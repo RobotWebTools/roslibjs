@@ -1,41 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="roslibjs" default="prod" basedir="../">
 
-  <description>Main Build Script</description>
+	<description>Main Build Script</description>
 
-  <target name="-properties" description="Set properties for this build.">
-    <!-- YUI Compressor Executable -->
-    <property name="yui" value="/usr/bin/yui-compressor" />
-    <!-- Source JS Directory -->
-    <property name="src" value="${basedir}/src" />
-    <!-- Output Directory -->
-    <property name="build" value="build" />
-    <!-- Output Files -->
-    <property name="js" value="roslib.js" />
-    <property name="js.min" value="roslib.min.js" />
-  </target>
+	<target name="-properties" description="Set properties for this build.">
+		<!-- YUI Compressor Executable -->
+		<property name="yui" value="/usr/bin/yui-compressor" />
+		<!-- JSDOC Executable -->
+		<property name="jsdoc" value="/usr/bin/jsdoc" />
+		<!-- Source JS Directory -->
+		<property name="src" value="${basedir}/src" />
+		<!-- Build Directory -->
+		<property name="build" value="build" />
+		<!-- Build Files -->
+		<property name="js" value="roslib.js" />
+		<property name="js.min" value="roslib.min.js" />
+		<!-- Documentation Directory -->
+		<property name="doc" value="doc" />
+	</target>
 
-  <target name="-init" depends="-properties" description="Create build directory structure.">
-    <!-- Delete and create build directory. -->
-    <delete dir="${build}" />
-  </target>
+	<target name="-init" depends="-properties" description="Create build directory structure.">
+		<!-- Delete and create build directory. -->
+		<delete dir="${build}" />
+		<mkdir dir="${build}"/>
+		<!-- Delete and create doc directory. -->
+		<delete dir="${doc}" />
+		<mkdir dir="${doc}"/>
+	</target>
 
-  <target name="-concatenate" depends="-properties" description="Concatenates specified JavaScript files">
-    <concat destfile="${build}/${js}">
-      <fileset dir="${src}" />
-    </concat>
-    <echo>${js} created.</echo>
-  </target>
+	<target name="-concatenate" depends="-properties" description="Concatenates specified JavaScript files">
+		<concat destfile="${build}/${js}">
+			<fileset dir="${src}" />
+		</concat>
+		<echo>${js} created.</echo>
+	</target>
 
-  <target name="-minify" depends="-concatenate" description="Minifies JavaScript files">
-    <exec failonerror="true" executable="${yui}">
-      <arg value="${build}/${js}" />
-      <arg value="-o" />
-      <arg value="${build}/${js.min}" />
-    </exec>
-    <echo>${js.min}created.</echo>
-  </target>
+	<target name="-minify" depends="-concatenate" description="Minifies JavaScript files">
+		<exec failonerror="true" executable="${yui}">
+			<arg value="${build}/${js}" />
+			<arg value="-o" />
+			<arg value="${build}/${js.min}" />
+		</exec>
+		<echo>${js.min}created.</echo>
+	</target>
 
-  <target name="prod" description="Builds project files for production use" 
-  	depends=" -properties, -init, -concatenate, -minify" />
+	<target name="-doc" depends="-minify" description="Documents JavaScript files">
+		<exec failonerror="true" executable="${jsdoc}">
+			<arg value="-d=${doc}" />
+			<arg value="${src}" />
+			<arg value="-r" />
+		</exec>
+		<echo>${js.min}created.</echo>
+	</target>
+
+	<target name="prod" description="Builds project files for production use" 
+  	depends=" -properties, -init, -concatenate, -minify, -doc" />
 </project>
