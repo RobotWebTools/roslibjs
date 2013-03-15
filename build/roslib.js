@@ -26,7 +26,7 @@ var ROSLIB = ROSLIB || {
  *   * timeout - the timeout length when connecting to the action server
  */
 ROSLIB.ActionClient = function(options) {
-  var that = this;
+  var actionClient = this;
   options = options || {};
   this.ros = options.ros;
   this.serverName = options.serverName;
@@ -80,7 +80,7 @@ ROSLIB.ActionClient = function(options) {
   statusListener.subscribe(function(statusMessage) {
     receivedStatus = true;
     statusMessage.status_list.forEach(function(status) {
-      var goal = that.goals[status.goal_id.id];
+      var goal = actionClient.goals[status.goal_id.id];
       if (goal) {
         goal.emit('status', status);
       }
@@ -89,7 +89,7 @@ ROSLIB.ActionClient = function(options) {
 
   // subscribe the the feedback topic
   feedbackListener.subscribe(function(feedbackMessage) {
-    var goal = that.goals[feedbackMessage.status.goal_id.id];
+    var goal = actionClient.goals[feedbackMessage.status.goal_id.id];
     if (goal) {
       goal.emit('status', feedbackMessage.status);
       goal.emit('feedback', feedbackMessage.feedback);
@@ -98,7 +98,7 @@ ROSLIB.ActionClient = function(options) {
 
   // subscribe to the result topic
   resultListener.subscribe(function(resultMessage) {
-    var goal = that.goals[resultMessage.status.goal_id.id];
+    var goal = actionClient.goals[resultMessage.status.goal_id.id];
 
     if (goal) {
       goal.emit('status', resultMessage.status);
@@ -110,7 +110,7 @@ ROSLIB.ActionClient = function(options) {
   if (this.timeout) {
     setTimeout(function() {
       if (!receivedStatus) {
-        that.emit('timeout');
+        actionClient.emit('timeout');
       }
     }, this.timeout);
   }
@@ -121,7 +121,7 @@ ROSLIB.ActionClient.prototype.__proto__ = EventEmitter2.prototype;
  */
 
 /**
- * An actionlib goal that is associated with an action server.
+ * An actionlib goal goal is associated with an action server.
  *
  * Emits the following events:
  *  * 'timeout' - if a timeout occurred while sending a goal 
@@ -133,7 +133,7 @@ ROSLIB.ActionClient.prototype.__proto__ = EventEmitter2.prototype;
  */
 
 ROSLIB.Goal = function(options) {
-  var that = this;
+  var goal = this;
   this.actionClient = options.actionClient;
   this.goalMessage = options.goalMessage;
   this.isFinished = false;
@@ -147,11 +147,11 @@ ROSLIB.Goal = function(options) {
    * @param timeout (optional) - a timeout length for the goal's result
    */
   this.send = function(timeout) {
-    that.actionClient.goalTopic.publish(that.goalMessage);
+    goal.actionClient.goalTopic.publish(goal.goalMessage);
     if (timeout) {
       setTimeout(function() {
-        if (!that.isFinished) {
-          that.emit('timeout');
+        if (!goal.isFinished) {
+          goal.emit('timeout');
         }
       }, timeout);
     }
@@ -162,9 +162,9 @@ ROSLIB.Goal = function(options) {
    */
   this.cancel = function() {
     var cancelMessage = new ROSLIB.Message({
-      id : that.goalID
+      id : goal.goalID
     });
-    that.actionClient.cancelTopic.publish(cancelMessage);
+    goal.actionClient.cancelTopic.publish(cancelMessage);
   };
 
   // create a random ID
@@ -210,10 +210,10 @@ ROSLIB.Goal.prototype.__proto__ = EventEmitter2.prototype;
  * @param values - object matching the fields defined in the .msg definition file.
  */
 ROSLIB.Message = function(values) {
-  var that = this;
+  var message = this;
   if (values) {
     Object.keys(values).forEach(function(name) {
-      that[name] = values[name];
+      message[name] = values[name];
     });
   }
 };
@@ -226,11 +226,13 @@ ROSLIB.Message = function(values) {
  *
  * @constructor
  * @param options - possible keys include:
+ *   * ros - the ROSLIB.Ros connection handle
  *   * name - the param name, like max_vel_x
  */
 ROSLIB.Param = function(options) {
-  var that = this;
+  var param = this;
   options = options || {};
+  this.ros = options.ros;
   this.name = options.name;
 
   /**
@@ -241,12 +243,13 @@ ROSLIB.Param = function(options) {
    */
   this.get = function(callback) {
     var paramClient = new ROSLIB.Service({
+      ros : ros,
       name : '/rosapi/get_param',
       serviceType : 'rosapi/GetParam'
     });
 
     var request = new ROSLIB.ServiceRequest({
-      name : that.name,
+      name : param.name,
       value : JSON.stringify('')
     });
 
@@ -263,12 +266,13 @@ ROSLIB.Param = function(options) {
    */
   this.set = function(value) {
     var paramClient = new ROSLIB.Service({
+      ros : ros,
       name : '/rosapi/set_param',
       serviceType : 'rosapi/SetParam'
     });
 
     var request = new ROSLIB.ServiceRequest({
-      name : that.name,
+      name : param.name,
       value : JSON.stringify(value)
     });
 
@@ -294,7 +298,7 @@ ROSLIB.Param = function(options) {
  *  @param url (optional) - The WebSocket URL for rosbridge. Can be specified later with `connect`.
  */
 ROSLIB.Ros = function(url) {
-  var that = this;
+  var ros = this;
   this.socket = null;
 
   /**
@@ -303,7 +307,7 @@ ROSLIB.Ros = function(url) {
    * @param event - the argument to emit with the event.
    */
   function onOpen(event) {
-    that.emit('connection', event);
+    ros.emit('connection', event);
   };
 
   /**
@@ -312,7 +316,7 @@ ROSLIB.Ros = function(url) {
    * @param event - the argument to emit with the event.
    */
   function onClose(event) {
-    that.emit('close', event);
+    ros.emit('close', event);
   };
 
   /**
@@ -321,7 +325,7 @@ ROSLIB.Ros = function(url) {
    * @param event - the argument to emit with the event.
    */
   function onError(event) {
-    that.emit('error', event);
+    ros.emit('error', event);
   };
 
   /**
@@ -372,9 +376,9 @@ ROSLIB.Ros = function(url) {
   function onMessage(message) {
     function handleMessage(message) {
       if (message.op === 'publish') {
-        that.emit(message.topic, message.msg);
+        ros.emit(message.topic, message.msg);
       } else if (message.op === 'service_response') {
-        that.emit(message.id, message.values);
+        ros.emit(message.id, message.values);
       }
     };
 
@@ -394,19 +398,19 @@ ROSLIB.Ros = function(url) {
    * @param url - WebSocket URL for Rosbridge
    */
   this.connect = function(url) {
-    that.socket = new WebSocket(url);
-    that.socket.onopen = onOpen;
-    that.socket.onclose = onClose;
-    that.socket.onerror = onError;
-    that.socket.onmessage = onMessage;
+    ros.socket = new WebSocket(url);
+    ros.socket.onopen = onOpen;
+    ros.socket.onclose = onClose;
+    ros.socket.onerror = onError;
+    ros.socket.onmessage = onMessage;
   };
 
   /**
    * Disconnect from the WebSocket server.
    */
   this.close = function() {
-    if (that.socket) {
-      that.socket.close();
+    if (ros.socket) {
+      ros.socket.close();
     }
   };
 
@@ -443,12 +447,12 @@ ROSLIB.Ros = function(url) {
   this.callOnConnection = function(message) {
     var messageJson = JSON.stringify(message);
 
-    if (that.socket.readyState !== WebSocket.OPEN) {
-      that.once('connection', function() {
-        that.socket.send(messageJson);
+    if (ros.socket.readyState !== WebSocket.OPEN) {
+      ros.once('connection', function() {
+        ros.socket.send(messageJson);
       });
     } else {
-      that.socket.send(messageJson);
+      ros.socket.send(messageJson);
     }
   };
 
@@ -460,6 +464,7 @@ ROSLIB.Ros = function(url) {
    */
   this.getTopics = function(callback) {
     var topicsClient = new ROSLIB.Service({
+      ros : ros,
       name : '/rosapi/topics',
       serviceType : 'rosapi/Topics'
     });
@@ -479,6 +484,7 @@ ROSLIB.Ros = function(url) {
    */
   this.getServices = function(callback) {
     var servicesClient = new ROSLIB.Service({
+      ros : ros,
       name : '/rosapi/services',
       serviceType : 'rosapi/Services'
     });
@@ -498,6 +504,7 @@ ROSLIB.Ros = function(url) {
    */
   this.getParams = function(callback) {
     var paramsClient = new ROSLIB.Service({
+      ros : ros,
       name : '/rosapi/get_param_names',
       serviceType : 'rosapi/GetParamNames'
     });
@@ -528,7 +535,7 @@ ROSLIB.Ros.prototype.__proto__ = EventEmitter2.prototype;
  *   * serviceType - the service type, like 'rospy_tutorials/AddTwoInts'
  */
 ROSLIB.Service = function(options) {
-  var that = this;
+  var service = this;
   options = options || {};
   this.ros = options.ros;
   this.name = options.name;
@@ -542,10 +549,10 @@ ROSLIB.Service = function(options) {
    *   * response - the response from the service request
    */
   this.callService = function(request, callback) {
-    that.ros.idCounter++;
-    serviceCallId = 'call_service:' + that.name + ':' + that.ros.idCounter;
+    service.ros.idCounter++;
+    serviceCallId = 'call_service:' + service.name + ':' + service.ros.idCounter;
 
-    that.ros.once(serviceCallId, function(data) {
+    service.ros.once(serviceCallId, function(data) {
       var response = new ROSLIB.ServiceResponse(data);
       callback(response);
     });
@@ -558,10 +565,10 @@ ROSLIB.Service = function(options) {
     var call = {
       op : 'call_service',
       id : serviceCallId,
-      service : that.name,
+      service : service.name,
       args : requestValues
     };
-    that.ros.callOnConnection(call);
+    service.ros.callOnConnection(call);
   };
 };
 /**
@@ -575,10 +582,10 @@ ROSLIB.Service = function(options) {
  * @param values - object matching the values of the request part from the .srv file.
  */
 ROSLIB.ServiceRequest = function(values) {
-  var that = this;
+  var serviceRequest = this;
   if (values) {
     Object.keys(values).forEach(function(name) {
-      that[name] = values[name];
+      serviceRequest[name] = values[name];
     });
   }
 };
@@ -593,10 +600,10 @@ ROSLIB.ServiceRequest = function(values) {
  * @param values - object matching the values of the response part from the .srv file.
  */
 ROSLIB.ServiceResponse = function(values) {
-  var that = this;
+  var serviceResponse = this;
   if (values) {
     Object.keys(values).forEach(function(name) {
-      that[name] = values[name];
+      serviceResponse[name] = values[name];
     });
   }
 };
@@ -620,7 +627,7 @@ ROSLIB.ServiceResponse = function(values) {
  *   * throttle_rate - the rate at which to throttle the topics
  */
 ROSLIB.Topic = function(options) {
-  var that = this;
+  var topic = this;
   options = options || {};
   this.ros = options.ros;
   this.name = options.name;
@@ -649,27 +656,27 @@ ROSLIB.Topic = function(options) {
    *   * message - the published message
    */
   this.subscribe = function(callback) {
-    that.on('message', function(message) {
+    topic.on('message', function(message) {
       callback(message);
     });
 
-    that.ros.on(that.name, function(data) {
+    topic.ros.on(topic.name, function(data) {
       var message = new ROSLIB.Message(data);
-      that.emit('message', message);
+      topic.emit('message', message);
     });
 
-    that.ros.idCounter++;
-    var subscribeId = 'subscribe:' + that.name + ':' + that.ros.idCounter;
+    topic.ros.idCounter++;
+    var subscribeId = 'subscribe:' + topic.name + ':' + topic.ros.idCounter;
     var call = {
       op : 'subscribe',
       id : subscribeId,
-      type : that.messageType,
-      topic : that.name,
-      compression : that.compression,
-      throttle_rate : that.throttle_rate
+      type : topic.messageType,
+      topic : topic.name,
+      compression : topic.compression,
+      throttle_rate : topic.throttle_rate
     };
 
-    that.ros.callOnConnection(call);
+    topic.ros.callOnConnection(call);
   };
 
   /**
@@ -677,46 +684,46 @@ ROSLIB.Topic = function(options) {
    * all subscribe callbacks.
    */
   this.unsubscribe = function() {
-    that.ros.removeAllListeners([ that.name ]);
-    that.ros.idCounter++;
-    var unsubscribeId = 'unsubscribe:' + that.name + ':' + that.ros.idCounter;
+    topic.ros.removeAllListeners([ topic.name ]);
+    topic.ros.idCounter++;
+    var unsubscribeId = 'unsubscribe:' + topic.name + ':' + topic.ros.idCounter;
     var call = {
       op : 'unsubscribe',
       id : unsubscribeId,
-      topic : that.name
+      topic : topic.name
     };
-    that.ros.callOnConnection(call);
+    topic.ros.callOnConnection(call);
   };
 
   /**
    * Registers as a publisher for the topic.
    */
   this.advertise = function() {
-    that.ros.idCounter++;
-    var advertiseId = 'advertise:' + that.name + ':' + that.ros.idCounter;
+    topic.ros.idCounter++;
+    var advertiseId = 'advertise:' + topic.name + ':' + topic.ros.idCounter;
     var call = {
       op : 'advertise',
       id : advertiseId,
-      type : that.messageType,
-      topic : that.name
+      type : topic.messageType,
+      topic : topic.name
     };
-    that.ros.callOnConnection(call);
-    that.isAdvertised = true;
+    topic.ros.callOnConnection(call);
+    topic.isAdvertised = true;
   };
 
   /**
    * Unregisters as a publisher for the topic.
    */
   this.unadvertise = function() {
-    that.ros.idCounter++;
-    var unadvertiseId = 'unadvertise:' + that.name + ':' + that.ros.idCounter;
+    topic.ros.idCounter++;
+    var unadvertiseId = 'unadvertise:' + topic.name + ':' + topic.ros.idCounter;
     var call = {
       op : 'unadvertise',
       id : unadvertiseId,
-      topic : that.name
+      topic : topic.name
     };
-    that.ros.callOnConnection(call);
-    that.isAdvertised = false;
+    topic.ros.callOnConnection(call);
+    topic.isAdvertised = false;
   };
 
   /**
@@ -725,19 +732,19 @@ ROSLIB.Topic = function(options) {
    * @param message - A ROSLIB.Message object.
    */
   this.publish = function(message) {
-    if (!that.isAdvertised) {
-      that.advertise();
+    if (!topic.isAdvertised) {
+      topic.advertise();
     }
 
-    that.ros.idCounter++;
-    var publishId = 'publish:' + that.name + ':' + that.ros.idCounter;
+    topic.ros.idCounter++;
+    var publishId = 'publish:' + topic.name + ':' + topic.ros.idCounter;
     var call = {
       op : 'publish',
       id : publishId,
-      topic : that.name,
+      topic : topic.name,
       msg : message
     };
-    that.ros.callOnConnection(call);
+    topic.ros.callOnConnection(call);
   };
 };
 ROSLIB.Topic.prototype.__proto__ = EventEmitter2.prototype;

@@ -12,7 +12,7 @@
  *   * serviceType - the service type, like 'rospy_tutorials/AddTwoInts'
  */
 ROSLIB.Service = function(options) {
-  var that = this;
+  var service = this;
   options = options || {};
   this.ros = options.ros;
   this.name = options.name;
@@ -26,10 +26,10 @@ ROSLIB.Service = function(options) {
    *   * response - the response from the service request
    */
   this.callService = function(request, callback) {
-    that.ros.idCounter++;
-    serviceCallId = 'call_service:' + that.name + ':' + that.ros.idCounter;
+    service.ros.idCounter++;
+    serviceCallId = 'call_service:' + service.name + ':' + service.ros.idCounter;
 
-    that.ros.once(serviceCallId, function(data) {
+    service.ros.once(serviceCallId, function(data) {
       var response = new ROSLIB.ServiceResponse(data);
       callback(response);
     });
@@ -42,9 +42,9 @@ ROSLIB.Service = function(options) {
     var call = {
       op : 'call_service',
       id : serviceCallId,
-      service : that.name,
+      service : service.name,
       args : requestValues
     };
-    that.ros.callOnConnection(call);
+    service.ros.callOnConnection(call);
   };
 };

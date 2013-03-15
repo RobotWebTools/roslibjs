@@ -18,7 +18,7 @@
  *   * throttle_rate - the rate at which to throttle the topics
  */
 ROSLIB.Topic = function(options) {
-  var that = this;
+  var topic = this;
   options = options || {};
   this.ros = options.ros;
   this.name = options.name;
@@ -47,27 +47,27 @@ ROSLIB.Topic = function(options) {
    *   * message - the published message
    */
   this.subscribe = function(callback) {
-    that.on('message', function(message) {
+    topic.on('message', function(message) {
       callback(message);
     });
 
-    that.ros.on(that.name, function(data) {
+    topic.ros.on(topic.name, function(data) {
       var message = new ROSLIB.Message(data);
-      that.emit('message', message);
+      topic.emit('message', message);
     });
 
-    that.ros.idCounter++;
-    var subscribeId = 'subscribe:' + that.name + ':' + that.ros.idCounter;
+    topic.ros.idCounter++;
+    var subscribeId = 'subscribe:' + topic.name + ':' + topic.ros.idCounter;
     var call = {
       op : 'subscribe',
       id : subscribeId,
-      type : that.messageType,
-      topic : that.name,
-      compression : that.compression,
-      throttle_rate : that.throttle_rate
+      type : topic.messageType,
+      topic : topic.name,
+      compression : topic.compression,
+      throttle_rate : topic.throttle_rate
     };
 
-    that.ros.callOnConnection(call);
+    topic.ros.callOnConnection(call);
   };
 
   /**
@@ -75,46 +75,46 @@ ROSLIB.Topic = function(options) {
    * all subscribe callbacks.
    */
   this.unsubscribe = function() {
-    that.ros.removeAllListeners([ that.name ]);
-    that.ros.idCounter++;
-    var unsubscribeId = 'unsubscribe:' + that.name + ':' + that.ros.idCounter;
+    topic.ros.removeAllListeners([ topic.name ]);
+    topic.ros.idCounter++;
+    var unsubscribeId = 'unsubscribe:' + topic.name + ':' + topic.ros.idCounter;
     var call = {
       op : 'unsubscribe',
       id : unsubscribeId,
-      topic : that.name
+      topic : topic.name
     };
-    that.ros.callOnConnection(call);
+    topic.ros.callOnConnection(call);
   };
 
   /**
    * Registers as a publisher for the topic.
    */
   this.advertise = function() {
-    that.ros.idCounter++;
-    var advertiseId = 'advertise:' + that.name + ':' + that.ros.idCounter;
+    topic.ros.idCounter++;
+    var advertiseId = 'advertise:' + topic.name + ':' + topic.ros.idCounter;
     var call = {
       op : 'advertise',
       id : advertiseId,
-      type : that.messageType,
-      topic : that.name
+      type : topic.messageType,
+      topic : topic.name
     };
-    that.ros.callOnConnection(call);
-    that.isAdvertised = true;
+    topic.ros.callOnConnection(call);
+    topic.isAdvertised = true;
   };
 
   /**
    * Unregisters as a publisher for the topic.
    */
   this.unadvertise = function() {
-    that.ros.idCounter++;
-    var unadvertiseId = 'unadvertise:' + that.name + ':' + that.ros.idCounter;
+    topic.ros.idCounter++;
+    var unadvertiseId = 'unadvertise:' + topic.name + ':' + topic.ros.idCounter;
     var call = {
       op : 'unadvertise',
       id : unadvertiseId,
-      topic : that.name
+      topic : topic.name
     };
-    that.ros.callOnConnection(call);
-    that.isAdvertised = false;
+    topic.ros.callOnConnection(call);
+    topic.isAdvertised = false;
   };
 
   /**
@@ -123,19 +123,19 @@ ROSLIB.Topic = function(options) {
    * @param message - A ROSLIB.Message object.
    */
   this.publish = function(message) {
-    if (!that.isAdvertised) {
-      that.advertise();
+    if (!topic.isAdvertised) {
+      topic.advertise();
     }
 
-    that.ros.idCounter++;
-    var publishId = 'publish:' + that.name + ':' + that.ros.idCounter;
+    topic.ros.idCounter++;
+    var publishId = 'publish:' + topic.name + ':' + topic.ros.idCounter;
     var call = {
       op : 'publish',
       id : publishId,
-      topic : that.name,
+      topic : topic.name,
       msg : message
     };
-    that.ros.callOnConnection(call);
+    topic.ros.callOnConnection(call);
   };
 };
 ROSLIB.Topic.prototype.__proto__ = EventEmitter2.prototype;

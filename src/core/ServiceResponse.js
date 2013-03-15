@@ -9,10 +9,10 @@
  * @param values - object matching the values of the response part from the .srv file.
  */
 ROSLIB.ServiceResponse = function(values) {
-  var that = this;
+  var serviceResponse = this;
   if (values) {
     Object.keys(values).forEach(function(name) {
-      that[name] = values[name];
+      serviceResponse[name] = values[name];
     });
   }
 };

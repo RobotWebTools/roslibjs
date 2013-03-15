@@ -7,11 +7,13 @@
  *
  * @constructor
  * @param options - possible keys include:
+ *   * ros - the ROSLIB.Ros connection handle
  *   * name - the param name, like max_vel_x
  */
 ROSLIB.Param = function(options) {
-  var that = this;
+  var param = this;
   options = options || {};
+  this.ros = options.ros;
   this.name = options.name;
 
   /**
@@ -22,12 +24,13 @@ ROSLIB.Param = function(options) {
    */
   this.get = function(callback) {
     var paramClient = new ROSLIB.Service({
+      ros : ros,
       name : '/rosapi/get_param',
       serviceType : 'rosapi/GetParam'
     });
 
     var request = new ROSLIB.ServiceRequest({
-      name : that.name,
+      name : param.name,
       value : JSON.stringify('')
     });
 
@@ -44,12 +47,13 @@ ROSLIB.Param = function(options) {
    */
   this.set = function(value) {
     var paramClient = new ROSLIB.Service({
+      ros : ros,
       name : '/rosapi/set_param',
       serviceType : 'rosapi/SetParam'
     });
 
     var request = new ROSLIB.ServiceRequest({
-      name : that.name,
+      name : param.name,
       value : JSON.stringify(value)
     });
 

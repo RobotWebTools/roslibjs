@@ -23,7 +23,7 @@
 <span class='line'> 16</span>  *  @param url (optional) - The WebSocket URL for rosbridge. Can be specified later with `connect`.
 <span class='line'> 17</span>  */</span><span class="WHIT">
 <span class='line'> 18</span> </span><span class="NAME">ROSLIB.Ros</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 19</span> </span><span class="WHIT">  </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">that</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="WHIT">  </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">ros</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 20</span> </span><span class="WHIT">  </span><span class="NAME">this.socket</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 21</span> 
 <span class='line'> 22</span> </span><span class="WHIT">  </span><span class="COMM">/**
@@ -32,7 +32,7 @@
 <span class='line'> 25</span>    * @param event - the argument to emit with the event.
 <span class='line'> 26</span>    */</span><span class="WHIT">
 <span class='line'> 27</span> </span><span class="WHIT">  </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">onOpen</span><span class="PUNC">(</span><span class="NAME">event</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 28</span> </span><span class="WHIT">    </span><span class="NAME">that.emit</span><span class="PUNC">(</span><span class="STRN">'connection'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">event</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 28</span> </span><span class="WHIT">    </span><span class="NAME">ros.emit</span><span class="PUNC">(</span><span class="STRN">'connection'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">event</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 29</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 30</span> 
 <span class='line'> 31</span> </span><span class="WHIT">  </span><span class="COMM">/**
@@ -41,7 +41,7 @@
 <span class='line'> 34</span>    * @param event - the argument to emit with the event.
 <span class='line'> 35</span>    */</span><span class="WHIT">
 <span class='line'> 36</span> </span><span class="WHIT">  </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">onClose</span><span class="PUNC">(</span><span class="NAME">event</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 37</span> </span><span class="WHIT">    </span><span class="NAME">that.emit</span><span class="PUNC">(</span><span class="STRN">'close'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">event</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 37</span> </span><span class="WHIT">    </span><span class="NAME">ros.emit</span><span class="PUNC">(</span><span class="STRN">'close'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">event</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 38</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 39</span> 
 <span class='line'> 40</span> </span><span class="WHIT">  </span><span class="COMM">/**
@@ -50,7 +50,7 @@
 <span class='line'> 43</span>    * @param event - the argument to emit with the event.
 <span class='line'> 44</span>    */</span><span class="WHIT">
 <span class='line'> 45</span> </span><span class="WHIT">  </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">onError</span><span class="PUNC">(</span><span class="NAME">event</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 46</span> </span><span class="WHIT">    </span><span class="NAME">that.emit</span><span class="PUNC">(</span><span class="STRN">'error'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">event</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 46</span> </span><span class="WHIT">    </span><span class="NAME">ros.emit</span><span class="PUNC">(</span><span class="STRN">'error'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">event</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 47</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 48</span> 
 <span class='line'> 49</span> </span><span class="WHIT">  </span><span class="COMM">/**
@@ -101,9 +101,9 @@
 <span class='line'> 94</span> </span><span class="WHIT">  </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">onMessage</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 95</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">handleMessage</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 96</span> </span><span class="WHIT">      </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">message.op</span><span class="WHIT"> </span><span class="PUNC">===</span><span class="WHIT"> </span><span class="STRN">'publish'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 97</span> </span><span class="WHIT">        </span><span class="NAME">that.emit</span><span class="PUNC">(</span><span class="NAME">message.topic</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">message.msg</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 97</span> </span><span class="WHIT">        </span><span class="NAME">ros.emit</span><span class="PUNC">(</span><span class="NAME">message.topic</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">message.msg</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 98</span> </span><span class="WHIT">      </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">message.op</span><span class="WHIT"> </span><span class="PUNC">===</span><span class="WHIT"> </span><span class="STRN">'service_response'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 99</span> </span><span class="WHIT">        </span><span class="NAME">that.emit</span><span class="PUNC">(</span><span class="NAME">message.id</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">message.values</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 99</span> </span><span class="WHIT">        </span><span class="NAME">ros.emit</span><span class="PUNC">(</span><span class="NAME">message.id</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">message.values</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>100</span> </span><span class="WHIT">      </span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'>101</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>102</span> 
@@ -123,19 +123,19 @@
 <span class='line'>116</span>    * @param url - WebSocket URL for Rosbridge
 <span class='line'>117</span>    */</span><span class="WHIT">
 <span class='line'>118</span> </span><span class="WHIT">  </span><span class="NAME">this.connect</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>119</span> </span><span class="WHIT">    </span><span class="NAME">that.socket</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">WebSocket</span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>120</span> </span><span class="WHIT">    </span><span class="NAME">that.socket.onopen</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">onOpen</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>121</span> </span><span class="WHIT">    </span><span class="NAME">that.socket.onclose</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">onClose</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>122</span> </span><span class="WHIT">    </span><span class="NAME">that.socket.onerror</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">onError</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>123</span> </span><span class="WHIT">    </span><span class="NAME">that.socket.onmessage</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">onMessage</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>119</span> </span><span class="WHIT">    </span><span class="NAME">ros.socket</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">WebSocket</span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>120</span> </span><span class="WHIT">    </span><span class="NAME">ros.socket.onopen</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">onOpen</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>121</span> </span><span class="WHIT">    </span><span class="NAME">ros.socket.onclose</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">onClose</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>122</span> </span><span class="WHIT">    </span><span class="NAME">ros.socket.onerror</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">onError</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>123</span> </span><span class="WHIT">    </span><span class="NAME">ros.socket.onmessage</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">onMessage</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>124</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>125</span> 
 <span class='line'>126</span> </span><span class="WHIT">  </span><span class="COMM">/**
 <span class='line'>127</span>    * Disconnect from the WebSocket server.
 <span class='line'>128</span>    */</span><span class="WHIT">
 <span class='line'>129</span> </span><span class="WHIT">  </span><span class="NAME">this.close</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>130</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">that.socket</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>131</span> </span><span class="WHIT">      </span><span class="NAME">that.socket.close</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>130</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">ros.socket</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>131</span> </span><span class="WHIT">      </span><span class="NAME">ros.socket.close</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>132</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'>133</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>134</span> 
@@ -172,12 +172,12 @@
 <span class='line'>165</span> </span><span class="WHIT">  </span><span class="NAME">this.callOnConnection</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>166</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">messageJson</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">JSON.stringify</span><span class="PUNC">(</span><span class="NAME">message</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>167</span> 
-<span class='line'>168</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">that.socket.readyState</span><span class="WHIT"> </span><span class="PUNC">!==</span><span class="WHIT"> </span><span class="NAME">WebSocket.OPEN</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>169</span> </span><span class="WHIT">      </span><span class="NAME">that.once</span><span class="PUNC">(</span><span class="STRN">'connection'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>170</span> </span><span class="WHIT">        </span><span class="NAME">that.socket.send</span><span class="PUNC">(</span><span class="NAME">messageJson</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>168</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">ros.socket.readyState</span><span class="WHIT"> </span><span class="PUNC">!==</span><span class="WHIT"> </span><span class="NAME">WebSocket.OPEN</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>169</span> </span><span class="WHIT">      </span><span class="NAME">ros.once</span><span class="PUNC">(</span><span class="STRN">'connection'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>170</span> </span><span class="WHIT">        </span><span class="NAME">ros.socket.send</span><span class="PUNC">(</span><span class="NAME">messageJson</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>171</span> </span><span class="WHIT">      </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>172</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>173</span> </span><span class="WHIT">      </span><span class="NAME">that.socket.send</span><span class="PUNC">(</span><span class="NAME">messageJson</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>173</span> </span><span class="WHIT">      </span><span class="NAME">ros.socket.send</span><span class="PUNC">(</span><span class="NAME">messageJson</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>174</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'>175</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>176</span> 
@@ -189,58 +189,61 @@
 <span class='line'>182</span>    */</span><span class="WHIT">
 <span class='line'>183</span> </span><span class="WHIT">  </span><span class="NAME">this.getTopics</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>184</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">topicsClient</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">ROSLIB.Service</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>185</span> </span><span class="WHIT">      </span><span class="NAME">name</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'/rosapi/topics'</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>186</span> </span><span class="WHIT">      </span><span class="NAME">serviceType</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'rosapi/Topics'</span><span class="WHIT">
-<span class='line'>187</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>188</span> 
-<span class='line'>189</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">request</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">ROSLIB.ServiceRequest</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>190</span> 
-<span class='line'>191</span> </span><span class="WHIT">    </span><span class="NAME">topicsClient.callService</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">result</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>192</span> </span><span class="WHIT">      </span><span class="NAME">callback</span><span class="PUNC">(</span><span class="NAME">result.topics</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>193</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>194</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>195</span> 
-<span class='line'>196</span> </span><span class="WHIT">  </span><span class="COMM">/**
-<span class='line'>197</span>    * Retrieves list of active service names in ROS.
-<span class='line'>198</span>    *
-<span class='line'>199</span>    * @param callback - function with the following params:
-<span class='line'>200</span>    *   * services - array of service names
-<span class='line'>201</span>    */</span><span class="WHIT">
-<span class='line'>202</span> </span><span class="WHIT">  </span><span class="NAME">this.getServices</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>203</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">servicesClient</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">ROSLIB.Service</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>204</span> </span><span class="WHIT">      </span><span class="NAME">name</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'/rosapi/services'</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>205</span> </span><span class="WHIT">      </span><span class="NAME">serviceType</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'rosapi/Services'</span><span class="WHIT">
-<span class='line'>206</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>207</span> 
-<span class='line'>208</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">request</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">ROSLIB.ServiceRequest</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>185</span> </span><span class="WHIT">      </span><span class="NAME">ros</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">ros</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>186</span> </span><span class="WHIT">      </span><span class="NAME">name</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'/rosapi/topics'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>187</span> </span><span class="WHIT">      </span><span class="NAME">serviceType</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'rosapi/Topics'</span><span class="WHIT">
+<span class='line'>188</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>189</span> 
+<span class='line'>190</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">request</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">ROSLIB.ServiceRequest</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>191</span> 
+<span class='line'>192</span> </span><span class="WHIT">    </span><span class="NAME">topicsClient.callService</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">result</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>193</span> </span><span class="WHIT">      </span><span class="NAME">callback</span><span class="PUNC">(</span><span class="NAME">result.topics</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>194</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>195</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>196</span> 
+<span class='line'>197</span> </span><span class="WHIT">  </span><span class="COMM">/**
+<span class='line'>198</span>    * Retrieves list of active service names in ROS.
+<span class='line'>199</span>    *
+<span class='line'>200</span>    * @param callback - function with the following params:
+<span class='line'>201</span>    *   * services - array of service names
+<span class='line'>202</span>    */</span><span class="WHIT">
+<span class='line'>203</span> </span><span class="WHIT">  </span><span class="NAME">this.getServices</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>204</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">servicesClient</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">ROSLIB.Service</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>205</span> </span><span class="WHIT">      </span><span class="NAME">ros</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">ros</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>206</span> </span><span class="WHIT">      </span><span class="NAME">name</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'/rosapi/services'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>207</span> </span><span class="WHIT">      </span><span class="NAME">serviceType</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'rosapi/Services'</span><span class="WHIT">
+<span class='line'>208</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>209</span> 
-<span class='line'>210</span> </span><span class="WHIT">    </span><span class="NAME">servicesClient.callService</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">result</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>211</span> </span><span class="WHIT">      </span><span class="NAME">callback</span><span class="PUNC">(</span><span class="NAME">result.services</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>212</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>213</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>214</span> 
-<span class='line'>215</span> </span><span class="WHIT">  </span><span class="COMM">/**
-<span class='line'>216</span>    * Retrieves list of param names from the ROS Parameter Server.
-<span class='line'>217</span>    *
-<span class='line'>218</span>    * @param callback function with params:
-<span class='line'>219</span>    *  * params - array of param names.
-<span class='line'>220</span>    */</span><span class="WHIT">
-<span class='line'>221</span> </span><span class="WHIT">  </span><span class="NAME">this.getParams</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>222</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">paramsClient</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">ROSLIB.Service</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>223</span> </span><span class="WHIT">      </span><span class="NAME">name</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'/rosapi/get_param_names'</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>224</span> </span><span class="WHIT">      </span><span class="NAME">serviceType</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'rosapi/GetParamNames'</span><span class="WHIT">
-<span class='line'>225</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>226</span> 
-<span class='line'>227</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">request</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">ROSLIB.ServiceRequest</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>228</span> </span><span class="WHIT">    </span><span class="NAME">paramsClient.callService</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">result</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>229</span> </span><span class="WHIT">      </span><span class="NAME">callback</span><span class="PUNC">(</span><span class="NAME">result.names</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>230</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>231</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>232</span> 
-<span class='line'>233</span> </span><span class="WHIT">  </span><span class="COMM">// begin by checking if a URL was given</span><span class="WHIT">
-<span class='line'>234</span> </span><span class="WHIT">  </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>235</span> </span><span class="WHIT">    </span><span class="NAME">this.connect</span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>236</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>237</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>238</span> </span><span class="NAME">ROSLIB.Ros.prototype.__proto__</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">EventEmitter2.prototype</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>239</span> </span></pre></body></html>
+<span class='line'>210</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">request</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">ROSLIB.ServiceRequest</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>211</span> 
+<span class='line'>212</span> </span><span class="WHIT">    </span><span class="NAME">servicesClient.callService</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">result</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>213</span> </span><span class="WHIT">      </span><span class="NAME">callback</span><span class="PUNC">(</span><span class="NAME">result.services</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>214</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>215</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>216</span> 
+<span class='line'>217</span> </span><span class="WHIT">  </span><span class="COMM">/**
+<span class='line'>218</span>    * Retrieves list of param names from the ROS Parameter Server.
+<span class='line'>219</span>    *
+<span class='line'>220</span>    * @param callback function with params:
+<span class='line'>221</span>    *  * params - array of param names.
+<span class='line'>222</span>    */</span><span class="WHIT">
+<span class='line'>223</span> </span><span class="WHIT">  </span><span class="NAME">this.getParams</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>224</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">paramsClient</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">ROSLIB.Service</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>225</span> </span><span class="WHIT">      </span><span class="NAME">ros</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">ros</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>226</span> </span><span class="WHIT">      </span><span class="NAME">name</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'/rosapi/get_param_names'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>227</span> </span><span class="WHIT">      </span><span class="NAME">serviceType</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'rosapi/GetParamNames'</span><span class="WHIT">
+<span class='line'>228</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>229</span> 
+<span class='line'>230</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">request</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">ROSLIB.ServiceRequest</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>231</span> </span><span class="WHIT">    </span><span class="NAME">paramsClient.callService</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">result</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>232</span> </span><span class="WHIT">      </span><span class="NAME">callback</span><span class="PUNC">(</span><span class="NAME">result.names</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>233</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>234</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>235</span> 
+<span class='line'>236</span> </span><span class="WHIT">  </span><span class="COMM">// begin by checking if a URL was given</span><span class="WHIT">
+<span class='line'>237</span> </span><span class="WHIT">  </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>238</span> </span><span class="WHIT">    </span><span class="NAME">this.connect</span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>239</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>240</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>241</span> </span><span class="NAME">ROSLIB.Ros.prototype.__proto__</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">EventEmitter2.prototype</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>242</span> </span></pre></body></html>

@@ -102,6 +102,7 @@
 
   // First, we create a Param object with the name of the param.
   var maxVelX = new ROSLIB.Param({
+    ros : ros,
     name : 'max_vel_y'
   });
 
@@ -115,6 +116,7 @@
   // ---------------------
 
   var favoriteColor = new ROSLIB.Param({
+    ros : ros,
     name : 'favorite_color'
   });
 

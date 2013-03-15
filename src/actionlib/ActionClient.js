@@ -19,7 +19,7 @@
  *   * timeout - the timeout length when connecting to the action server
  */
 ROSLIB.ActionClient = function(options) {
-  var that = this;
+  var actionClient = this;
   options = options || {};
   this.ros = options.ros;
   this.serverName = options.serverName;
@@ -73,7 +73,7 @@ ROSLIB.ActionClient = function(options) {
   statusListener.subscribe(function(statusMessage) {
     receivedStatus = true;
     statusMessage.status_list.forEach(function(status) {
-      var goal = that.goals[status.goal_id.id];
+      var goal = actionClient.goals[status.goal_id.id];
       if (goal) {
         goal.emit('status', status);
       }
@@ -82,7 +82,7 @@ ROSLIB.ActionClient = function(options) {
 
   // subscribe the the feedback topic
   feedbackListener.subscribe(function(feedbackMessage) {
-    var goal = that.goals[feedbackMessage.status.goal_id.id];
+    var goal = actionClient.goals[feedbackMessage.status.goal_id.id];
     if (goal) {
       goal.emit('status', feedbackMessage.status);
       goal.emit('feedback', feedbackMessage.feedback);
@@ -91,7 +91,7 @@ ROSLIB.ActionClient = function(options) {
 
   // subscribe to the result topic
   resultListener.subscribe(function(resultMessage) {
-    var goal = that.goals[resultMessage.status.goal_id.id];
+    var goal = actionClient.goals[resultMessage.status.goal_id.id];
 
     if (goal) {
       goal.emit('status', resultMessage.status);
@@ -103,7 +103,7 @@ ROSLIB.ActionClient = function(options) {
   if (this.timeout) {
     setTimeout(function() {
       if (!receivedStatus) {
-        that.emit('timeout');
+        actionClient.emit('timeout');
       }
     }, this.timeout);
   }

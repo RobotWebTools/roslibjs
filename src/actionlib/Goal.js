@@ -3,7 +3,7 @@
  */
 
 /**
- * An actionlib goal that is associated with an action server.
+ * An actionlib goal goal is associated with an action server.
  *
  * Emits the following events:
  *  * 'timeout' - if a timeout occurred while sending a goal 
@@ -15,7 +15,7 @@
  */
 
 ROSLIB.Goal = function(options) {
-  var that = this;
+  var goal = this;
   this.actionClient = options.actionClient;
   this.goalMessage = options.goalMessage;
   this.isFinished = false;
@@ -29,11 +29,11 @@ ROSLIB.Goal = function(options) {
    * @param timeout (optional) - a timeout length for the goal's result
    */
   this.send = function(timeout) {
-    that.actionClient.goalTopic.publish(that.goalMessage);
+    goal.actionClient.goalTopic.publish(goal.goalMessage);
     if (timeout) {
       setTimeout(function() {
-        if (!that.isFinished) {
-          that.emit('timeout');
+        if (!goal.isFinished) {
+          goal.emit('timeout');
         }
       }, timeout);
     }
@@ -44,9 +44,9 @@ ROSLIB.Goal = function(options) {
    */
   this.cancel = function() {
     var cancelMessage = new ROSLIB.Message({
-      id : that.goalID
+      id : goal.goalID
     });
-    that.actionClient.cancelTopic.publish(cancelMessage);
+    goal.actionClient.cancelTopic.publish(cancelMessage);
   };
 
   // create a random ID
