@@ -1,79 +1,97 @@
-(function (root, factory) {
-    if(typeof define === 'function' && define.amd) {
-        define(['eventemitter2'],factory);
-    }
-    else {
-        root.ActionClient = factory(root.EventEmitter2);
-    }
-}(this, function(EventEmitter2) {
+/**
+ * @author Russell Toris - rctoris@wpi.edu
+ */
 
-var ActionClient = function(options) {
-  var actionClient = this;
+/**
+ * An actionlib action client.
+ *
+ * Emits the following events:
+ *  * 'timeout' - if a timeout occurred while sending a goal
+ *  * 'status' - the status messages received from the action server
+ *  * 'feedback' -  the feedback messages received from the action server
+ *  * 'result' - the result returned from the action server
+ *
+ *  @constructor
+ *  @param options - object with following keys:
+ *   * ros - the ROSLIB.Ros connection handle
+ *   * serverName - the action server name, like /fibonacci
+ *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
+ *   * timeout - the timeout length when connecting to the action server
+ */
+ROSLIB.ActionClient = function(options) {
+  var that = this;
   options = options || {};
-  actionClient.ros         = options.ros;
-  actionClient.serverName  = options.serverName;
-  actionClient.actionName  = options.actionName;
-  actionClient.timeout     = options.timeout;
-  actionClient.goals       = {};
+  this.ros = options.ros;
+  this.serverName = options.serverName;
+  this.actionName = options.actionName;
+  this.timeout = options.timeout;
+  this.goals = {};
 
-  actionClient.goalTopic = new actionClient.ros.Topic({
-    name        : actionClient.serverName + '/goal'
-  , messageType : actionClient.actionName + 'Goal'
-  });
-  actionClient.goalTopic.advertise();
-
-  actionClient.cancelTopic = new actionClient.ros.Topic({
-    name        : actionClient.serverName + '/cancel'
-  , messageType : 'actionlib_msgs/GoalID'
-  });
-  actionClient.cancelTopic.advertise();
-
+  // flag to check if a status has been received
   var receivedStatus = false;
-  var statusListener = new actionClient.ros.Topic({
-    name        : actionClient.serverName + '/status'
-  , messageType : 'actionlib_msgs/GoalStatusArray'
-  });
-  statusListener.subscribe(function (statusMessage) {
-    receivedStatus = true;
 
+  // create the topics associated with actionlib
+  var feedbackListener = new ROSLIB.Topic({
+    ros : this.ros,
+    name : this.serverName + '/feedback',
+    messageType : this.actionName + 'Feedback'
+  });
+  var statusListener = new ROSLIB.Topic({
+    ros : this.ros,
+    name : this.serverName + '/status',
+    messageType : 'actionlib_msgs/GoalStatusArray'
+  });
+  var resultListener = new ROSLIB.Topic({
+    ros : this.ros,
+    name : this.serverName + '/result',
+    messageType : this.actionName + 'Result'
+  });
+  this.goalTopic = new ROSLIB.Topic({
+    ros : this.ros,
+    name : this.serverName + '/goal',
+    messageType : this.actionName + 'Goal'
+  });
+  this.cancelTopic = new ROSLIB.Topic({
+    ros : this.ros,
+    name : this.serverName + '/cancel',
+    messageType : 'actionlib_msgs/GoalID'
+  });
+
+  /**
+   * Cancel all goals associated with this ActionClient.
+   */
+  this.cancel = function() {
+    var cancelMessage = new ROSLIB.Message({});
+    this.cancelTopic.publish(cancelMessage);
+  };
+
+  // advertise the goal and cancel topics
+  this.goalTopic.advertise();
+  this.cancelTopic.advertise();
+
+  // subscribe to the status topic
+  statusListener.subscribe(function(statusMessage) {
+    receivedStatus = true;
     statusMessage.status_list.forEach(function(status) {
-      var goal = actionClient.goals[status.goal_id.id];
+      var goal = that.goals[status.goal_id.id];
       if (goal) {
         goal.emit('status', status);
       }
     });
   });
 
-  // If timeout specified, emit a 'timeout' event if the ActionServer does not
-  // respond before the timeout.
-  if (actionClient.timeout) {
-    setTimeout(function() {
-      if (!receivedStatus) {
-        actionClient.emit('timeout');
-      }
-    }, actionClient.timeout);
-  }
-
-  // Subscribe to the feedback, and result topics
-  var feedbackListener = new actionClient.ros.Topic({
-    name        : actionClient.serverName + '/feedback'
-  , messageType : actionClient.actionName + 'Feedback'
-  });
-  feedbackListener.subscribe(function (feedbackMessage) {
-    var goal = actionClient.goals[feedbackMessage.status.goal_id.id];
-
+  // subscribe the the feedback topic
+  feedbackListener.subscribe(function(feedbackMessage) {
+    var goal = that.goals[feedbackMessage.status.goal_id.id];
     if (goal) {
       goal.emit('status', feedbackMessage.status);
       goal.emit('feedback', feedbackMessage.feedback);
     }
   });
 
-  var resultListener = new actionClient.ros.Topic({
-    name        : actionClient.serverName + '/result'
-  , messageType : actionClient.actionName + 'Result'
-  });
-  resultListener.subscribe(function (resultMessage) {
-    var goal = actionClient.goals[resultMessage.status.goal_id.id];
+  // subscribe to the result topic
+  resultListener.subscribe(function(resultMessage) {
+    var goal = that.goals[resultMessage.status.goal_id.id];
 
     if (goal) {
       goal.emit('status', resultMessage.status);
@@ -81,69 +99,13 @@ var ActionClient = function(options) {
     }
   });
 
-  actionClient.cancel = function() {
-    var cancelMessage = new actionClient.ros.Message({});
-    actionClient.cancelTopic.publish(cancelMessage);
-  };
-
-  actionClient.Goal = function(goalMsg) {
-    var goal = this;
-
-    goal.isFinished = false;
-    goal.status;
-    goal.result;
-    goal.feedback;
-
-    var date = new Date();
-    goal.goalId = 'goal_' + Math.random() + "_" + date.getTime();
-    goal.goalMessage = new actionClient.ros.Message({
-      goal_id : {
-        stamp: {
-          secs  : 0
-        , nsecs : 0
-        }
-      , id: goal.goalId
+  // If timeout specified, emit a 'timeout' event if the action server does not respond
+  if (this.timeout) {
+    setTimeout(function() {
+      if (!receivedStatus) {
+        that.emit('timeout');
       }
-    , goal: goalMsg
-    });
-
-    goal.on('status', function(status) {
-      goal.status = status;
-    });
-
-    goal.on('result', function(result) {
-      goal.isFinished = true;
-      goal.result = result;
-    });
-
-    goal.on('feedback', function(feedback) {
-      goal.feedback = feedback;
-    });
-
-    actionClient.goals[goal.goalId] = this;
-
-    goal.send = function(timeout) {
-      actionClient.goalTopic.publish(goal.goalMessage);
-      if (timeout) {
-         setTimeout(function() {
-           if (!goal.isFinished) {
-             goal.emit('timeout');
-           }
-         }, timeout);
-      }
-    };
-
-    goal.cancel = function() {
-      var cancelMessage = new actionClient.ros.Message({
-        id: goal.goalId
-      });
-      actionClient.cancelTopic.publish(cancelMessage);
-    };
-  };
-  actionClient.Goal.prototype.__proto__ = EventEmitter2.prototype;
-
+    }, this.timeout);
+  }
 };
-ActionClient.prototype.__proto__ = EventEmitter2.prototype;
-return ActionClient;
-}
-));
+ROSLIB.ActionClient.prototype.__proto__ = EventEmitter2.prototype;
