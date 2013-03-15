@@ -50,7 +50,7 @@
 			<arg value="${src}" />
 			<arg value="-r" />
 		</exec>
-		<echo>${js.min}created.</echo>
+		<echo>JSDOC created.</echo>
 	</target>
 
 	<target name="prod" description="Builds project files for production use" 

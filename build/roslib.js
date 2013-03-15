@@ -5,44 +5,80 @@
 var ROSLIB = ROSLIB || {
   REVISION : '1'
 };
-(function (root, factory) {
-    if(typeof define === 'function' && define.amd) {
-        define(['eventemitter2'],factory);
-    }
-    else {
-        root.ActionClient = factory(root.EventEmitter2);
-    }
-}(this, function(EventEmitter2) {
+/**
+ * @author Russell Toris - rctoris@wpi.edu
+ */
 
-var ActionClient = function(options) {
+/**
+ * An actionlib action client.
+ *
+ * Emits the following events:
+ *  * 'timeout' - if a timeout occurred while sending a goal
+ *  * 'status' - the status messages received from the action server
+ *  * 'feedback' -  the feedback messages received from the action server
+ *  * 'result' - the result returned from the action server
+ *
+ *  @constructor
+ *  @param options - object with following keys:
+ *   * ros - the ROSLIB.Ros connection handle
+ *   * serverName - the action server name, like /fibonacci
+ *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
+ *   * timeout - the timeout length when connecting to the action server
+ */
+ROSLIB.ActionClient = function(options) {
   var actionClient = this;
   options = options || {};
-  actionClient.ros         = options.ros;
-  actionClient.serverName  = options.serverName;
-  actionClient.actionName  = options.actionName;
-  actionClient.timeout     = options.timeout;
-  actionClient.goals       = {};
+  this.ros = options.ros;
+  this.serverName = options.serverName;
+  this.actionName = options.actionName;
+  this.timeout = options.timeout;
+  this.goals = {};
 
-  actionClient.goalTopic = new actionClient.ros.Topic({
-    name        : actionClient.serverName + '/goal'
-  , messageType : actionClient.actionName + 'Goal'
-  });
-  actionClient.goalTopic.advertise();
-
-  actionClient.cancelTopic = new actionClient.ros.Topic({
-    name        : actionClient.serverName + '/cancel'
-  , messageType : 'actionlib_msgs/GoalID'
-  });
-  actionClient.cancelTopic.advertise();
-
+  // flag to check if a status has been received
   var receivedStatus = false;
-  var statusListener = new actionClient.ros.Topic({
-    name        : actionClient.serverName + '/status'
-  , messageType : 'actionlib_msgs/GoalStatusArray'
-  });
-  statusListener.subscribe(function (statusMessage) {
-    receivedStatus = true;
 
+  // create the topics associated with actionlib
+  var feedbackListener = new ROSLIB.Topic({
+    ros : this.ros,
+    name : this.serverName + '/feedback',
+    messageType : this.actionName + 'Feedback'
+  });
+  var statusListener = new ROSLIB.Topic({
+    ros : this.ros,
+    name : this.serverName + '/status',
+    messageType : 'actionlib_msgs/GoalStatusArray'
+  });
+  var resultListener = new ROSLIB.Topic({
+    ros : this.ros,
+    name : this.serverName + '/result',
+    messageType : this.actionName + 'Result'
+  });
+  this.goalTopic = new ROSLIB.Topic({
+    ros : this.ros,
+    name : this.serverName + '/goal',
+    messageType : this.actionName + 'Goal'
+  });
+  this.cancelTopic = new ROSLIB.Topic({
+    ros : this.ros,
+    name : this.serverName + '/cancel',
+    messageType : 'actionlib_msgs/GoalID'
+  });
+
+  /**
+   * Cancel all goals associated with this ActionClient.
+   */
+  this.cancel = function() {
+    var cancelMessage = new ROSLIB.Message({});
+    this.cancelTopic.publish(cancelMessage);
+  };
+
+  // advertise the goal and cancel topics
+  this.goalTopic.advertise();
+  this.cancelTopic.advertise();
+
+  // subscribe to the status topic
+  statusListener.subscribe(function(statusMessage) {
+    receivedStatus = true;
     statusMessage.status_list.forEach(function(status) {
       var goal = actionClient.goals[status.goal_id.id];
       if (goal) {
@@ -51,35 +87,17 @@ var ActionClient = function(options) {
     });
   });
 
-  // If timeout specified, emit a 'timeout' event if the ActionServer does not
-  // respond before the timeout.
-  if (actionClient.timeout) {
-    setTimeout(function() {
-      if (!receivedStatus) {
-        actionClient.emit('timeout');
-      }
-    }, actionClient.timeout);
-  }
-
-  // Subscribe to the feedback, and result topics
-  var feedbackListener = new actionClient.ros.Topic({
-    name        : actionClient.serverName + '/feedback'
-  , messageType : actionClient.actionName + 'Feedback'
-  });
-  feedbackListener.subscribe(function (feedbackMessage) {
+  // subscribe the the feedback topic
+  feedbackListener.subscribe(function(feedbackMessage) {
     var goal = actionClient.goals[feedbackMessage.status.goal_id.id];
-
     if (goal) {
       goal.emit('status', feedbackMessage.status);
       goal.emit('feedback', feedbackMessage.feedback);
     }
   });
 
-  var resultListener = new actionClient.ros.Topic({
-    name        : actionClient.serverName + '/result'
-  , messageType : actionClient.actionName + 'Result'
-  });
-  resultListener.subscribe(function (resultMessage) {
+  // subscribe to the result topic
+  resultListener.subscribe(function(resultMessage) {
     var goal = actionClient.goals[resultMessage.status.goal_id.id];
 
     if (goal) {
@@ -88,72 +106,99 @@ var ActionClient = function(options) {
     }
   });
 
-  actionClient.cancel = function() {
-    var cancelMessage = new actionClient.ros.Message({});
-    actionClient.cancelTopic.publish(cancelMessage);
-  };
+  // If timeout specified, emit a 'timeout' event if the action server does not respond
+  if (this.timeout) {
+    setTimeout(function() {
+      if (!receivedStatus) {
+        actionClient.emit('timeout');
+      }
+    }, this.timeout);
+  }
+};
+ROSLIB.ActionClient.prototype.__proto__ = EventEmitter2.prototype;
+/**
+ * @author Russell Toris - rctoris@wpi.edu
+ */
 
-  actionClient.Goal = function(goalMsg) {
-    var goal = this;
+/**
+ * An actionlib goal goal is associated with an action server.
+ *
+ * Emits the following events:
+ *  * 'timeout' - if a timeout occurred while sending a goal 
+ *
+ *  @constructor
+ *  @param object with following keys:
+ *   * actionClient - the ROSLIB.ActionClient to use with this goal
+ *   * goalMessage - The JSON object containing the goal for the action server
+ */
 
-    goal.isFinished = false;
-    goal.status;
-    goal.result;
-    goal.feedback;
+ROSLIB.Goal = function(options) {
+  var goal = this;
+  this.actionClient = options.actionClient;
+  this.goalMessage = options.goalMessage;
+  this.isFinished = false;
 
-    var date = new Date();
-    goal.goalId = 'goal_' + Math.random() + "_" + date.getTime();
-    goal.goalMessage = new actionClient.ros.Message({
-      goal_id : {
-        stamp: {
-          secs  : 0
-        , nsecs : 0
+  // used to create random IDs
+  var date = new Date();
+
+  /**
+   * Send the goal to the action server.
+   * 
+   * @param timeout (optional) - a timeout length for the goal's result
+   */
+  this.send = function(timeout) {
+    goal.actionClient.goalTopic.publish(goal.goalMessage);
+    if (timeout) {
+      setTimeout(function() {
+        if (!goal.isFinished) {
+          goal.emit('timeout');
         }
-      , id: goal.goalId
-      }
-    , goal: goalMsg
-    });
-
-    goal.on('status', function(status) {
-      goal.status = status;
-    });
-
-    goal.on('result', function(result) {
-      goal.isFinished = true;
-      goal.result = result;
-    });
-
-    goal.on('feedback', function(feedback) {
-      goal.feedback = feedback;
-    });
-
-    actionClient.goals[goal.goalId] = this;
-
-    goal.send = function(timeout) {
-      actionClient.goalTopic.publish(goal.goalMessage);
-      if (timeout) {
-         setTimeout(function() {
-           if (!goal.isFinished) {
-             goal.emit('timeout');
-           }
-         }, timeout);
-      }
-    };
-
-    goal.cancel = function() {
-      var cancelMessage = new actionClient.ros.Message({
-        id: goal.goalId
-      });
-      actionClient.cancelTopic.publish(cancelMessage);
-    };
+      }, timeout);
+    }
   };
-  actionClient.Goal.prototype.__proto__ = EventEmitter2.prototype;
+
+  /**
+   * Cancel the current this.
+   */
+  this.cancel = function() {
+    var cancelMessage = new ROSLIB.Message({
+      id : goal.goalID
+    });
+    goal.actionClient.cancelTopic.publish(cancelMessage);
+  };
+
+  // create a random ID
+  this.goalID = 'goal_' + Math.random() + "_" + date.getTime();
+  // fill in the goal message
+  this.goalMessage = new ROSLIB.Message({
+    goal_id : {
+      stamp : {
+        secs : 0,
+        nsecs : 0
+      },
+      id : this.goalID
+    },
+    goal : this.goalMessage
+  });
+
+  this.on('status', function(status) {
+    this.status = status;
+  });
+
+  this.on('result', function(result) {
+    this.isFinished = true;
+    this.result = result;
+  });
+
+  this.on('feedback', function(feedback) {
+    this.feedback = feedback;
+  });
+
+  // add the goal
+  this.actionClient.goals[this.goalID] = this;
 
 };
-ActionClient.prototype.__proto__ = EventEmitter2.prototype;
-return ActionClient;
-}
-));
+ROSLIB.Goal.prototype.__proto__ = EventEmitter2.prototype;
 /**
  * @author Brandon Alexander - balexander@willowgarage.com
  */
@@ -181,12 +226,14 @@ ROSLIB.Message = function(values) {
  *
  * @constructor
  * @param options - possible keys include:
+ *   * ros - the ROSLIB.Ros connection handle
  *   * name - the param name, like max_vel_x
  */
 ROSLIB.Param = function(options) {
   var param = this;
   options = options || {};
-  param.name = options.name;
+  this.ros = options.ros;
+  this.name = options.name;
 
   /**
    * Fetches the value of the param.
@@ -194,8 +241,9 @@ ROSLIB.Param = function(options) {
    * @param callback - function with the following params:
    *  * value - the value of the param from ROS.
    */
-  param.get = function(callback) {
+  this.get = function(callback) {
     var paramClient = new ROSLIB.Service({
+      ros : ros,
       name : '/rosapi/get_param',
       serviceType : 'rosapi/GetParam'
     });
@@ -216,8 +264,9 @@ ROSLIB.Param = function(options) {
    *
    * @param value - value to set param to.
    */
-  param.set = function(value) {
+  this.set = function(value) {
     var paramClient = new ROSLIB.Service({
+      ros : ros,
       name : '/rosapi/set_param',
       serviceType : 'rosapi/SetParam'
     });
@@ -231,7 +280,6 @@ ROSLIB.Param = function(options) {
     });
   };
 };
-ROSLIB.Param.prototype.__proto__ = EventEmitter2.prototype;
 /**
  * @author Brandon Alexander - balexander@willowgarage.com
  */
@@ -243,13 +291,15 @@ ROSLIB.Param.prototype.__proto__ = EventEmitter2.prototype;
  *  * 'error' - there was an error with ROS
  *  * 'connection' - connected to the WebSocket server
  *  * 'close' - disconnected to the WebSocket server
+ *  * <topicName> - a message came from rosbridge with the given topic name
+ *  * <serviceID> - a service response came from rosbridge with the given ID
  *
  *  @constructor
  *  @param url (optional) - The WebSocket URL for rosbridge. Can be specified later with `connect`.
  */
 ROSLIB.Ros = function(url) {
   var ros = this;
-  ros.socket = null;
+  this.socket = null;
 
   /**
    * Emits a 'connection' event on WebSocket connection.
@@ -347,7 +397,7 @@ ROSLIB.Ros = function(url) {
    *
    * @param url - WebSocket URL for Rosbridge
    */
-  ros.connect = function(url) {
+  this.connect = function(url) {
     ros.socket = new WebSocket(url);
     ros.socket.onopen = onOpen;
     ros.socket.onclose = onClose;
@@ -358,7 +408,7 @@ ROSLIB.Ros = function(url) {
   /**
    * Disconnect from the WebSocket server.
    */
-  ros.close = function() {
+  this.close = function() {
     if (ros.socket) {
       ros.socket.close();
     }
@@ -375,7 +425,7 @@ ROSLIB.Ros = function(url) {
    * @param level - User level as a string given by the client.
    * @param end - End time of the client's session.
    */
-  ros.authenticate = function(mac, client, dest, rand, t, level, end) {
+  this.authenticate = function(mac, client, dest, rand, t, level, end) {
     // create the request
     var auth = {
       op : 'auth',
@@ -394,7 +444,7 @@ ROSLIB.Ros = function(url) {
   /**
    * Sends the message over the WebSocket, but queues the message up if not yet connected.
    */
-  ros.callOnConnection = function(message) {
+  this.callOnConnection = function(message) {
     var messageJson = JSON.stringify(message);
 
     if (ros.socket.readyState !== WebSocket.OPEN) {
@@ -412,8 +462,9 @@ ROSLIB.Ros = function(url) {
    * @param callback function with params:
    *   * topics - Array of topic names
    */
-  ros.getTopics = function(callback) {
+  this.getTopics = function(callback) {
     var topicsClient = new ROSLIB.Service({
+      ros : ros,
       name : '/rosapi/topics',
       serviceType : 'rosapi/Topics'
     });
@@ -431,8 +482,9 @@ ROSLIB.Ros = function(url) {
    * @param callback - function with the following params:
    *   * services - array of service names
    */
-  ros.getServices = function(callback) {
+  this.getServices = function(callback) {
     var servicesClient = new ROSLIB.Service({
+      ros : ros,
       name : '/rosapi/services',
       serviceType : 'rosapi/Services'
     });
@@ -450,8 +502,9 @@ ROSLIB.Ros = function(url) {
    * @param callback function with params:
    *  * params - array of param names.
    */
-  ros.getParams = function(callback) {
+  this.getParams = function(callback) {
     var paramsClient = new ROSLIB.Service({
+      ros : ros,
       name : '/rosapi/get_param_names',
       serviceType : 'rosapi/GetParamNames'
     });
@@ -464,7 +517,7 @@ ROSLIB.Ros = function(url) {
 
   // begin by checking if a URL was given
   if (url) {
-    ros.connect(url);
+    this.connect(url);
   }
 };
 ROSLIB.Ros.prototype.__proto__ = EventEmitter2.prototype;
@@ -484,9 +537,9 @@ ROSLIB.Ros.prototype.__proto__ = EventEmitter2.prototype;
 ROSLIB.Service = function(options) {
   var service = this;
   options = options || {};
-  service.ros = options.ros;
-  service.name = options.name;
-  service.serviceType = options.serviceType;
+  this.ros = options.ros;
+  this.name = options.name;
+  this.serviceType = options.serviceType;
 
   /**
    * Calls the service. Returns the service response in the callback.
@@ -495,11 +548,11 @@ ROSLIB.Service = function(options) {
    * @param callback - function with params:
    *   * response - the response from the service request
    */
-  service.callService = function(request, callback) {
-    ros.idCounter++;
-    serviceCallId = 'call_service:' + service.name + ':' + ros.idCounter;
+  this.callService = function(request, callback) {
+    service.ros.idCounter++;
+    serviceCallId = 'call_service:' + service.name + ':' + service.ros.idCounter;
 
-    ros.once(serviceCallId, function(data) {
+    service.ros.once(serviceCallId, function(data) {
       var response = new ROSLIB.ServiceResponse(data);
       callback(response);
     });
@@ -515,10 +568,9 @@ ROSLIB.Service = function(options) {
       service : service.name,
       args : requestValues
     };
-    ros.callOnConnection(call);
+    service.ros.callOnConnection(call);
   };
 };
-ROSLIB.Service.prototype.__proto__ = EventEmitter2.prototype;
 /**
  * @author Brandon Alexander - balexander@willowgarage.com
  */
@@ -561,7 +613,11 @@ ROSLIB.ServiceResponse = function(values) {
 
 /**
  * Publish and/or subscribe to a topic in ROS.
- *
+ * 
+ * Emits the following events:
+ *  * 'warning' - if there are any warning during the Topic creation
+ *  * 'message' - the message data from rosbridge
+ *  
  * @constructor
  * @param options - object with following keys:
  *   * ros - the ROSLIB.Ros connection handle
@@ -573,23 +629,23 @@ ROSLIB.ServiceResponse = function(values) {
 ROSLIB.Topic = function(options) {
   var topic = this;
   options = options || {};
-  topic.ros = options.ros;
-  topic.name = options.name;
-  topic.messageType = options.messageType;
-  topic.isAdvertised = false;
-  topic.compression = options.compression || 'none';
-  topic.throttle_rate = options.throttle_rate || 0;
+  this.ros = options.ros;
+  this.name = options.name;
+  this.messageType = options.messageType;
+  this.isAdvertised = false;
+  this.compression = options.compression || 'none';
+  this.throttle_rate = options.throttle_rate || 0;
 
   // Check for valid compression types
-  if (topic.compression && topic.compression !== 'png' && topic.compression !== 'none') {
-    topic.emit('warning', topic.compression
+  if (this.compression && this.compression !== 'png' && this.compression !== 'none') {
+    this.emit('warning', this.compression
         + ' compression is not supported. No comression will be used.');
   }
 
   // Check if throttle rate is negative
-  if (topic.throttle_rate < 0) {
-    topic.emit('warning', topic.throttle_rate + ' is not allowed. Set to 0');
-    topic.throttle_rate = 0;
+  if (this.throttle_rate < 0) {
+    this.emit('warning', this.throttle_rate + ' is not allowed. Set to 0');
+    this.throttle_rate = 0;
   }
 
   /**
@@ -599,18 +655,18 @@ ROSLIB.Topic = function(options) {
    * @param callback - function with the following params:
    *   * message - the published message
    */
-  topic.subscribe = function(callback) {
+  this.subscribe = function(callback) {
     topic.on('message', function(message) {
       callback(message);
     });
 
-    ros.on(topic.name, function(data) {
+    topic.ros.on(topic.name, function(data) {
       var message = new ROSLIB.Message(data);
       topic.emit('message', message);
     });
 
-    ros.idCounter++;
-    var subscribeId = 'subscribe:' + topic.name + ':' + ros.idCounter;
+    topic.ros.idCounter++;
+    var subscribeId = 'subscribe:' + topic.name + ':' + topic.ros.idCounter;
     var call = {
       op : 'subscribe',
       id : subscribeId,
@@ -620,53 +676,53 @@ ROSLIB.Topic = function(options) {
       throttle_rate : topic.throttle_rate
     };
 
-    ros.callOnConnection(call);
+    topic.ros.callOnConnection(call);
   };
 
   /**
    * Unregisters as a subscriber for the topic. Unsubscribing will remove
    * all subscribe callbacks.
    */
-  topic.unsubscribe = function() {
-    ros.removeAllListeners([ topic.name ]);
-    ros.idCounter++;
-    var unsubscribeId = 'unsubscribe:' + topic.name + ':' + ros.idCounter;
+  this.unsubscribe = function() {
+    topic.ros.removeAllListeners([ topic.name ]);
+    topic.ros.idCounter++;
+    var unsubscribeId = 'unsubscribe:' + topic.name + ':' + topic.ros.idCounter;
     var call = {
       op : 'unsubscribe',
       id : unsubscribeId,
       topic : topic.name
     };
-    ros.callOnConnection(call);
+    topic.ros.callOnConnection(call);
   };
 
   /**
    * Registers as a publisher for the topic.
    */
-  topic.advertise = function() {
-    ros.idCounter++;
-    var advertiseId = 'advertise:' + topic.name + ':' + ros.idCounter;
+  this.advertise = function() {
+    topic.ros.idCounter++;
+    var advertiseId = 'advertise:' + topic.name + ':' + topic.ros.idCounter;
     var call = {
       op : 'advertise',
       id : advertiseId,
       type : topic.messageType,
       topic : topic.name
     };
-    ros.callOnConnection(call);
+    topic.ros.callOnConnection(call);
     topic.isAdvertised = true;
   };
 
   /**
    * Unregisters as a publisher for the topic.
    */
-  topic.unadvertise = function() {
-    ros.idCounter++;
-    var unadvertiseId = 'unadvertise:' + topic.name + ':' + ros.idCounter;
+  this.unadvertise = function() {
+    topic.ros.idCounter++;
+    var unadvertiseId = 'unadvertise:' + topic.name + ':' + topic.ros.idCounter;
     var call = {
       op : 'unadvertise',
       id : unadvertiseId,
       topic : topic.name
     };
-    ros.callOnConnection(call);
+    topic.ros.callOnConnection(call);
     topic.isAdvertised = false;
   };
 
@@ -675,20 +731,20 @@ ROSLIB.Topic = function(options) {
    *
    * @param message - A ROSLIB.Message object.
    */
-  topic.publish = function(message) {
+  this.publish = function(message) {
     if (!topic.isAdvertised) {
       topic.advertise();
     }
 
-    ros.idCounter++;
-    var publishId = 'publish:' + topic.name + ':' + ros.idCounter;
+    topic.ros.idCounter++;
+    var publishId = 'publish:' + topic.name + ':' + topic.ros.idCounter;
     var call = {
       op : 'publish',
       id : publishId,
       topic : topic.name,
       msg : message
     };
-    ros.callOnConnection(call);
+    topic.ros.callOnConnection(call);
   };
 };
 ROSLIB.Topic.prototype.__proto__ = EventEmitter2.prototype;

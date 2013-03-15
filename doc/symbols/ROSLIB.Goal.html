@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ROSLIB.ServiceResponse</title>
+		<title>JsDoc Reference - ROSLIB.Goal</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -218,7 +218,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class ROSLIB.ServiceResponse
+				Class ROSLIB.Goal
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -229,13 +229,13 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/_home_tor1pal_Documents_WPI_RAIL_ROS_groovy_src_roslibjs_src_core_ServiceResponse.js.html">ServiceResponse.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/_home_tor1pal_Documents_WPI_RAIL_ROS_groovy_src_roslibjs_src_actionlib_Goal.js.html">Goal.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROSLIB.ServiceResponse.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROSLIB.Goal.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -248,9 +248,9 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROSLIB.ServiceResponse.html#constructor">ROSLIB.ServiceResponse</a></b>(values)
+								<b><a href="../symbols/ROSLIB.Goal.html#constructor">ROSLIB.Goal</a></b>(object)
 							</div>
-							<div class="description">A ServiceResponse is returned from the service call.</div>
+							<div class="description">An actionlib goal goal is associated with an action server.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -261,6 +261,42 @@ ul.inheritsList
 			
 
 <!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROSLIB.Goal.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Goal.html#cancel">cancel</a></b>()
+								</div>
+								<div class="description">Cancel the current this.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Goal.html#send">send</a></b>(timeout)
+								</div>
+								<div class="description">Send the goal to the action server.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
 			
 <!-- ============================== events summary ======================== -->
 			
@@ -273,11 +309,14 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROSLIB.ServiceResponse</b>(values)
+						<b>ROSLIB.Goal</b>(object)
 				</div>
 				
 				<div class="description">
-					A ServiceResponse is returned from the service call.
+					An actionlib goal goal is associated with an action server.
+
+Emits the following events:
+ * 'timeout' - if a timeout occurred while sending a goal
 					
 				</div>
 				
@@ -289,10 +328,12 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								 <b>values</b>
+								 <b>object</b>
 								
 							</dt>
-								<dd>- object matching the values of the response part from the .srv file.</dd>
+								<dd>with following keys:
+  * actionClient - the ROSLIB.ActionClient to use with this goal
+  * goalMessage - The JSON object containing the goal for the action server</dd>
 						
 						</dl>
 					
@@ -310,6 +351,72 @@ ul.inheritsList
 			
 
 <!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="cancel"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>cancel</b>()
+					
+					</div>
+					<div class="description">
+						Cancel the current this.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="send"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>send</b>(timeout)
+					
+					</div>
+					<div class="description">
+						Send the goal to the action server.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>timeout</b>
+									
+								</dt>
+								<dd>(optional) - a timeout length for the goal's result</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+				
 			
 			
 <!-- ============================== event details ========================= -->		

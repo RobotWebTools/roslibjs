@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ROSLIB.ServiceResponse</title>
+		<title>JsDoc Reference - ROSLIB.ActionClient</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -218,7 +218,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class ROSLIB.ServiceResponse
+				Class ROSLIB.ActionClient
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -229,13 +229,13 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/_home_tor1pal_Documents_WPI_RAIL_ROS_groovy_src_roslibjs_src_core_ServiceResponse.js.html">ServiceResponse.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/_home_tor1pal_Documents_WPI_RAIL_ROS_groovy_src_roslibjs_src_actionlib_ActionClient.js.html">ActionClient.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROSLIB.ServiceResponse.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROSLIB.ActionClient.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -248,9 +248,9 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROSLIB.ServiceResponse.html#constructor">ROSLIB.ServiceResponse</a></b>(values)
+								<b><a href="../symbols/ROSLIB.ActionClient.html#constructor">ROSLIB.ActionClient</a></b>(options)
 							</div>
-							<div class="description">A ServiceResponse is returned from the service call.</div>
+							<div class="description">An actionlib action client.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -261,6 +261,33 @@ ul.inheritsList
 			
 
 <!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROSLIB.ActionClient.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.ActionClient.html#cancel">cancel</a></b>()
+								</div>
+								<div class="description">Cancel all goals associated with this ActionClient.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
 			
 <!-- ============================== events summary ======================== -->
 			
@@ -273,11 +300,17 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROSLIB.ServiceResponse</b>(values)
+						<b>ROSLIB.ActionClient</b>(options)
 				</div>
 				
 				<div class="description">
-					A ServiceResponse is returned from the service call.
+					An actionlib action client.
+
+Emits the following events:
+ * 'timeout' - if a timeout occurred while sending a goal
+ * 'status' - the status messages received from the action server
+ * 'feedback' -  the feedback messages received from the action server
+ * 'result' - the result returned from the action server
 					
 				</div>
 				
@@ -289,10 +322,14 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								 <b>values</b>
+								 <b>options</b>
 								
 							</dt>
-								<dd>- object matching the values of the response part from the .srv file.</dd>
+								<dd>- object with following keys:
+  * ros - the ROSLIB.Ros connection handle
+  * serverName - the action server name, like /fibonacci
+  * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
+  * timeout - the timeout length when connecting to the action server</dd>
 						
 						</dl>
 					
@@ -310,6 +347,36 @@ ul.inheritsList
 			
 
 <!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="cancel"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>cancel</b>()
+					
+					</div>
+					<div class="description">
+						Cancel all goals associated with this ActionClient.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+				
 			
 			
 <!-- ============================== event details ========================= -->		
