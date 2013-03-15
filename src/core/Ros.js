@@ -9,6 +9,8 @@
  *  * 'error' - there was an error with ROS
  *  * 'connection' - connected to the WebSocket server
  *  * 'close' - disconnected to the WebSocket server
+ *  * <topicName> - a message came from rosbridge with the given topic name
+ *  * <serviceID> - a service response came from rosbridge with the given ID
  *
  *  @constructor
  *  @param url (optional) - The WebSocket URL for rosbridge. Can be specified later with `connect`.

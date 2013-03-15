@@ -57,4 +57,3 @@ ROSLIB.Param = function(options) {
     });
   };
 };
-ROSLIB.Param.prototype.__proto__ = EventEmitter2.prototype;

@@ -4,7 +4,11 @@
 
 /**
  * Publish and/or subscribe to a topic in ROS.
- *
+ * 
+ * Emits the following events:
+ *  * 'warning' - if there are any warning during the Topic creation
+ *  * 'message' - the message data from rosbridge
+ *  
  * @constructor
  * @param options - object with following keys:
  *   * ros - the ROSLIB.Ros connection handle

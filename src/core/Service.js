@@ -48,4 +48,3 @@ ROSLIB.Service = function(options) {
     ros.callOnConnection(call);
   };
 };
-ROSLIB.Service.prototype.__proto__ = EventEmitter2.prototype;
