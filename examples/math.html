@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script type="text/javascript" src="../include/EventEmitter2/eventemitter2.js"></script>
+<script type="text/javascript" src="../build/roslib.js"></script>
+
+<script type="text/javascript" type="text/javascript">
+  // Let's start by adding some vectors.
+  var v1 = new ROSLIB.Vector3(1, 2, 3);
+  var v2 = v1.clone();
+  console.log(v1.add(v1, v2));
+
+  // Now let's play with some quaternions.
+  var q1 = new ROSLIB.Quaternion(0.1, 0.2, 0.3, 0.4);
+  var q2 = q1.clone();
+  q1.multiply(q1, q1)
+  console.log(q1.inverse());
+
+  // Let's copy the results into a pose.
+  var p = new ROSLIB.Pose(v1, q1);
+  console.log(p);
+
+  // Finally, let's play with some transforms.
+  var tf1 = new ROSLIB.Transform(v2, q2);
+  console.log(tf1.apply(p));
+  console.log(tf1.applyInverse(p));
+</script>
+</head>
+
+<body>
+  <h1>Simple Math Example</h1>
+  <p>Check the JavaScript console for the output.</p>
+</body>
+</html>

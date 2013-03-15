@@ -11,19 +11,27 @@
  */
 ROSLIB.Pose = function(position, orientation) {
   var pose = this;
-  this.position = new ROSLIB.Vector3();
-  this.orientation = new ROSLIB.Quaternion();
-
   // copy the values into this object if they exist
   if (position !== undefined) {
-    this.position.copy(position);
+    this.position = position.clone();
+  } else {
+    this.position = new ROSLIB.Vector3();
   }
   if (orientation !== undefined) {
-    this.orientation.copy(orientation);
+    this.orientation = orientation.clone();
+  } else {
+    this.orientation = new ROSLIB.Quaternion();
   }
-
+  
+  /**
+   * Copy the values from the given pose into this pose.
+   * 
+   * @param pose the pose to copy
+   * @returns a pointer to this pose
+   */
   this.copy = function(pose) {
     pose.position.copy(pose.position);
     pose.orientation.copy(pose.orientation);
+    return pose;
   };
 };
