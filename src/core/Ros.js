@@ -17,7 +17,7 @@
  */
 ROSLIB.Ros = function(url) {
   var ros = this;
-  ros.socket = null;
+  this.socket = null;
 
   /**
    * Emits a 'connection' event on WebSocket connection.
@@ -115,7 +115,7 @@ ROSLIB.Ros = function(url) {
    *
    * @param url - WebSocket URL for Rosbridge
    */
-  ros.connect = function(url) {
+  this.connect = function(url) {
     ros.socket = new WebSocket(url);
     ros.socket.onopen = onOpen;
     ros.socket.onclose = onClose;
@@ -126,7 +126,7 @@ ROSLIB.Ros = function(url) {
   /**
    * Disconnect from the WebSocket server.
    */
-  ros.close = function() {
+  this.close = function() {
     if (ros.socket) {
       ros.socket.close();
     }
@@ -143,7 +143,7 @@ ROSLIB.Ros = function(url) {
    * @param level - User level as a string given by the client.
    * @param end - End time of the client's session.
    */
-  ros.authenticate = function(mac, client, dest, rand, t, level, end) {
+  this.authenticate = function(mac, client, dest, rand, t, level, end) {
     // create the request
     var auth = {
       op : 'auth',
@@ -162,7 +162,7 @@ ROSLIB.Ros = function(url) {
   /**
    * Sends the message over the WebSocket, but queues the message up if not yet connected.
    */
-  ros.callOnConnection = function(message) {
+  this.callOnConnection = function(message) {
     var messageJson = JSON.stringify(message);
 
     if (ros.socket.readyState !== WebSocket.OPEN) {
@@ -180,8 +180,9 @@ ROSLIB.Ros = function(url) {
    * @param callback function with params:
    *   * topics - Array of topic names
    */
-  ros.getTopics = function(callback) {
+  this.getTopics = function(callback) {
     var topicsClient = new ROSLIB.Service({
+      ros : ros,
       name : '/rosapi/topics',
       serviceType : 'rosapi/Topics'
     });
@@ -199,8 +200,9 @@ ROSLIB.Ros = function(url) {
    * @param callback - function with the following params:
    *   * services - array of service names
    */
-  ros.getServices = function(callback) {
+  this.getServices = function(callback) {
     var servicesClient = new ROSLIB.Service({
+      ros : ros,
       name : '/rosapi/services',
       serviceType : 'rosapi/Services'
     });
@@ -218,8 +220,9 @@ ROSLIB.Ros = function(url) {
    * @param callback function with params:
    *  * params - array of param names.
    */
-  ros.getParams = function(callback) {
+  this.getParams = function(callback) {
     var paramsClient = new ROSLIB.Service({
+      ros : ros,
       name : '/rosapi/get_param_names',
       serviceType : 'rosapi/GetParamNames'
     });
@@ -232,7 +235,7 @@ ROSLIB.Ros = function(url) {
 
   // begin by checking if a URL was given
   if (url) {
-    ros.connect(url);
+    this.connect(url);
   }
 };
 ROSLIB.Ros.prototype.__proto__ = EventEmitter2.prototype;

@@ -191,6 +191,10 @@ ul.inheritsList
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
+	<li><a href="../symbols/ROSLIB.ActionClient.html">ROSLIB.ActionClient</a></li>
+	
+	<li><a href="../symbols/ROSLIB.Goal.html">ROSLIB.Goal</a></li>
+	
 	<li><a href="../symbols/ROSLIB.Message.html">ROSLIB.Message</a></li>
 	
 	<li><a href="../symbols/ROSLIB.Param.html">ROSLIB.Param</a></li>
@@ -258,6 +262,70 @@ ul.inheritsList
 
 <!-- ============================== methods summary ======================== -->
 			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROSLIB.Topic.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Topic.html#advertise">advertise</a></b>()
+								</div>
+								<div class="description">Registers as a publisher for the topic.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Topic.html#publish">publish</a></b>(message)
+								</div>
+								<div class="description">Publish the message.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Topic.html#subscribe">subscribe</a></b>(callback)
+								</div>
+								<div class="description">Every time a message is published for the given topic, the callback
+will be called with the message object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Topic.html#unadvertise">unadvertise</a></b>()
+								</div>
+								<div class="description">Unregisters as a publisher for the topic.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Topic.html#unsubscribe">unsubscribe</a></b>()
+								</div>
+								<div class="description">Unregisters as a subscriber for the topic.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
 <!-- ============================== events summary ======================== -->
 			
 
@@ -274,6 +342,10 @@ ul.inheritsList
 				
 				<div class="description">
 					Publish and/or subscribe to a topic in ROS.
+
+Emits the following events:
+ * 'warning' - if there are any warning during the Topic creation
+ * 'message' - the message data from rosbridge
 					
 				</div>
 				
@@ -312,6 +384,161 @@ ul.inheritsList
 
 <!-- ============================== method details ========================= -->		
 			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="advertise"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>advertise</b>()
+					
+					</div>
+					<div class="description">
+						Registers as a publisher for the topic.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="publish"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>publish</b>(message)
+					
+					</div>
+					<div class="description">
+						Publish the message.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>message</b>
+									
+								</dt>
+								<dd>- A ROSLIB.Message object.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="subscribe"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>subscribe</b>(callback)
+					
+					</div>
+					<div class="description">
+						Every time a message is published for the given topic, the callback
+will be called with the message object.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>callback</b>
+									
+								</dt>
+								<dd>- function with the following params:
+  * message - the published message</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="unadvertise"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>unadvertise</b>()
+					
+					</div>
+					<div class="description">
+						Unregisters as a publisher for the topic.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="unsubscribe"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>unsubscribe</b>()
+					
+					</div>
+					<div class="description">
+						Unregisters as a subscriber for the topic. Unsubscribing will remove
+all subscribe callbacks.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+				
+			
 			
 <!-- ============================== event details ========================= -->		
 			
@@ -323,7 +550,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri Mar 15 2013 11:56:50 GMT-0700 (PDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri Mar 15 2013 14:57:47 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>
