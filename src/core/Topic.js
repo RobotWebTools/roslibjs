@@ -18,25 +18,25 @@
  *   * throttle_rate - the rate at which to throttle the topics
  */
 ROSLIB.Topic = function(options) {
-  var topic = this;
+  var that = this;
   options = options || {};
-  topic.ros = options.ros;
-  topic.name = options.name;
-  topic.messageType = options.messageType;
-  topic.isAdvertised = false;
-  topic.compression = options.compression || 'none';
-  topic.throttle_rate = options.throttle_rate || 0;
+  this.ros = options.ros;
+  this.name = options.name;
+  this.messageType = options.messageType;
+  this.isAdvertised = false;
+  this.compression = options.compression || 'none';
+  this.throttle_rate = options.throttle_rate || 0;
 
   // Check for valid compression types
-  if (topic.compression && topic.compression !== 'png' && topic.compression !== 'none') {
-    topic.emit('warning', topic.compression
+  if (this.compression && this.compression !== 'png' && this.compression !== 'none') {
+    this.emit('warning', this.compression
         + ' compression is not supported. No comression will be used.');
   }
 
   // Check if throttle rate is negative
-  if (topic.throttle_rate < 0) {
-    topic.emit('warning', topic.throttle_rate + ' is not allowed. Set to 0');
-    topic.throttle_rate = 0;
+  if (this.throttle_rate < 0) {
+    this.emit('warning', this.throttle_rate + ' is not allowed. Set to 0');
+    this.throttle_rate = 0;
   }
 
   /**
@@ -46,75 +46,75 @@ ROSLIB.Topic = function(options) {
    * @param callback - function with the following params:
    *   * message - the published message
    */
-  topic.subscribe = function(callback) {
-    topic.on('message', function(message) {
+  this.subscribe = function(callback) {
+    that.on('message', function(message) {
       callback(message);
     });
 
-    ros.on(topic.name, function(data) {
+    that.ros.on(that.name, function(data) {
       var message = new ROSLIB.Message(data);
-      topic.emit('message', message);
+      that.emit('message', message);
     });
 
-    ros.idCounter++;
-    var subscribeId = 'subscribe:' + topic.name + ':' + ros.idCounter;
+    that.ros.idCounter++;
+    var subscribeId = 'subscribe:' + that.name + ':' + that.ros.idCounter;
     var call = {
       op : 'subscribe',
       id : subscribeId,
-      type : topic.messageType,
-      topic : topic.name,
-      compression : topic.compression,
-      throttle_rate : topic.throttle_rate
+      type : that.messageType,
+      topic : that.name,
+      compression : that.compression,
+      throttle_rate : that.throttle_rate
     };
 
-    ros.callOnConnection(call);
+    that.ros.callOnConnection(call);
   };
 
   /**
    * Unregisters as a subscriber for the topic. Unsubscribing will remove
    * all subscribe callbacks.
    */
-  topic.unsubscribe = function() {
-    ros.removeAllListeners([ topic.name ]);
-    ros.idCounter++;
-    var unsubscribeId = 'unsubscribe:' + topic.name + ':' + ros.idCounter;
+  this.unsubscribe = function() {
+    that.ros.removeAllListeners([ that.name ]);
+    that.ros.idCounter++;
+    var unsubscribeId = 'unsubscribe:' + that.name + ':' + that.ros.idCounter;
     var call = {
       op : 'unsubscribe',
       id : unsubscribeId,
-      topic : topic.name
+      topic : that.name
     };
-    ros.callOnConnection(call);
+    that.ros.callOnConnection(call);
   };
 
   /**
    * Registers as a publisher for the topic.
    */
-  topic.advertise = function() {
-    ros.idCounter++;
-    var advertiseId = 'advertise:' + topic.name + ':' + ros.idCounter;
+  this.advertise = function() {
+    that.ros.idCounter++;
+    var advertiseId = 'advertise:' + that.name + ':' + that.ros.idCounter;
     var call = {
       op : 'advertise',
       id : advertiseId,
-      type : topic.messageType,
-      topic : topic.name
+      type : that.messageType,
+      topic : that.name
     };
-    ros.callOnConnection(call);
-    topic.isAdvertised = true;
+    that.ros.callOnConnection(call);
+    that.isAdvertised = true;
   };
 
   /**
    * Unregisters as a publisher for the topic.
    */
-  topic.unadvertise = function() {
-    ros.idCounter++;
-    var unadvertiseId = 'unadvertise:' + topic.name + ':' + ros.idCounter;
+  this.unadvertise = function() {
+    that.ros.idCounter++;
+    var unadvertiseId = 'unadvertise:' + that.name + ':' + that.ros.idCounter;
     var call = {
       op : 'unadvertise',
       id : unadvertiseId,
-      topic : topic.name
+      topic : that.name
     };
-    ros.callOnConnection(call);
-    topic.isAdvertised = false;
+    that.ros.callOnConnection(call);
+    that.isAdvertised = false;
   };
 
   /**
@@ -122,20 +122,20 @@ ROSLIB.Topic = function(options) {
    *
    * @param message - A ROSLIB.Message object.
    */
-  topic.publish = function(message) {
-    if (!topic.isAdvertised) {
-      topic.advertise();
+  this.publish = function(message) {
+    if (!that.isAdvertised) {
+      that.advertise();
     }
 
-    ros.idCounter++;
-    var publishId = 'publish:' + topic.name + ':' + ros.idCounter;
+    that.ros.idCounter++;
+    var publishId = 'publish:' + that.name + ':' + that.ros.idCounter;
     var call = {
       op : 'publish',
       id : publishId,
-      topic : topic.name,
+      topic : that.name,
       msg : message
     };
-    ros.callOnConnection(call);
+    that.ros.callOnConnection(call);
   };
 };
 ROSLIB.Topic.prototype.__proto__ = EventEmitter2.prototype;

@@ -275,6 +275,42 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Ros.html#authenticate">authenticate</a></b>(mac, client, dest, rand, t, level, end)
+								</div>
+								<div class="description">Sends an authorization request to the server.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Ros.html#callOnConnection">callOnConnection</a></b>(message)
+								</div>
+								<div class="description">Sends the message over the WebSocket, but queues the message up if not yet connected.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Ros.html#close">close</a></b>()
+								</div>
+								<div class="description">Disconnect from the WebSocket server.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Ros.html#connect">connect</a></b>(url)
+								</div>
+								<div class="description">Connect to the specified WebSocket.</div>
+							</td>
+						</tr>
+					
+						<tr>
 							<td class="attributes">&lt;inner&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Ros.html#-decompressPng">decompressPng</a></b>(data, callback)
@@ -282,6 +318,33 @@ ul.inheritsList
 								<div class="description">If a message was compressed as a PNG image (a compression hack since gzipping over WebSockets
 is not supported yet), this function places the "image" in a canvas element then decodes the
 "image" as a Base64 string.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Ros.html#getParams">getParams</a></b>(callback)
+								</div>
+								<div class="description">Retrieves list of param names from the ROS Parameter Server.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Ros.html#getServices">getServices</a></b>(callback)
+								</div>
+								<div class="description">Retrieves list of active service names in ROS.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Ros.html#getTopics">getTopics</a></b>(callback)
+								</div>
+								<div class="description">Retrieves list of topics in ROS as an array.</div>
 							</td>
 						</tr>
 					
@@ -387,6 +450,175 @@ Emits the following events:
 					Method Detail
 				</div>
 				
+					<a name="authenticate"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>authenticate</b>(mac, client, dest, rand, t, level, end)
+					
+					</div>
+					<div class="description">
+						Sends an authorization request to the server.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>mac</b>
+									
+								</dt>
+								<dd>- MAC (hash) string given by the trusted source.</dd>
+							
+								<dt>
+									<b>client</b>
+									
+								</dt>
+								<dd>- IP of the client.</dd>
+							
+								<dt>
+									<b>dest</b>
+									
+								</dt>
+								<dd>- IP of the destination.</dd>
+							
+								<dt>
+									<b>rand</b>
+									
+								</dt>
+								<dd>- Random string given by the trusted source.</dd>
+							
+								<dt>
+									<b>t</b>
+									
+								</dt>
+								<dd>- Time of the authorization request.</dd>
+							
+								<dt>
+									<b>level</b>
+									
+								</dt>
+								<dd>- User level as a string given by the client.</dd>
+							
+								<dt>
+									<b>end</b>
+									
+								</dt>
+								<dd>- End time of the client's session.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="callOnConnection"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>callOnConnection</b>(message)
+					
+					</div>
+					<div class="description">
+						Sends the message over the WebSocket, but queues the message up if not yet connected.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>message</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="close"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>close</b>()
+					
+					</div>
+					<div class="description">
+						Disconnect from the WebSocket server.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="connect"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>connect</b>(url)
+					
+					</div>
+					<div class="description">
+						Connect to the specified WebSocket.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>url</b>
+									
+								</dt>
+								<dd>- WebSocket URL for Rosbridge</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="-decompressPng"> </a>
 					<div class="fixedFont">&lt;inner&gt; 
 					
@@ -420,6 +652,117 @@ is not supported yet), this function places the "image" in a canvas element then
 								</dt>
 								<dd>- function with params:
   * data - the uncompressed data</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getParams"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getParams</b>(callback)
+					
+					</div>
+					<div class="description">
+						Retrieves list of param names from the ROS Parameter Server.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>callback</b>
+									
+								</dt>
+								<dd>function with params:
+ * params - array of param names.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getServices"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getServices</b>(callback)
+					
+					</div>
+					<div class="description">
+						Retrieves list of active service names in ROS.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>callback</b>
+									
+								</dt>
+								<dd>- function with the following params:
+  * services - array of service names</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getTopics"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getTopics</b>(callback)
+					
+					</div>
+					<div class="description">
+						Retrieves list of topics in ROS as an array.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>callback</b>
+									
+								</dt>
+								<dd>function with params:
+  * topics - Array of topic names</dd>
 							
 							</dl>
 						
@@ -588,7 +931,7 @@ is not supported yet), this function places the "image" in a canvas element then
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri Mar 15 2013 14:13:29 GMT-0700 (PDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri Mar 15 2013 14:44:04 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>

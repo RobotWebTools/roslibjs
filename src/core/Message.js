@@ -9,10 +9,10 @@
  * @param values - object matching the fields defined in the .msg definition file.
  */
 ROSLIB.Message = function(values) {
-  var message = this;
+  var that = this;
   if (values) {
     Object.keys(values).forEach(function(name) {
-      message[name] = values[name];
+      that[name] = values[name];
     });
   }
 };
