@@ -12,15 +12,13 @@
 ROSLIB.Transform = function(translation, rotation) {
   var transform = this;
   // copy the values into this object if they exist
+  this.translation = new ROSLIB.Vector3();
+  this.rotation = new ROSLIB.Quaternion();
   if (translation !== undefined) {
-    this.translation = translation.clone();
-  } else {
-    this.translation = new ROSLIB.Vector3();
+    this.translation.copy(translation);
   }
   if (rotation !== undefined) {
-    this.rotation = rotation.clone();
-  } else {
-    this.rotation = new ROSLIB.Quaternion();
+    this.rotation.copy(rotation);
   }
 
   /**

@@ -12,17 +12,15 @@
 ROSLIB.Pose = function(position, orientation) {
   var pose = this;
   // copy the values into this object if they exist
+  this.position = new ROSLIB.Vector3();
+  this.orientation = new ROSLIB.Quaternion();
   if (position !== undefined) {
-    this.position = position.clone();
-  } else {
-    this.position = new ROSLIB.Vector3();
+    this.position.copy(position);
   }
   if (orientation !== undefined) {
-    this.orientation = orientation.clone();
-  } else {
-    this.orientation = new ROSLIB.Quaternion();
+    this.orientation.copy(orientation);
   }
-  
+
   /**
    * Copy the values from the given pose into this pose.
    * 
