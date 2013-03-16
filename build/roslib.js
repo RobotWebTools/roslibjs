@@ -158,7 +158,7 @@ ROSLIB.Goal = function(options) {
   };
 
   /**
-   * Cancel the current this.
+   * Cancel the current goal.
    */
   this.cancel = function() {
     var cancelMessage = new ROSLIB.Message({
@@ -748,270 +748,428 @@ ROSLIB.Topic = function(options) {
   };
 };
 ROSLIB.Topic.prototype.__proto__ = EventEmitter2.prototype;
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['robotwebtools/eventemitter2','robotwebtools/actionclient'], factory);
+/**
+ * @author David Gossow - dgossow@willowgarage.com
+ */
+
+/**
+ * A Pose in 3D space. Values are copied into this object.
+ *
+ *  @constructor
+ *  @param position - the ROSLIB.Vector3 describing the position
+ *  @param orientation - the ROSLIB.Quaternion describing the orientation
+ */
+ROSLIB.Pose = function(position, orientation) {
+  var pose = this;
+  // copy the values into this object if they exist
+  this.position = new ROSLIB.Vector3();
+  this.orientation = new ROSLIB.Quaternion();
+  if (position !== undefined) {
+    this.position.copy(position);
   }
-  else {
-    root.TfClient = factory(root.EventEmitter2,root.ActionClient);
+  if (orientation !== undefined) {
+    this.orientation.copy(orientation);
   }
-}(this, function (EventEmitter2, ActionClient) {
 
-  var TfClient = function(options) {
-    this.ros = options.ros;
-    this.fixedFrame = options.fixedFrame || 'base_link';
-    this.angularThres = options.angularThres || 2.0;
-    this.transThres = options.transThres || 0.01;
-    this.rate = options.rate || 10.0;
-    this.goalUpdateDelay = options.goalUpdateDelay !== undefined ? options.goalUpdateDelay : 50;
+  /**
+   * Copy the values from the given pose into this pose.
+   * 
+   * @param pose the pose to copy
+   * @returns a pointer to this pose
+   */
+  this.copy = function(pose) {
+    pose.position.copy(pose.position);
+    pose.orientation.copy(pose.orientation);
+    return pose;
+  };
+};
+/**
+ * @author David Gossow - dgossow@willowgarage.com
+ */
 
-    var options = {
-      ros: this.ros,
-      serverName: options.serverName || "/tf2_web_republisher",
-      actionName: "tf2_web_republisher/TFSubscriptionAction"
-    };
+/**
+ * A Quaternion.
+ *
+ *  @constructor
+ *  @param x - the x value 
+ *  @param y - the y value
+ *  @param z - the z value
+ *  @param w - the w value
+ */
+ROSLIB.Quaternion = function(x, y, z, w) {
+  var quaternion = this;
+  this.x = x || 0;
+  this.y = y || 0;
+  this.z = z || 0;
+  this.w = w || 1;
 
-    this.actionClient = new ActionClient( options );
-    this.currentGoal = false;
-    this.frame_infos = {};
-    this.goalUpdateRequested = false;
+  /**
+   * Copy the values from the given quaternion into this quaternion.
+   * 
+   * @param q the quaternion to copy
+   * @returns a pointer to this quaternion
+   */
+  this.copy = function(q) {
+    quaternion.x = q.x;
+    quaternion.y = q.y;
+    quaternion.z = q.z;
+    quaternion.w = q.w;
+    return quaternion;
   };
 
-  TfClient.prototype.__proto__ = EventEmitter2.prototype;
+  /**
+   * Perform a conjugation on this quaternion.
+   * 
+   * @returns a pointer to this quaternion
+   */
+  this.conjugate = function() {
+    quaternion.x *= -1;
+    quaternion.y *= -1;
+    quaternion.z *= -1;
+    return quaternion;
+  };
 
-  TfClient.prototype.processFeedback = function(tfMsg) {
-    var that = this;
-    tfMsg.transforms.forEach( function(transform) {
-      var frameId = transform.child_frame_id;
-      var info = that.frame_infos[frameId];
-      if ( info != undefined ) {
-        info.transform = new Transform(transform.transform.translation,transform.transform.rotation);
+  /**
+   * Perform a normalization on this quaternion.
+   * 
+   * @returns a pointer to this quaternion
+   */
+  this.normalize = function() {
+    var l = Math.sqrt(quaternion.x * quaternion.x + quaternion.y * quaternion.y + quaternion.z
+        * quaternion.z + quaternion.w * quaternion.w);
+    if (l === 0) {
+      quaternion.x = 0;
+      quaternion.y = 0;
+      quaternion.z = 0;
+      quaternion.w = 1;
+    } else {
+      l = 1 / l;
+      quaternion.x = quaternion.x * l;
+      quaternion.y = quaternion.y * l;
+      quaternion.z = quaternion.z * l;
+      quaternion.w = quaternion.w * l;
+    }
+    return quaternion;
+  };
+
+  /**
+   * Convert this quaternion into its inverse.
+   * 
+   * @returns a pointer to this quaternion
+   */
+  this.inverse = function() {
+    this.conjugate().normalize();
+    return quaternion;
+  };
+
+  /**
+   * Set the values of this quaternion to the product of quaternions a and b.
+   * 
+   * @param a the first quaternion to multiply with
+   * @param b the second quaternion to multiply with
+   * @returns a pointer to this quaternion
+   */
+  this.multiply = function(a, b) {
+    var qax = a.x, qay = a.y, qaz = a.z, qaw = a.w, qbx = b.x, qby = b.y, qbz = b.z, qbw = b.w;
+    this.x = qax * qbw + qay * qbz - qaz * qby + qaw * qbx;
+    this.y = -qax * qbz + qay * qbw + qaz * qbx + qaw * qby;
+    this.z = qax * qby - qay * qbx + qaz * qbw + qaw * qbz;
+    this.w = -qax * qbx - qay * qby - qaz * qbz + qaw * qbw;
+    return quaternion;
+  };
+
+  /**
+   * Multiply the given ROSLIB.Vector3 with this quaternion.
+   * 
+   * @param vector the vector to multiply with
+   * @param dest (option) - where the computed values will go (defaults to 'vector').
+   * @returns a pointer to dest
+   */
+  this.multiplyVec3 = function(vector, dest) {
+    if (!dest) {
+      dest = vector;
+    }
+    var x = vector.x, y = vector.y, z = vector.z, qx = quaternion.x, qy = quaternion.y, qz = quaternion.z, qw = quaternion.w;
+    var ix = qw * x + qy * z - qz * y, iy = qw * y + qz * x - qx * z, iz = qw * z + qx * y - qy * x, iw = -qx
+        * x - qy * y - qz * z;
+    dest.x = ix * qw + iw * -qx + iy * -qz - iz * -qy;
+    dest.y = iy * qw + iw * -qy + iz * -qx - ix * -qz;
+    dest.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
+    return dest;
+  };
+
+  /**
+   * Clone a copy of this quaternion.
+   * 
+   * @returns the cloned quaternion
+   */
+  this.clone = function() {
+    return new ROSLIB.Quaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+  };
+};
+/**
+ * @author David Gossow - dgossow@willowgarage.com
+ */
+
+/**
+ * A 3D vector.
+ *
+ *  @constructor
+ *  @param x - the x value 
+ *  @param y - the y value
+ *  @param z - the z value
+ */
+ROSLIB.Vector3 = function(x, y, z) {
+  var vector3 = this;
+  this.x = x || 0;
+  this.y = y || 0;
+  this.z = z || 0;
+
+  /**
+   * Copy the values from the given vector into this vector.
+   * 
+   * @param v the vector to copy
+   * @returns a pointer to this vector
+   */
+  this.copy = function(v) {
+    vector3.x = v.x;
+    vector3.y = v.y;
+    vector3.z = v.z;
+    return vector3;
+  };
+
+  /**
+   * Set the values of this vector to the sum of vectors a and b.
+   * 
+   * @param a the first vector to add with
+   * @param b the second vector to add with
+   * @returns a pointer to this vector
+   */
+  this.add = function(a, b) {
+    vector3.x = a.x + b.x;
+    vector3.y = a.y + b.y;
+    vector3.z = a.z + b.z;
+    return vector3;
+  };
+
+  /**
+   * Set the values of this vector to the difference of vectors a and b.
+   * 
+   * @param a the first vector to add with
+   * @param b the second vector to add with
+   * @returns a pointer to this vector
+   */
+  this.sub = function(a, b) {
+    vector3.x = a.x - b.x;
+    vector3.y = a.y - b.y;
+    vector3.z = a.z - b.z;
+    return vector3;
+  };
+
+  /**
+   * Clone a copy of this vector.
+   * 
+   * @returns the cloned vector
+   */
+  this.clone = function() {
+    return new ROSLIB.Vector3(vector3.x, vector3.y, vector3.z);
+  };
+};
+/**
+ * @author David Gossow - dgossow@willowgarage.com
+ */
+
+/**
+ * A TF Client that listens to TFs from tf2_web_republisher.
+ *
+ *  @constructor
+ *  @param options - object with following keys:
+ *   * ros - the ROSLIB.Ros connection handle
+ *   * fixedFrame - the fixed frame, like /base_link
+ *   * angularThres - the angular threshold for the TF republisher
+ *   * transThres - the translation threshold for the TF republisher
+ *   * rate - the rate for the TF republisher
+ *   * goalUpdateDelay - the goal update delay for the TF republisher
+ */
+ROSLIB.TFClient = function(options) {
+  var tfClient = this;
+  var options = options || {};
+  this.ros = options.ros;
+  this.fixedFrame = options.fixedFrame || '/base_link';
+  this.angularThres = options.angularThres || 2.0;
+  this.transThres = options.transThres || 0.01;
+  this.rate = options.rate || 10.0;
+  this.goalUpdateDelay = options.goalUpdateDelay || 50;
+
+  this.currentGoal = false;
+  this.frameInfos = {};
+  this.goalUpdateRequested = false;
+
+  // create an ActionClient
+  this.actionClient = new ROSLIB.ActionClient({
+    ros : this.ros,
+    serverName : '/tf2_web_republisher',
+    actionName : 'tf2_web_republisher/TFSubscriptionAction'
+  });
+
+  /**
+   * Process the incoming TF message and send them out using the callback functions.
+   * 
+   * @param tf - the TF message from the server
+   */
+  this.processFeedback = function(tf) {
+    tf.transforms.forEach(function(transform) {
+      var frameID = transform.child_frame_id;
+      var info = tfClient.frameInfos[frameID];
+      if (info != undefined) {
+        info.transform = new ROSLIB.Transform(transform.transform.translation,
+            transform.transform.rotation);
         info.cbs.forEach(function(cb) {
           cb(info.transform);
         });
       }
     });
-  }
+  };
 
-  TfClient.prototype.requestGoalUpdate = function() {
-    if ( !this.goalUpdateRequested ) {
-      setTimeout(this.updateGoal.bind(this), this.goalUpdateDelay);
-      this.goalUpdateRequested = true;
-      return;
-    }
-  }
-
-  TfClient.prototype.updateGoal = function() {
-    // Anytime the list of frames changes,
-    // we will need to send a new goal.
-    if ( this.currentGoal ) {
-      this.currentGoal.cancel();
+  /**
+   * Create and send a new goal to the tf2_web_republisher based on the current list of TFs.
+   */
+  this.updateGoal = function() {
+    // Anytime the list of frames changes, we will need to send a new goal.
+    if (tfClient.currentGoal) {
+      tfClient.currentGoal.cancel();
     }
 
-    var goalMsg = {
-      source_frames: [],
-       target_frame: this.fixedFrame,
-       angular_thres: this.angularThres,
-       trans_thres: this.transThres,
-       rate: this.rate
+    var goalMessage = {
+      source_frames : [],
+      target_frame : tfClient.fixedFrame,
+      angular_thres : tfClient.angularThres,
+      trans_thres : tfClient.transThres,
+      rate : tfClient.rate
     };
 
-    var source_frames = [];
-    for (frame in this.frame_infos ) {
-      goalMsg.source_frames.push(frame);
-    };
+    for (frame in tfClient.frameInfos) {
+      goalMessage.source_frames.push(frame);
+    }
 
-    this.currentGoal = new this.actionClient.Goal(goalMsg);
-    this.currentGoal.on('feedback', this.processFeedback.bind(this));
-    this.currentGoal.send();
-    this.goalUpdateRequested = false;
-  }
+    tfClient.currentGoal = new ROSLIB.Goal({
+      actionClient : tfClient.actionClient,
+      goalMessage : goalMessage
+    });
+    tfClient.currentGoal.on('feedback', tfClient.processFeedback.bind(tfClient));
+    tfClient.currentGoal.send();
+    tfClient.goalUpdateRequested = false;
+  };
 
-  TfClient.prototype.subscribe = function(frameId,callback) {
+  /**
+   * Subscribe to the given TF frame.
+   * 
+   * @param frameID - the TF frame to subscribe to
+   * @param callback - function with params:
+   *   * transform - the transform data
+   */
+  this.subscribe = function(frameID, callback) {
     // make sure the frame id is relative
-    if ( frameId[0] === "/" ) {
-      frameId = frameId.substring(1);
+    if (frameID[0] === '/') {
+      frameID = frameID.substring(1);
     }
-    // if there is no callback registered for the given frame,
-    // create emtpy callback list
-    if ( this.frame_infos[frameId] == undefined ) {
-      this.frame_infos[frameId] = {
-        cbs: [] };
-      this.requestGoalUpdate();
+    // if there is no callback registered for the given frame, create emtpy callback list
+    if (tfClient.frameInfos[frameID] == undefined) {
+      tfClient.frameInfos[frameID] = {
+        cbs : []
+      };
+      if (!tfClient.goalUpdateRequested) {
+        setTimeout(tfClient.updateGoal.bind(tfClient), tfClient.goalUpdateDelay);
+        tfClient.goalUpdateRequested = true;
+      }
     } else {
       // if we already have a transform, call back immediately
-      if ( this.frame_infos[frameId].transform != undefined ) {
-        callback( this.frame_infos[frameId].transform );
+      if (tfClient.frameInfos[frameID].transform != undefined) {
+        callback(tfClient.frameInfos[frameID].transform);
       }
     }
-    this.frame_infos[frameId].cbs.push( callback );
+    tfClient.frameInfos[frameID].cbs.push(callback);
   };
 
-  TfClient.prototype.unsubscribe = function(frameId,callback) {
-    var info = this.frame_infos[frameId];
-    if ( info != undefined ) {
-      var cbIndex = info.cbs.indexOf( callback );
-      if ( cbIndex >= 0 ) {
+  /**
+   * Unsubscribe from the given TF frame.
+   * 
+   * @param frameID - the TF frame to unsubscribe from
+   * @param callback - the callback function to remove
+   */
+  tfClient.unsubscribe = function(frameID, callback) {
+    var info = tfClient.frameInfos[frameID];
+    if (info != undefined) {
+      var cbIndex = info.cbs.indexOf(callback);
+      if (cbIndex >= 0) {
         info.cbs.splice(cbIndex, 1);
-        if ( info.cbs.length == 0 ) {
-          delete this.frame_infos[frameId];
+        if (info.cbs.length == 0) {
+          delete tfClient.frameInfos[frameID];
         }
-      this.needUpdate = true;
+        tfClient.needUpdate = true;
       }
     }
+  };
+};
+/**
+ * @author David Gossow - dgossow@willowgarage.com
+ */
+
+/**
+ * A Transform in 3-space. Values are copied into this object.
+ *
+ *  @constructor
+ *  @param translation - the ROSLIB.Vector3 describing the translation
+ *  @param rotation - the ROSLIB.Quaternion describing the rotation
+ */
+ROSLIB.Transform = function(translation, rotation) {
+  var transform = this;
+  // copy the values into this object if they exist
+  this.translation = new ROSLIB.Vector3();
+  this.rotation = new ROSLIB.Quaternion();
+  if (translation !== undefined) {
+    this.translation.copy(translation);
+  }
+  if (rotation !== undefined) {
+    this.rotation.copy(rotation);
   }
 
-
-  var Pose = TfClient.Pose = function( position, orientation ) {
-    this.position = new Vector3;
-    this.orientation = new Quaternion;
-    if ( position !== undefined ) {
-      this.position.copy( position );
-    }
-    if ( orientation !== undefined ) {
-      this.orientation.copy( orientation );
-    }
+  /**
+   * Apply a transform against the given ROSLIB.Pose.
+   * 
+   * @param pose the pose to transform with
+   * @returns a pointer to the pose
+   */
+  this.apply = function(pose) {
+    transform.rotation.multiplyVec3(pose.position);
+    pose.position.add(pose.position, transform.translation);
+    pose.orientation.multiply(transform.rotation, pose.orientation);
+    return pose;
   };
 
-  Pose.prototype = {
-    constructor: Pose,
-    copy: function( pose ) {
-      this.position.copy( pose.position );
-      this.orientation.copy( pose.orientation );
-    }
-  }
-
-  var Transform = TfClient.Transform = function( translation, rotation ) {
-    this.translation = new Vector3;
-    this.rotation = new Quaternion;
-    if ( translation !== undefined ) {
-      this.translation.copy( translation );
-    }
-    if ( rotation !== undefined ) {
-      this.rotation.copy( rotation );
-    }
+  /**
+   * Apply an inverse transform against the given ROSLIB.Pose.
+   * 
+   * @param pose the pose to transform with
+   * @returns a pointer to the pose
+   */
+  this.applyInverse = function(pose) {
+    var rotInv = transform.rotation.clone().inverse();
+    rotInv.multiplyVec3(pose.position);
+    pose.position.sub(pose.position, transform.translation);
+    pose.orientation.multiply(rotInv, pose.orientation);
+    return pose;
   };
 
-  Transform.prototype = {
-    constructor: Transform,
-    apply: function( pose ) {
-      this.rotation.multiplyVec3(pose.position);
-      pose.position.add(pose.position,this.translation);
-      pose.orientation.multiply(this.rotation, pose.orientation);
-      return pose;
-    },
-    applyInverse: function( pose ) {
-      var rotInv = this.rotation.clone().inverse();
-      rotInv.multiplyVec3(pose.position);
-      pose.position.sub(pose.position,this.translation);
-      pose.orientation.multiply(rotInv, pose.orientation);
-      return pose;
-    },
-    copy: function( transform ) {
-      this.translation.copy( transform.translation );
-      this.rotation.copy( transform.rotation );
-    }
-  }
-
-  var Quaternion = TfClient.Quaternion = function( x, y, z, w ) {
-    this.x = x || 0;
-    this.y = y || 0;
-    this.z = z || 0;
-    this.w = ( w !== undefined ) ? w : 1;
+  /**
+   * Copy the values from the given transform into this transform.
+   * 
+   * @param transform the transform to copy
+   * @returns a pointer to this transform
+   */
+  this.copy = function(transform) {
+    transform.translation.copy(transform.translation);
+    transform.rotation.copy(transform.rotation);
+    return transform;
   };
-
-  Quaternion.prototype = {
-    constructor: Quaternion,
-    copy: function ( q ) {
-      this.x = q.x;
-      this.y = q.y;
-      this.z = q.z;
-      this.w = q.w;
-      return this;
-    },
-    inverse: function () {
-      this.conjugate().normalize();
-      return this;
-    },
-    conjugate: function () {
-      this.x *= -1;
-      this.y *= -1;
-      this.z *= -1;
-      return this;
-    },
-    normalize: function () {
-      var l = Math.sqrt( this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w );
-      if ( l === 0 ) {
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
-        this.w = 1;
-      } else {
-        l = 1 / l;
-        this.x = this.x * l;
-        this.y = this.y * l;
-        this.z = this.z * l;
-        this.w = this.w * l;
-      }
-      return this;
-    },
-    multiply: function ( a, b ) {
-      var qax = a.x, qay = a.y, qaz = a.z, qaw = a.w,
-      qbx = b.x, qby = b.y, qbz = b.z, qbw = b.w;
-      this.x =  qax * qbw + qay * qbz - qaz * qby + qaw * qbx;
-      this.y = -qax * qbz + qay * qbw + qaz * qbx + qaw * qby;
-      this.z =  qax * qby - qay * qbx + qaz * qbw + qaw * qbz;
-      this.w = -qax * qbx - qay * qby - qaz * qbz + qaw * qbw;
-      return this;
-    },
-    multiplyVec3: function ( vector, dest ) {
-      if ( !dest ) { dest = vector; }
-      var x    = vector.x,  y  = vector.y,  z  = vector.z,
-        qx   = this.x, qy = this.y, qz = this.z, qw = this.w;
-      var ix =  qw * x + qy * z - qz * y,
-        iy =  qw * y + qz * x - qx * z,
-        iz =  qw * z + qx * y - qy * x,
-        iw = -qx * x - qy * y - qz * z;
-      dest.x = ix * qw + iw * -qx + iy * -qz - iz * -qy;
-      dest.y = iy * qw + iw * -qy + iz * -qx - ix * -qz;
-      dest.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
-      return dest;
-    },
-    clone: function () {
-      return new Quaternion( this.x, this.y, this.z, this.w );
-    }
-  }
-
-  var Vector3 = TfClient.Vector3 = function ( x, y, z ) {
-    this.x = x || 0;
-    this.y = y || 0;
-    this.z = z || 0;
-  };
-
-  Vector3.prototype = {
-    constructor: Vector3,
-    copy: function ( v ) {
-      this.x = v.x;
-      this.y = v.y;
-      this.z = v.z;
-      return this;
-    },
-    add: function ( a, b ) {
-      this.x = a.x + b.x;
-      this.y = a.y + b.y;
-      this.z = a.z + b.z;
-      return this;
-    },
-    sub: function ( a, b ) {
-      this.x = a.x - b.x;
-      this.y = a.y - b.y;
-      this.z = a.z - b.z;
-      return this;
-    },
-    clone: function () {
-      return new Vector3( this.x, this.y, this.z );
-    }
-  };
-
-  return TfClient;
-}));
+};
