@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script type="text/javascript" src="../include/EventEmitter2/eventemitter2.js"></script>
+<script type="text/javascript" src="../build/roslib.js"></script>
+
+<script type="text/javascript" type="text/javascript">
+  // Connecting to ROS
+  // -----------------
+  var ros = new ROSLIB.Ros();
+
+  // If there is an error on the backend, an 'error' emit will be emitted.
+  ros.on('error', function(error) {
+    console.log(error);
+  });
+
+  // Find out exactly when we made a connection.
+  ros.on('connection', function() {
+    console.log('Connection made!');
+  });
+
+  // Create a connection to the rosbridge WebSocket server.
+  ros.connect('ws://localhost:9090');
+
+  // TF Client
+  // ---------
+  var tfClient = new ROSLIB.TFClient({
+    ros : ros,
+    fixedFrame : 'world',
+    angularThres : 0.01,
+    transThres : 0.01
+  });
+
+  // Subscribe to a turtle.
+  tfClient.subscribe('turtle1', function(tf) {
+    console.log(tf);
+  });
+</script>
+</head>
+
+<body>
+  <h1>Simple TF Example</h1>
+  <p>Run the following commands in the terminal then refresh this page. Check the JavaScript
+    console for the output.</p>
+  <ol>
+    <li>roslaunch turtle_tf turtle_tf_demo.launch</li>
+    <li>rosrun tf2_web_republisher tf2_web_republisher</li>
+    <li>roslaunch rosbridge_server rosbridge_websocket.launch</li>
+    <li>Use your arrow keys on your keyboard to move the turtle (must have
+      turtle_tf_demo.launch terminal focused).</li>
+  </ol>
+</body>
+</html>

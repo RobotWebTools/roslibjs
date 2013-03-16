@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ROSLIB.Message</title>
+		<title>JsDoc Reference - ROSLIB.Vector3</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -228,7 +228,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class ROSLIB.Message
+				Class ROSLIB.Vector3
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -239,13 +239,13 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/_home_tor1pal_Documents_WPI_RAIL_ROS_groovy_src_roslibjs_src_core_Message.js.html">Message.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/_home_tor1pal_Documents_WPI_RAIL_ROS_groovy_src_roslibjs_src_math_Vector3.js.html">Vector3.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROSLIB.Message.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROSLIB.Vector3.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -258,9 +258,9 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROSLIB.Message.html#constructor">ROSLIB.Message</a></b>(values)
+								<b><a href="../symbols/ROSLIB.Vector3.html#constructor">ROSLIB.Vector3</a></b>(x, y, z)
 							</div>
-							<div class="description">Message objects are used for publishing and subscribing to and from topics.</div>
+							<div class="description">A 3D vector.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -271,6 +271,60 @@ ul.inheritsList
 			
 
 <!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROSLIB.Vector3.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Vector3.html#add">add</a></b>(a, b)
+								</div>
+								<div class="description">Set the values of this vector to the sum of vectors a and b.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Vector3.html#clone">clone</a></b>()
+								</div>
+								<div class="description">Clone a copy of this vector.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Vector3.html#copy">copy</a></b>(v)
+								</div>
+								<div class="description">Copy the values from the given vector into this vector.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Vector3.html#sub">sub</a></b>(a, b)
+								</div>
+								<div class="description">Set the values of this vector to the difference of vectors a and b.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
 			
 <!-- ============================== events summary ======================== -->
 			
@@ -283,11 +337,11 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROSLIB.Message</b>(values)
+						<b>ROSLIB.Vector3</b>(x, y, z)
 				</div>
 				
 				<div class="description">
-					Message objects are used for publishing and subscribing to and from topics.
+					A 3D vector.
 					
 				</div>
 				
@@ -299,10 +353,22 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								 <b>values</b>
+								 <b>x</b>
 								
 							</dt>
-								<dd>- object matching the fields defined in the .msg definition file.</dd>
+								<dd>- the x value</dd>
+						
+							<dt>
+								 <b>y</b>
+								
+							</dt>
+								<dd>- the y value</dd>
+						
+							<dt>
+								 <b>z</b>
+								
+							</dt>
+								<dd>- the z value</dd>
 						
 						</dl>
 					
@@ -320,6 +386,184 @@ ul.inheritsList
 			
 
 <!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="add"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>add</b>(a, b)
+					
+					</div>
+					<div class="description">
+						Set the values of this vector to the sum of vectors a and b.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>a</b>
+									
+								</dt>
+								<dd>the first vector to add with</dd>
+							
+								<dt>
+									<b>b</b>
+									
+								</dt>
+								<dd>the second vector to add with</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>a pointer to this vector</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="clone"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>clone</b>()
+					
+					</div>
+					<div class="description">
+						Clone a copy of this vector.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>the cloned vector</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="copy"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>copy</b>(v)
+					
+					</div>
+					<div class="description">
+						Copy the values from the given vector into this vector.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>v</b>
+									
+								</dt>
+								<dd>the vector to copy</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>a pointer to this vector</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="sub"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>sub</b>(a, b)
+					
+					</div>
+					<div class="description">
+						Set the values of this vector to the difference of vectors a and b.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>a</b>
+									
+								</dt>
+								<dd>the first vector to add with</dd>
+							
+								<dt>
+									<b>b</b>
+									
+								</dt>
+								<dd>the second vector to add with</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>a pointer to this vector</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+				
 			
 			
 <!-- ============================== event details ========================= -->		

@@ -40,7 +40,7 @@ ROSLIB.Goal = function(options) {
   };
 
   /**
-   * Cancel the current this.
+   * Cancel the current goal.
    */
   this.cancel = function() {
     var cancelMessage = new ROSLIB.Message({
