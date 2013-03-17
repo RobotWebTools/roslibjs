@@ -24,7 +24,7 @@ ROSLIB.Param = function(options) {
    */
   this.get = function(callback) {
     var paramClient = new ROSLIB.Service({
-      ros : ros,
+      ros : param.ros,
       name : '/rosapi/get_param',
       serviceType : 'rosapi/GetParam'
     });
@@ -47,7 +47,7 @@ ROSLIB.Param = function(options) {
    */
   this.set = function(value) {
     var paramClient = new ROSLIB.Service({
-      ros : ros,
+      ros : param.ros,
       name : '/rosapi/set_param',
       serviceType : 'rosapi/SetParam'
     });

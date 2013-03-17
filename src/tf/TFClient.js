@@ -120,7 +120,7 @@ ROSLIB.TFClient = function(options) {
    * @param frameID - the TF frame to unsubscribe from
    * @param callback - the callback function to remove
    */
-  tfClient.unsubscribe = function(frameID, callback) {
+  this.unsubscribe = function(frameID, callback) {
     var info = tfClient.frameInfos[frameID];
     if (info != undefined) {
       var cbIndex = info.cbs.indexOf(callback);

@@ -243,7 +243,7 @@ ROSLIB.Param = function(options) {
    */
   this.get = function(callback) {
     var paramClient = new ROSLIB.Service({
-      ros : ros,
+      ros : param.ros,
       name : '/rosapi/get_param',
       serviceType : 'rosapi/GetParam'
     });
@@ -266,7 +266,7 @@ ROSLIB.Param = function(options) {
    */
   this.set = function(value) {
     var paramClient = new ROSLIB.Service({
-      ros : ros,
+      ros : param.ros,
       name : '/rosapi/set_param',
       serviceType : 'rosapi/SetParam'
     });
@@ -1097,7 +1097,7 @@ ROSLIB.TFClient = function(options) {
    * @param frameID - the TF frame to unsubscribe from
    * @param callback - the callback function to remove
    */
-  tfClient.unsubscribe = function(frameID, callback) {
+  this.unsubscribe = function(frameID, callback) {
     var info = tfClient.frameInfos[frameID];
     if (info != undefined) {
       var cbIndex = info.cbs.indexOf(callback);
