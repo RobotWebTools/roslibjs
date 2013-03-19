@@ -974,7 +974,7 @@ ROSLIB.Vector3.prototype.add = function(a, b) {
  * @param b the second vector to add with
  * @returns a pointer to this vector
  */
-ROSLIB.Vector3.sub = function(a, b) {
+ROSLIB.Vector3.prototype.sub = function(a, b) {
   this.x = a.x - b.x;
   this.y = a.y - b.y;
   this.z = a.z - b.z;
