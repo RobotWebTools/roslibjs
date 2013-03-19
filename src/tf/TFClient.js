@@ -15,7 +15,6 @@
  *   * goalUpdateDelay - the goal update delay for the TF republisher
  */
 ROSLIB.TFClient = function(options) {
-  var tfClient = this;
   var options = options || {};
   this.ros = options.ros;
   this.fixedFrame = options.fixedFrame || '/base_link';
@@ -28,109 +27,113 @@ ROSLIB.TFClient = function(options) {
   this.frameInfos = {};
   this.goalUpdateRequested = false;
 
-  // create an ActionClient
+  // Create an ActionClient
   this.actionClient = new ROSLIB.ActionClient({
     ros : this.ros,
     serverName : '/tf2_web_republisher',
     actionName : 'tf2_web_republisher/TFSubscriptionAction'
   });
-
-  /**
-   * Process the incoming TF message and send them out using the callback functions.
-   * 
-   * @param tf - the TF message from the server
-   */
-  this.processFeedback = function(tf) {
-    tf.transforms.forEach(function(transform) {
-      var frameID = transform.child_frame_id;
-      var info = tfClient.frameInfos[frameID];
-      if (info != undefined) {
-        info.transform = new ROSLIB.Transform(transform.transform.translation,
-            transform.transform.rotation);
-        info.cbs.forEach(function(cb) {
-          cb(info.transform);
-        });
-      }
-    });
-  };
-
-  /**
-   * Create and send a new goal to the tf2_web_republisher based on the current list of TFs.
-   */
-  this.updateGoal = function() {
-    // Anytime the list of frames changes, we will need to send a new goal.
-    if (tfClient.currentGoal) {
-      tfClient.currentGoal.cancel();
-    }
-
-    var goalMessage = {
-      source_frames : [],
-      target_frame : tfClient.fixedFrame,
-      angular_thres : tfClient.angularThres,
-      trans_thres : tfClient.transThres,
-      rate : tfClient.rate
-    };
-
-    for (frame in tfClient.frameInfos) {
-      goalMessage.source_frames.push(frame);
-    }
-
-    tfClient.currentGoal = new ROSLIB.Goal({
-      actionClient : tfClient.actionClient,
-      goalMessage : goalMessage
-    });
-    tfClient.currentGoal.on('feedback', tfClient.processFeedback.bind(tfClient));
-    tfClient.currentGoal.send();
-    tfClient.goalUpdateRequested = false;
-  };
-
-  /**
-   * Subscribe to the given TF frame.
-   * 
-   * @param frameID - the TF frame to subscribe to
-   * @param callback - function with params:
-   *   * transform - the transform data
-   */
-  this.subscribe = function(frameID, callback) {
-    // make sure the frame id is relative
-    if (frameID[0] === '/') {
-      frameID = frameID.substring(1);
-    }
-    // if there is no callback registered for the given frame, create emtpy callback list
-    if (tfClient.frameInfos[frameID] == undefined) {
-      tfClient.frameInfos[frameID] = {
-        cbs : []
-      };
-      if (!tfClient.goalUpdateRequested) {
-        setTimeout(tfClient.updateGoal.bind(tfClient), tfClient.goalUpdateDelay);
-        tfClient.goalUpdateRequested = true;
-      }
-    } else {
-      // if we already have a transform, call back immediately
-      if (tfClient.frameInfos[frameID].transform != undefined) {
-        callback(tfClient.frameInfos[frameID].transform);
-      }
-    }
-    tfClient.frameInfos[frameID].cbs.push(callback);
-  };
-
-  /**
-   * Unsubscribe from the given TF frame.
-   * 
-   * @param frameID - the TF frame to unsubscribe from
-   * @param callback - the callback function to remove
-   */
-  this.unsubscribe = function(frameID, callback) {
-    var info = tfClient.frameInfos[frameID];
-    if (info != undefined) {
-      var cbIndex = info.cbs.indexOf(callback);
-      if (cbIndex >= 0) {
-        info.cbs.splice(cbIndex, 1);
-        if (info.cbs.length == 0) {
-          delete tfClient.frameInfos[frameID];
-        }
-        tfClient.needUpdate = true;
-      }
-    }
-  };
 };
+
+/**
+ * Process the incoming TF message and send them out using the callback
+ * functions.
+ *
+ * @param tf - the TF message from the server
+ */
+ROSLIB.TFClient.processFeedback = function(tf) {
+  var that = this;
+  tf.transforms.forEach(function(transform) {
+    var frameID = transform.child_frame_id;
+    var info = that.frameInfos[frameID];
+    if (info != undefined) {
+      info.transform = new ROSLIB.Transform(transform.transform.translation,
+        transform.transform.rotation);
+      info.cbs.forEach(function(cb) {
+        cb(info.transform);
+      });
+    }
+  });
+};
+
+/**
+ * Create and send a new goal to the tf2_web_republisher based on the current
+ * list of TFs.
+ */
+ROSLIB.TFClient.prototype.updateGoal = function() {
+  // Anytime the list of frames changes, we will need to send a new goal.
+  if (this.currentGoal) {
+    this.currentGoal.cancel();
+  }
+
+  var goalMessage = {
+    source_frames : [],
+    target_frame : this.fixedFrame,
+    angular_thres : this.angularThres,
+    trans_thres : this.transThres,
+    rate : this.rate
+  };
+
+  for (frame in this.frameInfos) {
+    goalMessage.source_frames.push(frame);
+  }
+
+  this.currentGoal = new ROSLIB.Goal({
+    actionClient : this.actionClient,
+    goalMessage : goalMessage
+  });
+  this.currentGoal.on('feedback', tfClient.processFeedback.bind(tfClient));
+  this.currentGoal.send();
+  this.goalUpdateRequested = false;
+};
+
+/**
+ * Subscribe to the given TF frame.
+ *
+ * @param frameID - the TF frame to subscribe to
+ * @param callback - function with params:
+ *   * transform - the transform data
+ */
+ROSLIB.TFClient.subscribe = function(frameID, callback) {
+  // make sure the frame id is relative
+  if (frameID[0] === '/') {
+    frameID = frameID.substring(1);
+  }
+  // if there is no callback registered for the given frame, create emtpy callback list
+  if (this.frameInfos[frameID] == undefined) {
+    this.frameInfos[frameID] = {
+      cbs : []
+    };
+    if (!this.goalUpdateRequested) {
+      setTimeout(this.updateGoal.bind(tfClient), this.goalUpdateDelay);
+      this.goalUpdateRequested = true;
+    }
+  } else {
+    // if we already have a transform, call back immediately
+    if (this.frameInfos[frameID].transform != undefined) {
+      callback(this.frameInfos[frameID].transform);
+    }
+  }
+  this.frameInfos[frameID].cbs.push(callback);
+};
+
+/**
+ * Unsubscribe from the given TF frame.
+ *
+ * @param frameID - the TF frame to unsubscribe from
+ * @param callback - the callback function to remove
+ */
+ROSLIB.TFClient.prototype.unsubscribe = function(frameID, callback) {
+  var info = this.frameInfos[frameID];
+  if (info != undefined) {
+    var cbIndex = info.cbs.indexOf(callback);
+    if (cbIndex >= 0) {
+      info.cbs.splice(cbIndex, 1);
+      if (info.cbs.length == 0) {
+        delete this.frameInfos[frameID];
+      }
+      this.needUpdate = true;
+    }
+  }
+};
+
