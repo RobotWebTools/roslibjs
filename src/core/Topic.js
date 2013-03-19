@@ -88,8 +88,8 @@ ROSLIB.Topic.prototype.unsubscribe = function() {
 };
 
 /**
-  * Registers as a publisher for the topic.
-  */
+ * Registers as a publisher for the topic.
+ */
 ROSLIB.Topic.prototype.advertise = function() {
   this.ros.idCounter++;
   var advertiseId = 'advertise:' + this.name + ':' + this.ros.idCounter;
@@ -123,7 +123,7 @@ ROSLIB.Topic.prototype.unadvertise = function() {
  *
  * @param message - A ROSLIB.Message object.
  */
-this.publish = function(message) {
+ROSLIB.Topic.prototype.publish = function(message) {
   if (!this.isAdvertised) {
     this.advertise();
   }

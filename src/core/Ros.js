@@ -18,13 +18,29 @@
 ROSLIB.Ros = function(url) {
   this.socket = null;
 
+
+  // begin by checking if a URL was given
+  if (url) {
+    this.connect(url);
+  }
+};
+ROSLIB.Ros.prototype.__proto__ = EventEmitter2.prototype;
+
+/**
+ * Connect to the specified WebSocket.
+ *
+ * @param url - WebSocket URL for Rosbridge
+ */
+ROSLIB.Ros.prototype.connect = function(url) {
+  var that = this;
+
   /**
    * Emits a 'connection' event on WebSocket connection.
    *
    * @param event - the argument to emit with the event.
    */
   function onOpen(event) {
-    ros.emit('connection', event);
+    that.emit('connection', event);
   };
 
   /**
@@ -33,7 +49,7 @@ ROSLIB.Ros = function(url) {
    * @param event - the argument to emit with the event.
    */
   function onClose(event) {
-    ros.emit('close', event);
+    that.emit('close', event);
   };
 
   /**
@@ -42,7 +58,7 @@ ROSLIB.Ros = function(url) {
    * @param event - the argument to emit with the event.
    */
   function onError(event) {
-    ros.emit('error', event);
+    that.emit('error', event);
   };
 
   /**
@@ -94,9 +110,9 @@ ROSLIB.Ros = function(url) {
   function onMessage(message) {
     function handleMessage(message) {
       if (message.op === 'publish') {
-        ros.emit(message.topic, message.msg);
+        that.emit(message.topic, message.msg);
       } else if (message.op === 'service_response') {
-        ros.emit(message.id, message.values);
+        that.emit(message.id, message.values);
       }
     };
 
@@ -110,32 +126,19 @@ ROSLIB.Ros = function(url) {
     }
   };
 
-  // begin by checking if a URL was given
-  if (url) {
-    this.connect(url);
-  }
-};
-ROSLIB.Ros.prototype.__proto__ = EventEmitter2.prototype;
-
-/**
- * Connect to the specified WebSocket.
- *
- * @param url - WebSocket URL for Rosbridge
- */
-ROSLIB.Ros.prototype.connect = function(url) {
-  ros.socket = new WebSocket(url);
-  ros.socket.onopen = onOpen;
-  ros.socket.onclose = onClose;
-  ros.socket.onerror = onError;
-  ros.socket.onmessage = onMessage;
+  that.socket = new WebSocket(url);
+  that.socket.onopen = onOpen;
+  that.socket.onclose = onClose;
+  that.socket.onerror = onError;
+  that.socket.onmessage = onMessage;
 };
 
 /**
  * Disconnect from the WebSocket server.
  */
 ROSLIB.Ros.prototype.close = function() {
-  if (ros.socket) {
-    ros.socket.close();
+  if (this.socket) {
+    this.socket.close();
   }
 };
 
@@ -171,14 +174,15 @@ ROSLIB.Ros.prototype.authenticate = function(mac, client, dest, rand, t, level, 
  * connected.
  */
 ROSLIB.Ros.prototype.callOnConnection = function(message) {
+  var that = this;
   var messageJson = JSON.stringify(message);
 
   if (ros.socket.readyState !== WebSocket.OPEN) {
-    ros.once('connection', function() {
-      ros.socket.send(messageJson);
+    that.once('connection', function() {
+      that.socket.send(messageJson);
     });
   } else {
-    ros.socket.send(messageJson);
+    that.socket.send(messageJson);
   }
 };
 
@@ -190,7 +194,7 @@ ROSLIB.Ros.prototype.callOnConnection = function(message) {
  */
 ROSLIB.Ros.prototype.getTopics = function(callback) {
   var topicsClient = new ROSLIB.Service({
-    ros : ros,
+    ros : this,
     name : '/rosapi/topics',
     serviceType : 'rosapi/Topics'
   });
@@ -210,7 +214,7 @@ ROSLIB.Ros.prototype.getTopics = function(callback) {
  */
 ROSLIB.Ros.prototype.getServices = function(callback) {
   var servicesClient = new ROSLIB.Service({
-    ros : ros,
+    ros : this,
     name : '/rosapi/services',
     serviceType : 'rosapi/Services'
   });
@@ -230,7 +234,7 @@ ROSLIB.Ros.prototype.getServices = function(callback) {
  */
 ROSLIB.Ros.prototype.getParams = function(callback) {
   var paramsClient = new ROSLIB.Service({
-    ros : ros,
+    ros : this,
     name : '/rosapi/get_param_names',
     serviceType : 'rosapi/GetParamNames'
   });

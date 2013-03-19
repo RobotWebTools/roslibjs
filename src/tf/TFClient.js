@@ -41,7 +41,7 @@ ROSLIB.TFClient = function(options) {
  *
  * @param tf - the TF message from the server
  */
-ROSLIB.TFClient.processFeedback = function(tf) {
+ROSLIB.TFClient.prototype.processFeedback = function(tf) {
   var that = this;
   tf.transforms.forEach(function(transform) {
     var frameID = transform.child_frame_id;
@@ -82,7 +82,7 @@ ROSLIB.TFClient.prototype.updateGoal = function() {
     actionClient : this.actionClient,
     goalMessage : goalMessage
   });
-  this.currentGoal.on('feedback', tfClient.processFeedback.bind(tfClient));
+  this.currentGoal.on('feedback', this.processFeedback.bind(this));
   this.currentGoal.send();
   this.goalUpdateRequested = false;
 };
@@ -94,7 +94,7 @@ ROSLIB.TFClient.prototype.updateGoal = function() {
  * @param callback - function with params:
  *   * transform - the transform data
  */
-ROSLIB.TFClient.subscribe = function(frameID, callback) {
+ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
   // make sure the frame id is relative
   if (frameID[0] === '/') {
     frameID = frameID.substring(1);
