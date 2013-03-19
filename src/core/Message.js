@@ -1,10 +1,10 @@
 /**
- * @author Brandon Alexander - balexander@willowgarage.com
+ * @author Brandon Alexander - baalexander@gmail.com
  */
 
 /**
  * Message objects are used for publishing and subscribing to and from topics.
- * 
+ *
  * @constructor
  * @param values - object matching the fields defined in the .msg definition file.
  */
