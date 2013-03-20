@@ -74,7 +74,6 @@ ROSLIB.ActionClient = function(options) {
 
   // subscribe to the status topic
   statusListener.subscribe(function(statusMessage) {
-    var that = this;
     receivedStatus = true;
     statusMessage.status_list.forEach(function(status) {
       var goal = that.goals[status.goal_id.id];
@@ -118,7 +117,7 @@ ROSLIB.ActionClient.prototype.__proto__ = EventEmitter2.prototype;
  * Cancel all goals associated with this ActionClient.
  */
 ROSLIB.ActionClient.prototype.cancel = function() {
-  var cancelMessage = new ROSLIB.Message({});
+  var cancelMessage = new ROSLIB.Message();
   this.cancelTopic.publish(cancelMessage);
 };
 
@@ -150,14 +149,16 @@ ROSLIB.Goal = function(options) {
   this.goalID = 'goal_' + Math.random() + '_' + date.getTime();
   // Fill in the goal message
   this.goalMessage = new ROSLIB.Message({
-    goal_id : {
-      stamp : {
-        secs : 0,
-        nsecs : 0
+    values : {
+      goal_id : {
+        stamp : {
+          secs : 0,
+          nsecs : 0
+        },
+        id : this.goalID
       },
-      id : this.goalID
-    },
-    goal : this.goalMessage
+      goal : this.goalMessage
+    }
   });
 
   this.on('status', function(status) {
@@ -200,11 +201,12 @@ ROSLIB.Goal.prototype.send = function(timeout) {
  */
 ROSLIB.Goal.prototype.cancel = function() {
   var cancelMessage = new ROSLIB.Message({
-    id : this.goalID
+    values : {
+      id : this.goalID
+    }
   });
   this.actionClient.cancelTopic.publish(cancelMessage);
 };
-
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
@@ -213,13 +215,17 @@ ROSLIB.Goal.prototype.cancel = function() {
  * Message objects are used for publishing and subscribing to and from topics.
  *
  * @constructor
- * @param values - object matching the fields defined in the .msg definition file.
+ * @param options - possible keys include:
+ *   * values - object matching the fields defined in the .msg definition file
  */
-ROSLIB.Message = function(values) {
-  var message = this;
+ROSLIB.Message = function(options) {
+  var that = this;
+  var options = options || {};
+  var values = options.values;
+
   if (values) {
     Object.keys(values).forEach(function(name) {
-      message[name] = values[name];
+      that[name] = values[name];
     });
   }
 };
@@ -255,8 +261,10 @@ ROSLIB.Param.prototype.get = function(callback) {
   });
 
   var request = new ROSLIB.ServiceRequest({
-    name : this.name,
-    value : JSON.stringify('')
+    values : {
+      name : this.name,
+      value : JSON.stringify('')
+    }
   });
 
   paramClient.callService(request, function(result) {
@@ -278,14 +286,15 @@ ROSLIB.Param.prototype.set = function(value) {
   });
 
   var request = new ROSLIB.ServiceRequest({
-    name : this.name,
-    value : JSON.stringify(value)
+    values : {
+      name : this.name,
+      value : JSON.stringify(value)
+    }
   });
 
   paramClient.callService(request, function() {
   });
 };
-
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
@@ -300,10 +309,13 @@ ROSLIB.Param.prototype.set = function(value) {
  *  * <topicName> - a message came from rosbridge with the given topic name
  *  * <serviceID> - a service response came from rosbridge with the given ID
  *
- *  @constructor
- *  @param url (optional) - The WebSocket URL for rosbridge. Can be specified later with `connect`.
+ * @constructor
+ * @param options - possible keys include:
+ *   * url (optional) - the WebSocket URL for rosbridge (can be specified later with `connect`)
  */
-ROSLIB.Ros = function(url) {
+ROSLIB.Ros = function(options) {
+  var options = options || {};
+  var url = options.url;
   this.socket = null;
 
 
@@ -465,7 +477,7 @@ ROSLIB.Ros.prototype.callOnConnection = function(message) {
   var that = this;
   var messageJson = JSON.stringify(message);
 
-  if (ros.socket.readyState !== WebSocket.OPEN) {
+  if (this.socket.readyState !== WebSocket.OPEN) {
     that.once('connection', function() {
       that.socket.send(messageJson);
     });
@@ -565,7 +577,9 @@ ROSLIB.Service.prototype.callService = function(request, callback) {
   serviceCallId = 'call_service:' + this.name + ':' + this.ros.idCounter;
 
   this.ros.once(serviceCallId, function(data) {
-    var response = new ROSLIB.ServiceResponse(data);
+    var response = new ROSLIB.ServiceResponse({
+      values : data
+    });
     callback(response);
   });
 
@@ -582,7 +596,6 @@ ROSLIB.Service.prototype.callService = function(request, callback) {
   };
   this.ros.callOnConnection(call);
 };
-
 /**
  * @author Brandon Alexander - balexander@willowgarage.com
  */
@@ -591,10 +604,14 @@ ROSLIB.Service.prototype.callService = function(request, callback) {
  * A ServiceRequest is passed into the service call.
  *
  * @constructor
- * @param values - object matching the values of the request part from the .srv file.
+ * @param options - possible keys include:
+ *   * values - object matching the values of the request part from the .srv file.
  */
-ROSLIB.ServiceRequest = function(values) {
+ROSLIB.ServiceRequest = function(options) {
   var that = this;
+  var options = options || {};
+  var values = options.values;
+
   if (values) {
     Object.keys(values).forEach(function(name) {
       that[name] = values[name];
@@ -609,10 +626,14 @@ ROSLIB.ServiceRequest = function(values) {
  * A ServiceResponse is returned from the service call.
  *
  * @constructor
- * @param values - object matching the values of the response part from the .srv file.
+ * @param options - possible keys include:
+ *   * values - object matching the values of the response part from the .srv file.
  */
-ROSLIB.ServiceResponse = function(values) {
+ROSLIB.ServiceResponse = function(options) {
   var that = this;
+  var options = options || {};
+  var values = options.values;
+
   if (values) {
     Object.keys(values).forEach(function(name) {
       that[name] = values[name];
@@ -669,13 +690,17 @@ ROSLIB.Topic.prototype.__proto__ = EventEmitter2.prototype;
  *   * message - the published message
  */
 ROSLIB.Topic.prototype.subscribe = function(callback) {
+  var that = this;
+
   this.on('message', function(message) {
     callback(message);
   });
 
   this.ros.on(this.name, function(data) {
-    var message = new ROSLIB.Message(data);
-    this.emit('message', message);
+    var message = new ROSLIB.Message({
+      values : data
+    });
+    that.emit('message', message);
   });
 
   this.ros.idCounter++;
@@ -697,7 +722,7 @@ ROSLIB.Topic.prototype.subscribe = function(callback) {
  * all subscribe callbacks.
  */
 ROSLIB.Topic.prototype.unsubscribe = function() {
-  this.ros.removeAllListeners([this.name]);
+  this.ros.removeAllListeners([ this.name ]);
   this.ros.idCounter++;
   var unsubscribeId = 'unsubscribe:' + this.name + ':' + this.ros.idCounter;
   var call = {
@@ -759,7 +784,6 @@ ROSLIB.Topic.prototype.publish = function(message) {
   };
   this.ros.callOnConnection(call);
 };
-
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
@@ -768,33 +792,38 @@ ROSLIB.Topic.prototype.publish = function(message) {
  * A Pose in 3D space. Values are copied into this object.
  *
  *  @constructor
- *  @param position - the ROSLIB.Vector3 describing the position
- *  @param orientation - the ROSLIB.Quaternion describing the orientation
+ *  @param options - object with following keys:
+ *   * position - the Vector3 describing the position
+ *   * orientation - the ROSLIB.Quaternion describing the orientation
  */
-ROSLIB.Pose = function(position, orientation) {
-  // Copy the values into this object if they exist
-  this.position = new ROSLIB.Vector3();
-  this.orientation = new ROSLIB.Quaternion();
-  if (position !== undefined) {
-    this.position.copy(position);
-  }
-  if (orientation !== undefined) {
-    this.orientation.copy(orientation);
-  }
+ROSLIB.Pose = function(options) {
+  var options = options || {};
+  // copy the values into this object if they exist
+  this.position = new ROSLIB.Vector3(options.position);
+  this.orientation = new ROSLIB.Quaternion(options.orientation);
 };
 
 /**
- * Copy the values from the given pose into this pose.
+ * Apply a transform against this pose.
  *
- * @param pose the pose to copy
- * @returns a pointer to this pose
+ * @param tf the transform
  */
-ROSLIB.Pose.prototype.copy = function(pose) {
-  this.position.copy(pose.position);
-  this.orientation.copy(pose.orientation);
-  return pose;
+ROSLIB.Pose.prototype.applyTransform = function(tf) {
+  this.position.multiplyQuaternion(tf.rotation);
+  this.position.add(tf.translation);
+  var tmp = tf.rotation.clone();
+  tmp.multiply(this.orientation);
+  this.orientation = tmp;
 };
 
+/**
+ * Clone a copy of this pose.
+ *
+ * @returns the cloned pose
+ */
+ROSLIB.Pose.prototype.clone = function() {
+  return new ROSLIB.Pose(this);
+};
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
@@ -803,55 +832,34 @@ ROSLIB.Pose.prototype.copy = function(pose) {
  * A Quaternion.
  *
  *  @constructor
- *  @param x - the x value 
- *  @param y - the y value
- *  @param z - the z value
- *  @param w - the w value
+ *  @param options - object with following keys:
+ *   * x - the x value 
+ *   * y - the y value 
+ *   * z - the z value 
+ *   * w - the w value 
  */
-ROSLIB.Quaternion = function(x, y, z, w) {
-  var quaternion = this;
-  this.x = x || 0;
-  this.y = y || 0;
-  this.z = z || 0;
-  this.w = w || 1;
-};
-
-/**
- * Copy the values from the given quaternion into this quaternion.
- *
- * @param q the quaternion to copy
- * @returns a pointer to this quaternion
- */
-ROSLIB.Quaternion.prototype.copy = function(q) {
-  this.x = q.x;
-  this.y = q.y;
-  this.z = q.z;
-  this.w = q.w;
-  return this;
+ROSLIB.Quaternion = function(options) {
+  var options = options || {};
+  this.x = options.x || 0;
+  this.y = options.y || 0;
+  this.z = options.z || 0;
+  this.w = options.w || 1;
 };
 
 /**
  * Perform a conjugation on this quaternion.
- *
- * @returns a pointer to this quaternion
  */
 ROSLIB.Quaternion.prototype.conjugate = function() {
   this.x *= -1;
   this.y *= -1;
   this.z *= -1;
-  return this;
 };
 
 /**
  * Perform a normalization on this quaternion.
- *
- * @returns a pointer to this quaternion
  */
 ROSLIB.Quaternion.prototype.normalize = function() {
-  var l = Math.sqrt(
-    this.x * this.x + this.y * this.y
-  + this.z * this.z + this.w * this.w
-  );
+  var l = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
   if (l === 0) {
     this.x = 0;
     this.y = 0;
@@ -864,53 +872,26 @@ ROSLIB.Quaternion.prototype.normalize = function() {
     this.z = this.z * l;
     this.w = this.w * l;
   }
-  return this;
 };
 
 /**
  * Convert this quaternion into its inverse.
- *
- * @returns a pointer to this quaternion
  */
 ROSLIB.Quaternion.prototype.inverse = function() {
-  this.conjugate().normalize();
-  return this;
+  this.conjugate();
+  this.normalize();
 };
 
 /**
- * Set the values of this quaternion to the product of quaternions a and b.
+ * Set the values of this quaternion to the product of itself and the given quaternion.
  *
- * @param a the first quaternion to multiply with
- * @param b the second quaternion to multiply with
- * @returns a pointer to this quaternion
+ * @param q the quaternion to multiply with
  */
-ROSLIB.Quaternion.prototype.multiply = function(a, b) {
-  var qax = a.x, qay = a.y, qaz = a.z, qaw = a.w, qbx = b.x, qby = b.y, qbz = b.z, qbw = b.w;
-  this.x = qax * qbw + qay * qbz - qaz * qby + qaw * qbx;
-  this.y = -qax * qbz + qay * qbw + qaz * qbx + qaw * qby;
-  this.z = qax * qby - qay * qbx + qaz * qbw + qaw * qbz;
-  this.w = -qax * qbx - qay * qby - qaz * qbz + qaw * qbw;
-  return this;
-};
-
-/**
- * Multiply the given ROSLIB.Vector3 with this quaternion.
- *
- * @param vector the vector to multiply with
- * @param dest (option) - where the computed values will go (defaults to 'vector').
- * @returns a pointer to dest
- */
-ROSLIB.Quaternion.prototype.multiplyVec3 = function(vector, dest) {
-  if (!dest) {
-    dest = vector;
-  }
-  var x = vector.x, y = vector.y, z = vector.z, qx = this.x, qy = this.y, qz = this.z, qw = this.w;
-  var ix = qw * x + qy * z - qz * y, iy = qw * y + qz * x - qx * z, iz = qw * z + qx * y - qy * x, iw = -qx
-      * x - qy * y - qz * z;
-  dest.x = ix * qw + iw * -qx + iy * -qz - iz * -qy;
-  dest.y = iy * qw + iw * -qy + iz * -qx - ix * -qz;
-  dest.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
-  return dest;
+ROSLIB.Quaternion.prototype.multiply = function(q) {
+  this.x = this.x * q.w + this.y * q.z - this.z * q.y + this.w * q.x;
+  this.y = -this.x * q.z + this.y * q.w + this.z * q.x + this.w * q.y;
+  this.z = this.x * q.y - this.y * q.x + this.z * q.w + this.w * q.z;
+  this.w = -this.x * q.x - this.y * q.y - this.z * q.z + this.w * q.w;
 };
 
 /**
@@ -919,9 +900,35 @@ ROSLIB.Quaternion.prototype.multiplyVec3 = function(vector, dest) {
  * @returns the cloned quaternion
  */
 ROSLIB.Quaternion.prototype.clone = function() {
-  return new ROSLIB.Quaternion(this.x, this.y, this.z, this.w);
+  return new ROSLIB.Quaternion(this);
+};
+/**
+ * @author David Gossow - dgossow@willowgarage.com
+ */
+
+/**
+ * A Transform in 3-space. Values are copied into this object.
+ *
+ *  @constructor
+ *  @param options - object with following keys:
+ *   * translation - the Vector3 describing the translation
+ *   * rotation - the ROSLIB.Quaternion describing the rotation
+ */
+ROSLIB.Transform = function(options) {
+  var options = options || {};
+  // copy the values into this object if they exist
+  this.translation = new ROSLIB.Vector3(options.translation);
+  this.rotation = new ROSLIB.Quaternion(options.rotation);
 };
 
+/**
+ * Clone a copy of this transform.
+ *
+ * @returns the cloned transform
+ */
+ROSLIB.Transform.prototype.clone = function() {
+  return new ROSLIB.Transform(this);
+};
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
@@ -930,55 +937,53 @@ ROSLIB.Quaternion.prototype.clone = function() {
  * A 3D vector.
  *
  *  @constructor
- *  @param x - the x value 
- *  @param y - the y value
- *  @param z - the z value
+ *  @param options - object with following keys:
+ *   * x - the x value 
+ *   * y - the y value 
+ *   * z - the z value 
  */
-ROSLIB.Vector3 = function(x, y, z) {
-  this.x = x || 0;
-  this.y = y || 0;
-  this.z = z || 0;
+ROSLIB.Vector3 = function(options) {
+  var options = options || {};
+  this.x = options.x || 0;
+  this.y = options.y || 0;
+  this.z = options.z || 0;
 };
 
 /**
- * Copy the values from the given vector into this vector.
+ * Set the values of this vector to the sum of itself and the given vector.
  *
- * @param v the vector to copy
- * @returns a pointer to this vector
+ * @param v the vector to add with
  */
-ROSLIB.Vector3.prototype.copy = function(v) {
-  this.x = v.x;
-  this.y = v.y;
-  this.z = v.z;
-  return this;
+ROSLIB.Vector3.prototype.add = function(v) {
+  this.x += v.x;
+  this.y += v.y;
+  this.z += v.z;
 };
 
 /**
- * Set the values of this vector to the sum of vectors a and b.
+ * Set the values of this vector to the difference of itself and the given vector.
  *
- * @param a the first vector to add with
- * @param b the second vector to add with
- * @returns a pointer to this vector
+ * @param v the vector to subtract with
  */
-ROSLIB.Vector3.prototype.add = function(a, b) {
-  this.x = a.x + b.x;
-  this.y = a.y + b.y;
-  this.z = a.z + b.z;
-  return this;
+ROSLIB.Vector3.prototype.subtract = function(v) {
+  this.x -= v.x;
+  this.y -= v.y;
+  this.z -= v.z;
 };
 
 /**
- * Set the values of this vector to the difference of vectors a and b.
+ * Multiply the given Quaternion with this vector.
  *
- * @param a the first vector to add with
- * @param b the second vector to add with
- * @returns a pointer to this vector
+ * @param q - the quaternion to multiply with
  */
-ROSLIB.Vector3.prototype.sub = function(a, b) {
-  this.x = a.x - b.x;
-  this.y = a.y - b.y;
-  this.z = a.z - b.z;
-  return this;
+ROSLIB.Vector3.prototype.multiplyQuaternion = function(q) {
+  var ix = q.w * this.x + q.y * this.z - q.z * this.y;
+  var iy = q.w * this.y + q.z * this.x - q.x * this.z;
+  var iz = q.w * this.z + q.x * this.y - q.y * this.x;
+  var iw = -q.x * this.x - q.y * this.y - q.z * this.z;
+  this.x = ix * q.w + iw * -q.x + iy * -q.z - iz * -q.y;
+  this.y = iy * q.w + iw * -q.y + iz * -q.x - ix * -q.z;
+  this.z = iz * q.w + iw * -q.z + ix * -q.y - iy * -q.x;
 };
 
 /**
@@ -987,9 +992,8 @@ ROSLIB.Vector3.prototype.sub = function(a, b) {
  * @returns the cloned vector
  */
 ROSLIB.Vector3.prototype.clone = function() {
-  return new ROSLIB.Vector3(this.x, this.y, this.z);
+  return new ROSLIB.Vector3(this);
 };
-
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
@@ -1039,8 +1043,10 @@ ROSLIB.TFClient.prototype.processFeedback = function(tf) {
     var frameID = transform.child_frame_id;
     var info = that.frameInfos[frameID];
     if (info != undefined) {
-      info.transform = new ROSLIB.Transform(transform.transform.translation,
-        transform.transform.rotation);
+      info.transform = new ROSLIB.Transform({
+        translation : transform.transform.translation,
+        rotation : transform.transform.rotation
+      });
       info.cbs.forEach(function(cb) {
         cb(info.transform);
       });
@@ -1097,7 +1103,7 @@ ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
       cbs : []
     };
     if (!this.goalUpdateRequested) {
-      setTimeout(this.updateGoal.bind(tfClient), this.goalUpdateDelay);
+      setTimeout(this.updateGoal.bind(this), this.goalUpdateDelay);
       this.goalUpdateRequested = true;
     }
   } else {
@@ -1128,65 +1134,3 @@ ROSLIB.TFClient.prototype.unsubscribe = function(frameID, callback) {
     }
   }
 };
-
-/**
- * @author David Gossow - dgossow@willowgarage.com
- */
-
-/**
- * A Transform in 3-space. Values are copied into this object.
- *
- *  @constructor
- *  @param translation - the ROSLIB.Vector3 describing the translation
- *  @param rotation - the ROSLIB.Quaternion describing the rotation
- */
-ROSLIB.Transform = function(translation, rotation) {
-  this.translation = new ROSLIB.Vector3();
-  this.rotation = new ROSLIB.Quaternion();
-  if (translation !== undefined) {
-    this.translation.copy(translation);
-  }
-  if (rotation !== undefined) {
-    this.rotation.copy(rotation);
-  }
-};
-
-/**
- * Apply a transform against the given ROSLIB.Pose.
- *
- * @param pose the pose to transform with
- * @returns a pointer to the pose
- */
-ROSLIB.Transform.prototype.apply = function(pose) {
-  this.rotation.multiplyVec3(pose.position);
-  pose.position.add(pose.position, this.translation);
-  pose.orientation.multiply(this.rotation, pose.orientation);
-  return pose;
-};
-
-/**
- * Apply an inverse transform against the given ROSLIB.Pose.
- *
- * @param pose the pose to transform with
- * @returns a pointer to the pose
- */
-ROSLIB.Transform.prototype.applyInverse = function(pose) {
-  var rotInv = this.rotation.clone().inverse();
-  rotInv.multiplyVec3(pose.position);
-  pose.position.sub(pose.position, this.translation);
-  pose.orientation.multiply(rotInv, pose.orientation);
-  return pose;
-};
-
-/**
- * Copy the values from the given transform into this transform.
- *
- * @param transform the transform to copy
- * @returns a pointer to this transform
- */
-ROSLIB.Transform.prototype.copy = function(transform) {
-  transform.translation.copy(transform.translation);
-  transform.rotation.copy(transform.rotation);
-  return transform;
-};
-
