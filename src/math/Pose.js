@@ -6,30 +6,35 @@
  * A Pose in 3D space. Values are copied into this object.
  *
  *  @constructor
- *  @param position - the ROSLIB.Vector3 describing the position
- *  @param orientation - the ROSLIB.Quaternion describing the orientation
+ *  @param options - object with following keys:
+ *   * position - the Vector3 describing the position
+ *   * orientation - the ROSLIB.Quaternion describing the orientation
  */
-ROSLIB.Pose = function(position, orientation) {
-  // Copy the values into this object if they exist
-  this.position = new ROSLIB.Vector3();
-  this.orientation = new ROSLIB.Quaternion();
-  if (position !== undefined) {
-    this.position.copy(position);
-  }
-  if (orientation !== undefined) {
-    this.orientation.copy(orientation);
-  }
+ROSLIB.Pose = function(options) {
+  var options = options || {};
+  // copy the values into this object if they exist
+  this.position = new ROSLIB.Vector3(options.position);
+  this.orientation = new ROSLIB.Quaternion(options.orientation);
 };
 
 /**
- * Copy the values from the given pose into this pose.
+ * Apply a transform against this pose.
  *
- * @param pose the pose to copy
- * @returns a pointer to this pose
+ * @param tf the transform
  */
-ROSLIB.Pose.prototype.copy = function(pose) {
-  this.position.copy(pose.position);
-  this.orientation.copy(pose.orientation);
-  return pose;
+ROSLIB.Pose.prototype.applyTransform = function(tf) {
+  this.position.multiplyQuaternion(tf.rotation);
+  this.position.add(tf.translation);
+  var tmp = tf.rotation.clone();
+  tmp.multiply(this.orientation);
+  this.orientation = tmp;
 };
 
+/**
+ * Clone a copy of this pose.
+ *
+ * @returns the cloned pose
+ */
+ROSLIB.Pose.prototype.clone = function() {
+  return new ROSLIB.Pose(this);
+};

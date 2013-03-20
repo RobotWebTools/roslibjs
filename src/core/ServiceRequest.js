@@ -6,10 +6,14 @@
  * A ServiceRequest is passed into the service call.
  *
  * @constructor
- * @param values - object matching the values of the request part from the .srv file.
+ * @param options - possible keys include:
+ *   * values - object matching the values of the request part from the .srv file.
  */
-ROSLIB.ServiceRequest = function(values) {
+ROSLIB.ServiceRequest = function(options) {
   var that = this;
+  var options = options || {};
+  var values = options.values;
+
   if (values) {
     Object.keys(values).forEach(function(name) {
       that[name] = values[name];

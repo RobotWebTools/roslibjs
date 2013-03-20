@@ -239,7 +239,7 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/_home_vagrant_ws_roslibjs_src_tf_Transform.js.html">Transform.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/_home_tor1pal_Documents_WPI_RAIL_ROS_groovy_src_roslibjs_src_math_Transform.js.html">Transform.js</a>.
 				
 			</p>
 
@@ -258,7 +258,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROSLIB.Transform.html#constructor">ROSLIB.Transform</a></b>(translation, rotation)
+								<b><a href="../symbols/ROSLIB.Transform.html#constructor">ROSLIB.Transform</a></b>(options)
 							</div>
 							<div class="description">A Transform in 3-space.</div>
 						</td>
@@ -287,27 +287,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Transform.html#apply">apply</a></b>(pose)
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Transform.html#clone">clone</a></b>()
 								</div>
-								<div class="description">Apply a transform against the given ROSLIB.Pose.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Transform.html#applyInverse">applyInverse</a></b>(pose)
-								</div>
-								<div class="description">Apply an inverse transform against the given ROSLIB.Pose.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Transform.html#copy">copy</a></b>(transform)
-								</div>
-								<div class="description">Copy the values from the given transform into this transform.</div>
+								<div class="description">Clone a copy of this transform.</div>
 							</td>
 						</tr>
 					
@@ -328,7 +310,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROSLIB.Transform</b>(translation, rotation)
+						<b>ROSLIB.Transform</b>(options)
 				</div>
 				
 				<div class="description">
@@ -344,16 +326,12 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								 <b>translation</b>
+								 <b>options</b>
 								
 							</dt>
-								<dd>- the ROSLIB.Vector3 describing the translation</dd>
-						
-							<dt>
-								 <b>rotation</b>
-								
-							</dt>
-								<dd>- the ROSLIB.Quaternion describing the rotation</dd>
+								<dd>- object with following keys:
+  * translation - the Vector3 describing the translation
+  * rotation - the ROSLIB.Quaternion describing the rotation</dd>
 						
 						</dl>
 					
@@ -376,32 +354,21 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="apply"> </a>
+					<a name="clone"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>apply</b>(pose)
+					<b>clone</b>()
 					
 					</div>
 					<div class="description">
-						Apply a transform against the given ROSLIB.Pose.
+						Clone a copy of this transform.
 						
 						
 					</div>
 					
 					
 					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>pose</b>
-									
-								</dt>
-								<dd>the pose to transform with</dd>
-							
-							</dl>
 						
 						
 						
@@ -410,93 +377,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>a pointer to the pose</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="applyInverse"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>applyInverse</b>(pose)
-					
-					</div>
-					<div class="description">
-						Apply an inverse transform against the given ROSLIB.Pose.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>pose</b>
-									
-								</dt>
-								<dd>the pose to transform with</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>a pointer to the pose</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="copy"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>copy</b>(transform)
-					
-					</div>
-					<div class="description">
-						Copy the values from the given transform into this transform.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>transform</b>
-									
-								</dt>
-								<dd>the transform to copy</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>a pointer to this transform</dd>
+								<dd>the cloned transform</dd>
 							
 							</dl>
 						
@@ -517,7 +398,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Tue Mar 19 2013 22:13:00 GMT-0000 (UTC)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Mar 20 2013 16:56:47 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>
