@@ -48,7 +48,7 @@ ROSLIB.TFClient.prototype.processFeedback = function(tf) {
     var info = that.frameInfos[frameID];
     if (info != undefined) {
       info.transform = new ROSLIB.Transform(transform.transform.translation,
-        transform.transform.rotation);
+          transform.transform.rotation);
       info.cbs.forEach(function(cb) {
         cb(info.transform);
       });
@@ -136,4 +136,3 @@ ROSLIB.TFClient.prototype.unsubscribe = function(frameID, callback) {
     }
   }
 };
-

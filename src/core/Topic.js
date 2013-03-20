@@ -49,13 +49,15 @@ ROSLIB.Topic.prototype.__proto__ = EventEmitter2.prototype;
  */
 ROSLIB.Topic.prototype.subscribe = function(callback) {
   var that = this;
-  
+
   this.on('message', function(message) {
     callback(message);
   });
 
   this.ros.on(this.name, function(data) {
-    var message = new ROSLIB.Message(data);
+    var message = new ROSLIB.Message({
+      values : data
+    });
     that.emit('message', message);
   });
 
@@ -78,7 +80,7 @@ ROSLIB.Topic.prototype.subscribe = function(callback) {
  * all subscribe callbacks.
  */
 ROSLIB.Topic.prototype.unsubscribe = function() {
-  this.ros.removeAllListeners([this.name]);
+  this.ros.removeAllListeners([ this.name ]);
   this.ros.idCounter++;
   var unsubscribeId = 'unsubscribe:' + this.name + ':' + this.ros.idCounter;
   var call = {
@@ -140,4 +142,3 @@ ROSLIB.Topic.prototype.publish = function(message) {
   };
   this.ros.callOnConnection(call);
 };
-

@@ -12,10 +12,13 @@
  *  * <topicName> - a message came from rosbridge with the given topic name
  *  * <serviceID> - a service response came from rosbridge with the given ID
  *
- *  @constructor
- *  @param url (optional) - The WebSocket URL for rosbridge. Can be specified later with `connect`.
+ * @constructor
+ * @param options - possible keys include:
+ *   * url (optional) - the WebSocket URL for rosbridge (can be specified later with `connect`)
  */
-ROSLIB.Ros = function(url) {
+ROSLIB.Ros = function(options) {
+  var options = options || {};
+  var url = options.url;
   this.socket = null;
 
 
