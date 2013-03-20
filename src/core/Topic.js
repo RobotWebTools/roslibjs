@@ -48,13 +48,15 @@ ROSLIB.Topic.prototype.__proto__ = EventEmitter2.prototype;
  *   * message - the published message
  */
 ROSLIB.Topic.prototype.subscribe = function(callback) {
+  var that = this;
+  
   this.on('message', function(message) {
     callback(message);
   });
 
   this.ros.on(this.name, function(data) {
     var message = new ROSLIB.Message(data);
-    this.emit('message', message);
+    that.emit('message', message);
   });
 
   this.ros.idCounter++;
