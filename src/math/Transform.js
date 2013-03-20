@@ -54,8 +54,8 @@ ROSLIB.Transform.prototype.applyInverse = function(pose) {
  * @returns a pointer to this transform
  */
 ROSLIB.Transform.prototype.copy = function(transform) {
-  transform.translation.copy(transform.translation);
-  transform.rotation.copy(transform.rotation);
-  return transform;
+  this.translation.copy(transform.translation);
+  this.rotation.copy(transform.rotation);
+  return this;
 };
 

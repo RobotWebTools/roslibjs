@@ -105,7 +105,7 @@ ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
       cbs : []
     };
     if (!this.goalUpdateRequested) {
-      setTimeout(this.updateGoal.bind(tfClient), this.goalUpdateDelay);
+      setTimeout(this.updateGoal.bind(this), this.goalUpdateDelay);
       this.goalUpdateRequested = true;
     }
   } else {
