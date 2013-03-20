@@ -13,45 +13,18 @@
  *   * actionClient - the ROSLIB.ActionClient to use with this goal
  *   * goalMessage - The JSON object containing the goal for the action server
  */
-
 ROSLIB.Goal = function(options) {
-  var goal = this;
+  var that = this;
   this.actionClient = options.actionClient;
   this.goalMessage = options.goalMessage;
   this.isFinished = false;
 
-  // used to create random IDs
+  // Used to create random IDs
   var date = new Date();
 
-  /**
-   * Send the goal to the action server.
-   * 
-   * @param timeout (optional) - a timeout length for the goal's result
-   */
-  this.send = function(timeout) {
-    goal.actionClient.goalTopic.publish(goal.goalMessage);
-    if (timeout) {
-      setTimeout(function() {
-        if (!goal.isFinished) {
-          goal.emit('timeout');
-        }
-      }, timeout);
-    }
-  };
-
-  /**
-   * Cancel the current goal.
-   */
-  this.cancel = function() {
-    var cancelMessage = new ROSLIB.Message({
-      id : goal.goalID
-    });
-    goal.actionClient.cancelTopic.publish(cancelMessage);
-  };
-
-  // create a random ID
-  this.goalID = 'goal_' + Math.random() + "_" + date.getTime();
-  // fill in the goal message
+  // Create a random ID
+  this.goalID = 'goal_' + Math.random() + '_' + date.getTime();
+  // Fill in the goal message
   this.goalMessage = new ROSLIB.Message({
     goal_id : {
       stamp : {
@@ -64,20 +37,47 @@ ROSLIB.Goal = function(options) {
   });
 
   this.on('status', function(status) {
-    this.status = status;
+    that.status = status;
   });
 
   this.on('result', function(result) {
-    this.isFinished = true;
-    this.result = result;
+    that.isFinished = true;
+    that.result = result;
   });
 
   this.on('feedback', function(feedback) {
-    this.feedback = feedback;
+    that.feedback = feedback;
   });
 
-  // add the goal
+  // Add the goal
   this.actionClient.goals[this.goalID] = this;
-
 };
 ROSLIB.Goal.prototype.__proto__ = EventEmitter2.prototype;
+
+/**
+ * Send the goal to the action server.
+ *
+ * @param timeout (optional) - a timeout length for the goal's result
+ */
+ROSLIB.Goal.prototype.send = function(timeout) {
+  var that = this;
+  that.actionClient.goalTopic.publish(that.goalMessage);
+  if (timeout) {
+    setTimeout(function() {
+      if (!that.isFinished) {
+        that.emit('timeout');
+      }
+    }, timeout);
+  }
+};
+
+/**
+ * Cancel the current goal.
+ */
+ROSLIB.Goal.prototype.cancel = function() {
+  var cancelMessage = new ROSLIB.Message({
+    id : this.goalID
+  });
+  this.actionClient.cancelTopic.publish(cancelMessage);
+};
+

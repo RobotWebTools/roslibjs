@@ -19,7 +19,7 @@
  *   * timeout - the timeout length when connecting to the action server
  */
 ROSLIB.ActionClient = function(options) {
-  var actionClient = this;
+  var that = this;
   options = options || {};
   this.ros = options.ros;
   this.serverName = options.serverName;
@@ -36,34 +36,30 @@ ROSLIB.ActionClient = function(options) {
     name : this.serverName + '/feedback',
     messageType : this.actionName + 'Feedback'
   });
+
   var statusListener = new ROSLIB.Topic({
     ros : this.ros,
     name : this.serverName + '/status',
     messageType : 'actionlib_msgs/GoalStatusArray'
   });
+
   var resultListener = new ROSLIB.Topic({
     ros : this.ros,
     name : this.serverName + '/result',
     messageType : this.actionName + 'Result'
   });
+
   this.goalTopic = new ROSLIB.Topic({
     ros : this.ros,
     name : this.serverName + '/goal',
     messageType : this.actionName + 'Goal'
   });
+
   this.cancelTopic = new ROSLIB.Topic({
     ros : this.ros,
     name : this.serverName + '/cancel',
     messageType : 'actionlib_msgs/GoalID'
   });
-
-  /**
-   * Cancel all goals associated with this ActionClient.
-   */
-  this.cancel = function() {
-    var cancelMessage = new ROSLIB.Message({});
-    this.cancelTopic.publish(cancelMessage);
-  };
 
   // advertise the goal and cancel topics
   this.goalTopic.advertise();
@@ -71,9 +67,10 @@ ROSLIB.ActionClient = function(options) {
 
   // subscribe to the status topic
   statusListener.subscribe(function(statusMessage) {
+    var that = this;
     receivedStatus = true;
     statusMessage.status_list.forEach(function(status) {
-      var goal = actionClient.goals[status.goal_id.id];
+      var goal = that.goals[status.goal_id.id];
       if (goal) {
         goal.emit('status', status);
       }
@@ -82,7 +79,7 @@ ROSLIB.ActionClient = function(options) {
 
   // subscribe the the feedback topic
   feedbackListener.subscribe(function(feedbackMessage) {
-    var goal = actionClient.goals[feedbackMessage.status.goal_id.id];
+    var goal = that.goals[feedbackMessage.status.goal_id.id];
     if (goal) {
       goal.emit('status', feedbackMessage.status);
       goal.emit('feedback', feedbackMessage.feedback);
@@ -91,7 +88,7 @@ ROSLIB.ActionClient = function(options) {
 
   // subscribe to the result topic
   resultListener.subscribe(function(resultMessage) {
-    var goal = actionClient.goals[resultMessage.status.goal_id.id];
+    var goal = that.goals[resultMessage.status.goal_id.id];
 
     if (goal) {
       goal.emit('status', resultMessage.status);
@@ -103,9 +100,18 @@ ROSLIB.ActionClient = function(options) {
   if (this.timeout) {
     setTimeout(function() {
       if (!receivedStatus) {
-        actionClient.emit('timeout');
+        that.emit('timeout');
       }
     }, this.timeout);
   }
 };
 ROSLIB.ActionClient.prototype.__proto__ = EventEmitter2.prototype;
+
+/**
+ * Cancel all goals associated with this ActionClient.
+ */
+ROSLIB.ActionClient.prototype.cancel = function() {
+  var cancelMessage = new ROSLIB.Message({});
+  this.cancelTopic.publish(cancelMessage);
+};
+

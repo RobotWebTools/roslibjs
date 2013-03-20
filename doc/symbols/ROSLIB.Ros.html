@@ -239,7 +239,7 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/_wg_stor5_rtoris_Documents_WPI_RAIL_ROS_groovy_src_roslibjs_src_core_Ros.js.html">Ros.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/_home_vagrant_ws_roslibjs_src_core_Ros.js.html">Ros.js</a>.
 				
 			</p>
 
@@ -298,7 +298,8 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Ros.html#callOnConnection">callOnConnection</a></b>(message)
 								</div>
-								<div class="description">Sends the message over the WebSocket, but queues the message up if not yet connected.</div>
+								<div class="description">Sends the message over the WebSocket, but queues the message up if not yet
+connected.</div>
 							</td>
 						</tr>
 					
@@ -317,17 +318,6 @@ ul.inheritsList
 								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Ros.html#connect">connect</a></b>(url)
 								</div>
 								<div class="description">Connect to the specified WebSocket.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;inner&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Ros.html#-decompressPng">decompressPng</a></b>(data, callback)
-								</div>
-								<div class="description">If a message was compressed as a PNG image (a compression hack since gzipping over WebSockets
-is not supported yet), this function places the "image" in a canvas element then decodes the
-"image" as a Base64 string.</div>
 							</td>
 						</tr>
 					
@@ -355,42 +345,6 @@ is not supported yet), this function places the "image" in a canvas element then
 								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Ros.html#getTopics">getTopics</a></b>(callback)
 								</div>
 								<div class="description">Retrieves list of topics in ROS as an array.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;inner&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Ros.html#-onClose">onClose</a></b>(event)
-								</div>
-								<div class="description">Emits a 'close' event on WebSocket disconnection.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;inner&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Ros.html#-onError">onError</a></b>(event)
-								</div>
-								<div class="description">Emits an 'error' event whenever there was an error.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;inner&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Ros.html#-onMessage">onMessage</a></b>(message)
-								</div>
-								<div class="description">Parses message responses from rosbridge and sends to the appropriate topic, service, or param.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;inner&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Ros.html#-onOpen">onOpen</a></b>(event)
-								</div>
-								<div class="description">Emits a 'connection' event on WebSocket connection.</div>
 							</td>
 						</tr>
 					
@@ -540,7 +494,8 @@ Emits the following events:
 					
 					</div>
 					<div class="description">
-						Sends the message over the WebSocket, but queues the message up if not yet connected.
+						Sends the message over the WebSocket, but queues the message up if not yet
+connected.
 						
 						
 					</div>
@@ -617,51 +572,6 @@ Emits the following events:
 									
 								</dt>
 								<dd>- WebSocket URL for Rosbridge</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="-decompressPng"> </a>
-					<div class="fixedFont">&lt;inner&gt; 
-					
-					
-					<b>decompressPng</b>(data, callback)
-					
-					</div>
-					<div class="description">
-						If a message was compressed as a PNG image (a compression hack since gzipping over WebSockets
-is not supported yet), this function places the "image" in a canvas element then decodes the
-"image" as a Base64 string.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>data</b>
-									
-								</dt>
-								<dd>- object containing the PNG data.</dd>
-							
-								<dt>
-									<b>callback</b>
-									
-								</dt>
-								<dd>- function with params:
-  * data - the uncompressed data</dd>
 							
 							</dl>
 						
@@ -783,150 +693,6 @@ is not supported yet), this function places the "image" in a canvas element then
 						
 						
 
-					<hr />
-				
-					<a name="-onClose"> </a>
-					<div class="fixedFont">&lt;inner&gt; 
-					
-					
-					<b>onClose</b>(event)
-					
-					</div>
-					<div class="description">
-						Emits a 'close' event on WebSocket disconnection.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>event</b>
-									
-								</dt>
-								<dd>- the argument to emit with the event.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="-onError"> </a>
-					<div class="fixedFont">&lt;inner&gt; 
-					
-					
-					<b>onError</b>(event)
-					
-					</div>
-					<div class="description">
-						Emits an 'error' event whenever there was an error.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>event</b>
-									
-								</dt>
-								<dd>- the argument to emit with the event.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="-onMessage"> </a>
-					<div class="fixedFont">&lt;inner&gt; 
-					
-					
-					<b>onMessage</b>(message)
-					
-					</div>
-					<div class="description">
-						Parses message responses from rosbridge and sends to the appropriate topic, service, or param.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>message</b>
-									
-								</dt>
-								<dd>- the raw JSON message from rosbridge.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="-onOpen"> </a>
-					<div class="fixedFont">&lt;inner&gt; 
-					
-					
-					<b>onOpen</b>(event)
-					
-					</div>
-					<div class="description">
-						Emits a 'connection' event on WebSocket connection.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>event</b>
-									
-								</dt>
-								<dd>- the argument to emit with the event.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
 					
 				
 			
@@ -941,7 +707,7 @@ is not supported yet), this function places the "image" in a canvas element then
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sun Mar 17 2013 15:42:05 GMT-0700 (PDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Tue Mar 19 2013 22:13:00 GMT-0000 (UTC)
 		</div>
 	</body>
 </html>
