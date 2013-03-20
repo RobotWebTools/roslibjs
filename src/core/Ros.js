@@ -180,7 +180,7 @@ ROSLIB.Ros.prototype.callOnConnection = function(message) {
   var that = this;
   var messageJson = JSON.stringify(message);
 
-  if (ros.socket.readyState !== WebSocket.OPEN) {
+  if (this.socket.readyState !== WebSocket.OPEN) {
     that.once('connection', function() {
       that.socket.send(messageJson);
     });
