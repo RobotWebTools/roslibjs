@@ -6,56 +6,22 @@
  * A Transform in 3-space. Values are copied into this object.
  *
  *  @constructor
- *  @param translation - the ROSLIB.Vector3 describing the translation
- *  @param rotation - the ROSLIB.Quaternion describing the rotation
+ *  @param options - object with following keys:
+ *   * translation - the Vector3 describing the translation
+ *   * rotation - the ROSLIB.Quaternion describing the rotation
  */
-ROSLIB.Transform = function(translation, rotation) {
-  this.translation = new ROSLIB.Vector3();
-  this.rotation = new ROSLIB.Quaternion();
-  if (translation !== undefined) {
-    this.translation.copy(translation);
-  }
-  if (rotation !== undefined) {
-    this.rotation.copy(rotation);
-  }
+ROSLIB.Transform = function(options) {
+  var options = options || {};
+  // copy the values into this object if they exist
+  this.translation = new ROSLIB.Vector3(options.translation);
+  this.rotation = new ROSLIB.Quaternion(options.rotation);
 };
 
 /**
- * Apply a transform against the given ROSLIB.Pose.
+ * Clone a copy of this transform.
  *
- * @param pose the pose to transform with
- * @returns a pointer to the pose
+ * @returns the cloned transform
  */
-ROSLIB.Transform.prototype.apply = function(pose) {
-  this.rotation.multiplyVec3(pose.position);
-  pose.position.add(pose.position, this.translation);
-  pose.orientation.multiply(this.rotation, pose.orientation);
-  return pose;
+ROSLIB.Transform.prototype.clone = function() {
+  return new ROSLIB.Transform(this);
 };
-
-/**
- * Apply an inverse transform against the given ROSLIB.Pose.
- *
- * @param pose the pose to transform with
- * @returns a pointer to the pose
- */
-ROSLIB.Transform.prototype.applyInverse = function(pose) {
-  var rotInv = this.rotation.clone().inverse();
-  rotInv.multiplyVec3(pose.position);
-  pose.position.sub(pose.position, this.translation);
-  pose.orientation.multiply(rotInv, pose.orientation);
-  return pose;
-};
-
-/**
- * Copy the values from the given transform into this transform.
- *
- * @param transform the transform to copy
- * @returns a pointer to this transform
- */
-ROSLIB.Transform.prototype.copy = function(transform) {
-  this.translation.copy(transform.translation);
-  this.rotation.copy(transform.rotation);
-  return this;
-};
-
