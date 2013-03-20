@@ -67,7 +67,6 @@ ROSLIB.ActionClient = function(options) {
 
   // subscribe to the status topic
   statusListener.subscribe(function(statusMessage) {
-    var that = this;
     receivedStatus = true;
     statusMessage.status_list.forEach(function(status) {
       var goal = that.goals[status.goal_id.id];
