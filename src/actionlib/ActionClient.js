@@ -110,7 +110,7 @@ ROSLIB.ActionClient.prototype.__proto__ = EventEmitter2.prototype;
  * Cancel all goals associated with this ActionClient.
  */
 ROSLIB.ActionClient.prototype.cancel = function() {
-  var cancelMessage = new ROSLIB.Message({});
+  var cancelMessage = new ROSLIB.Message();
   this.cancelTopic.publish(cancelMessage);
 };
 

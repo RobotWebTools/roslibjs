@@ -30,7 +30,9 @@ ROSLIB.Service.prototype.callService = function(request, callback) {
   serviceCallId = 'call_service:' + this.name + ':' + this.ros.idCounter;
 
   this.ros.once(serviceCallId, function(data) {
-    var response = new ROSLIB.ServiceResponse(data);
+    var response = new ROSLIB.ServiceResponse({
+      values : data
+    });
     callback(response);
   });
 
@@ -47,4 +49,3 @@ ROSLIB.Service.prototype.callService = function(request, callback) {
   };
   this.ros.callOnConnection(call);
 };
-

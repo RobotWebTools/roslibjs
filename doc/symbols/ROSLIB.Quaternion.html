@@ -239,7 +239,7 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/_home_vagrant_ws_roslibjs_src_math_Quaternion.js.html">Quaternion.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/_home_tor1pal_Documents_WPI_RAIL_ROS_groovy_src_roslibjs_src_math_Quaternion.js.html">Quaternion.js</a>.
 				
 			</p>
 
@@ -258,7 +258,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROSLIB.Quaternion.html#constructor">ROSLIB.Quaternion</a></b>(x, y, z, w)
+								<b><a href="../symbols/ROSLIB.Quaternion.html#constructor">ROSLIB.Quaternion</a></b>(options)
 							</div>
 							<div class="description">A Quaternion.</div>
 						</td>
@@ -305,15 +305,6 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Quaternion.html#copy">copy</a></b>(q)
-								</div>
-								<div class="description">Copy the values from the given quaternion into this quaternion.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Quaternion.html#inverse">inverse</a></b>()
 								</div>
 								<div class="description">Convert this quaternion into its inverse.</div>
@@ -323,18 +314,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Quaternion.html#multiply">multiply</a></b>(a, b)
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Quaternion.html#multiply">multiply</a></b>(q)
 								</div>
-								<div class="description">Set the values of this quaternion to the product of quaternions a and b.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Quaternion.html#multiplyVec3">multiplyVec3</a></b>(vector, dest)
-								</div>
-								<div class="description">Multiply the given ROSLIB.Vector3 with this quaternion.</div>
+								<div class="description">Set the values of this quaternion to the product of itself and the given quaternion.</div>
 							</td>
 						</tr>
 					
@@ -364,7 +346,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROSLIB.Quaternion</b>(x, y, z, w)
+						<b>ROSLIB.Quaternion</b>(options)
 				</div>
 				
 				<div class="description">
@@ -380,28 +362,14 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								 <b>x</b>
+								 <b>options</b>
 								
 							</dt>
-								<dd>- the x value</dd>
-						
-							<dt>
-								 <b>y</b>
-								
-							</dt>
-								<dd>- the y value</dd>
-						
-							<dt>
-								 <b>z</b>
-								
-							</dt>
-								<dd>- the z value</dd>
-						
-							<dt>
-								 <b>w</b>
-								
-							</dt>
-								<dd>- the w value</dd>
+								<dd>- object with following keys:
+  * x - the x value 
+  * y - the y value 
+  * z - the z value 
+  * w - the w value</dd>
 						
 						</dl>
 					
@@ -476,56 +444,6 @@ ul.inheritsList
 						
 						
 						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>a pointer to this quaternion</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="copy"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>copy</b>(q)
-					
-					</div>
-					<div class="description">
-						Copy the values from the given quaternion into this quaternion.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>q</b>
-									
-								</dt>
-								<dd>the quaternion to copy</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>a pointer to this quaternion</dd>
-							
-							</dl>
-						
 						
 						
 
@@ -551,13 +469,6 @@ ul.inheritsList
 						
 						
 						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>a pointer to this quaternion</dd>
-							
-							</dl>
-						
 						
 						
 
@@ -567,11 +478,11 @@ ul.inheritsList
 					<div class="fixedFont">
 					
 					
-					<b>multiply</b>(a, b)
+					<b>multiply</b>(q)
 					
 					</div>
 					<div class="description">
-						Set the values of this quaternion to the product of quaternions a and b.
+						Set the values of this quaternion to the product of itself and the given quaternion.
 						
 						
 					</div>
@@ -583,78 +494,16 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>a</b>
+									<b>q</b>
 									
 								</dt>
-								<dd>the first quaternion to multiply with</dd>
-							
-								<dt>
-									<b>b</b>
-									
-								</dt>
-								<dd>the second quaternion to multiply with</dd>
+								<dd>the quaternion to multiply with</dd>
 							
 							</dl>
 						
 						
 						
 						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>a pointer to this quaternion</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="multiplyVec3"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>multiplyVec3</b>(vector, dest)
-					
-					</div>
-					<div class="description">
-						Multiply the given ROSLIB.Vector3 with this quaternion.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>vector</b>
-									
-								</dt>
-								<dd>the vector to multiply with</dd>
-							
-								<dt>
-									<b>dest</b>
-									
-								</dt>
-								<dd>(option) - where the computed values will go (defaults to 'vector').</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>a pointer to dest</dd>
-							
-							</dl>
 						
 						
 						
@@ -681,13 +530,6 @@ ul.inheritsList
 						
 						
 						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>a pointer to this quaternion</dd>
-							
-							</dl>
-						
 						
 						
 
@@ -705,7 +547,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Tue Mar 19 2013 22:13:00 GMT-0000 (UTC)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Mar 20 2013 16:56:47 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>

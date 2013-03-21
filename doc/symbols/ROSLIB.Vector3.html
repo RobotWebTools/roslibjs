@@ -239,7 +239,7 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/_home_vagrant_ws_roslibjs_src_math_Vector3.js.html">Vector3.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/_home_tor1pal_Documents_WPI_RAIL_ROS_groovy_src_roslibjs_src_math_Vector3.js.html">Vector3.js</a>.
 				
 			</p>
 
@@ -258,7 +258,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROSLIB.Vector3.html#constructor">ROSLIB.Vector3</a></b>(x, y, z)
+								<b><a href="../symbols/ROSLIB.Vector3.html#constructor">ROSLIB.Vector3</a></b>(options)
 							</div>
 							<div class="description">A 3D vector.</div>
 						</td>
@@ -287,9 +287,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Vector3.html#add">add</a></b>(a, b)
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Vector3.html#add">add</a></b>(v)
 								</div>
-								<div class="description">Set the values of this vector to the sum of vectors a and b.</div>
+								<div class="description">Set the values of this vector to the sum of itself and the given vector.</div>
 							</td>
 						</tr>
 					
@@ -305,18 +305,18 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Vector3.html#copy">copy</a></b>(v)
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Vector3.html#multiplyQuaternion">multiplyQuaternion</a></b>(q)
 								</div>
-								<div class="description">Copy the values from the given vector into this vector.</div>
+								<div class="description">Multiply the given Quaternion with this vector.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Vector3.html#sub">sub</a></b>(a, b)
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Vector3.html#subtract">subtract</a></b>(v)
 								</div>
-								<div class="description">Set the values of this vector to the difference of vectors a and b.</div>
+								<div class="description">Set the values of this vector to the difference of itself and the given vector.</div>
 							</td>
 						</tr>
 					
@@ -337,7 +337,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROSLIB.Vector3</b>(x, y, z)
+						<b>ROSLIB.Vector3</b>(options)
 				</div>
 				
 				<div class="description">
@@ -353,22 +353,13 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								 <b>x</b>
+								 <b>options</b>
 								
 							</dt>
-								<dd>- the x value</dd>
-						
-							<dt>
-								 <b>y</b>
-								
-							</dt>
-								<dd>- the y value</dd>
-						
-							<dt>
-								 <b>z</b>
-								
-							</dt>
-								<dd>- the z value</dd>
+								<dd>- object with following keys:
+  * x - the x value 
+  * y - the y value 
+  * z - the z value</dd>
 						
 						</dl>
 					
@@ -395,11 +386,11 @@ ul.inheritsList
 					<div class="fixedFont">
 					
 					
-					<b>add</b>(a, b)
+					<b>add</b>(v)
 					
 					</div>
 					<div class="description">
-						Set the values of this vector to the sum of vectors a and b.
+						Set the values of this vector to the sum of itself and the given vector.
 						
 						
 					</div>
@@ -411,29 +402,16 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>a</b>
+									<b>v</b>
 									
 								</dt>
-								<dd>the first vector to add with</dd>
-							
-								<dt>
-									<b>b</b>
-									
-								</dt>
-								<dd>the second vector to add with</dd>
+								<dd>the vector to add with</dd>
 							
 							</dl>
 						
 						
 						
 						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>a pointer to this vector</dd>
-							
-							</dl>
 						
 						
 						
@@ -472,15 +450,51 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="copy"> </a>
+					<a name="multiplyQuaternion"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>copy</b>(v)
+					<b>multiplyQuaternion</b>(q)
 					
 					</div>
 					<div class="description">
-						Copy the values from the given vector into this vector.
+						Multiply the given Quaternion with this vector.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>q</b>
+									
+								</dt>
+								<dd>- the quaternion to multiply with</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="subtract"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>subtract</b>(v)
+					
+					</div>
+					<div class="description">
+						Set the values of this vector to the difference of itself and the given vector.
 						
 						
 					</div>
@@ -495,69 +509,13 @@ ul.inheritsList
 									<b>v</b>
 									
 								</dt>
-								<dd>the vector to copy</dd>
+								<dd>the vector to subtract with</dd>
 							
 							</dl>
 						
 						
 						
 						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>a pointer to this vector</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="sub"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>sub</b>(a, b)
-					
-					</div>
-					<div class="description">
-						Set the values of this vector to the difference of vectors a and b.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>a</b>
-									
-								</dt>
-								<dd>the first vector to add with</dd>
-							
-								<dt>
-									<b>b</b>
-									
-								</dt>
-								<dd>the second vector to add with</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>a pointer to this vector</dd>
-							
-							</dl>
 						
 						
 						
@@ -576,7 +534,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Tue Mar 19 2013 22:13:00 GMT-0000 (UTC)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Mar 20 2013 16:56:47 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>
