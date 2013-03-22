@@ -51,7 +51,7 @@ ROSLIB.Quaternion.prototype.normalize = function() {
 /**
  * Convert this quaternion into its inverse.
  */
-ROSLIB.Quaternion.prototype.inverse = function() {
+ROSLIB.Quaternion.prototype.invert = function() {
   this.conjugate();
   this.normalize();
 };
@@ -62,10 +62,14 @@ ROSLIB.Quaternion.prototype.inverse = function() {
  * @param q the quaternion to multiply with
  */
 ROSLIB.Quaternion.prototype.multiply = function(q) {
-  this.x = this.x * q.w + this.y * q.z - this.z * q.y + this.w * q.x;
-  this.y = -this.x * q.z + this.y * q.w + this.z * q.x + this.w * q.y;
-  this.z = this.x * q.y - this.y * q.x + this.z * q.w + this.w * q.z;
-  this.w = -this.x * q.x - this.y * q.y - this.z * q.z + this.w * q.w;
+  var newX = this.x * q.w + this.y * q.z - this.z * q.y + this.w * q.x;
+  var newY = -this.x * q.z + this.y * q.w + this.z * q.x + this.w * q.y;
+  var newZ = this.x * q.y - this.y * q.x + this.z * q.w + this.w * q.z;
+  var newW = -this.x * q.x - this.y * q.y - this.z * q.z + this.w * q.w;
+  this.x = newX;
+  this.y = newY;
+  this.z = newZ;
+  this.w = newW;
 };
 
 /**
