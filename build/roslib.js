@@ -149,16 +149,14 @@ ROSLIB.Goal = function(options) {
   this.goalID = 'goal_' + Math.random() + '_' + date.getTime();
   // Fill in the goal message
   this.goalMessage = new ROSLIB.Message({
-    values : {
-      goal_id : {
-        stamp : {
-          secs : 0,
-          nsecs : 0
-        },
-        id : this.goalID
+    goal_id : {
+      stamp : {
+        secs : 0,
+        nsecs : 0
       },
-      goal : this.goalMessage
-    }
+      id : this.goalID
+    },
+    goal : this.goalMessage
   });
 
   this.on('status', function(status) {
@@ -201,9 +199,7 @@ ROSLIB.Goal.prototype.send = function(timeout) {
  */
 ROSLIB.Goal.prototype.cancel = function() {
   var cancelMessage = new ROSLIB.Message({
-    values : {
-      id : this.goalID
-    }
+    id : this.goalID
   });
   this.actionClient.cancelTopic.publish(cancelMessage);
 };
@@ -215,19 +211,15 @@ ROSLIB.Goal.prototype.cancel = function() {
  * Message objects are used for publishing and subscribing to and from topics.
  *
  * @constructor
- * @param options - possible keys include:
- *   * values - object matching the fields defined in the .msg definition file
+ * @param values - object matching the fields defined in the .msg definition file
  */
-ROSLIB.Message = function(options) {
+ROSLIB.Message = function(values) {
   var that = this;
-  var options = options || {};
-  var values = options.values;
+  var values = values || {};
 
-  if (values) {
-    Object.keys(values).forEach(function(name) {
-      that[name] = values[name];
-    });
-  }
+  Object.keys(values).forEach(function(name) {
+    that[name] = values[name];
+  });
 };
 /**
  * @author Brandon Alexander - baalexander@gmail.com
@@ -261,10 +253,8 @@ ROSLIB.Param.prototype.get = function(callback) {
   });
 
   var request = new ROSLIB.ServiceRequest({
-    values : {
-      name : this.name,
-      value : JSON.stringify('')
-    }
+    name : this.name,
+    value : JSON.stringify('')
   });
 
   paramClient.callService(request, function(result) {
@@ -286,10 +276,8 @@ ROSLIB.Param.prototype.set = function(value) {
   });
 
   var request = new ROSLIB.ServiceRequest({
-    values : {
-      name : this.name,
-      value : JSON.stringify(value)
-    }
+    name : this.name,
+    value : JSON.stringify(value)
   });
 
   paramClient.callService(request, function() {
@@ -317,7 +305,6 @@ ROSLIB.Ros = function(options) {
   var options = options || {};
   var url = options.url;
   this.socket = null;
-
 
   // begin by checking if a URL was given
   if (url) {
@@ -390,7 +377,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
 
       // Constructs the JSON.
       var jsonData = '';
-      for (var i = 0; i < imageData.length; i += 4) {
+      for ( var i = 0; i < imageData.length; i += 4) {
         // RGB
         jsonData += String.fromCharCode(imageData[i], imageData[i + 1], imageData[i + 2]);
       }
@@ -426,11 +413,11 @@ ROSLIB.Ros.prototype.connect = function(url) {
     }
   };
 
-  that.socket = new WebSocket(url);
-  that.socket.onopen = onOpen;
-  that.socket.onclose = onClose;
-  that.socket.onerror = onError;
-  that.socket.onmessage = onMessage;
+  this.socket = new WebSocket(url);
+  this.socket.onopen = onOpen;
+  this.socket.onclose = onClose;
+  this.socket.onerror = onError;
+  this.socket.onmessage = onMessage;
 };
 
 /**
@@ -477,7 +464,7 @@ ROSLIB.Ros.prototype.callOnConnection = function(message) {
   var that = this;
   var messageJson = JSON.stringify(message);
 
-  if (this.socket.readyState !== WebSocket.OPEN) {
+  if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
     that.once('connection', function() {
       that.socket.send(messageJson);
     });
@@ -544,7 +531,6 @@ ROSLIB.Ros.prototype.getParams = function(callback) {
     callback(result.names);
   });
 };
-
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
@@ -577,9 +563,7 @@ ROSLIB.Service.prototype.callService = function(request, callback) {
   serviceCallId = 'call_service:' + this.name + ':' + this.ros.idCounter;
 
   this.ros.once(serviceCallId, function(data) {
-    var response = new ROSLIB.ServiceResponse({
-      values : data
-    });
+    var response = new ROSLIB.ServiceResponse(data);
     callback(response);
   });
 
@@ -604,19 +588,15 @@ ROSLIB.Service.prototype.callService = function(request, callback) {
  * A ServiceRequest is passed into the service call.
  *
  * @constructor
- * @param options - possible keys include:
- *   * values - object matching the values of the request part from the .srv file.
+ * @param values - object matching the fields defined in the .srv definition file
  */
-ROSLIB.ServiceRequest = function(options) {
+ROSLIB.ServiceRequest = function(values) {
   var that = this;
-  var options = options || {};
-  var values = options.values;
+  var values = values || {};
 
-  if (values) {
-    Object.keys(values).forEach(function(name) {
-      that[name] = values[name];
-    });
-  }
+  Object.keys(values).forEach(function(name) {
+    that[name] = values[name];
+  });
 };
 /**
  * @author Brandon Alexander - balexander@willowgarage.com
@@ -626,19 +606,15 @@ ROSLIB.ServiceRequest = function(options) {
  * A ServiceResponse is returned from the service call.
  *
  * @constructor
- * @param options - possible keys include:
- *   * values - object matching the values of the response part from the .srv file.
+ * @param values - object matching the fields defined in the .srv definition file
  */
-ROSLIB.ServiceResponse = function(options) {
+ROSLIB.ServiceResponse = function(values) {
   var that = this;
-  var options = options || {};
-  var values = options.values;
+  var values = values || {};
 
-  if (values) {
-    Object.keys(values).forEach(function(name) {
-      that[name] = values[name];
-    });
-  }
+  Object.keys(values).forEach(function(name) {
+    that[name] = values[name];
+  });
 };
 /**
  * @author Brandon Alexander - baalexander@gmail.com
@@ -697,9 +673,7 @@ ROSLIB.Topic.prototype.subscribe = function(callback) {
   });
 
   this.ros.on(this.name, function(data) {
-    var message = new ROSLIB.Message({
-      values : data
-    });
+    var message = new ROSLIB.Message(data);
     that.emit('message', message);
   });
 
@@ -877,7 +851,7 @@ ROSLIB.Quaternion.prototype.normalize = function() {
 /**
  * Convert this quaternion into its inverse.
  */
-ROSLIB.Quaternion.prototype.inverse = function() {
+ROSLIB.Quaternion.prototype.invert = function() {
   this.conjugate();
   this.normalize();
 };
@@ -888,10 +862,14 @@ ROSLIB.Quaternion.prototype.inverse = function() {
  * @param q the quaternion to multiply with
  */
 ROSLIB.Quaternion.prototype.multiply = function(q) {
-  this.x = this.x * q.w + this.y * q.z - this.z * q.y + this.w * q.x;
-  this.y = -this.x * q.z + this.y * q.w + this.z * q.x + this.w * q.y;
-  this.z = this.x * q.y - this.y * q.x + this.z * q.w + this.w * q.z;
-  this.w = -this.x * q.x - this.y * q.y - this.z * q.z + this.w * q.w;
+  var newX = this.x * q.w + this.y * q.z - this.z * q.y + this.w * q.x;
+  var newY = -this.x * q.z + this.y * q.w + this.z * q.x + this.w * q.y;
+  var newZ = this.x * q.y - this.y * q.x + this.z * q.w + this.w * q.z;
+  var newW = -this.x * q.x - this.y * q.y - this.z * q.z + this.w * q.w;
+  this.x = newX;
+  this.y = newY;
+  this.z = newZ;
+  this.w = newW;
 };
 
 /**
