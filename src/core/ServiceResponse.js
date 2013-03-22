@@ -6,17 +6,13 @@
  * A ServiceResponse is returned from the service call.
  *
  * @constructor
- * @param options - possible keys include:
- *   * values - object matching the values of the response part from the .srv file.
+ * @param values - object matching the fields defined in the .srv definition file
  */
-ROSLIB.ServiceResponse = function(options) {
+ROSLIB.ServiceResponse = function(values) {
   var that = this;
-  var options = options || {};
-  var values = options.values;
+  var values = values || {};
 
-  if (values) {
-    Object.keys(values).forEach(function(name) {
-      that[name] = values[name];
-    });
-  }
+  Object.keys(values).forEach(function(name) {
+    that[name] = values[name];
+  });
 };
