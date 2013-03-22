@@ -31,7 +31,8 @@ ROSLIB.Service.prototype.callService = function(request, callback) {
 
   this.ros.once(serviceCallId, function(data) {
     var response = new ROSLIB.ServiceResponse({
-      values : data
+      values : data,
+      type : this.serviceType
     });
     callback(response);
   });

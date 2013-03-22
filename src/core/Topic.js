@@ -56,7 +56,8 @@ ROSLIB.Topic.prototype.subscribe = function(callback) {
 
   this.ros.on(this.name, function(data) {
     var message = new ROSLIB.Message({
-      values : data
+      values : data,
+      type : this.messageType
     });
     that.emit('message', message);
   });
