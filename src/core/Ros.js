@@ -21,7 +21,6 @@ ROSLIB.Ros = function(options) {
   var url = options.url;
   this.socket = null;
 
-
   // begin by checking if a URL was given
   if (url) {
     this.connect(url);
@@ -93,7 +92,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
 
       // Constructs the JSON.
       var jsonData = '';
-      for (var i = 0; i < imageData.length; i += 4) {
+      for ( var i = 0; i < imageData.length; i += 4) {
         // RGB
         jsonData += String.fromCharCode(imageData[i], imageData[i + 1], imageData[i + 2]);
       }
@@ -129,11 +128,11 @@ ROSLIB.Ros.prototype.connect = function(url) {
     }
   };
 
-  that.socket = new WebSocket(url);
-  that.socket.onopen = onOpen;
-  that.socket.onclose = onClose;
-  that.socket.onerror = onError;
-  that.socket.onmessage = onMessage;
+  this.socket = new WebSocket(url);
+  this.socket.onopen = onOpen;
+  this.socket.onclose = onClose;
+  this.socket.onerror = onError;
+  this.socket.onmessage = onMessage;
 };
 
 /**
@@ -180,7 +179,7 @@ ROSLIB.Ros.prototype.callOnConnection = function(message) {
   var that = this;
   var messageJson = JSON.stringify(message);
 
-  if (this.socket.readyState !== WebSocket.OPEN) {
+  if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
     that.once('connection', function() {
       that.socket.send(messageJson);
     });
@@ -247,4 +246,3 @@ ROSLIB.Ros.prototype.getParams = function(callback) {
     callback(result.names);
   });
 };
-

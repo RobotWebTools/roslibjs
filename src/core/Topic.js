@@ -55,10 +55,7 @@ ROSLIB.Topic.prototype.subscribe = function(callback) {
   });
 
   this.ros.on(this.name, function(data) {
-    var message = new ROSLIB.Message({
-      values : data,
-      type : this.messageType
-    });
+    var message = new ROSLIB.Message(data);
     that.emit('message', message);
   });
 

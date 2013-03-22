@@ -8,7 +8,9 @@
 <script type="text/javascript" type="text/javascript">
   // Connecting to ROS
   // -----------------
-  var ros = new ROSLIB.Ros('ws://localhost:9090');
+  var ros = new ROSLIB.Ros({
+    url : 'ws://localhost:9090'
+  });
 
   // If there is an error on the backend, an 'error' emit will be emitted.
   ros.on('error', function(error) {

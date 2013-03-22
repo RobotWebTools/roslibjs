@@ -30,10 +30,8 @@ ROSLIB.Param.prototype.get = function(callback) {
   });
 
   var request = new ROSLIB.ServiceRequest({
-    values : {
-      name : this.name,
-      value : JSON.stringify('')
-    }
+    name : this.name,
+    value : JSON.stringify('')
   });
 
   paramClient.callService(request, function(result) {
@@ -55,10 +53,8 @@ ROSLIB.Param.prototype.set = function(value) {
   });
 
   var request = new ROSLIB.ServiceRequest({
-    values : {
-      name : this.name,
-      value : JSON.stringify(value)
-    }
+    name : this.name,
+    value : JSON.stringify(value)
   });
 
   paramClient.callService(request, function() {

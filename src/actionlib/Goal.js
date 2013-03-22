@@ -26,16 +26,14 @@ ROSLIB.Goal = function(options) {
   this.goalID = 'goal_' + Math.random() + '_' + date.getTime();
   // Fill in the goal message
   this.goalMessage = new ROSLIB.Message({
-    values : {
-      goal_id : {
-        stamp : {
-          secs : 0,
-          nsecs : 0
-        },
-        id : this.goalID
+    goal_id : {
+      stamp : {
+        secs : 0,
+        nsecs : 0
       },
-      goal : this.goalMessage
-    }
+      id : this.goalID
+    },
+    goal : this.goalMessage
   });
 
   this.on('status', function(status) {
@@ -78,9 +76,7 @@ ROSLIB.Goal.prototype.send = function(timeout) {
  */
 ROSLIB.Goal.prototype.cancel = function() {
   var cancelMessage = new ROSLIB.Message({
-    values : {
-      id : this.goalID
-    }
+    id : this.goalID
   });
   this.actionClient.cancelTopic.publish(cancelMessage);
 };
