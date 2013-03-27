@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ROSLIB.Param</title>
+		<title>JsDoc Reference - ROSLIB.UrdfLink</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -246,7 +246,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class ROSLIB.Param
+				Class ROSLIB.UrdfLink
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -257,13 +257,13 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/_home_tor1pal_Documents_WPI_RAIL_ROS_groovy_src_roslibjs_src_core_Param.js.html">Param.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/_home_tor1pal_Documents_WPI_RAIL_ROS_groovy_src_roslibjs_src_urdf_UrdfLink.js.html">UrdfLink.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROSLIB.Param.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ROSLIB.UrdfLink.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -276,9 +276,9 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ROSLIB.Param.html#constructor">ROSLIB.Param</a></b>(options)
+								<b><a href="../symbols/ROSLIB.UrdfLink.html#constructor">ROSLIB.UrdfLink</a></b>(options)
 							</div>
-							<div class="description">A ROS parameter.</div>
+							<div class="description">A Link element in a URDF.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -292,7 +292,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROSLIB.Param.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ROSLIB.UrdfLink.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -303,20 +303,11 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;inner&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Param.html#get">get</a></b>(callback)
+								<div class="fixedFont"><b><a href="../symbols/ROSLIB.UrdfLink.html#-initXml">initXml</a></b>(xml)
 								</div>
-								<div class="description">Fetches the value of the param.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ROSLIB.Param.html#set">set</a></b>(value)
-								</div>
-								<div class="description">Sets the value of the param in ROS.</div>
+								<div class="description">Initialize the element with the given XML node.</div>
 							</td>
 						</tr>
 					
@@ -337,11 +328,11 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>ROSLIB.Param</b>(options)
+						<b>ROSLIB.UrdfLink</b>(options)
 				</div>
 				
 				<div class="description">
-					A ROS parameter.
+					A Link element in a URDF.
 					
 				</div>
 				
@@ -356,9 +347,8 @@ ul.inheritsList
 								 <b>options</b>
 								
 							</dt>
-								<dd>- possible keys include:
-  * ros - the ROSLIB.Ros connection handle
-  * name - the param name, like max_vel_x</dd>
+								<dd>- object with following keys:
+ * xml - the XML element to parse</dd>
 						
 						</dl>
 					
@@ -381,15 +371,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="get"> </a>
-					<div class="fixedFont">
+					<a name="-initXml"> </a>
+					<div class="fixedFont">&lt;inner&gt; 
 					
 					
-					<b>get</b>(callback)
+					<b>initXml</b>(xml)
 					
 					</div>
 					<div class="description">
-						Fetches the value of the param.
+						Initialize the element with the given XML node.
 						
 						
 					</div>
@@ -401,47 +391,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>callback</b>
+									<b>xml</b>
 									
 								</dt>
-								<dd>- function with the following params:
- * value - the value of the param from ROS.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="set"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>set</b>(value)
-					
-					</div>
-					<div class="description">
-						Sets the value of the param in ROS.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>value</b>
-									
-								</dt>
-								<dd>- value to set param to.</dd>
+								<dd>- the XML element to parse</dd>
 							
 							</dl>
 						
