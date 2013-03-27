@@ -3,8 +3,14 @@
  */
 
 var ROSLIB = ROSLIB || {
-  REVISION : '1'
+  REVISION : '3-devel'
 };
+
+//URDF types
+ROSLIB.URDF_SPHERE = 0;
+ROSLIB.URDF_BOX = 1;
+ROSLIB.URDF_CYLINDER = 2;
+ROSLIB.URDF_MESH = 3;
 /**
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -1111,4 +1117,488 @@ ROSLIB.TFClient.prototype.unsubscribe = function(frameID, callback) {
       this.needUpdate = true;
     }
   }
+};
+/**
+ * @author Benjamin Pitzer - ben.pitzer@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
+ */
+
+/**
+ * A Box element in a URDF.
+ * 
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ */
+ROSLIB.UrdfBox = function(options) {
+  var that = this;
+  var options = options || {};
+  var xml = options.xml;
+  this.dimension = null;
+  this.type = null;
+
+  /**
+   * Initialize the element with the given XML node.
+   * 
+   * @param xml - the XML element to parse
+   */
+  var initXml = function(xml) {
+    this.type = ROSLIB.URDF_BOX;
+
+    // parse the string
+    var xyz = xml.getAttribute('size').split(' ');
+    that.dimension = new ROSLIB.Vector3({
+      x : parseFloat(xyz[0]),
+      y : parseFloat(xyz[1]),
+      z : parseFloat(xyz[2])
+    });
+  };
+
+  // pass it to the XML parser
+  initXml(xml);
+};
+/**
+ * @author Benjamin Pitzer - ben.pitzer@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
+ */
+
+/**
+ * A Color element in a URDF.
+ * 
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ */
+ROSLIB.UrdfColor = function(options) {
+  var that = this;
+  var options = options || {};
+  var xml = options.xml;
+  this.r = null;
+  this.g = null;
+  this.b = null;
+  this.a = null;
+
+  /**
+   * Initialize the element with the given XML node.
+   * 
+   * @param xml - the XML element to parse
+   */
+  var initXml = function(xml) {
+    // parse the string
+    var rgba = xml.getAttribute('rgba').split(' ');
+    that.r = parseFloat(rgba[0]);
+    that.g = parseFloat(rgba[1]);
+    that.b = parseFloat(rgba[2]);
+    that.a = parseFloat(rgba[3]);
+    return true;
+  };
+
+  // pass it to the XML parser
+  initXml(xml);
+};
+/**
+ * @author Benjamin Pitzer - ben.pitzer@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
+ */
+
+/**
+ * A Cylinder element in a URDF.
+ * 
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ */
+ROSLIB.UrdfCylinder = function(options) {
+  var that = this;
+  var options = options || {};
+  var xml = options.xml;
+  this.type = null;
+  this.length = null;
+  this.radius = null;
+
+  /**
+   * Initialize the element with the given XML node.
+   * 
+   * @param xml - the XML element to parse
+   */
+  var initXml = function(xml) {
+    that.type = ROSLIB.URDF_CYLINDER;
+    that.length = parseFloat(xml.getAttribute('length'));
+    that.radius = parseFloat(xml.getAttribute('radius'));
+  };
+
+  // pass it to the XML parser
+  initXml(xml);
+};
+/**
+ * @author Benjamin Pitzer - ben.pitzer@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
+ */
+
+/**
+ * A Link element in a URDF.
+ * 
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ */
+ROSLIB.UrdfLink = function(options) {
+  var that = this;
+  var options = options || {};
+  var xml = options.xml;
+  this.name = null;
+  this.visual = null;
+
+  /**
+   * Initialize the element with the given XML node.
+   * 
+   * @param xml - the XML element to parse
+   */
+  var initXml = function(xml) {
+    that.name = xml.getAttribute('name');
+    var visuals = xml.getElementsByTagName('visual');
+    if (visuals.length > 0) {
+      that.visual = new ROSLIB.UrdfVisual({
+        xml : visuals[0]
+      });
+    }
+  };
+
+  // pass it to the XML parser
+  initXml(xml);
+};
+/**
+ * @author Benjamin Pitzer - ben.pitzer@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
+ */
+
+/**
+ * A Material element in a URDF.
+ * 
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ */
+ROSLIB.UrdfMaterial = function(options) {
+  var that = this;
+  var options = options || {};
+  var xml = options.xml;
+  this.name = null;
+  this.textureFilename = null;
+  this.color = null;
+
+  /**
+   * Initialize the element with the given XML node.
+   * 
+   * @param xml - the XML element to parse
+   */
+  var initXml = function(xml) {
+    that.name = xml.getAttribute('name');
+
+    // texture
+    var textures = xml.getElementsByTagName('texture');
+    if (textures.length > 0) {
+      that.textureFilename = textures[0].getAttribute('filename');
+    }
+
+    // color
+    var colors = xml.getElementsByTagName('color');
+    if (colors.length > 0) {
+      // parse the RBGA string
+      that.color = new ROSLIB.UrdfColor({
+        xml : colors[0]
+      });
+    }
+  };
+
+  // pass it to the XML parser
+  initXml(xml);
+};
+/**
+ * @author Benjamin Pitzer - ben.pitzer@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
+ */
+
+/**
+ * A Mesh element in a URDF.
+ * 
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ */
+ROSLIB.UrdfMesh = function(options) {
+  var that = this;
+  var options = options || {};
+  var xml = options.xml;
+  this.filename = null;
+  this.scale = null;
+  this.type = null;
+
+  /**
+   * Initialize the element with the given XML node.
+   * 
+   * @param xml - the XML element to parse
+   */
+  var initXml = function(xml) {
+    that.type = ROSLIB.URDF_MESH;
+    that.filename = xml.getAttribute('filename');
+
+    // check for a scale
+    var scale = xml.getAttribute('scale');
+    if (scale) {
+      // get the XYZ
+      var xyz = scale.split(' ');
+      that.scale = new ROSLIB.Vector3({
+        x : parseFloat(xyz[0]),
+        y : parseFloat(xyz[1]),
+        z : parseFloat(xyz[2])
+      });
+    }
+  };
+
+  // pass it to the XML parser
+  initXml(xml);
+};
+/**
+ * @author Benjamin Pitzer - ben.pitzer@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
+ */
+
+/**
+ * A URDF Model can be used to parse a given URDF into the appropriate elements. 
+ * 
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ *  * string - the XML element to parse as a string
+ */
+ROSLIB.UrdfModel = function(options) {
+  var that = this;
+  var options = options || {};
+  var xml = options.xml;
+  var string = options.string;
+
+  this.name;
+  this.materials = [];
+  this.links = [];
+
+  /**
+   * Initialize the model with the given XML node.
+   * 
+   * @param xml - the XML element to parse
+   */
+  var initXml = function(xml) {
+    // get the robot tag
+    var robotXml = xml.evaluate('//robot', xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+
+    // get the robot name
+    that.name = robotXml.getAttribute('name');
+
+    // parse all the visual elements we need
+    for (n in robotXml.childNodes) {
+      var node = robotXml.childNodes[n];
+      if (node.tagName === 'material') {
+        var material = new ROSLIB.UrdfMaterial({
+          xml : node
+        });
+        // make sure this is unique
+        if (that.materials[material.name]) {
+          console.warn('Material ' + material.name + 'is not unique.');
+        } else {
+          that.materials[material.name] = material;
+        }
+      } else if (node.tagName === 'link') {
+        var link = new ROSLIB.UrdfLink({
+          xml : node
+        });
+        // make sure this is unique
+        if (that.links[link.name]) {
+          console.warn('Link ' + link.name + ' is not unique.');
+        } else {
+          // check for a material
+          if (link.visual && link.visual.material) {
+            if (that.materials[link.visual.material.name]) {
+              link.visual.material = that.materials[link.visual.material.name];
+            } else if (link.visual.material) {
+              that.materials[link.visual.material.name] = link.visual.material;
+            }
+          }
+
+          // add the link
+          that.links[link.name] = link;
+        }
+      }
+    }
+  };
+
+  // check if we are using a string or an XML element
+  if (string) {
+    // parse the string
+    var parser = new DOMParser();
+    xml = parser.parseFromString(string, 'text/xml');
+  }
+  // pass it to the XML parser
+  initXml(xml);
+};
+/**
+ * @author Benjamin Pitzer - ben.pitzer@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
+ */
+
+/**
+ * A Sphere element in a URDF.
+ * 
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ */
+ROSLIB.UrdfSphere = function(options) {
+  var that = this;
+  var options = options || {};
+  var xml = options.xml;
+  this.radius = null;
+  this.type = null;
+
+  /**
+   * Initialize the element with the given XML node.
+   * 
+   * @param xml - the XML element to parse
+   */
+  var initXml = function(xml) {
+    that.type = ROSLIB.URDF_SPHERE;
+    that.radius = parseFloat(xml.getAttribute('radius'));
+  };
+
+  // pass it to the XML parser
+  initXml(xml);
+};
+/**
+ * @author Benjamin Pitzer - ben.pitzer@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
+ */
+
+/**
+ * A Visual element in a URDF.
+ * 
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ */
+ROSLIB.UrdfVisual = function(options) {
+  var that = this;
+  var options = options || {};
+  var xml = options.xml;
+  this.origin = null;
+  this.geometry = null;
+  this.material = null;
+
+  /**
+   * Initialize the element with the given XML node.
+   * 
+   * @param xml - the XML element to parse
+   */
+  var initXml = function(xml) {
+    // origin
+    var origins = xml.getElementsByTagName('origin');
+    if (origins.length === 0) {
+      // use the identity as the default
+      that.origin = new ROSLIB.Pose();
+    } else {
+      // check the XYZ
+      var xyz = xml.getAttribute('xyz');
+      if (!xyz) {
+        // use the default values
+        var position = new ROSLIB.Vector3();
+      } else {
+        var xyz = xyz.split(' ');
+        var position = new ROSLIB.Vector3({
+          x : parseFloat(xyz[0]),
+          y : parseFloat(xyz[1]),
+          z : parseFloat(xyz[2])
+        });
+      }
+
+      // check the RPY
+      rpy = xml.getAttribute('rpy');
+      if (!rpy) {
+        // use the default values
+        var orientation = new ROSLIB.Quaternion();
+      } else {
+        var rpy = rpy.split(' ');
+        // convert from RPY
+        var roll = parseFloat(rpy[0]);
+        var pitch = parseFloat(rpy[1]);
+        var yaw = parseFloat(rpy[2]);
+        var phi = roll / 2.0;
+        var the = pitch / 2.0;
+        var psi = yaw / 2.0;
+        var x = Math.sin(phi) * Math.cos(the) * Math.cos(psi) - Math.cos(phi) * Math.sin(the)
+            * Math.sin(psi);
+        var y = Math.cos(phi) * Math.sin(the) * Math.cos(psi) + Math.sin(phi) * Math.cos(the)
+            * Math.sin(psi);
+        var z = Math.cos(phi) * Math.cos(the) * Math.sin(psi) - Math.sin(phi) * Math.sin(the)
+            * Math.cos(psi);
+        var w = Math.cos(phi) * Math.cos(the) * Math.cos(psi) + Math.sin(phi) * Math.sin(the)
+            * Math.sin(psi);
+
+        var orientation = new ROSLIB.Quaternion({
+          x : x,
+          y : y,
+          z : z,
+          w : w
+        });
+        orientation.normalize();
+      }
+      that.origin = new ROSLIB.Pose({
+        position : position,
+        orientation : orientation
+      });
+    }
+
+    // geometry
+    var geoms = xml.getElementsByTagName('geometry');
+    if (geoms.length > 0) {
+      var shape = null;
+      // check for the shape
+      for (n in geoms[0].childNodes) {
+        var node = geoms[0].childNodes[n];
+        if (node.nodeType === 1) {
+          shape = node;
+          break;
+        }
+      }
+      // check the type
+      var type = shape.nodeName;
+      if (type === 'sphere') {
+        that.geometry = new ROSLIB.UrdfSphere({
+          xml : shape
+        });
+      } else if (type === 'box') {
+        that.geometry = new ROSLIB.UrdfBox({
+          xml : shape
+        });
+      } else if (type === 'cylinder') {
+        that.geometry = new ROSLIB.UrdfCylinder({
+          xml : shape
+        });
+      } else if (type === 'mesh') {
+        that.geometry = new ROSLIB.UrdfMesh({
+          xml : shape
+        });
+      } else {
+        console.warn('Unknown geometry type ' + type);
+      }
+    }
+
+    // material
+    var materials = xml.getElementsByTagName('material');
+    if (materials.length > 0) {
+      that.material = new ROSLIB.UrdfMaterial({
+        xml : materials[0]
+      });
+    }
+  };
+
+  // pass it to the XML parser
+  initXml(xml);
 };
