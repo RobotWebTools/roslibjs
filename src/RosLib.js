@@ -3,5 +3,5 @@
  */
 
 var ROSLIB = ROSLIB || {
-  REVISION : '2'
+  REVISION : '3-devel'
 };
