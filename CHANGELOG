@@ -1,5 +1,5 @@
 DEVEL - **r4**
-* Bug in UrdfVisual RPY to Quaternion conversion fixed (rctoris)
+* Bug in UrdfVisual origin to Pose conversion fixed (rctoris)
 
 2013-03-28 - **r3**
 * URDF XML parser added (rctoris)

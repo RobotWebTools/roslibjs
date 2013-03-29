@@ -1505,7 +1505,7 @@ ROSLIB.UrdfVisual = function(options) {
       that.origin = new ROSLIB.Pose();
     } else {
       // check the XYZ
-      var xyz = xml.getAttribute('xyz');
+      var xyz = origins[0].getAttribute('xyz');
       if (!xyz) {
         // use the default values
         var position = new ROSLIB.Vector3();
