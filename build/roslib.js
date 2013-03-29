@@ -3,7 +3,7 @@
  */
 
 var ROSLIB = ROSLIB || {
-  REVISION : '3'
+  REVISION : '4-devel'
 };
 
 //URDF types
@@ -1519,7 +1519,7 @@ ROSLIB.UrdfVisual = function(options) {
       }
 
       // check the RPY
-      rpy = xml.getAttribute('rpy');
+      var rpy = origins[0].getAttribute('rpy');
       if (!rpy) {
         // use the default values
         var orientation = new ROSLIB.Quaternion();
