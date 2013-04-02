@@ -14,12 +14,12 @@ This project is released as part of the [Robot Web Tools](http://robotwebtools.o
 ### Usage ###
 Pre-built files can be found in either [roslib.js](build/roslib.js) or [roslib.min.js](build/roslib.min.js).
 
-Alternatively, you can use the current release via the Robot Web Tools CDN ([full](http://cdn.robotsfor.me/roslibjs/current/roslib.js)) | ([min](http://cdn.robotsfor.me/roslibjs/current/roslib.min.js))
+Alternatively, you can use the current release via the Robot Web Tools CDN ([full](http://cdn.robotwebtools.org/roslibjs/current/roslib.js)) | ([min](http://cdn.robotwebtools.org/roslibjs/current/roslib.min.js))
 
 ### Dependencies ###
 roslibjs depends on [EventEmitter2](https://github.com/hij1nx/EventEmitter2). The current supported version is 0.4.11.
 
-The current supported version can be found [in this project](include/EventEmitter2/eventemitter2.js) or on the Robot Web Tools CDN ([full](http://cdn.robotsfor.me/EventEmitter2/0.4.11/eventemitter2.js)) | ([min](http://cdn.robotsfor.me/EventEmitter2/0.4.11/eventemitter2.min.js))
+The current supported version can be found [in this project](include/EventEmitter2/eventemitter2.js) or on the Robot Web Tools CDN ([full](http://cdn.robotwebtools.org/EventEmitter2/0.4.11/eventemitter2.js)) | ([min](http://cdn.robotwebtools.org/EventEmitter2/0.4.11/eventemitter2.min.js))
 
 ### Build ###
 To build from source, use the provided [ANT script](utils/build.xml).
