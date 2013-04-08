@@ -1,10 +1,11 @@
 language: node_js
 node_js:
-  - 0.8
+  - "0.10"
 
 before_script:
-  - npm install -g karma
+  - npm install -g karma grunt-cli
+  - cd utils
 
 script:
-  - karma start test/karma.conf.js
+  - grunt build
 
