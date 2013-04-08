@@ -10,7 +10,7 @@
  */
 ROSLIB.Message = function(values) {
   var that = this;
-  var values = values || {};
+  values = values || {};
 
   Object.keys(values).forEach(function(name) {
     that[name] = values[name];

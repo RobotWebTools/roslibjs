@@ -11,8 +11,8 @@
  *   * rotation - the ROSLIB.Quaternion describing the rotation
  */
 ROSLIB.Transform = function(options) {
-  var options = options || {};
-  // copy the values into this object if they exist
+  options = options || {};
+  // Copy the values into this object if they exist
   this.translation = new ROSLIB.Vector3(options.translation);
   this.rotation = new ROSLIB.Quaternion(options.rotation);
 };

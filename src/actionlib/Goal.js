@@ -6,7 +6,7 @@
  * An actionlib goal goal is associated with an action server.
  *
  * Emits the following events:
- *  * 'timeout' - if a timeout occurred while sending a goal 
+ *  * 'timeout' - if a timeout occurred while sending a goal
  *
  *  @constructor
  *  @param object with following keys:

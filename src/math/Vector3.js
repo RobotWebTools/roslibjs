@@ -7,12 +7,12 @@
  *
  *  @constructor
  *  @param options - object with following keys:
- *   * x - the x value 
- *   * y - the y value 
- *   * z - the z value 
+ *   * x - the x value
+ *   * y - the y value
+ *   * z - the z value
  */
 ROSLIB.Vector3 = function(options) {
-  var options = options || {};
+  options = options || {};
   this.x = options.x || 0;
   this.y = options.y || 0;
   this.z = options.z || 0;
