@@ -1,6 +1,7 @@
 {
   "globals": {
-    "module": true
+    "module": true,
+    "EventEmitter2" : true
   },
   "curly": true,
   "eqeqeq": true,
@@ -17,6 +18,8 @@
   "es5": true,
   "strict": false,
   "trailing": true,
-  "quotmark": "single"
+  "quotmark": "single",
+  "proto": true,
+  "laxbreak": true
 }
 

@@ -24,6 +24,9 @@ module.exports = function(grunt) {
       }
     },
     uglify: {
+      options: {
+        report: 'min'
+      },
       build: {
         src: '../build/roslib.js',
         dest: '../build/roslib.min.js'

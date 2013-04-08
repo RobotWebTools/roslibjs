@@ -11,7 +11,7 @@
  *   * orientation - the ROSLIB.Quaternion describing the orientation
  */
 ROSLIB.Pose = function(options) {
-  var options = options || {};
+  options = options || {};
   // copy the values into this object if they exist
   this.position = new ROSLIB.Vector3(options.position);
   this.orientation = new ROSLIB.Quaternion(options.orientation);
