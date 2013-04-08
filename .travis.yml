@@ -5,6 +5,7 @@ node_js:
 before_script:
   - npm install -g karma grunt-cli
   - cd utils
+  - npm install .
 
 script:
   - grunt build
