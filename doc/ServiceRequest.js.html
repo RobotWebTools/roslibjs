@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Index</title>
+    <title>JSDoc: Source: core/ServiceRequest.js</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,30 +17,35 @@
 
 <div id="main">
     
-    <h1 class="page-title">Index</h1>
+    <h1 class="page-title">Source: core/ServiceRequest.js</h1>
     
     
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ * @author Brandon Alexander - balexander@willowgarage.com
+ */
 
+/**
+ * A ServiceRequest is passed into the service call.
+ *
+ * @constructor
+ * @param values - object matching the fields defined in the .srv definition file
+ */
+ROSLIB.ServiceRequest = function(values) {
+  var that = this;
+  values = values || {};
 
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+  Object.keys(values).forEach(function(name) {
+    that[name] = values[name];
+  });
+};
+</code></pre>
+        </article>
+    </section>
 
 
 

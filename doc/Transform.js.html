@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Index</title>
+    <title>JSDoc: Source: math/Transform.js</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,30 +17,44 @@
 
 <div id="main">
     
-    <h1 class="page-title">Index</h1>
+    <h1 class="page-title">Source: math/Transform.js</h1>
     
     
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ * @author David Gossow - dgossow@willowgarage.com
+ */
 
+/**
+ * A Transform in 3-space. Values are copied into this object.
+ *
+ *  @constructor
+ *  @param options - object with following keys:
+ *   * translation - the Vector3 describing the translation
+ *   * rotation - the ROSLIB.Quaternion describing the rotation
+ */
+ROSLIB.Transform = function(options) {
+  options = options || {};
+  // Copy the values into this object if they exist
+  this.translation = new ROSLIB.Vector3(options.translation);
+  this.rotation = new ROSLIB.Quaternion(options.rotation);
+};
 
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+/**
+ * Clone a copy of this transform.
+ *
+ * @returns the cloned transform
+ */
+ROSLIB.Transform.prototype.clone = function() {
+  return new ROSLIB.Transform(this);
+};
+</code></pre>
+        </article>
+    </section>
 
 
 
