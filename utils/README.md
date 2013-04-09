@@ -20,6 +20,8 @@ minimizing, documenting, linting, and testing.
    * `npm install .`
  4. (Optional) To generate the documentation, you'll need Java and JSDoc. Documentation generation is not required for patches.
    * `sudo apt-get install jsdoc-toolkit`
+   * `echo "export JAVA_HOME=/usr/lib/jvm/default-java/jre" >> ~/.bashrc`
+   * `source ~/.bashrc`
 
 #### OS X
 
