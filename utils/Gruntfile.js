@@ -10,12 +10,12 @@ module.exports = function(grunt) {
     },
     jshint: {
       options: {
-        jshintrc: '.jshintrc',
+        jshintrc: '.jshintrc'
       },
       files: [
         'Gruntfile.js',
         '../build/roslib.js'
-      ],
+      ]
     },
     karma: {
       build: {
