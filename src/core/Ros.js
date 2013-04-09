@@ -17,7 +17,7 @@
  *   * url (optional) - the WebSocket URL for rosbridge (can be specified later with `connect`)
  */
 ROSLIB.Ros = function(options) {
-  var options = options || {};
+  options = options || {};
   var url = options.url;
   this.socket = null;
 
@@ -43,7 +43,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
    */
   function onOpen(event) {
     that.emit('connection', event);
-  };
+  }
 
   /**
    * Emits a 'close' event on WebSocket disconnection.
@@ -52,7 +52,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
    */
   function onClose(event) {
     that.emit('close', event);
-  };
+  }
 
   /**
    * Emits an 'error' event whenever there was an error.
@@ -61,7 +61,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
    */
   function onError(event) {
     that.emit('error', event);
-  };
+  }
 
   /**
    * If a message was compressed as a PNG image (a compression hack since
@@ -116,7 +116,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
       } else if (message.op === 'service_response') {
         that.emit(message.id, message.values);
       }
-    };
+    }
 
     var data = JSON.parse(message.data);
     if (data.op === 'png') {
@@ -126,7 +126,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
     } else {
       handleMessage(data);
     }
-  };
+  }
 
   this.socket = new WebSocket(url);
   this.socket.onopen = onOpen;
@@ -168,7 +168,7 @@ ROSLIB.Ros.prototype.authenticate = function(mac, client, dest, rand, t, level, 
     end : end
   };
   // send the request
-  callOnConnection(auth);
+  this.callOnConnection(auth);
 };
 
 /**

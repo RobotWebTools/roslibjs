@@ -5,14 +5,14 @@
 
 /**
  * A Material element in a URDF.
- * 
+ *
  * @constructor
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
 ROSLIB.UrdfMaterial = function(options) {
+  options = options || {};
   var that = this;
-  var options = options || {};
   var xml = options.xml;
   this.name = null;
   this.textureFilename = null;
@@ -20,28 +20,28 @@ ROSLIB.UrdfMaterial = function(options) {
 
   /**
    * Initialize the element with the given XML node.
-   * 
+   *
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
     that.name = xml.getAttribute('name');
 
-    // texture
+    // Texture
     var textures = xml.getElementsByTagName('texture');
     if (textures.length > 0) {
       that.textureFilename = textures[0].getAttribute('filename');
     }
 
-    // color
+    // Color
     var colors = xml.getElementsByTagName('color');
     if (colors.length > 0) {
-      // parse the RBGA string
+      // Parse the RBGA string
       that.color = new ROSLIB.UrdfColor({
         xml : colors[0]
       });
     }
   };
 
-  // pass it to the XML parser
+  // Pass it to the XML parser
   initXml(xml);
 };

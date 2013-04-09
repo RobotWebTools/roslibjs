@@ -5,21 +5,21 @@
 
 /**
  * A Sphere element in a URDF.
- * 
+ *
  * @constructor
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
 ROSLIB.UrdfSphere = function(options) {
+  options = options || {};
   var that = this;
-  var options = options || {};
   var xml = options.xml;
   this.radius = null;
   this.type = null;
 
   /**
    * Initialize the element with the given XML node.
-   * 
+   *
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
@@ -30,3 +30,4 @@ ROSLIB.UrdfSphere = function(options) {
   // pass it to the XML parser
   initXml(xml);
 };
+
