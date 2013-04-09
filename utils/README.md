@@ -18,8 +18,7 @@ minimizing, documenting, linting, and testing.
  3. Install the Grunt tasks specific to this project
    * `cd /path/to/roslibjs/utils/`
    * `npm install .`
- 4. (Optional) To generate the documentation, you'll need Java and JSDoc. Documentation generation is not required for patches.
-   * `sudo apt-get install jsdoc-toolkit`
+ 4. (Optional) To generate the documentation, you'll need to setup Java. Documentation generation is not required for patches.
    * `echo "export JAVA_HOME=/usr/lib/jvm/default-java/jre" >> ~/.bashrc`
    * `source ~/.bashrc`
 
