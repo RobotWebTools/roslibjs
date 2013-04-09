@@ -1,7 +1,7 @@
 Original Authors
 ----------------
 
- * Russell Toris (rctoris@wpi.edu)
+ * [Russell Toris](http://users.wpi.edu/~rctoris/) (rctoris@wpi.edu)
  * Jihoon Lee (jihoonlee.in@gmail.com)
  * Brandon Alexander (balexander@willowgarage.com)
  * David Gossow (dgossow@willowgarage.com)
