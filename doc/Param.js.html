@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Index</title>
+    <title>JSDoc: Source: core/Param.js</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,30 +17,79 @@
 
 <div id="main">
     
-    <h1 class="page-title">Index</h1>
+    <h1 class="page-title">Source: core/Param.js</h1>
     
     
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ * @author Brandon Alexander - baalexander@gmail.com
+ */
 
+/**
+ * A ROS parameter.
+ *
+ * @constructor
+ * @param options - possible keys include:
+ *   * ros - the ROSLIB.Ros connection handle
+ *   * name - the param name, like max_vel_x
+ */
+ROSLIB.Param = function(options) {
+  options = options || {};
+  this.ros = options.ros;
+  this.name = options.name;
+};
 
-    <h3> </h3>
+/**
+ * Fetches the value of the param.
+ *
+ * @param callback - function with the following params:
+ *  * value - the value of the param from ROS.
+ */
+ROSLIB.Param.prototype.get = function(callback) {
+  var paramClient = new ROSLIB.Service({
+    ros : this.ros,
+    name : '/rosapi/get_param',
+    serviceType : 'rosapi/GetParam'
+  });
 
+  var request = new ROSLIB.ServiceRequest({
+    name : this.name,
+    value : JSON.stringify('')
+  });
 
+  paramClient.callService(request, function(result) {
+    var value = JSON.parse(result.value);
+    callback(value);
+  });
+};
 
+/**
+ * Sets the value of the param in ROS.
+ *
+ * @param value - value to set param to.
+ */
+ROSLIB.Param.prototype.set = function(value) {
+  var paramClient = new ROSLIB.Service({
+    ros : this.ros,
+    name : '/rosapi/set_param',
+    serviceType : 'rosapi/SetParam'
+  });
 
+  var request = new ROSLIB.ServiceRequest({
+    name : this.name,
+    value : JSON.stringify(value)
+  });
 
-
-
-
-
-    
-
-
-
-
-
+  paramClient.callService(request, function() {
+  });
+};
+</code></pre>
+        </article>
+    </section>
 
 
 

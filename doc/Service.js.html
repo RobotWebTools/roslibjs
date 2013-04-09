@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Index</title>
+    <title>JSDoc: Source: core/Service.js</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,30 +17,66 @@
 
 <div id="main">
     
-    <h1 class="page-title">Index</h1>
+    <h1 class="page-title">Source: core/Service.js</h1>
     
     
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ * @author Brandon Alexander - baalexander@gmail.com
+ */
 
+/**
+ * A ROS service client.
+ *
+ * @constructor
+ * @params options - possible keys include:
+ *   * ros - the ROSLIB.Ros connection handle
+ *   * name - the service name, like /add_two_ints
+ *   * serviceType - the service type, like 'rospy_tutorials/AddTwoInts'
+ */
+ROSLIB.Service = function(options) {
+  options = options || {};
+  this.ros = options.ros;
+  this.name = options.name;
+  this.serviceType = options.serviceType;
+};
 
-    <h3> </h3>
+/**
+ * Calls the service. Returns the service response in the callback.
+ *
+ * @param request - the ROSLIB.ServiceRequest to send
+ * @param callback - function with params:
+ *   * response - the response from the service request
+ */
+ROSLIB.Service.prototype.callService = function(request, callback) {
+  this.ros.idCounter++;
+  var serviceCallId = 'call_service:' + this.name + ':' + this.ros.idCounter;
 
+  this.ros.once(serviceCallId, function(data) {
+    var response = new ROSLIB.ServiceResponse(data);
+    callback(response);
+  });
 
+  var requestValues = [];
+  Object.keys(request).forEach(function(name) {
+    requestValues.push(request[name]);
+  });
 
-
-
-
-
-
-
-    
-
-
-
-
-
+  var call = {
+    op : 'call_service',
+    id : serviceCallId,
+    service : this.name,
+    args : requestValues
+  };
+  this.ros.callOnConnection(call);
+};
+</code></pre>
+        </article>
+    </section>
 
 
 
