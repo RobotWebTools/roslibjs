@@ -11,7 +11,7 @@ minimizing, documenting, linting, and testing.
  1. Install Node.js and its package manager, NPM
    * `sudo apt-get install python-software-properties`
    * `sudo add-apt-repository ppa:chris-lea/node.js`
-   * `sudo apt-get install nodejs`
+   * `sudo apt-get update && sudo apt-get install nodejs phantomjs`
  2. Install Grunt and the test runner [Karma](http://karma-runner.github.io/)
    * `sudo npm install -g grunt-cli karma`
    * `sudo rm -rf ~/.npm ~/tmp`
