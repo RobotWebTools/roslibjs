@@ -7,13 +7,13 @@
  *
  *  @constructor
  *  @param options - object with following keys:
- *   * x - the x value 
- *   * y - the y value 
- *   * z - the z value 
- *   * w - the w value 
+ *   * x - the x value
+ *   * y - the y value
+ *   * z - the z value
+ *   * w - the w value
  */
 ROSLIB.Quaternion = function(options) {
-  var options = options || {};
+  options = options || {};
   this.x = options.x || 0;
   this.y = options.y || 0;
   this.z = options.z || 0;
@@ -80,3 +80,4 @@ ROSLIB.Quaternion.prototype.multiply = function(q) {
 ROSLIB.Quaternion.prototype.clone = function() {
   return new ROSLIB.Quaternion(this);
 };
+

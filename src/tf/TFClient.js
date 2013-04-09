@@ -15,7 +15,7 @@
  *   * goalUpdateDelay - the goal update delay for the TF republisher
  */
 ROSLIB.TFClient = function(options) {
-  var options = options || {};
+  options = options || {};
   this.ros = options.ros;
   this.fixedFrame = options.fixedFrame || '/base_link';
   this.angularThres = options.angularThres || 2.0;
@@ -46,7 +46,7 @@ ROSLIB.TFClient.prototype.processFeedback = function(tf) {
   tf.transforms.forEach(function(transform) {
     var frameID = transform.child_frame_id;
     var info = that.frameInfos[frameID];
-    if (info != undefined) {
+    if (info !== undefined) {
       info.transform = new ROSLIB.Transform({
         translation : transform.transform.translation,
         rotation : transform.transform.rotation
@@ -76,7 +76,7 @@ ROSLIB.TFClient.prototype.updateGoal = function() {
     rate : this.rate
   };
 
-  for (frame in this.frameInfos) {
+  for (var frame in this.frameInfos) {
     goalMessage.source_frames.push(frame);
   }
 
@@ -102,7 +102,7 @@ ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
     frameID = frameID.substring(1);
   }
   // if there is no callback registered for the given frame, create emtpy callback list
-  if (this.frameInfos[frameID] == undefined) {
+  if (this.frameInfos[frameID] === undefined) {
     this.frameInfos[frameID] = {
       cbs : []
     };
@@ -112,7 +112,7 @@ ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
     }
   } else {
     // if we already have a transform, call back immediately
-    if (this.frameInfos[frameID].transform != undefined) {
+    if (this.frameInfos[frameID].transform !== undefined) {
       callback(this.frameInfos[frameID].transform);
     }
   }
@@ -127,14 +127,15 @@ ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
  */
 ROSLIB.TFClient.prototype.unsubscribe = function(frameID, callback) {
   var info = this.frameInfos[frameID];
-  if (info != undefined) {
+  if (info !== undefined) {
     var cbIndex = info.cbs.indexOf(callback);
     if (cbIndex >= 0) {
       info.cbs.splice(cbIndex, 1);
-      if (info.cbs.length == 0) {
+      if (info.cbs.length === 0) {
         delete this.frameInfos[frameID];
       }
       this.needUpdate = true;
     }
   }
 };
+

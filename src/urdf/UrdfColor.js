@@ -5,14 +5,14 @@
 
 /**
  * A Color element in a URDF.
- * 
+ *
  * @constructor
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
 ROSLIB.UrdfColor = function(options) {
+  options = options || {};
   var that = this;
-  var options = options || {};
   var xml = options.xml;
   this.r = null;
   this.g = null;
@@ -21,11 +21,11 @@ ROSLIB.UrdfColor = function(options) {
 
   /**
    * Initialize the element with the given XML node.
-   * 
+   *
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
-    // parse the string
+    // Parse the string
     var rgba = xml.getAttribute('rgba').split(' ');
     that.r = parseFloat(rgba[0]);
     that.g = parseFloat(rgba[1]);
@@ -34,6 +34,6 @@ ROSLIB.UrdfColor = function(options) {
     return true;
   };
 
-  // pass it to the XML parser
+  // Pass it to the XML parser
   initXml(xml);
 };

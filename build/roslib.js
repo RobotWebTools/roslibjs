@@ -3,7 +3,7 @@
  */
 
 var ROSLIB = ROSLIB || {
-  REVISION : '4'
+  REVISION : '5'
 };
 
 //URDF types
@@ -11,6 +11,7 @@ ROSLIB.URDF_SPHERE = 0;
 ROSLIB.URDF_BOX = 1;
 ROSLIB.URDF_CYLINDER = 2;
 ROSLIB.URDF_MESH = 3;
+
 /**
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -127,6 +128,7 @@ ROSLIB.ActionClient.prototype.cancel = function() {
   this.cancelTopic.publish(cancelMessage);
 };
 
+
 /**
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -135,7 +137,7 @@ ROSLIB.ActionClient.prototype.cancel = function() {
  * An actionlib goal goal is associated with an action server.
  *
  * Emits the following events:
- *  * 'timeout' - if a timeout occurred while sending a goal 
+ *  * 'timeout' - if a timeout occurred while sending a goal
  *
  *  @constructor
  *  @param object with following keys:
@@ -209,6 +211,7 @@ ROSLIB.Goal.prototype.cancel = function() {
   });
   this.actionClient.cancelTopic.publish(cancelMessage);
 };
+
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
@@ -221,12 +224,13 @@ ROSLIB.Goal.prototype.cancel = function() {
  */
 ROSLIB.Message = function(values) {
   var that = this;
-  var values = values || {};
+  values = values || {};
 
   Object.keys(values).forEach(function(name) {
     that[name] = values[name];
   });
 };
+
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
@@ -289,6 +293,7 @@ ROSLIB.Param.prototype.set = function(value) {
   paramClient.callService(request, function() {
   });
 };
+
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
@@ -308,7 +313,7 @@ ROSLIB.Param.prototype.set = function(value) {
  *   * url (optional) - the WebSocket URL for rosbridge (can be specified later with `connect`)
  */
 ROSLIB.Ros = function(options) {
-  var options = options || {};
+  options = options || {};
   var url = options.url;
   this.socket = null;
 
@@ -334,7 +339,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
    */
   function onOpen(event) {
     that.emit('connection', event);
-  };
+  }
 
   /**
    * Emits a 'close' event on WebSocket disconnection.
@@ -343,7 +348,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
    */
   function onClose(event) {
     that.emit('close', event);
-  };
+  }
 
   /**
    * Emits an 'error' event whenever there was an error.
@@ -352,7 +357,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
    */
   function onError(event) {
     that.emit('error', event);
-  };
+  }
 
   /**
    * If a message was compressed as a PNG image (a compression hack since
@@ -407,7 +412,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
       } else if (message.op === 'service_response') {
         that.emit(message.id, message.values);
       }
-    };
+    }
 
     var data = JSON.parse(message.data);
     if (data.op === 'png') {
@@ -417,7 +422,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
     } else {
       handleMessage(data);
     }
-  };
+  }
 
   this.socket = new WebSocket(url);
   this.socket.onopen = onOpen;
@@ -459,7 +464,7 @@ ROSLIB.Ros.prototype.authenticate = function(mac, client, dest, rand, t, level, 
     end : end
   };
   // send the request
-  callOnConnection(auth);
+  this.callOnConnection(auth);
 };
 
 /**
@@ -537,6 +542,7 @@ ROSLIB.Ros.prototype.getParams = function(callback) {
     callback(result.names);
   });
 };
+
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
@@ -566,7 +572,7 @@ ROSLIB.Service = function(options) {
  */
 ROSLIB.Service.prototype.callService = function(request, callback) {
   this.ros.idCounter++;
-  serviceCallId = 'call_service:' + this.name + ':' + this.ros.idCounter;
+  var serviceCallId = 'call_service:' + this.name + ':' + this.ros.idCounter;
 
   this.ros.once(serviceCallId, function(data) {
     var response = new ROSLIB.ServiceResponse(data);
@@ -586,6 +592,7 @@ ROSLIB.Service.prototype.callService = function(request, callback) {
   };
   this.ros.callOnConnection(call);
 };
+
 /**
  * @author Brandon Alexander - balexander@willowgarage.com
  */
@@ -598,12 +605,13 @@ ROSLIB.Service.prototype.callService = function(request, callback) {
  */
 ROSLIB.ServiceRequest = function(values) {
   var that = this;
-  var values = values || {};
+  values = values || {};
 
   Object.keys(values).forEach(function(name) {
     that[name] = values[name];
   });
 };
+
 /**
  * @author Brandon Alexander - balexander@willowgarage.com
  */
@@ -616,12 +624,13 @@ ROSLIB.ServiceRequest = function(values) {
  */
 ROSLIB.ServiceResponse = function(values) {
   var that = this;
-  var values = values || {};
+  values = values || {};
 
   Object.keys(values).forEach(function(name) {
     that[name] = values[name];
   });
 };
+
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
@@ -652,8 +661,8 @@ ROSLIB.Topic = function(options) {
 
   // Check for valid compression types
   if (this.compression && this.compression !== 'png' && this.compression !== 'none') {
-    this.emit('warning', this.compression
-        + ' compression is not supported. No comression will be used.');
+    this.emit('warning', this.compression +
+      ' compression is not supported. No compression will be used.');
   }
 
   // Check if throttle rate is negative
@@ -764,6 +773,7 @@ ROSLIB.Topic.prototype.publish = function(message) {
   };
   this.ros.callOnConnection(call);
 };
+
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
@@ -777,7 +787,7 @@ ROSLIB.Topic.prototype.publish = function(message) {
  *   * orientation - the ROSLIB.Quaternion describing the orientation
  */
 ROSLIB.Pose = function(options) {
-  var options = options || {};
+  options = options || {};
   // copy the values into this object if they exist
   this.position = new ROSLIB.Vector3(options.position);
   this.orientation = new ROSLIB.Quaternion(options.orientation);
@@ -804,6 +814,7 @@ ROSLIB.Pose.prototype.applyTransform = function(tf) {
 ROSLIB.Pose.prototype.clone = function() {
   return new ROSLIB.Pose(this);
 };
+
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
@@ -813,13 +824,13 @@ ROSLIB.Pose.prototype.clone = function() {
  *
  *  @constructor
  *  @param options - object with following keys:
- *   * x - the x value 
- *   * y - the y value 
- *   * z - the z value 
- *   * w - the w value 
+ *   * x - the x value
+ *   * y - the y value
+ *   * z - the z value
+ *   * w - the w value
  */
 ROSLIB.Quaternion = function(options) {
-  var options = options || {};
+  options = options || {};
   this.x = options.x || 0;
   this.y = options.y || 0;
   this.z = options.z || 0;
@@ -886,6 +897,8 @@ ROSLIB.Quaternion.prototype.multiply = function(q) {
 ROSLIB.Quaternion.prototype.clone = function() {
   return new ROSLIB.Quaternion(this);
 };
+
+
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
@@ -899,8 +912,8 @@ ROSLIB.Quaternion.prototype.clone = function() {
  *   * rotation - the ROSLIB.Quaternion describing the rotation
  */
 ROSLIB.Transform = function(options) {
-  var options = options || {};
-  // copy the values into this object if they exist
+  options = options || {};
+  // Copy the values into this object if they exist
   this.translation = new ROSLIB.Vector3(options.translation);
   this.rotation = new ROSLIB.Quaternion(options.rotation);
 };
@@ -913,6 +926,7 @@ ROSLIB.Transform = function(options) {
 ROSLIB.Transform.prototype.clone = function() {
   return new ROSLIB.Transform(this);
 };
+
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
@@ -922,12 +936,12 @@ ROSLIB.Transform.prototype.clone = function() {
  *
  *  @constructor
  *  @param options - object with following keys:
- *   * x - the x value 
- *   * y - the y value 
- *   * z - the z value 
+ *   * x - the x value
+ *   * y - the y value
+ *   * z - the z value
  */
 ROSLIB.Vector3 = function(options) {
-  var options = options || {};
+  options = options || {};
   this.x = options.x || 0;
   this.y = options.y || 0;
   this.z = options.z || 0;
@@ -978,6 +992,7 @@ ROSLIB.Vector3.prototype.multiplyQuaternion = function(q) {
 ROSLIB.Vector3.prototype.clone = function() {
   return new ROSLIB.Vector3(this);
 };
+
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
@@ -995,7 +1010,7 @@ ROSLIB.Vector3.prototype.clone = function() {
  *   * goalUpdateDelay - the goal update delay for the TF republisher
  */
 ROSLIB.TFClient = function(options) {
-  var options = options || {};
+  options = options || {};
   this.ros = options.ros;
   this.fixedFrame = options.fixedFrame || '/base_link';
   this.angularThres = options.angularThres || 2.0;
@@ -1026,7 +1041,7 @@ ROSLIB.TFClient.prototype.processFeedback = function(tf) {
   tf.transforms.forEach(function(transform) {
     var frameID = transform.child_frame_id;
     var info = that.frameInfos[frameID];
-    if (info != undefined) {
+    if (info !== undefined) {
       info.transform = new ROSLIB.Transform({
         translation : transform.transform.translation,
         rotation : transform.transform.rotation
@@ -1056,7 +1071,7 @@ ROSLIB.TFClient.prototype.updateGoal = function() {
     rate : this.rate
   };
 
-  for (frame in this.frameInfos) {
+  for (var frame in this.frameInfos) {
     goalMessage.source_frames.push(frame);
   }
 
@@ -1082,7 +1097,7 @@ ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
     frameID = frameID.substring(1);
   }
   // if there is no callback registered for the given frame, create emtpy callback list
-  if (this.frameInfos[frameID] == undefined) {
+  if (this.frameInfos[frameID] === undefined) {
     this.frameInfos[frameID] = {
       cbs : []
     };
@@ -1092,7 +1107,7 @@ ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
     }
   } else {
     // if we already have a transform, call back immediately
-    if (this.frameInfos[frameID].transform != undefined) {
+    if (this.frameInfos[frameID].transform !== undefined) {
       callback(this.frameInfos[frameID].transform);
     }
   }
@@ -1107,17 +1122,19 @@ ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
  */
 ROSLIB.TFClient.prototype.unsubscribe = function(frameID, callback) {
   var info = this.frameInfos[frameID];
-  if (info != undefined) {
+  if (info !== undefined) {
     var cbIndex = info.cbs.indexOf(callback);
     if (cbIndex >= 0) {
       info.cbs.splice(cbIndex, 1);
-      if (info.cbs.length == 0) {
+      if (info.cbs.length === 0) {
         delete this.frameInfos[frameID];
       }
       this.needUpdate = true;
     }
   }
 };
+
+
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1125,27 +1142,27 @@ ROSLIB.TFClient.prototype.unsubscribe = function(frameID, callback) {
 
 /**
  * A Box element in a URDF.
- * 
+ *
  * @constructor
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
 ROSLIB.UrdfBox = function(options) {
+  options = options || {};
   var that = this;
-  var options = options || {};
   var xml = options.xml;
   this.dimension = null;
   this.type = null;
 
   /**
    * Initialize the element with the given XML node.
-   * 
+   *
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
     this.type = ROSLIB.URDF_BOX;
 
-    // parse the string
+    // Parse the string
     var xyz = xml.getAttribute('size').split(' ');
     that.dimension = new ROSLIB.Vector3({
       x : parseFloat(xyz[0]),
@@ -1154,9 +1171,10 @@ ROSLIB.UrdfBox = function(options) {
     });
   };
 
-  // pass it to the XML parser
+  // Pass it to the XML parser
   initXml(xml);
 };
+
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1164,14 +1182,14 @@ ROSLIB.UrdfBox = function(options) {
 
 /**
  * A Color element in a URDF.
- * 
+ *
  * @constructor
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
 ROSLIB.UrdfColor = function(options) {
+  options = options || {};
   var that = this;
-  var options = options || {};
   var xml = options.xml;
   this.r = null;
   this.g = null;
@@ -1180,11 +1198,11 @@ ROSLIB.UrdfColor = function(options) {
 
   /**
    * Initialize the element with the given XML node.
-   * 
+   *
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
-    // parse the string
+    // Parse the string
     var rgba = xml.getAttribute('rgba').split(' ');
     that.r = parseFloat(rgba[0]);
     that.g = parseFloat(rgba[1]);
@@ -1193,9 +1211,10 @@ ROSLIB.UrdfColor = function(options) {
     return true;
   };
 
-  // pass it to the XML parser
+  // Pass it to the XML parser
   initXml(xml);
 };
+
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1203,14 +1222,14 @@ ROSLIB.UrdfColor = function(options) {
 
 /**
  * A Cylinder element in a URDF.
- * 
+ *
  * @constructor
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
 ROSLIB.UrdfCylinder = function(options) {
+  options = options || {};
   var that = this;
-  var options = options || {};
   var xml = options.xml;
   this.type = null;
   this.length = null;
@@ -1218,7 +1237,7 @@ ROSLIB.UrdfCylinder = function(options) {
 
   /**
    * Initialize the element with the given XML node.
-   * 
+   *
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
@@ -1227,9 +1246,11 @@ ROSLIB.UrdfCylinder = function(options) {
     that.radius = parseFloat(xml.getAttribute('radius'));
   };
 
-  // pass it to the XML parser
+  // Pass it to the XML parser
   initXml(xml);
 };
+
+
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1237,21 +1258,21 @@ ROSLIB.UrdfCylinder = function(options) {
 
 /**
  * A Link element in a URDF.
- * 
+ *
  * @constructor
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
 ROSLIB.UrdfLink = function(options) {
+  options = options || {};
   var that = this;
-  var options = options || {};
   var xml = options.xml;
   this.name = null;
   this.visual = null;
 
   /**
    * Initialize the element with the given XML node.
-   * 
+   *
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
@@ -1264,9 +1285,11 @@ ROSLIB.UrdfLink = function(options) {
     }
   };
 
-  // pass it to the XML parser
+  // Pass it to the XML parser
   initXml(xml);
 };
+
+
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1274,14 +1297,14 @@ ROSLIB.UrdfLink = function(options) {
 
 /**
  * A Material element in a URDF.
- * 
+ *
  * @constructor
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
 ROSLIB.UrdfMaterial = function(options) {
+  options = options || {};
   var that = this;
-  var options = options || {};
   var xml = options.xml;
   this.name = null;
   this.textureFilename = null;
@@ -1289,31 +1312,32 @@ ROSLIB.UrdfMaterial = function(options) {
 
   /**
    * Initialize the element with the given XML node.
-   * 
+   *
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
     that.name = xml.getAttribute('name');
 
-    // texture
+    // Texture
     var textures = xml.getElementsByTagName('texture');
     if (textures.length > 0) {
       that.textureFilename = textures[0].getAttribute('filename');
     }
 
-    // color
+    // Color
     var colors = xml.getElementsByTagName('color');
     if (colors.length > 0) {
-      // parse the RBGA string
+      // Parse the RBGA string
       that.color = new ROSLIB.UrdfColor({
         xml : colors[0]
       });
     }
   };
 
-  // pass it to the XML parser
+  // Pass it to the XML parser
   initXml(xml);
 };
+
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1321,14 +1345,14 @@ ROSLIB.UrdfMaterial = function(options) {
 
 /**
  * A Mesh element in a URDF.
- * 
+ *
  * @constructor
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
 ROSLIB.UrdfMesh = function(options) {
+  options = options || {};
   var that = this;
-  var options = options || {};
   var xml = options.xml;
   this.filename = null;
   this.scale = null;
@@ -1336,17 +1360,17 @@ ROSLIB.UrdfMesh = function(options) {
 
   /**
    * Initialize the element with the given XML node.
-   * 
+   *
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
     that.type = ROSLIB.URDF_MESH;
     that.filename = xml.getAttribute('filename');
 
-    // check for a scale
+    // Check for a scale
     var scale = xml.getAttribute('scale');
     if (scale) {
-      // get the XYZ
+      // Get the XYZ
       var xyz = scale.split(' ');
       that.scale = new ROSLIB.Vector3({
         x : parseFloat(xyz[0]),
@@ -1356,52 +1380,52 @@ ROSLIB.UrdfMesh = function(options) {
     }
   };
 
-  // pass it to the XML parser
+  // Pass it to the XML parser
   initXml(xml);
 };
+
+
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
 
 /**
- * A URDF Model can be used to parse a given URDF into the appropriate elements. 
- * 
+ * A URDF Model can be used to parse a given URDF into the appropriate elements.
+ *
  * @constructor
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  *  * string - the XML element to parse as a string
  */
 ROSLIB.UrdfModel = function(options) {
+  options = options || {};
   var that = this;
-  var options = options || {};
   var xml = options.xml;
   var string = options.string;
-
-  this.name;
   this.materials = [];
   this.links = [];
 
   /**
    * Initialize the model with the given XML node.
-   * 
+   *
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
-    // get the robot tag
+    // Get the robot tag
     var robotXml = xml.evaluate('//robot', xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 
-    // get the robot name
+    // Get the robot name
     that.name = robotXml.getAttribute('name');
 
-    // parse all the visual elements we need
-    for (n in robotXml.childNodes) {
+    // Parse all the visual elements we need
+    for (var n in robotXml.childNodes) {
       var node = robotXml.childNodes[n];
       if (node.tagName === 'material') {
         var material = new ROSLIB.UrdfMaterial({
           xml : node
         });
-        // make sure this is unique
+        // Make sure this is unique
         if (that.materials[material.name]) {
           console.warn('Material ' + material.name + 'is not unique.');
         } else {
@@ -1411,11 +1435,11 @@ ROSLIB.UrdfModel = function(options) {
         var link = new ROSLIB.UrdfLink({
           xml : node
         });
-        // make sure this is unique
+        // Make sure this is unique
         if (that.links[link.name]) {
           console.warn('Link ' + link.name + ' is not unique.');
         } else {
-          // check for a material
+          // Check for a material
           if (link.visual && link.visual.material) {
             if (that.materials[link.visual.material.name]) {
               link.visual.material = that.materials[link.visual.material.name];
@@ -1424,22 +1448,24 @@ ROSLIB.UrdfModel = function(options) {
             }
           }
 
-          // add the link
+          // Add the link
           that.links[link.name] = link;
         }
       }
     }
   };
 
-  // check if we are using a string or an XML element
+  // Check if we are using a string or an XML element
   if (string) {
-    // parse the string
+    // Parse the string
     var parser = new DOMParser();
     xml = parser.parseFromString(string, 'text/xml');
   }
-  // pass it to the XML parser
+  // Pass it to the XML parser
   initXml(xml);
 };
+
+
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1447,21 +1473,21 @@ ROSLIB.UrdfModel = function(options) {
 
 /**
  * A Sphere element in a URDF.
- * 
+ *
  * @constructor
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
 ROSLIB.UrdfSphere = function(options) {
+  options = options || {};
   var that = this;
-  var options = options || {};
   var xml = options.xml;
   this.radius = null;
   this.type = null;
 
   /**
    * Initialize the element with the given XML node.
-   * 
+   *
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
@@ -1472,6 +1498,8 @@ ROSLIB.UrdfSphere = function(options) {
   // pass it to the XML parser
   initXml(xml);
 };
+
+
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1479,14 +1507,14 @@ ROSLIB.UrdfSphere = function(options) {
 
 /**
  * A Visual element in a URDF.
- * 
+ *
  * @constructor
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
 ROSLIB.UrdfVisual = function(options) {
+  options = options || {};
   var that = this;
-  var options = options || {};
   var xml = options.xml;
   this.origin = null;
   this.geometry = null;
@@ -1494,38 +1522,34 @@ ROSLIB.UrdfVisual = function(options) {
 
   /**
    * Initialize the element with the given XML node.
-   * 
+   *
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
-    // origin
+    // Origin
     var origins = xml.getElementsByTagName('origin');
     if (origins.length === 0) {
       // use the identity as the default
       that.origin = new ROSLIB.Pose();
     } else {
-      // check the XYZ
+      // Check the XYZ
       var xyz = origins[0].getAttribute('xyz');
-      if (!xyz) {
-        // use the default values
-        var position = new ROSLIB.Vector3();
-      } else {
-        var xyz = xyz.split(' ');
-        var position = new ROSLIB.Vector3({
+      var position = new ROSLIB.Vector3();
+      if (xyz) {
+        xyz = xyz.split(' ');
+        position = new ROSLIB.Vector3({
           x : parseFloat(xyz[0]),
           y : parseFloat(xyz[1]),
           z : parseFloat(xyz[2])
         });
       }
 
-      // check the RPY
+      // Check the RPY
       var rpy = origins[0].getAttribute('rpy');
-      if (!rpy) {
-        // use the default values
-        var orientation = new ROSLIB.Quaternion();
-      } else {
-        var rpy = rpy.split(' ');
-        // convert from RPY
+      var orientation = new ROSLIB.Quaternion();
+      if (rpy) {
+        rpy = rpy.split(' ');
+        // Convert from RPY
         var roll = parseFloat(rpy[0]);
         var pitch = parseFloat(rpy[1]);
         var yaw = parseFloat(rpy[2]);
@@ -1541,7 +1565,7 @@ ROSLIB.UrdfVisual = function(options) {
         var w = Math.cos(phi) * Math.cos(the) * Math.cos(psi) + Math.sin(phi) * Math.sin(the)
             * Math.sin(psi);
 
-        var orientation = new ROSLIB.Quaternion({
+        orientation = new ROSLIB.Quaternion({
           x : x,
           y : y,
           z : z,
@@ -1555,19 +1579,19 @@ ROSLIB.UrdfVisual = function(options) {
       });
     }
 
-    // geometry
+    // Geometry
     var geoms = xml.getElementsByTagName('geometry');
     if (geoms.length > 0) {
       var shape = null;
-      // check for the shape
-      for (n in geoms[0].childNodes) {
+      // Check for the shape
+      for (var n in geoms[0].childNodes) {
         var node = geoms[0].childNodes[n];
         if (node.nodeType === 1) {
           shape = node;
           break;
         }
       }
-      // check the type
+      // Check the type
       var type = shape.nodeName;
       if (type === 'sphere') {
         that.geometry = new ROSLIB.UrdfSphere({
@@ -1590,7 +1614,7 @@ ROSLIB.UrdfVisual = function(options) {
       }
     }
 
-    // material
+    // Material
     var materials = xml.getElementsByTagName('material');
     if (materials.length > 0) {
       that.material = new ROSLIB.UrdfMaterial({
@@ -1599,6 +1623,7 @@ ROSLIB.UrdfVisual = function(options) {
     }
   };
 
-  // pass it to the XML parser
+  // Pass it to the XML parser
   initXml(xml);
 };
+
