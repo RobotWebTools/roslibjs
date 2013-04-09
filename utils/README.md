@@ -1,10 +1,10 @@
-roslibjs build setup
+roslibjs Build Setup
 ====================
 
 [Grunt](http://gruntjs.com/) is used for building, including concatenating,
 minimizing, documenting, linting, and testing.
 
-### Install Grunt and its dependencies
+### Install Grunt and its Dependencies
 
 #### Ubuntu
 
@@ -14,6 +14,7 @@ minimizing, documenting, linting, and testing.
    * `sudo apt-get install nodejs`
  2. Install Grunt and the test runner [Karma](http://karma-runner.github.io/)
    * `sudo npm install -g grunt-cli karma`
+   * `sudo rm -rf ~/.npm ~/tmp`
  3. Install the Grunt tasks specific to this project
    * `cd /path/to/roslibjs/utils/`
    * `npm install .`
