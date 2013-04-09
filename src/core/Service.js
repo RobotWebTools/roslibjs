@@ -27,7 +27,7 @@ ROSLIB.Service = function(options) {
  */
 ROSLIB.Service.prototype.callService = function(request, callback) {
   this.ros.idCounter++;
-  serviceCallId = 'call_service:' + this.name + ':' + this.ros.idCounter;
+  var serviceCallId = 'call_service:' + this.name + ':' + this.ros.idCounter;
 
   this.ros.once(serviceCallId, function(data) {
     var response = new ROSLIB.ServiceResponse(data);

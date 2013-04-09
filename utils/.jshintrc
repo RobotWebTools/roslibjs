@@ -1,0 +1,25 @@
+{
+  "globals": {
+    "module": true,
+    "EventEmitter2" : true
+  },
+  "curly": true,
+  "eqeqeq": true,
+  "immed": true,
+  "latedef": false,
+  "newcap": true,
+  "noarg": true,
+  "sub": true,
+  "undef": true,
+  "boss": false,
+  "eqnull": false,
+  "browser": true,
+  "devel": true,
+  "es5": true,
+  "strict": false,
+  "trailing": true,
+  "quotmark": "single",
+  "proto": true,
+  "laxbreak": true
+}
+

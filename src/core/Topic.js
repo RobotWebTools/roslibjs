@@ -28,8 +28,8 @@ ROSLIB.Topic = function(options) {
 
   // Check for valid compression types
   if (this.compression && this.compression !== 'png' && this.compression !== 'none') {
-    this.emit('warning', this.compression
-        + ' compression is not supported. No comression will be used.');
+    this.emit('warning', this.compression +
+      ' compression is not supported. No compression will be used.');
   }
 
   // Check if throttle rate is negative
