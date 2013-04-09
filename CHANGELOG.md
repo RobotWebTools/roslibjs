@@ -1,4 +1,4 @@
-DEVEL - **r5**
+2013-04-09 - **r5**
  * Replaces build system with Grunt [(baalexander)](https://github.com/baalexander/)
  * Code cleanup for linter [(baalexander)](https://github.com/baalexander/)
 
