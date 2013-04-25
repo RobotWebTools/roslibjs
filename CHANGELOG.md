@@ -1,4 +1,5 @@
 DEVEL - **r6**
+ * Fixes missing ID counter in ROS so multiple service calls can be made [(rctoris)](https://github.com/rctoris/)
 
 2013-04-09 - **r5**
  * Replaces build system with Grunt [(baalexander)](https://github.com/baalexander/)
