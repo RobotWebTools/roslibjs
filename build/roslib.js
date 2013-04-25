@@ -316,6 +316,7 @@ ROSLIB.Ros = function(options) {
   options = options || {};
   var url = options.url;
   this.socket = null;
+  this.idCounter = 0;
 
   // begin by checking if a URL was given
   if (url) {
@@ -573,7 +574,7 @@ ROSLIB.Service = function(options) {
 ROSLIB.Service.prototype.callService = function(request, callback) {
   this.ros.idCounter++;
   var serviceCallId = 'call_service:' + this.name + ':' + this.ros.idCounter;
-
+  console.log(serviceCallId);
   this.ros.once(serviceCallId, function(data) {
     var response = new ROSLIB.ServiceResponse(data);
     callback(response);
