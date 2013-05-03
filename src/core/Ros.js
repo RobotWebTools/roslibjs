@@ -22,6 +22,9 @@ ROSLIB.Ros = function(options) {
   this.socket = null;
   this.idCounter = 0;
 
+  // Sets unlimited event listeners.
+  this.setMaxListeners(0);
+
   // begin by checking if a URL was given
   if (url) {
     this.connect(url);
