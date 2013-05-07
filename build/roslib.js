@@ -3,7 +3,7 @@
  */
 
 var ROSLIB = ROSLIB || {
-  REVISION : '5'
+  REVISION : '6'
 };
 
 //URDF types
@@ -316,6 +316,10 @@ ROSLIB.Ros = function(options) {
   options = options || {};
   var url = options.url;
   this.socket = null;
+  this.idCounter = 0;
+
+  // Sets unlimited event listeners.
+  this.setMaxListeners(0);
 
   // begin by checking if a URL was given
   if (url) {
