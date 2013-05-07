@@ -1,5 +1,6 @@
 DEVEL - **r6**
  * Fixes missing ID counter in ROS so multiple service calls can be made [(rctoris)](https://github.com/rctoris/)
+ * Unlimited number of event listeners added [(baalexander)](https://github.com/baalexander/)
 
 2013-04-09 - **r5**
  * Replaces build system with Grunt [(baalexander)](https://github.com/baalexander/)
