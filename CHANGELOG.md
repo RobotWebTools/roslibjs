@@ -1,3 +1,5 @@
+DEVEL - **r7**
+
 2013-05-07 - **r6**
  * Fixes missing ID counter in ROS so multiple service calls can be made [(rctoris)](https://github.com/rctoris/)
  * Unlimited number of event listeners added [(baalexander)](https://github.com/baalexander/)
