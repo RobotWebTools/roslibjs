@@ -233,6 +233,26 @@ ROSLIB.Ros.prototype.getServices = function(callback) {
 };
 
 /**
+ * Retrieves list of active node names in ROS.
+ *
+ * @param callback - function with the following params:
+ *   * nodes - array of node names
+ */
+ROSLIB.Ros.prototype.getNodes = function(callback) {
+  var nodesClient = new ROSLIB.Service({
+    ros : this,
+    name : '/rosapi/nodes',
+    serviceType : 'rosapi/Nodes'
+  });
+
+  var request = new ROSLIB.ServiceRequest();
+
+  nodesClient.callService(request, function(result) {
+    callback(result.nodes);
+  });
+};
+
+/**
  * Retrieves list of param names from the ROS Parameter Server.
  *
  * @param callback function with params:
