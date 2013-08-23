@@ -60,3 +60,21 @@ ROSLIB.Param.prototype.set = function(value) {
   paramClient.callService(request, function() {
   });
 };
+
+/**
+ * Delete this parameter on the ROS server.
+ */
+ROSLIB.Param.prototype.delete = function() {
+  var paramClient = new ROSLIB.Service({
+    ros : this.ros,
+    name : '/rosapi/delete_param',
+    serviceType : 'rosapi/DeleteParam'
+  });
+
+  var request = new ROSLIB.ServiceRequest({
+    name : this.name
+  });
+
+  paramClient.callService(request, function() {
+  });
+};

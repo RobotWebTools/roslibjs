@@ -295,6 +295,24 @@ ROSLIB.Param.prototype.set = function(value) {
 };
 
 /**
+ * Delete this parameter on the ROS server.
+ */
+ROSLIB.Param.prototype.delete = function() {
+  var paramClient = new ROSLIB.Service({
+    ros : this.ros,
+    name : '/rosapi/delete_param',
+    serviceType : 'rosapi/DeleteParam'
+  });
+
+  var request = new ROSLIB.ServiceRequest({
+    name : this.name
+  });
+
+  paramClient.callService(request, function() {
+  });
+};
+
+/**
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
@@ -525,6 +543,26 @@ ROSLIB.Ros.prototype.getServices = function(callback) {
 
   servicesClient.callService(request, function(result) {
     callback(result.services);
+  });
+};
+
+/**
+ * Retrieves list of active node names in ROS.
+ *
+ * @param callback - function with the following params:
+ *   * nodes - array of node names
+ */
+ROSLIB.Ros.prototype.getNodes = function(callback) {
+  var nodesClient = new ROSLIB.Service({
+    ros : this,
+    name : '/rosapi/nodes',
+    serviceType : 'rosapi/Nodes'
+  });
+
+  var request = new ROSLIB.ServiceRequest();
+
+  nodesClient.callService(request, function(result) {
+    callback(result.nodes);
   });
 };
 
