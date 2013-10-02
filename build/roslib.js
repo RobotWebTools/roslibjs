@@ -432,7 +432,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
       if (message.op === 'publish') {
         that.emit(message.topic, message.msg);
       } else if (message.op === 'service_response') {
-        that.emit(message.id, message.values);
+        that.emit(message.id, message);
       }
     }
 
@@ -611,14 +611,21 @@ ROSLIB.Service = function(options) {
  * @param request - the ROSLIB.ServiceRequest to send
  * @param callback - function with params:
  *   * response - the response from the service request
+ * @param failedCallback - the callback function when the service call failed (optional)
  */
-ROSLIB.Service.prototype.callService = function(request, callback) {
+ROSLIB.Service.prototype.callService = function(request, callback, failedCallback) {
   this.ros.idCounter++;
   var serviceCallId = 'call_service:' + this.name + ':' + this.ros.idCounter;
 
-  this.ros.once(serviceCallId, function(data) {
-    var response = new ROSLIB.ServiceResponse(data);
-    callback(response);
+  this.ros.once(serviceCallId, function(message) {
+    if (message.result !== undefined && message.result === false) {
+      if (typeof failedCallback === 'function') {
+	failedCallback();
+      }
+    } else {
+      var response = new ROSLIB.ServiceResponse(message.values);
+      callback(response);
+    }
   });
 
   var requestValues = [];
