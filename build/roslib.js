@@ -620,7 +620,7 @@ ROSLIB.Service.prototype.callService = function(request, callback, failedCallbac
   this.ros.once(serviceCallId, function(message) {
     if (message.result !== undefined && message.result === false) {
       if (typeof failedCallback === 'function') {
-	failedCallback();
+        failedCallback();
       }
     } else {
       var response = new ROSLIB.ServiceResponse(message.values);
