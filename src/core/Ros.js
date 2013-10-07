@@ -118,7 +118,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
       if (message.op === 'publish') {
         that.emit(message.topic, message.msg);
       } else if (message.op === 'service_response') {
-        that.emit(message.id, message.values);
+        that.emit(message.id, message);
       }
     }
 
