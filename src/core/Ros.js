@@ -317,49 +317,49 @@ ROSLIB.Ros.prototype.getMessageDetails = function(message, callback) {
  * @param type_defs - array of type_def dictionary
  */
 ROSLIB.Ros.decodeTypeDefs = function(type_defs) {
-  var type_def_dict = {};
-  var the_type = type_defs[0];
+  var typeDefDict = {};
+  var theType = type_defs[0];
   
   // It calls itself recursively to resolve type definition
   // using hint_defs.
-  var decodeTypeDefsRec = function(the_type, hint_defs) {
-    var type_def_dict = {};
-    for (var i = 0; i < the_type.fieldnames.length; i++) {
-      var array_len = the_type.fieldarraylen[i];
-      var field_name = the_type.fieldnames[i];
-      var field_type = the_type.fieldtypes[i];
-      if (field_type.indexOf('/') === -1) { // check the field_type includes '/' or not
-        if (array_len == -1) {
-          type_def_dict[field_name] = field_type;
+  var decodeTypeDefsRec = function(theType, hint_defs) {
+    var typeDefDict = {};
+    for (var i = 0; i < theType.fieldnames.length; i++) {
+      var arrayLen = theType.fieldarraylen[i];
+      var fieldName = theType.fieldnames[i];
+      var fieldType = theType.fieldtypes[i];
+      if (fieldType.indexOf('/') === -1) { // check the fieldType includes '/' or not
+        if (arrayLen === -1) {
+          typeDefDict[fieldName] = fieldType;
         }
         else {
-          type_def_dict[field_name] = [field_type];
+          typeDefDict[fieldName] = [fieldType];
         }
       }
       else {
         // lookup the name
         var sub_type = false;
         for (var j = 0; j < hint_defs.length; j++) {
-          if (hint_defs[j].type == field_type) {
+          if (hint_defs[j].type === fieldType) {
             sub_type = hint_defs[j];
             break;
           }
         }
         if (sub_type) {
           var sub_type_result = decodeTypeDefsRec(sub_type, hint_defs);
-          if (array_len == -1) {
-            type_def_dict[field_name] = sub_type_result;
+          if (arrayLen === -1) {
+            typeDefDict[fieldName] = sub_type_result;
           }
           else {
-            type_def_dict[field_name] = [sub_type_result];
+            typeDefDict[fieldName] = [sub_type_result];
           }
         }
         else {
-          throw 'cannot find ' + field_type;
+          throw 'cannot find ' + fieldType;
         }
       }
     }
-    return type_def_dict;
+    return typeDefDict;
   };                            // end of decodeTypeDefsRec
   
   return decodeTypeDefsRec(type_defs[0], type_defs);
