@@ -270,3 +270,103 @@ ROSLIB.Ros.prototype.getParams = function(callback) {
     callback(result.names);
   });
 };
+
+/**
+ * Retrieves a type of ROS topic.
+ *
+ * @param callback - function with params:
+ *   * type - String of the topic type
+ */
+ROSLIB.Ros.prototype.getTopicType = function(topic, callback) {
+    var topicTypeClient = new ROSLIB.Service({
+        ros : this,
+        name : '/rosapi/topic_type',
+        serviceType : 'rosapi/TopicType'
+    });
+    var request = new ROSLIB.ServiceRequest({
+        topic: topic
+    });
+    topicTypeClient.callService(request, function(result) {
+        callback(result.type);
+    });
+};
+
+/**
+ * Retrieves a detail of ROS message.
+ *
+ * @param callback - function with params:
+ *   * details - Array of the message detail
+ * @param message - String of a topic type
+ */
+ROSLIB.Ros.prototype.getMessageDetails = function(message, callback) {
+    var messageDetailClient = new ROSLIB.Service({
+        ros : this,
+        name : '/rosapi/message_details',
+        serviceType : 'rosapi/MessageDetails'
+    });
+    var request = new ROSLIB.ServiceRequest({
+        type: message
+    });
+    messageDetailClient.callService(request, function(result) {
+        var typedefs = result.typedefs;
+        callback(result.typedefs);
+    });
+};
+
+/**
+ * Encode a typedefs into a dictionary like `rosmsg show foo/bar`
+ * @param type_defs - array of type_def dictionary
+ */
+ROSLIB.Ros.decodeTypeDefs = function(type_defs) {
+    var type_def_dict = {};
+    var the_type = type_defs[0];
+    return ROSLIB.Ros._decodeTypeDefs(type_defs[0], type_defs);
+};
+
+/**
+ * Internal function of ROSLIB.Ros.decodeTypeDefs.
+ * It calls itself recursively to resolve type definition
+ * using hint_defs.
+ * @param the_type - array of type_def dictionary
+ * @param hint_defs - array of typedefs
+ */
+ROSLIB.Ros._decodeTypeDefs = function(the_type, hint_defs) {
+    var type_def_dict = {};
+    for (var i = 0; i < the_type.fieldnames.length; i++) {
+        var array_len = the_type.fieldarraylen[i];
+        var field_name = the_type.fieldnames[i];
+        var field_type = the_type.fieldtypes[i];
+        if (field_type.indexOf("/") === -1) { // check the field_type includes "/" or not
+            if (array_len == -1) {
+                type_def_dict[field_name] = field_type;
+            }
+            else {
+                type_def_dict[field_name] = [field_type];
+            }
+        }
+        else {
+            // lookup the name
+            var sub_type = false;
+            for (var j = 0; j < hint_defs.length; j++) {
+                if (hint_defs[j].type == field_type) {
+                    sub_type = hint_defs[j];
+                    break;
+                }
+            }
+            if (sub_type) {
+                var sub_type_result = ROSLIB.Ros._decodeTypeDefs(sub_type, hint_defs);
+                if (array_len == -1) {
+                    type_def_dict[field_name] = sub_type_result;
+                }
+                else {
+                    type_def_dict[field_name] = [sub_type_result];
+                }
+            }
+            else {
+                throw "cannot find " + field_type;
+            }
+            //ROSLIB.Ros._decodeTypeDefs(field_type, hint_defs)
+        }
+    }
+    return type_def_dict;
+};
