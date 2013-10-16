@@ -654,7 +654,7 @@ ROSLIB.Ros.prototype.decodeTypeDefs = function(type_defs) {
         // lookup the name
         var sub_type = false;
         for (var j = 0; j < hint_defs.length; j++) {
-          if (hint_defs[j].type === fieldType) {
+          if (hint_defs[j].type.toString() === fieldType.toString()) {
             sub_type = hint_defs[j];
             break;
           }
