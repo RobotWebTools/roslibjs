@@ -328,7 +328,7 @@ ROSLIB.Ros.decodeTypeDefs = function(type_defs) {
       var array_len = the_type.fieldarraylen[i];
       var field_name = the_type.fieldnames[i];
       var field_type = the_type.fieldtypes[i];
-      if (field_type.indexOf("/") === -1) { // check the field_type includes "/" or not
+      if (field_type.indexOf('/') === -1) { // check the field_type includes '/' or not
         if (array_len == -1) {
           type_def_dict[field_name] = field_type;
         }
@@ -355,7 +355,7 @@ ROSLIB.Ros.decodeTypeDefs = function(type_defs) {
           }
         }
         else {
-          throw "cannot find " + field_type;
+          throw 'cannot find ' + field_type;
         }
       }
     }
