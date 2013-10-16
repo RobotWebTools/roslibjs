@@ -316,7 +316,7 @@ ROSLIB.Ros.prototype.getMessageDetails = function(message, callback) {
  * Encode a typedefs into a dictionary like `rosmsg show foo/bar`
  * @param type_defs - array of type_def dictionary
  */
-ROSLIB.Ros.decodeTypeDefs = function(type_defs) {
+ROSLIB.Ros.prototype.decodeTypeDefs = function(type_defs) {
   var typeDefDict = {};
   var theType = type_defs[0];
   
