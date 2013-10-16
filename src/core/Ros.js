@@ -308,7 +308,6 @@ ROSLIB.Ros.prototype.getMessageDetails = function(message, callback) {
     type: message
   });
   messageDetailClient.callService(request, function(result) {
-    var typedefs = result.typedefs;
     callback(result.typedefs);
   });
 };
@@ -365,7 +364,6 @@ ROSLIB.Ros._decodeTypeDefs = function(the_type, hint_defs) {
       else {
         throw "cannot find " + field_type;
       }
-      //ROSLIB.Ros._decodeTypeDefs(field_type, hint_defs)
     }
   }
   return type_def_dict;
