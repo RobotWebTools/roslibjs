@@ -706,7 +706,8 @@ ROSLIB.Service = function(options) {
  * @param request - the ROSLIB.ServiceRequest to send
  * @param callback - function with params:
  *   * response - the response from the service request
- * @param failedCallback - the callback function when the service call failed (optional)
+ * @param failedCallback - the callback function when the service call failed (optional). Params:
+ *   * error - the error message reported by ROS
  */
 ROSLIB.Service.prototype.callService = function(request, callback, failedCallback) {
   this.ros.idCounter++;
@@ -715,7 +716,7 @@ ROSLIB.Service.prototype.callService = function(request, callback, failedCallbac
   this.ros.once(serviceCallId, function(message) {
     if (message.result !== undefined && message.result === false) {
       if (typeof failedCallback === 'function') {
-        failedCallback();
+        failedCallback(message.values);
       }
     } else {
       var response = new ROSLIB.ServiceResponse(message.values);
