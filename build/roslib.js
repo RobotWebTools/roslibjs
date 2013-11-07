@@ -724,16 +724,11 @@ ROSLIB.Service.prototype.callService = function(request, callback, failedCallbac
     }
   });
 
-  var requestValues = [];
-  Object.keys(request).forEach(function(name) {
-    requestValues.push(request[name]);
-  });
-
   var call = {
     op : 'call_service',
     id : serviceCallId,
     service : this.name,
-    args : requestValues
+    args : request
   };
   this.ros.callOnConnection(call);
 };
