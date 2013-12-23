@@ -45,6 +45,7 @@ ROSLIB.TFClient.prototype.processFeedback = function(tf) {
   var that = this;
   tf.transforms.forEach(function(transform) {
     var frameID = transform.child_frame_id;
+    if (frameID[0] != '/') frameID = '/' + frameID;
     var info = that.frameInfos[frameID];
     if (info !== undefined) {
       info.transform = new ROSLIB.Transform({
