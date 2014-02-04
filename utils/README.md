@@ -12,7 +12,7 @@ roslibjs Build Setup
    * `sudo add-apt-repository ppa:chris-lea/node.js`
    * `sudo apt-get update && sudo apt-get install nodejs phantomjs`
  2. Install Grunt and the test runner [Karma](http://karma-runner.github.io/)
-   * `sudo npm install -g grunt-cli karma`
+   * `sudo npm install -g grunt-cli karma phantomjs`
    * `sudo rm -rf ~/.npm ~/tmp`
  3. Install the Grunt tasks specific to this project
    * `cd /path/to/roslibjs/utils/`
@@ -27,7 +27,7 @@ roslibjs Build Setup
    * Go to [Node.js Downloads](http://nodejs.org/download/)
    * Download and install the Universal pkg file.
  2. Install Grunt and the test runner [Karma](http://karma-runner.github.io/)
-   * `sudo npm install -g grunt-cli karma`
+   * `sudo npm install -g grunt-cli karma phantomjs`
  3. Install the Grunt tasks specific to this project
    * `cd /path/to/roslibjs/utils/`
    * `npm install .`
