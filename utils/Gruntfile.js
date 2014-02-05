@@ -4,7 +4,15 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     concat: {
       build: {
-        src  : ['../src/*.js', '../src/**/*.js'],
+        src  : ['../src/RosLibHeader.js',
+                '../src/RosLib.js',
+                '../src/actionlib/*.js',
+                '../src/core/*.js',
+                '../src/math/*.js',
+                '../src/tf/*.js',
+                '../src/urdf/*.js',
+                '../src/RosLibFooter.js'
+               ],
         dest : '../build/roslib.js'
       }
     },
