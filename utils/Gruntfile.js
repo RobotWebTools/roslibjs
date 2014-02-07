@@ -4,7 +4,15 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     concat: {
       build: {
-        src  : ['../src/*.js', '../src/**/*.js'],
+        src  : ['../src/RosLibHeader.js',
+                '../src/RosLib.js',
+                '../src/actionlib/*.js',
+                '../src/core/*.js',
+                '../src/math/*.js',
+                '../src/tf/*.js',
+                '../src/urdf/*.js',
+                '../src/RosLibFooter.js'
+               ],
         dest : '../build/roslib.js'
       }
     },
@@ -85,7 +93,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('dev', ['concat', 'watch']);
-  grunt.registerTask('build', ['concat', 'jshint', 'karma', 'uglify']);
+  grunt.registerTask('build', ['concat', /*'jshint', 'karma' */, 'uglify']);
   grunt.registerTask('build_and_watch', ['watch']);
   grunt.registerTask('doc', ['clean', 'jsdoc']);
 };
