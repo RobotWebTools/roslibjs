@@ -78,11 +78,11 @@ ROSLIB.Ros.prototype.connect = function(url) {
    */
   function decompressPng(data, callback) {
     // Uncompresses the data before sending it through (use image/canvas to do so).
-    var image = new Image();
+    var image = new Canvas.Image();
     // When the image loads, extracts the raw data (JSON message).
     image.onload = function() {
       // Creates a local canvas to draw on.
-      var canvas = document.createElement('canvas');
+      var canvas = new Canvas();
       var context = canvas.getContext('2d');
 
       // Sets width and height.
