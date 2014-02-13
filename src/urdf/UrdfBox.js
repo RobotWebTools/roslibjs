@@ -23,7 +23,7 @@ ROSLIB.UrdfBox = function(options) {
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
-    this.type = ROSLIB.URDF_BOX;
+    that.type = ROSLIB.URDF_BOX;
 
     // Parse the string
     var xyz = xml.getAttribute('size').split(' ');
