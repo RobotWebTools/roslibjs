@@ -4,6 +4,14 @@
   "homepage": "https://www.robotwebtools.org",
   "version": "0.7.0",
   "author": "Jihoon Lee <jihoonlee.in@gmail.com>",
+  "contributors": [
+    { "name": "Russell Toris" },
+    { "name": "Brandon Alexander" },
+    { "name": "David Gossow"},
+    { "name": "Benjamin Pitzer"},
+    { "name": "adamfowleruk"},
+    { "name": "tlau"}
+  ],
   "keywords": ["ros", "roslib", "roslibjs", "robot"],
   "dependencies": { 
     "eventemitter2": "~0.4.11",
