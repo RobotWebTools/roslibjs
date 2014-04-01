@@ -13,7 +13,7 @@ module.exports = function(grunt) {
                 'src/urdf/*.js',
                 'src/RosLibFooter.js'
                ],
-        dest : 'roslib.js'
+        dest : 'build/roslib.js'
       }
     },
     jshint: {
@@ -22,7 +22,7 @@ module.exports = function(grunt) {
       },
       files: [
         'Gruntfile.js',
-        'roslib.js'
+        'build/roslib.js'
       ]
     },
     /*

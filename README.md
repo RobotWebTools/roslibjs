@@ -10,12 +10,16 @@ For full documentation, see [the ROS wiki](http://ros.org/wiki/roslibjs) or chec
 
 This project is released as part of the [Robot Web Tools](http://robotwebtools.org/) effort.
 
-### Usage
-Pre-built files can be found in either [roslib.js](build/roslib.js) or [roslib.min.js](build/roslib.min.js).
+### Installation
 
-Alternatively, you can use the current release via the Robot Web Tools CDN: ([full](http://cdn.robotwebtools.org/roslibjs/current/roslib.js)) | ([min](http://cdn.robotwebtools.org/roslibjs/current/roslib.min.js))
+> npm install roslib
+
+### Usage
+
+> var Ros = require('roslib').Ros
 
 ### Dependencies
+
 roslibjs depends on:
 
 * [eventemitter2](https://github.com/hij1nx/EventEmitter2)
