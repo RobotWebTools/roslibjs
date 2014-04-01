@@ -26,7 +26,7 @@ ROSLIB.UrdfModel = function(options) {
    */
   var initXml = function(xml) {
     // Get the robot tag
-    var robotXml = xml.evaluate('//robot', xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    var robotXml = XPath.evaluate('//robot', xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 
     // Get the robot name
     that.name = robotXml.getAttribute('name');

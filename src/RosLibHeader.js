@@ -22,6 +22,9 @@
 var EventEmitter2 = require('eventemitter2').EventEmitter2; // direct import as eventemitter2 is a node.js module also - TODO Test direct import works
 var ws = require('nodejs-websocket');
 var Canvas = require('canvas');
+var DOMParser = require('xmldom').DomParser;
+var XPath = require('xpath').XPath;
+var XPathResult = require('xpath').XPathResult;
 
 /**
  * Provides a WebSocket browser compatible interface to the nodejs-websocket client library. This is used by ROSLIB.Ros directly.
