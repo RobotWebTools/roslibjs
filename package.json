@@ -2,7 +2,7 @@
   "name": "roslib",
   "description": "The standard ROS Javascript Library",
   "homepage": "https://www.robotwebtools.org",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "author": "Jihoon Lee <jihoonlee.in@gmail.com>",
   "contributors": [
     { "name": "Russell Toris" },
@@ -14,6 +14,7 @@
   ],
   "keywords": ["ros", "roslib", "roslibjs", "robot"],
   "dependencies": {
+    "nodejs-websocket": "~0.1.4",
     "eventemitter2": "~0.4.11",
     "canvas": "~1.1.3",
     "xpath": "~0.0.6",

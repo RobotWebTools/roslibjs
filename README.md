@@ -27,6 +27,7 @@ This project is released as part of the [Robot Web Tools](http://robotwebtools.o
 
 roslibjs depends on:
 
+* [nodejs-websocket](https://github.com/sitegui/nodejs-websocket)
 * [eventemitter2](https://github.com/hij1nx/EventEmitter2)
 * [canvas](https://github.com/learnboost/node-canvas)
 * [xpath](https://github.com/goto100/xpath)
