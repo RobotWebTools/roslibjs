@@ -18,10 +18,10 @@ Alternatively, you can use the current release via the Robot Web Tools CDN: ([fu
 ### Dependencies
 roslibjs depends on:
 
-* eventemitter2
-* canvas
-* xpath
-* xmldom
+* [eventemitter2](https://github.com/hij1nx/EventEmitter2)
+* [canvas](https://github.com/learnboost/node-canvas)
+* [xpath](https://github.com/goto100/xpath)
+* [xmldom](https://github.com/jindw/xmldom)
 
 
 ### Build
