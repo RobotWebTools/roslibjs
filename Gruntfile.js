@@ -1,19 +1,19 @@
 module.exports = function(grunt) {
 
   grunt.initConfig({
-    pkg: grunt.file.readJSON('../package.json'),
+    pkg: grunt.file.readJSON('package.json'),
     concat: {
       build: {
-        src  : ['../src/RosLibHeader.js',
-                '../src/RosLib.js',
-                '../src/actionlib/*.js',
-                '../src/core/*.js',
-                '../src/math/*.js',
-                '../src/tf/*.js',
-                '../src/urdf/*.js',
-                '../src/RosLibFooter.js'
+        src  : ['src/RosLibHeader.js',
+                'src/RosLib.js',
+                'src/actionlib/*.js',
+                'src/core/*.js',
+                'src/math/*.js',
+                'src/tf/*.js',
+                'src/urdf/*.js',
+                'src/RosLibFooter.js'
                ],
-        dest : '../build/roslib.js'
+        dest : 'build/roslib.js'
       }
     },
     jshint: {
@@ -22,13 +22,13 @@ module.exports = function(grunt) {
       },
       files: [
         'Gruntfile.js',
-        '../build/roslib.js'
+        'build/roslib.js'
       ]
     },
     /*
     karma: {
       build: {
-        configFile: '../test/karma.conf.js',
+        configFile: 'test/karma.conf.js',
         singleRun: true,
         browsers: ['PhantomJS']
       }
@@ -38,8 +38,8 @@ module.exports = function(grunt) {
         report: 'min'
       },
       build: {
-        src: '../build/roslib.js',
-        dest: '../build/roslib.min.js'
+        src: 'build/roslib.js',
+        dest: 'build/roslib.min.js'
       }
     },
     watch: {
@@ -48,8 +48,8 @@ module.exports = function(grunt) {
           interrupt: true
         },
         files: [
-          '../src/*.js',
-          '../src/**/*.js'
+          'src/*.js',
+          'src/**/*.js'
         ],
         tasks: ['concat']
       },
@@ -60,8 +60,8 @@ module.exports = function(grunt) {
         files: [
           'Gruntfile.js',
           '.jshintrc',
-          '../src/*.js',
-          '../src/**/*.js'
+          'src/*.js',
+          'src/**/*.js'
         ],
         tasks: ['build']
       }
@@ -70,16 +70,17 @@ module.exports = function(grunt) {
       options: {
         force: true
       },
-      doc: ['../doc']
+      doc: ['doc'],
+      build: ['build']
     },
     jsdoc: {
       doc: {
         src: [
-          '../src/*.js',
-          '../src/**/*.js'
+          'src/*.js',
+          'src/**/*.js'
         ],
         options: {
-          destination: '../doc'
+          destination: 'doc'
         }
       }
     }
