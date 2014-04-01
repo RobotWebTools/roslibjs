@@ -1,7 +1,7 @@
 roslibjs - node version [![Build Status](https://api.travis-ci.org/RobotWebTools/roslibjs.png)](https://travis-ci.org/RobotWebTools/roslibjs)
 ========
 
-#### Warning. It is not working yet ####
+### Warning. It is highly experimental! Some modules may not be available ####
 
 #### The Standard ROS JavaScript Library
 For full documentation, see [the ROS wiki](http://ros.org/wiki/roslibjs) or check out some [working demos](http://robotwebtools.org/).
