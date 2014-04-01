@@ -11,13 +11,10 @@ roslibjs Build Setup
    * `sudo apt-get install python-software-properties`
    * `sudo add-apt-repository ppa:chris-lea/node.js`
    * `sudo apt-get update && sudo apt-get install nodejs phantomjs`
- 2. Install Grunt and the test runner [Karma](http://karma-runner.github.io/)
-   * `sudo npm install -g grunt-cli karma phantomjs`
-   * `sudo rm -rf ~/.npm ~/tmp`
- 3. Install the Grunt tasks specific to this project
+ 2. Install the Grunt tasks specific to this project
    * `cd /path/to/roslibjs/utils/`
    * `npm install .`
- 4. (Optional) To generate the documentation, you'll need to setup Java. Documentation generation is not required for patches.
+ 3. (Optional) To generate the documentation, you'll need to setup Java. Documentation generation is not required for patches.
    * `echo "export JAVA_HOME=/usr/lib/jvm/default-java/jre" >> ~/.bashrc`
    * `source ~/.bashrc`
 
@@ -26,9 +23,7 @@ roslibjs Build Setup
  1. Install Node.js and its package manager, NPM
    * Go to [Node.js Downloads](http://nodejs.org/download/)
    * Download and install the Universal pkg file.
- 2. Install Grunt and the test runner [Karma](http://karma-runner.github.io/)
-   * `sudo npm install -g grunt-cli karma phantomjs`
- 3. Install the Grunt tasks specific to this project
+ 2. Install the Grunt tasks specific to this project
    * `cd /path/to/roslibjs/utils/`
    * `npm install .`
 
@@ -46,4 +41,3 @@ To run the build tasks:
 `grunt dev` will watch for any changes to any of the src/ files and automatically concatenate and minimize the files. This is ideal for those developing as you should only have to run `grunt dev` once.
 
 `grunt doc` will rebuild all JSDoc for the project.
-
