@@ -12,6 +12,11 @@ This project is released as part of the [Robot Web Tools](http://robotwebtools.o
 
 ### Installation
 
+* Install [node-canvas](https://github.com/learnboost/node-canvas) dependency
+ * https://github.com/learnboost/node-canvas/wiki
+
+* Install roslib
+
 > npm install roslib
 
 ### Usage
