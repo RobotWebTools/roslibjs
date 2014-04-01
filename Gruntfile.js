@@ -13,7 +13,7 @@ module.exports = function(grunt) {
                 'src/urdf/*.js',
                 'src/RosLibFooter.js'
                ],
-        dest : 'build/roslib.js'
+        dest : 'roslib.js'
       }
     },
     jshint: {
@@ -22,7 +22,7 @@ module.exports = function(grunt) {
       },
       files: [
         'Gruntfile.js',
-        'build/roslib.js'
+        'roslib.js'
       ]
     },
     /*
@@ -33,15 +33,6 @@ module.exports = function(grunt) {
         browsers: ['PhantomJS']
       }
     },*/
-    uglify: {
-      options: {
-        report: 'min'
-      },
-      build: {
-        src: 'build/roslib.js',
-        dest: 'build/roslib.min.js'
-      }
-    },
     watch: {
       dev: {
         options: {
@@ -71,7 +62,6 @@ module.exports = function(grunt) {
         force: true
       },
       doc: ['doc'],
-      build: ['build']
     },
     jsdoc: {
       doc: {
@@ -89,13 +79,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-jsdoc');
 //  grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('dev', ['concat', 'watch']);
-  grunt.registerTask('build', ['concat', 'jshint','uglify']); //karma has been disabled. karma is to test brownser modules.
+  grunt.registerTask('build', ['concat', 'jshint']); //karma has been disabled. karma is to test brownser modules.
   grunt.registerTask('build_and_watch', ['watch']);
   grunt.registerTask('doc', ['clean', 'jsdoc']);
 };

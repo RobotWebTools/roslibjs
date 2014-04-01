@@ -1,4 +1,4 @@
-roslibjs - node compatible version [![Build Status](https://api.travis-ci.org/RobotWebTools/roslibjs.png)](https://travis-ci.org/RobotWebTools/roslibjs)
+roslibjs - node version [![Build Status](https://api.travis-ci.org/RobotWebTools/roslibjs.png)](https://travis-ci.org/RobotWebTools/roslibjs)
 ========
 
 #### Warning. It is not working yet ####
@@ -17,6 +17,11 @@ Alternatively, you can use the current release via the Robot Web Tools CDN: ([fu
 
 ### Dependencies
 roslibjs depends on:
+
+* eventemitter2
+* canvas
+* xpath
+* xmldom
 
 
 ### Build
