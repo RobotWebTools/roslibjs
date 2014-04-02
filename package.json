@@ -5,38 +5,67 @@
   "version": "0.8.1",
   "author": "Jihoon Lee <jihoonlee.in@gmail.com>",
   "contributors": [
-    { "name": "Russell Toris" },
-    { "name": "Brandon Alexander" },
-    { "name": "David Gossow"},
-    { "name": "Benjamin Pitzer"},
-    { "name": "adamfowleruk"},
-    { "name": "tlau"}
+    {
+      "name": "Russell Toris"
+    },
+    {
+      "name": "Brandon Alexander"
+    },
+    {
+      "name": "David Gossow"
+    },
+    {
+      "name": "Benjamin Pitzer"
+    },
+    {
+      "name": "adamfowleruk"
+    },
+    {
+      "name": "tlau"
+    }
+    
   ],
-  "keywords": ["ros", "roslib", "roslibjs", "robot"],
+  "keywords": [
+    "ros",
+    "roslib",
+    "roslibjs",
+    "robot"
+  ],
   "dependencies": {
     "nodejs-websocket": "~0.1.4",
-    "eventemitter2": "~0.4.11",
+    "eventemitter2": "~0.4.13",
     "canvas": "~1.1.3",
     "xpath": "~0.0.6",
-    "xmldom": "~0.1.19" 
+    "xmldom": "~0.1.19"
   },
-  "main": "./build/roslib.js",
+  "scripts": {
+    "publish": "grunt build",
+    "install": "grunt build",
+    "test": "grunt test"
+  },
+  "main": "./build/roslib.node.js",
   "license": "BSD",
   "devDependencies": {
     "grunt": "~0.4.1",
-    "grunt-contrib-concat": "~0.1.3",
+    "grunt-contrib-concat": "~0.4.0",
     "grunt-contrib-jshint": "~0.1.1",
     "grunt-karma": "~0.3.0",
     "grunt-contrib-watch": "~0.3.1",
     "grunt-jsdoc": "~0.3.0",
-    "grunt-contrib-clean": "~0.4.0"
+    "grunt-contrib-clean": "~0.4.0",
+    "grunt-cli": "~0.1.13",
+    "grunt-mocha-test": "~0.10.0",
+    "karma": "~0.12.3",
+    "chai": "~1.9.1"
   },
-  "engines" : {"node": ">=0.10"},
-  "repository" : {
+  "engines": {
+    "node": ">=0.10"
+  },
+  "repository": {
     "type": "git",
-    "url" : "https://github.com/RobotWebTools/roslibjs.git"
+    "url": "https://github.com/RobotWebTools/roslibjs.git"
   },
-  "bugs" : {
-    "url" : "https://github.com/RobotWebTools/roslibjs/issues"
+  "bugs": {
+    "url": "https://github.com/RobotWebTools/roslibjs/issues"
   }
 }
