@@ -25,6 +25,7 @@ ROSLIB.Topic = function(options) {
   this.isAdvertised = false;
   this.compression = options.compression || 'none';
   this.throttle_rate = options.throttle_rate || 0;
+  this.latch = options.latch || false;
 
   // Check for valid compression types
   if (this.compression && this.compression !== 'png' && this.compression !== 'none') {
@@ -99,7 +100,8 @@ ROSLIB.Topic.prototype.advertise = function() {
     op : 'advertise',
     id : advertiseId,
     type : this.messageType,
-    topic : this.name
+    topic : this.name,
+    latch : this.latch
   };
   this.ros.callOnConnection(call);
   this.isAdvertised = true;
@@ -136,7 +138,8 @@ ROSLIB.Topic.prototype.publish = function(message) {
     op : 'publish',
     id : publishId,
     topic : this.name,
-    msg : message
+    msg : message,
+    latch : this.latch
   };
   this.ros.callOnConnection(call);
 };
