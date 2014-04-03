@@ -42,9 +42,9 @@ module.exports = function(grunt) {
           reporter: 'spec',
           require: [
             function(){
-              chai = require('chai')
-              EventEmitter2 = require('eventemitter2').EventEmitter2
-              ROSLIB = require('./build/roslib.node.js')
+              chai = require('chai');
+              EventEmitter2 = require('eventemitter2').EventEmitter2;
+              ROSLIB = require('./build/roslib.node.js');
             }]
         },
         src: ['test/**/*.test.js']

@@ -82,7 +82,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
     // When the image loads, extracts the raw data (JSON message).
     image.onload = function() {
       // Creates a local canvas to draw on.
-      var canvas = (typeof Canvas !== "undefined") ? new Canvas() : document.createElement('canvas');
+      var canvas = (typeof Canvas !== 'undefined') ? new Canvas() : document.createElement('canvas');
       var context = canvas.getContext('2d');
 
       // Sets width and height.

@@ -1,7 +1,16 @@
 {
   "globals": {
     "module": true,
-    "EventEmitter2" : true
+    "require": true,
+    "EventEmitter2" : true,
+    "document" : true,
+    "Image" : true,
+    "Canvas" : true,
+    "WebSocket" : true,
+    "XPathResult" : true,
+    "DOMParser" : true,
+    "chai" : true,
+    "ROSLIB" : true
   },
   "curly": true,
   "eqeqeq": true,
@@ -13,8 +22,8 @@
   "undef": true,
   "boss": false,
   "eqnull": false,
-  "browser": false,
-  "node": true,
+  "browser": true,
+  "node": false,
   "devel": true,
   "es5": true,
   "strict": false,
