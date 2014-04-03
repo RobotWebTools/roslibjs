@@ -22,8 +22,10 @@
 var EventEmitter2 = require('eventemitter2').EventEmitter2; // direct import as eventemitter2 is a node.js module also - TODO Test direct import works
 var ws = require('nodejs-websocket');
 var Canvas = require('canvas');
+var Image = Canvas.Image;
 var DOMParser = require('xmldom').DomParser;
 var XPath = require('xpath').XPath;
+var xml = XPath;
 var XPathResult = require('xpath').XPathResult;
 
 /**
