@@ -34,6 +34,7 @@
     "grunt-cli": "~0.1.13",
     "grunt-mocha-test": "~0.10.0",
     "karma": "~0.12.3",
+    "phantomjs": "~1.9.7",
     "chai": "~1.9.1"
   },
   "engines": {
