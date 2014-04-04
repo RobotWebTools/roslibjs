@@ -19,7 +19,6 @@
   },
   "scripts": {
     "publish": "grunt build",
-    "install": "grunt build",
     "test": "grunt test"
   },
   "main": "./build/roslib.node.js",
