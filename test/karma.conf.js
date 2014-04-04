@@ -9,7 +9,7 @@ basePath = '';
 files = [
   MOCHA,
   MOCHA_ADAPTER,
-  "../include/EventEmitter2/eventemitter2.js",
+  "../node_modules/eventemitter2/lib/eventemitter2.js",
   "../build/roslib.js",
   "chai.js",
   "*.test.js"
