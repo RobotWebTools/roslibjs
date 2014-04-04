@@ -4,27 +4,6 @@
   "homepage": "https://www.robotwebtools.org",
   "version": "0.8.1",
   "author": "Jihoon Lee <jihoonlee.in@gmail.com>",
-  "contributors": [
-    {
-      "name": "Russell Toris"
-    },
-    {
-      "name": "Brandon Alexander"
-    },
-    {
-      "name": "David Gossow"
-    },
-    {
-      "name": "Benjamin Pitzer"
-    },
-    {
-      "name": "adamfowleruk"
-    },
-    {
-      "name": "tlau"
-    }
-    
-  ],
   "keywords": [
     "ros",
     "roslib",
