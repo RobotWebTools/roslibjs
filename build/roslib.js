@@ -3,7 +3,7 @@
  */
 
 var ROSLIB = ROSLIB || {
-  REVISION : '7-devel'
+  REVISION : '7'
 };
 
 //URDF types
@@ -263,8 +263,7 @@ ROSLIB.Param.prototype.get = function(callback) {
   });
 
   var request = new ROSLIB.ServiceRequest({
-    name : this.name,
-    value : JSON.stringify('')
+    name : this.name
   });
 
   paramClient.callService(request, function(result) {
@@ -798,6 +797,7 @@ ROSLIB.Topic = function(options) {
   this.isAdvertised = false;
   this.compression = options.compression || 'none';
   this.throttle_rate = options.throttle_rate || 0;
+  this.latch = options.latch || false;
 
   // Check for valid compression types
   if (this.compression && this.compression !== 'png' && this.compression !== 'none') {
@@ -872,7 +872,8 @@ ROSLIB.Topic.prototype.advertise = function() {
     op : 'advertise',
     id : advertiseId,
     type : this.messageType,
-    topic : this.name
+    topic : this.name,
+    latch : this.latch
   };
   this.ros.callOnConnection(call);
   this.isAdvertised = true;
@@ -909,7 +910,8 @@ ROSLIB.Topic.prototype.publish = function(message) {
     op : 'publish',
     id : publishId,
     topic : this.name,
-    msg : message
+    msg : message,
+    latch : this.latch
   };
   this.ros.callOnConnection(call);
 };
@@ -1303,7 +1305,7 @@ ROSLIB.UrdfBox = function(options) {
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
-    this.type = ROSLIB.URDF_BOX;
+    that.type = ROSLIB.URDF_BOX;
 
     // Parse the string
     var xyz = xml.getAttribute('size').split(' ');
