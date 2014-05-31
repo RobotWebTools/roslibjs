@@ -14,6 +14,7 @@ This project is released as part of the [Robot Web Tools](http://robotwebtools.o
 
 * Install [node-canvas](https://github.com/learnboost/node-canvas) dependency
  * https://github.com/learnboost/node-canvas/wiki
+ * On OSX, you may need `export PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig` before `npm install canvas` per `https://github.com/selaux/node-sprite-generator/issues/23`
 
 * Install roslib
 
