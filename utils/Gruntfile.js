@@ -29,6 +29,10 @@ module.exports = function(grunt) {
         // We can't use phantomjs right now. It's incompatible with websockets rosbridge uses
         // https://github.com/ariya/phantomjs/issues/11018
         browsers: ['Chrome']
+
+        // Change allow_draft76 to True in rosbridge_server/src/tornado/websocket.py
+        //browsers: ['PhantomJS']
+
       }
     },
     uglify: {
@@ -92,7 +96,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('dev', ['concat', 'watch']);
-  grunt.registerTask('build', ['concat', 'jshint', 'karma', 'uglify']);
+  grunt.registerTask('build', ['concat', 'jshint', 'karma:build', 'uglify']);
   grunt.registerTask('build_and_watch', ['watch']);
   grunt.registerTask('doc', ['clean', 'jsdoc']);
 };
