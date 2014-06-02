@@ -35,13 +35,13 @@ module.exports = function(grunt) {
 
         options: {
           files:[
-            "../../utils/node_modules/grunt-karma/node_modules/karma/adapter/lib/mocha.js",
-            "../../utils/node_modules/grunt-karma/node_modules/karma/adapter/mocha.js",
-            "../../include/EventEmitter2/eventemitter2.js",
-            "../../build/roslib.js",
-            "../../test/chai.js",
-            "../../utils/node_modules/chai-as-promised/lib/chai-as-promised.js",
-            "<%= grunt.option('jsFiles') %>"
+            '../../utils/node_modules/grunt-karma/node_modules/karma/adapter/lib/mocha.js',
+            '../../utils/node_modules/grunt-karma/node_modules/karma/adapter/mocha.js',
+            '../../include/EventEmitter2/eventemitter2.js',
+            '../../build/roslib.js',
+            '../../test/chai.js',
+            '../../utils/node_modules/chai-as-promised/lib/chai-as-promised.js',
+            '<%= grunt.option(\'jsFiles\') %>'
           ]
         }
       }
