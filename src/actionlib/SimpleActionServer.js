@@ -16,7 +16,6 @@
  *   * ros - the ROSLIB.Ros connection handle
  *   * serverName - the action server name, like /fibonacci
  *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
- *  
  */
 
 ROSLIB.SimpleActionServer = function(options) {
