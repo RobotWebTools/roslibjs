@@ -1,8 +1,23 @@
 /**
-* Hacky actionlib SimpleActionServer (only tracks one goal)
-* Author: Laura Lindzey
-*/
+ * @author Laura Lindzey - lindzey@gmail.com
+ */
 
+/**
+ * An actionlib action server client.
+ *
+ * Emits the following events:
+ *  * 'timeout' - if a timeout occurred while sending a goal
+ *  * 'status' - the status messages received from the action server
+ *  * 'feedback' -  the feedback messages received from the action server
+ *  * 'result' - the result returned from the action server
+ *
+ *  @constructor
+ *  @param options - object with following keys:
+ *   * ros - the ROSLIB.Ros connection handle
+ *   * serverName - the action server name, like /fibonacci
+ *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
+ *  
+ */
 
 ROSLIB.SimpleActionServer = function(options) {
     var that = this;
@@ -46,7 +61,7 @@ ROSLIB.SimpleActionServer = function(options) {
         messageType : 'actionlib_msgs/GoalID'
     });
 
-    // I need to track the goals and their status in order to publish status...
+    // Track the goals and their status in order to publish status...
     this.statusMessage = new ROSLIB.Message({
         header : {
             stamp : {secs : 0, nsecs : 100},
@@ -60,14 +75,12 @@ ROSLIB.SimpleActionServer = function(options) {
     this.nextGoal = null; // the one that'll be preempting
 
     goalListener.subscribe(function(goalMessage) {
-        console.log('SAS got goal message w/ id:', goalMessage.goal_id.id);
+        
     if(that.currentGoal) {
-            console.log('...and we need to preempt currently-tracked goal');
             that.nextGoal = goalMessage;
             // needs to happen AFTER rest is set up
             that.emit('cancel');
     } else {
-            console.log('... and no currently-tracked goal');
             that.statusMessage.status_list = [{goal_id : goalMessage.goal_id, status : 1}];
             that.currentGoal = goalMessage;
             that.emit('goal', goalMessage.goal);
@@ -93,34 +106,27 @@ ROSLIB.SimpleActionServer = function(options) {
     // where we've been preempted by a next goal, it hasn't finished
     // processing, and then we get a cancel message
     cancelListener.subscribe(function(cancelMessage) {
-        console.log('SAS got cancel message!');
-        console.log('...id: ', cancelMessage.id);
-        console.log('...stamp: ', cancelMessage.stamp);
 
         // cancel ALL goals if both empty
         if(cancelMessage.stamp.secs === 0 && cancelMessage.stamp.secs === 0 && cancelMessage.id === '') {
-            console.log('...Both empty! cancelling everything');
             that.nextGoal = null;
             if(that.currentGoal) {
                 that.emit('cancel');
             }
         } else { // treat id and stamp independently
             if(that.currentGoal && cancelMessage.id === that.currentGoal.goal_id.id) {
-                console.log('...ID matches current goal! cancelling it');
                 that.emit('cancel');
             } else if(that.nextGoal && cancelMessage.id === that.nextGoal.goal_id.id) {
-                console.log('...ID matches queued goal! cancelling it');
                 that.nextGoal = null;
             }
 
             if(that.nextGoal && isEarlier(that.nextGoal.goal_id.stamp,
                                           cancelMessage.stamp)) {
-                console.log('...stamp after next goal! cancelling it!');
                 that.nextGoal = null;
             }
             if(that.currentGoal && isEarlier(that.currentGoal.goal_id.stamp,
                                              cancelMessage.stamp)) {
-                console.log('...stamp after current goal! cancelling it!');
+                
                 that.emit('cancel');
             }
         }
@@ -140,8 +146,12 @@ ROSLIB.SimpleActionServer = function(options) {
 
 ROSLIB.SimpleActionServer.prototype.__proto__ = EventEmitter2.prototype;
 
+/**
+*  Set action state to succeeded and return to client
+*/
+
 ROSLIB.SimpleActionServer.prototype.setSucceeded = function(result2) {
-    console.log('SAS got setSucceeded call for goal: ', this.currentGoal.goal_id.id);
+    
 
     var resultMessage = new ROSLIB.Message({
         status : {goal_id : this.currentGoal.goal_id, status : 3},
@@ -151,8 +161,6 @@ ROSLIB.SimpleActionServer.prototype.setSucceeded = function(result2) {
 
     this.statusMessage.status_list = [];
     if(this.nextGoal) {
-        console.log('SAS: Bug or Weird synchronization thing!');
-        console.log(' ... goal was preempted but finished first');
         this.currentGoal = this.nextGoal;
         this.nextGoal = null;
         this.emit('goal', this.currentGoal.goal);
@@ -161,8 +169,11 @@ ROSLIB.SimpleActionServer.prototype.setSucceeded = function(result2) {
     }
 };
 
+/**
+*  Function to send feedback
+*/
+
 ROSLIB.SimpleActionServer.prototype.sendFeedback = function(feedback2) {
-    console.log('SAS got sendFeedback call for goal: ', this.currentGoal.goal_id.id);
 
     var feedbackMessage = new ROSLIB.Message({
         status : {goal_id : this.currentGoal.goal_id, status : 1},
@@ -171,8 +182,11 @@ ROSLIB.SimpleActionServer.prototype.sendFeedback = function(feedback2) {
     this.feedbackPublisher.publish(feedbackMessage);
 };
 
+/**
+*  Handle case where client requests preemption
+*/
+
 ROSLIB.SimpleActionServer.prototype.setPreempted = function() {
-    console.log('SAS got setPreempted for goal: ', this.currentGoal.goal_id.id);
 
     this.statusMessage.status_list = [];
     var resultMessage = new ROSLIB.Message({
@@ -180,14 +194,11 @@ ROSLIB.SimpleActionServer.prototype.setPreempted = function() {
     });
     this.resultPublisher.publish(resultMessage);
 
-    console.log('...checking for waiting goal');
     if(this.nextGoal) {
-        console.log('......Preempted, but had another goal waiting!');
         this.currentGoal = this.nextGoal;
         this.nextGoal = null;
         this.emit('goal', this.currentGoal.goal);
     } else {
-        console.log('......no goal waiting');
         this.currentGoal = null;
     }
 };
