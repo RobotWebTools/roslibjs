@@ -5,18 +5,6 @@
 basePath = '';
 
 
-// List of files / patterns to load in the browser
-files = [
-  MOCHA,
-  MOCHA_ADAPTER,
-  "../../include/EventEmitter2/eventemitter2.js",
-  "../../build/roslib.js",
-  "../../test/chai.js",
-  "../../utils/node_modules/chai-as-promised/lib/chai-as-promised.js",
-  "*.test.js"
-];
-
-
 // list of files to exclude
 exclude = [
 
