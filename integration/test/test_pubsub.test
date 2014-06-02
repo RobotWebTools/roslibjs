@@ -1,0 +1,4 @@
+<launch>
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+  <test test-name="test_subscribe" pkg="roslibjs_integration" type="js_runner" args="pubsub.test.js" time-limit="10000.0"/>
+</launch>

@@ -22,6 +22,28 @@ module.exports = function(grunt) {
         configFile: '../test/karma.conf.js',
         singleRun: true,
         browsers: ['PhantomJS']
+      },
+      integration: {
+        configFile: '../integration/test/karma.conf.js',
+        singleRun: true,
+        // We can't use phantomjs right now. It's incompatible with websockets rosbridge uses
+        // https://github.com/ariya/phantomjs/issues/11018
+        browsers: ['Chrome'],
+
+        // Change allow_draft76 to True in rosbridge_server/src/tornado/websocket.py
+        //browsers: ['PhantomJS'],
+
+        options: {
+          files:[
+            '../../utils/node_modules/grunt-karma/node_modules/karma/adapter/lib/mocha.js',
+            '../../utils/node_modules/grunt-karma/node_modules/karma/adapter/mocha.js',
+            '../../include/EventEmitter2/eventemitter2.js',
+            '../../build/roslib.js',
+            '../../test/chai.js',
+            '../../utils/node_modules/chai-as-promised/lib/chai-as-promised.js',
+            '<%= grunt.option(\'jsFiles\') %>'
+          ]
+        }
       }
     },
     uglify: {
@@ -85,8 +107,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('dev', ['concat', 'watch']);
-  grunt.registerTask('build', ['concat', 'jshint', 'karma', 'uglify']);
+  grunt.registerTask('build', ['concat', 'jshint', 'karma:build', 'uglify']);
   grunt.registerTask('build_and_watch', ['watch']);
   grunt.registerTask('doc', ['clean', 'jsdoc']);
 };
-

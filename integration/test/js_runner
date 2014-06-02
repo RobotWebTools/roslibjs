@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+GT_OUTPUT=$2
+OUT_ARGS=(${GT_OUTPUT//:/ })
+OUT_FN=${OUT_ARGS[1]}
+
+JS_TEST_NAME=$1
+TEST_DIR=$(rospack find roslibjs_integration)/test
+
+WD=$(rospack find roslibjs_integration)/../utils
+cd $WD
+
+if [ -f ${TEST_DIR}/${JS_TEST_NAME} ] ; then
+    grunt karma:integration --jsFiles=${TEST_DIR}/${JS_TEST_NAME} 2>&1 >/tmp/integration_test_log
+    NE=$?
+else
+    NE=1
+fi
+
+cat >${OUT_FN} << EOF
+<?xml version="1.0" encoding="utf-8"?>
+<testsuite errors="${NE}" failures="0" name="unittest.suite.TestSuite" tests="1" time="1">
+  <testcase classname="rostest.runner.RosTest" name="dummy_test" time="1"></testcase>
+  <system-out><![CDATA[OUT]]></system-out>
+  <system-err><![CDATA[ERR]]></system-err>
+</testsuite>
+EOF
