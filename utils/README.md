@@ -13,6 +13,13 @@ roslibjs Build Setup
  2. Install Grunt and the test runner [Karma](http://karma-runner.github.io/)
    * `sudo npm install -g grunt-cli`
    * `sudo rm -rf ~/.npm ~/tmp`
+   
+   If using an older version of Ubuntu, you may need to install a newer version of Node.js for this step to work:
+   * `sudo apt-get update`
+   * `sudo apt-get install -y python-software-properties python g++ make`
+   * `sudo add-apt-repository ppa:chris-lea/node.js`
+   * `sudo apt-get update`
+   * `sudo apt-get install nodejs`
  3. Install the Grunt tasks specific to this project
    * `cd /path/to/roslibjs/utils/`
    * `npm install .`

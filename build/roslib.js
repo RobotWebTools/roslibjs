@@ -867,10 +867,10 @@ ROSLIB.Topic.prototype.unsubscribe = function() {
  */
 ROSLIB.Topic.prototype.advertise = function() {
   this.ros.idCounter++;
-  var advertiseId = 'advertise:' + this.name + ':' + this.ros.idCounter;
+  this.advertiseId = 'advertise:' + this.name + ':' + this.ros.idCounter;
   var call = {
     op : 'advertise',
-    id : advertiseId,
+    id : this.advertiseId,
     type : this.messageType,
     topic : this.name,
     latch : this.latch
@@ -883,8 +883,7 @@ ROSLIB.Topic.prototype.advertise = function() {
  * Unregisters as a publisher for the topic.
  */
 ROSLIB.Topic.prototype.unadvertise = function() {
-  this.ros.idCounter++;
-  var unadvertiseId = 'unadvertise:' + this.name + ':' + this.ros.idCounter;
+  var unadvertiseId = this.advertiseId;
   var call = {
     op : 'unadvertise',
     id : unadvertiseId,
@@ -901,7 +900,7 @@ ROSLIB.Topic.prototype.unadvertise = function() {
  */
 ROSLIB.Topic.prototype.publish = function(message) {
   if (!this.isAdvertised) {
-    this.advertise();
+      this.advertise();
   }
 
   this.ros.idCounter++;
@@ -1182,8 +1181,8 @@ ROSLIB.TFClient.prototype.processFeedback = function(tf) {
   var that = this;
   tf.transforms.forEach(function(transform) {
     var frameID = transform.child_frame_id;
-    if (frameID[0] !== '/') {
-      frameID = '/' + frameID;
+    if (frameID[0] === '/') {
+      frameID = frameID.substring(1);
     }
     var info = that.frameInfos[frameID];
     if (info !== undefined) {
