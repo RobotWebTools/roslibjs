@@ -94,6 +94,9 @@ ROSLIB.Topic.prototype.unsubscribe = function() {
  * Registers as a publisher for the topic.
  */
 ROSLIB.Topic.prototype.advertise = function() {
+  if (this.isAdvertised) {
+    return;
+  }
   this.ros.idCounter++;
   this.advertiseId = 'advertise:' + this.name + ':' + this.ros.idCounter;
   var call = {
@@ -111,6 +114,9 @@ ROSLIB.Topic.prototype.advertise = function() {
  * Unregisters as a publisher for the topic.
  */
 ROSLIB.Topic.prototype.unadvertise = function() {
+  if (!this.isAdvertised) {
+    return;
+  }
   var unadvertiseId = this.advertiseId;
   var call = {
     op : 'unadvertise',
