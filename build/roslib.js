@@ -3,7 +3,7 @@
  */
 
 var ROSLIB = ROSLIB || {
-  REVISION : '7'
+  REVISION : '0.8.0-SNAPSHOT'
 };
 
 //URDF types
@@ -626,16 +626,15 @@ ROSLIB.Ros.prototype.getMessageDetails = function(message, callback) {
 };
 
 /**
- * Encode a typedefs into a dictionary like `rosmsg show foo/bar`
- * @param type_defs - array of type_def dictionary
+ * Decode a typedefs into a dictionary like `rosmsg show foo/bar`
+ *
+ * @param defs - array of type_def dictionary
  */
-ROSLIB.Ros.prototype.decodeTypeDefs = function(type_defs) {
-  var typeDefDict = {};
-  var theType = type_defs[0];
-  
-  // It calls itself recursively to resolve type definition
-  // using hint_defs.
-  var decodeTypeDefsRec = function(theType, hint_defs) {
+ROSLIB.Ros.prototype.decodeTypeDefs = function(defs) {
+  var that = this;
+
+  // calls itself recursively to resolve type definition using hints.
+  var decodeTypeDefsRec = function(theType, hints) {
     var typeDefDict = {};
     for (var i = 0; i < theType.fieldnames.length; i++) {
       var arrayLen = theType.fieldarraylen[i];
@@ -651,33 +650,32 @@ ROSLIB.Ros.prototype.decodeTypeDefs = function(type_defs) {
       }
       else {
         // lookup the name
-        var sub_type = false;
-        for (var j = 0; j < hint_defs.length; j++) {
-          if (hint_defs[j].type.toString() === fieldType.toString()) {
-            sub_type = hint_defs[j];
+        var sub = false;
+        for (var j = 0; j < hints.length; j++) {
+          if (hints[j].type.toString() === fieldType.toString()) {
+            sub = hints[j];
             break;
           }
         }
-        if (sub_type) {
-          var sub_type_result = decodeTypeDefsRec(sub_type, hint_defs);
+        if (sub) {
+          var subResult = decodeTypeDefsRec(sub, hints);
           if (arrayLen === -1) {
-            typeDefDict[fieldName] = sub_type_result;
+            typeDefDict[fieldName] = subResult;
           }
           else {
-            typeDefDict[fieldName] = [sub_type_result];
+            typeDefDict[fieldName] = [subResult];
           }
         }
         else {
-          throw 'cannot find ' + fieldType;
+          that.emit('error', 'Cannot find ' + fieldType + ' in decodeTypeDefs');
         }
       }
     }
     return typeDefDict;
-  };                            // end of decodeTypeDefsRec
+  };
   
-  return decodeTypeDefsRec(type_defs[0], type_defs);
+  return decodeTypeDefsRec(defs[0], defs);
 };
-
 
 /**
  * @author Brandon Alexander - baalexander@gmail.com
