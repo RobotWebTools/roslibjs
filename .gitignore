@@ -1,4 +1,3 @@
-.project
-.settings
+.idea
 .vagrant
 node_modules
