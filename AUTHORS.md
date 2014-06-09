@@ -9,4 +9,3 @@ Original Authors
 
 Contributors
 ------------
-
