@@ -1,4 +1,9 @@
-SNAPSHOT - **0.8.0**
+2014-06-11 - **0.8.0**
+ * Remove build folder and change examples to use CDN versions of roslib.js [(T045T)](https://github.com/T045T/)
+ * Use proper parameters for addTwoInts service [(T045T)](https://github.com/T045T/)
+ * Only advertise a topic when it isn't currently being advertised [(T045T)](https://github.com/T045T/)
+ * Use the same ID to unadvertise a topic as was used to advertise it [(T045T)](https://github.com/T045T/)
+ * Remove, rather than add, leading slash from tf frame name [(T045T)](https://github.com/T045T/)
 
 2014-05-13 - **r7**
  * Removed sending value as a message field in GetParam service call [(mitchellwills)](https://github.com/mitchellwills/)
