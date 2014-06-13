@@ -20,22 +20,23 @@
   // The ActionServer
   // ----------------
 
-  this.fibonacciServer = new ROSLIB.ActionServer({
+  this.fibonacciServer = new ROSLIB.SimpleActionServer({
     ros : ros,
     serverName : '/fibonacci',
     actionName : 'actionlib_tutorials/FibonacciAction'
   });
 
   this.canceled = false;
-  that=this;
+  var that=this;
 
   //handle fibonacci action request.
   this.fibonacciServer.on('goal', function(goalMessage) {
+    console.log(goalMessage);
     fibonacciSequence = [];
     fibonacciSequence.push(0);
     fibonacciSequence.push(1);
 
-    for (var i = 1; i < goal.order; i++ ) {
+    for (var i = 1; i < goalMessage.order; i++ ) {
       fibonacciSequence.push( fibonacciSequence[i] + fibonacciSequence[i-1] );
 
       if (that.canceled === true ) {
@@ -43,12 +44,15 @@
         
         that.fibonacciServer.setPreempted();
       }
-
+      console.log(fibonacciSequence);
       //send feedback
+      var feedback = { sequence: fibonacciSequence };
       that.fibonacciServer.sendFeedback(fibonacciSequence);
     }      
+
     //send result
-    that.fibonacciServer.setSucceeded(fibonacciSequence);
+    var result = { sequence: fibonacciSequence};
+    that.fibonacciServer.setSucceeded(result);
   });
 
   this.fibonacciServer.on('cancel', function(goalMessage){
@@ -56,24 +60,8 @@
 
   });
 
-  // Create a goal.
-  var goal = new ROSLIB.Goal({
-    actionClient : fibonacciClient,
-    goalMessage : {
-      order : 7
-    }
-  });
+  
 
-  // Print out their output into the terminal.
-  goal.on('feedback', function(feedback) {
-    console.log('Feedback: ' + feedback.sequence);
-  });
-  goal.on('result', function(result) {
-    console.log('Final Result: ' + result.sequence);
-  });
-
-  // Send the goal to the action server.
-  goal.send();
 </script>
 </head>
 
