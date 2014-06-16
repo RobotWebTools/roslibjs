@@ -1,6 +1,12 @@
 language: node_js
+
 node_js:
   - "0.10"
+
+branches:
+  only:
+    - master
+    - develop
 
 before_script:
   - npm install -g karma grunt-cli
@@ -9,4 +15,3 @@ before_script:
 
 script:
   - grunt build
-

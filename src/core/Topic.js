@@ -25,6 +25,7 @@ ROSLIB.Topic = function(options) {
   this.isAdvertised = false;
   this.compression = options.compression || 'none';
   this.throttle_rate = options.throttle_rate || 0;
+  this.latch = options.latch || false;
 
   // Check for valid compression types
   if (this.compression && this.compression !== 'png' && this.compression !== 'none') {
@@ -93,13 +94,17 @@ ROSLIB.Topic.prototype.unsubscribe = function() {
  * Registers as a publisher for the topic.
  */
 ROSLIB.Topic.prototype.advertise = function() {
+  if (this.isAdvertised) {
+    return;
+  }
   this.ros.idCounter++;
-  var advertiseId = 'advertise:' + this.name + ':' + this.ros.idCounter;
+  this.advertiseId = 'advertise:' + this.name + ':' + this.ros.idCounter;
   var call = {
     op : 'advertise',
-    id : advertiseId,
+    id : this.advertiseId,
     type : this.messageType,
-    topic : this.name
+    topic : this.name,
+    latch : this.latch
   };
   this.ros.callOnConnection(call);
   this.isAdvertised = true;
@@ -109,8 +114,10 @@ ROSLIB.Topic.prototype.advertise = function() {
  * Unregisters as a publisher for the topic.
  */
 ROSLIB.Topic.prototype.unadvertise = function() {
-  this.ros.idCounter++;
-  var unadvertiseId = 'unadvertise:' + this.name + ':' + this.ros.idCounter;
+  if (!this.isAdvertised) {
+    return;
+  }
+  var unadvertiseId = this.advertiseId;
   var call = {
     op : 'unadvertise',
     id : unadvertiseId,
@@ -127,7 +134,7 @@ ROSLIB.Topic.prototype.unadvertise = function() {
  */
 ROSLIB.Topic.prototype.publish = function(message) {
   if (!this.isAdvertised) {
-    this.advertise();
+      this.advertise();
   }
 
   this.ros.idCounter++;
@@ -136,7 +143,8 @@ ROSLIB.Topic.prototype.publish = function(message) {
     op : 'publish',
     id : publishId,
     topic : this.name,
-    msg : message
+    msg : message,
+    latch : this.latch
   };
   this.ros.callOnConnection(call);
 };
