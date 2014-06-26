@@ -9,3 +9,5 @@ Original Authors
 
 Contributors
 ------------
+
+ * [Alan Meekins](http://nullagent.com) (alan.meekins@gmail.com)
