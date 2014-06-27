@@ -12,6 +12,7 @@ ROSLIB.MessageFactory = function(r){
   this.knownTypes = {};
   this.ros = r;
 };
+ROSLIB.MessageFactory.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
  * Get a constructor for the specified message type
@@ -41,7 +42,7 @@ ROSLIB.MessageFactory.prototype.createMessage = function(type){
  * @param f    - Constructor object
  */
 ROSLIB.MessageFactory.prototype.addMessageConstructor = function(type, f){
-  this.knownTypes[name] = f;
+  this.knownTypes[type] = f;
 };
 
 /**
@@ -56,76 +57,82 @@ ROSLIB.MessageFactory.prototype.getMessageTypes = function() {
   return list;
 };
 
+
 /**
  * Load message details from server and create message constructor for specified
  * type.
  *
  * @param type - Message type
- * @param cb - Callback, called when message constructor is ready
+ * @param cb(type) - Callback, called when message constructor is ready
  */
 ROSLIB.MessageFactory.prototype.getMessageDetails = function(type, cb){
-  var getMessageDetailsCallback = function(that, type, cb){
-    return function(details){
+  var that = this;
 
+  var factoryConstructor = function(detail){
+    var fieldList = detail.fieldList;
+    var typeList = detail.typeList;
+    var exampleList = detail.exampleList;
+    var currentType = detail.currentType;
+
+    return function(){
+      for(var fIdx in fieldList){
+        var fieldType = typeList[fIdx];
+        var fieldName = fieldList[fIdx];
+        var fieldExample = exampleList[fIdx];
+
+        //Handle arrays
+        if(fieldExample === '[]'){
+          this[fieldName] = [];
+          continue;
+        }
+
+        //Handle basic types
+        if(fieldType === 'string'){
+          this[fieldName] = String();
+        }
+        else if(fieldType.indexOf('int') > -1){
+          this[fieldName] = Number(0);
+        }
+        else if(fieldType.indexOf('float') > -1){
+          this[fieldName] = Number(0.0);
+        }
+        else if(fieldType === 'bool'){
+          this[fieldName] = Boolean();
+        }
+        else if(fieldType.length > 0){
+          if(fieldExample === '{}'){
+            this[fieldName] = that.createMessage(fieldType);
+          }
+        }
+        else{
+          //Unsupported type
+          this[fieldName] = undefined;
+        }
+      }
+    };
+  };
+
+  var getMessageDetailsCallback = function(details){
       for(var idx in details){
         //Create constructor function
-        (function(detail){
-          var fieldList=details[idx].fieldnames;
-          var typeList=details[idx].fieldtypes;
-          var exampleList=details[idx].examples;
-          var currentType = details[idx].type;
+        var detail = {
+          fieldList : details[idx].fieldnames,
+          typeList : details[idx].fieldtypes,
+          exampleList : details[idx].examples,
+          currentType : details[idx].type
+        };
 
-          that.addMessageConstructor(currentType,
-            function(){
-              for(var fIdx in fieldList){
-                var fieldType = typeList[fIdx];
-                var fieldName = fieldList[fIdx];
-                var fieldExample = exampleList[fIdx];
+        var f = factoryConstructor(detail);
 
-                //Handle arrays
-                if(fieldExample == '[]'){
-                  this[fieldName] = [];
-                  continue;
-                }
-
-                //Handle basic types
-                if(fieldType == 'string'){
-                  this[fieldName] = String();
-                }
-                else if(fieldType.indexOf('int') > -1){
-                  this[fieldName] = Number(0);
-                }
-                else if(fieldType.indexOf('float') > -1){
-                  this[fieldName] = Number(0.0);
-                }
-                else if(fieldType== 'bool'){
-                  this[fieldName] = Boolean();
-                }
-                else if(fieldType.length > 0){
-                  if(fieldExample == '{}'){
-                    this[fieldName] = that.createMessage(fieldType);
-                  }
-                }
-                else{
-                  //Unsupported type
-                  this[fieldName] = undefined;
-                }
-              }
-            }
-          );
-
-        }
-      )(details[idx]);
+        this.addMessageConstructor(detail.currentType, f);
       }
 
       if(cb !== undefined){
         cb(type);
       }
-    }.bind(this);
+      this.emit('typeready', type);
   };
 
 
-  this.ros.getMessageDetails(type,
-    getMessageDetailsCallback(this, type, cb)
-  );
+  this.ros.getMessageDetails(type, getMessageDetailsCallback.bind(this));
 };
