@@ -80,4 +80,3 @@ ROSLIB.Quaternion.prototype.multiply = function(q) {
 ROSLIB.Quaternion.prototype.clone = function() {
   return new ROSLIB.Quaternion(this);
 };
-
