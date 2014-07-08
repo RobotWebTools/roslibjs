@@ -8,6 +8,7 @@
     "Canvas" : true,
     "WebSocket" : true,
     "XPathResult" : true,
+    "XPath" : true,
     "DOMParser" : true,
     "chai" : true,
     "ROSLIB" : true
@@ -32,4 +33,3 @@
   "proto": true,
   "laxbreak": true
 }
-
