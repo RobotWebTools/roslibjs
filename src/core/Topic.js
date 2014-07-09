@@ -26,6 +26,7 @@ ROSLIB.Topic = function(options) {
   this.compression = options.compression || 'none';
   this.throttle_rate = options.throttle_rate || 0;
   this.latch = options.latch || false;
+  this.queue_size = options.queue_size || 100;
 
   // Check for valid compression types
   if (this.compression && this.compression !== 'png' && this.compression !== 'none') {
@@ -104,7 +105,8 @@ ROSLIB.Topic.prototype.advertise = function() {
     id : this.advertiseId,
     type : this.messageType,
     topic : this.name,
-    latch : this.latch
+    latch : this.latch,
+    queue_size : this.queue_size
   };
   this.ros.callOnConnection(call);
   this.isAdvertised = true;
