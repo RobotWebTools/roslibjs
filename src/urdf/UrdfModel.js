@@ -24,10 +24,16 @@ ROSLIB.UrdfModel = function(options) {
    *
    * @param xml - the XML element to parse
    */
-  var initXml = function(xml) {
+  var initXml = function(xmlDoc) {
     // Get the robot tag
-    var robotXml = xml.evaluate('//robot', xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 
+    var robotXml;
+    if( typeof( XPath ) === 'undefined' ){
+      robotXml = xmlDoc.evaluate('//robot', xmlDoc, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    }else{
+      // Node JS
+      robotXml = XPath.select('//robot', xmlDoc)[0];
+    }
     // Get the robot name
     that.name = robotXml.getAttribute('name');
 
@@ -77,4 +83,3 @@ ROSLIB.UrdfModel = function(options) {
   // Pass it to the XML parser
   initXml(xml);
 };
-

@@ -23,9 +23,8 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2; // direct import as 
 var ws = require('nodejs-websocket');
 var Canvas = require('canvas');
 var Image = Canvas.Image;
-var DOMParser = require('xmldom').DomParser;
-var XPath = require('xpath').XPath;
-var xml = XPath;
+var DOMParser = require('xmldom').DOMParser;
+var XPath = require('xpath');
 var XPathResult = require('xpath').XPathResult;
 
 /**
@@ -35,43 +34,43 @@ var XPathResult = require('xpath').XPathResult;
  */
 var WebSocket = function(url) {
   this.url = url;
-  
+
   this.onopen = function() {}; // placeholder function
   this.onclose = function() {}; // placeholder function
   this.onerror = function() {}; // placeholder function
   this.onmessage = function() {}; // placeholder function
-  
+
   var that = this;
   this.wsconn = ws.connect(url,null,function(evt) {
     that.readyState = that.wsconn.readyState;
-    
+
     // call onopen
     that.onopen(evt); // TODO check compatible
   });
-  
+
   this.wsconn.on('close', function(evt) {
     that.readyState = that.wsconn.readyState;
-    
+
     that.onclose(evt);
   });
   this.wsconn.on('error',function(evt) {
     that.readyState = that.wsconn.readyState;
-    
+
     that.onerror(evt);
   });
   this.wsconn.on('text',function(fb) {
     that.readyState = that.wsconn.readyState;
-    
+
     // do something with framebuffer
-    
+
     // assume RosBridge JSON and parse
     var json = JSON.parse(fb);
-    
+
     that.onmessage(json);
   });
   this.wsconn.on('binary',function(fb) {
     that.readyState = that.wsconn.readyState;
-    
+
     // do something with framebuffer - rosbridge wraps binary in the JSON under the data property
     // Thus this function should not be needed - we can safely ignore binary messages
   });
@@ -94,4 +93,3 @@ WebSocket.prototype.send = function(messageJson) {
  *
  * DO NOT EDIT THE FILE AFTER THE END OF THIS COMMENT
  */
-
