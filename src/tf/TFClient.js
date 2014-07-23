@@ -100,7 +100,7 @@ ROSLIB.TFClient.prototype.updateGoal = function() {
  *   * transform - the transform data
  */
 ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
-  // make sure the frame id is relative
+  // remove leading slash, if it's there
   if (frameID[0] === '/') {
     frameID = frameID.substring(1);
   }
@@ -129,6 +129,10 @@ ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
  * @param callback - the callback function to remove
  */
 ROSLIB.TFClient.prototype.unsubscribe = function(frameID, callback) {
+  // remove leading slash, if it's there
+  if (frameID[0] === '/') {
+    frameID = frameID.substring(1);
+  }
   var info = this.frameInfos[frameID];
   if (info !== undefined) {
     var cbIndex = info.cbs.indexOf(callback);
