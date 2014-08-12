@@ -84,6 +84,12 @@ WebSocket.prototype.send = function(messageJson) {
   this.wsconn.sendText(JSON.stringify(messageJson));
 };
 
+// Copied from https://github.com/sitegui/nodejs-websocket/blob/master/Connection.js#L75-L78
+WebSocket.CONNECTING = 0;
+WebSocket.OPEN = 1;
+WebSocket.CLOSING = 2;
+WebSocket.CLOSED = 3;
+
 /*
  * NOTE AFTER THIS ALL CODE IS COPIED IN FOR NODE.JS FROM CLIENT FILES TO CREATE roslibjs.js (A Node npm usable module)
  *
