@@ -63,10 +63,9 @@ var WebSocket = function(url) {
 
     // do something with framebuffer
 
-    // assume RosBridge JSON and parse
-    var json = JSON.parse(fb);
-
-    that.onmessage(json);
+    that.onmessage({
+      data : fb
+    });
   });
   this.wsconn.on('binary',function(fb) {
     that.readyState = that.wsconn.readyState;
@@ -81,8 +80,14 @@ WebSocket.prototype.close = function() {
 };
 
 WebSocket.prototype.send = function(messageJson) {
-  this.wsconn.sendText(JSON.stringify(messageJson));
+  this.wsconn.sendText(messageJson);
 };
+
+// Copied from https://github.com/sitegui/nodejs-websocket/blob/master/Connection.js#L75-L78
+WebSocket.CONNECTING = 0;
+WebSocket.OPEN = 1;
+WebSocket.CLOSING = 2;
+WebSocket.CLOSED = 3;
 
 /*
  * NOTE AFTER THIS ALL CODE IS COPIED IN FOR NODE.JS FROM CLIENT FILES TO CREATE roslibjs.js (A Node npm usable module)
