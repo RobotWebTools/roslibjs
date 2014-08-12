@@ -81,7 +81,7 @@ WebSocket.prototype.close = function() {
 };
 
 WebSocket.prototype.send = function(messageJson) {
-  this.wsconn.sendText(JSON.stringify(messageJson));
+  this.wsconn.sendText(messageJson);
 };
 
 // Copied from https://github.com/sitegui/nodejs-websocket/blob/master/Connection.js#L75-L78
