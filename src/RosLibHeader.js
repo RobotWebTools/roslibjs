@@ -63,10 +63,9 @@ var WebSocket = function(url) {
 
     // do something with framebuffer
 
-    // assume RosBridge JSON and parse
-    var json = JSON.parse(fb);
-
-    that.onmessage(json);
+    that.onmessage({
+      data : fb
+    });
   });
   this.wsconn.on('binary',function(fb) {
     that.readyState = that.wsconn.readyState;
