@@ -2,7 +2,7 @@
   "name": "roslib",
   "description": "The standard ROS Javascript Library",
   "homepage": "https://www.robotwebtools.org",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "author": "Jihoon Lee <jihoonlee.in@gmail.com>",
   "keywords": [
     "ros",
