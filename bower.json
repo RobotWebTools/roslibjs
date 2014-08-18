@@ -23,6 +23,6 @@
     "utils"
   ],
   "dependencies": {
-    "eventemitter2": "0.4.11"
+    "eventemitter2": "0.4.14"
   }
 }
