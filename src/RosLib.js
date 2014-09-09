@@ -3,7 +3,7 @@
  */
 
 var ROSLIB = ROSLIB || {
-  REVISION : '0.9.0'
+  REVISION : '0.10.0-SNAPSHOT'
 };
 
 //URDF types
