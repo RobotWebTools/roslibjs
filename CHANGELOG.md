@@ -1,3 +1,13 @@
+2014-09-09 - **0.9.0**
+ * Add connection status indicator to roslibjs examples [(T045T)](https://github.com/T045T/)
+ * Add a bower.json to publish this as a Bower packagee [(Rayman)](https://github.com/Rayman/)
+ * Add a basic urdf test [(syrnick)](https://github.com/syrnick/)
+ * Add troubleshooting section [(syrnick)](https://github.com/syrnick/)
+ * Add queue_size to topic publisher [(syrnick)](https://github.com/syrnick/)
+ * TFClient.unsubscribe(): remove leading slash from frame ID [(T045T)](https://github.com/T045T/)
+ * Update EventEmitter2 to 0.4.14 [(T045T)](https://github.com/T045T/)
+ * SimpleActionServer functionality [(oss1pal)](https://github.com/oss1pal/)
+
 2014-06-11 - **0.8.0**
  * Remove build folder and change examples to use CDN versions of roslib.js [(T045T)](https://github.com/T045T/)
  * Use proper parameters for addTwoInts service [(T045T)](https://github.com/T045T/)

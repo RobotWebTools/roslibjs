@@ -12,12 +12,27 @@
 
   // If there is an error on the backend, an 'error' emit will be emitted.
   ros.on('error', function(error) {
+    document.getElementById('connecting').style.display = 'none';
+    document.getElementById('connected').style.display = 'none';
+    document.getElementById('closed').style.display = 'none';
+    document.getElementById('error').style.display = 'inline';
     console.log(error);
   });
 
   // Find out exactly when we made a connection.
   ros.on('connection', function() {
     console.log('Connection made!');
+    document.getElementById('connecting').style.display = 'none';
+    document.getElementById('error').style.display = 'none';
+    document.getElementById('closed').style.display = 'none';
+    document.getElementById('connected').style.display = 'inline';
+  });
+
+  ros.on('close', function() {
+    console.log('Connection closed.');
+    document.getElementById('connecting').style.display = 'none';
+    document.getElementById('connected').style.display = 'none';
+    document.getElementById('closed').style.display = 'inline';
   });
 
   // Create a connection to the rosbridge WebSocket server.
@@ -138,5 +153,19 @@
     <li><tt>rosrun rospy_tutorials add_two_ints_server</tt></li>
     <li><tt>roslaunch rosbridge_server rosbridge_websocket.launch</tt></li>
   </ol>
+  <div id="statusIndicator">
+    <p id="connecting">
+      Connecting to rosbridge...
+    </p>
+    <p id="connected" style="color:#00D600; display:none">
+      Connected
+    </p>
+    <p id="error" style="color:#FF0000; display:none">
+      Error in the backend!
+    </p>
+    <p id="closed" style="display:none">
+      Connection closed.
+    </p>
+  </div>
 </body>
 </html>
