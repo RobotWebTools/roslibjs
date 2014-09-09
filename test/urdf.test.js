@@ -1,4 +1,5 @@
-var expect = chai.expect;
+var expect = require('chai').expect;
+var ROSLIB = require('..');
 
 var sample_urdf = function (){
   return '<robot name="test_robot">' +

@@ -19,7 +19,7 @@
  * Now use the same as you would in the browser
  */
 
-var EventEmitter2 = require('eventemitter2').EventEmitter2; // direct import as eventemitter2 is a node.js module also - TODO Test direct import works
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
 var ws = require('nodejs-websocket');
 var Canvas = require('canvas');
 var Image = Canvas.Image;

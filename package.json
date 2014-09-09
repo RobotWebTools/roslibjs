@@ -27,14 +27,11 @@
     "grunt": "~0.4.1",
     "grunt-contrib-concat": "~0.4.0",
     "grunt-contrib-jshint": "~0.1.1",
-    "grunt-karma": "~0.3.0",
     "grunt-contrib-watch": "~0.3.1",
     "grunt-jsdoc": "~0.3.0",
     "grunt-contrib-clean": "~0.4.0",
     "grunt-cli": "~0.1.13",
     "grunt-mocha-test": "~0.10.0",
-    "karma": "~0.12.3",
-    "phantomjs": "~1.9.7",
     "chai": "~1.9.1"
   },
   "engines": {
