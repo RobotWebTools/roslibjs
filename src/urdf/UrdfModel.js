@@ -3,6 +3,9 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
+// See https://developer.mozilla.org/docs/XPathResult#Constants
+var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
+
 /**
  * A URDF Model can be used to parse a given URDF into the appropriate elements.
  *
@@ -26,14 +29,8 @@ ROSLIB.UrdfModel = function(options) {
    */
   var initXml = function(xmlDoc) {
     // Get the robot tag
+    var robotXml = xmlDoc.evaluate('//robot', xmlDoc, null, XPATH_FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 
-    var robotXml;
-    if( typeof( XPath ) === 'undefined' ){
-      robotXml = xmlDoc.evaluate('//robot', xmlDoc, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-    }else{
-      // Node JS
-      robotXml = XPath.select('//robot', xmlDoc)[0];
-    }
     // Get the robot name
     that.name = robotXml.getAttribute('name');
 

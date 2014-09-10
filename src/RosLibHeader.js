@@ -23,9 +23,7 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
 var ws = require('nodejs-websocket');
 var Canvas = require('canvas');
 var Image = Canvas.Image;
-var DOMParser = require('xmldom').DOMParser;
-var XPath = require('xpath');
-var XPathResult = require('xpath').XPathResult;
+var DOMParser = require('xmlshim').DOMParser;
 
 /**
  * Provides a WebSocket browser compatible interface to the nodejs-websocket client library. This is used by ROSLIB.Ros directly.
