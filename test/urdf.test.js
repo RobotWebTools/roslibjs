@@ -35,11 +35,8 @@ describe('URDF', function() {
 
     it('is ignorant to the xml node', function(){
       var parser = new DOMParser();
-      var xml1 = parser.parseFromString("", 'text/xml');
-      var xml2 = parser.parseFromString(sample_urdf(), 'text/xml');
-      var robotXml = xml1.evaluate('//robot', xml2, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-      expect(robotXml.getAttribute('name')).to.equal('test_robot');
-      var robotXml = xml2.evaluate('//robot', xml2, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+      var xml = parser.parseFromString(sample_urdf(), 'text/xml');
+      var robotXml = xml.evaluate('//robot', xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
       expect(robotXml.getAttribute('name')).to.equal('test_robot');
     });
   });
