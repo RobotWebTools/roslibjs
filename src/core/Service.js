@@ -2,6 +2,8 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
+var ServiceResponse = require('./ServiceResponse');
+
 /**
  * A ROS service client.
  *
@@ -11,12 +13,12 @@
  *   * name - the service name, like /add_two_ints
  *   * serviceType - the service type, like 'rospy_tutorials/AddTwoInts'
  */
-ROSLIB.Service = function(options) {
+function Service(options) {
   options = options || {};
   this.ros = options.ros;
   this.name = options.name;
   this.serviceType = options.serviceType;
-};
+}
 
 /**
  * Calls the service. Returns the service response in the callback.
@@ -27,7 +29,7 @@ ROSLIB.Service = function(options) {
  * @param failedCallback - the callback function when the service call failed (optional). Params:
  *   * error - the error message reported by ROS
  */
-ROSLIB.Service.prototype.callService = function(request, callback, failedCallback) {
+Service.prototype.callService = function(request, callback, failedCallback) {
   this.ros.idCounter++;
   var serviceCallId = 'call_service:' + this.name + ':' + this.ros.idCounter;
 
@@ -37,7 +39,7 @@ ROSLIB.Service.prototype.callService = function(request, callback, failedCallbac
         failedCallback(message.values);
       }
     } else {
-      var response = new ROSLIB.ServiceResponse(message.values);
+      var response = new ServiceResponse(message.values);
       callback(response);
     }
   });
@@ -50,3 +52,5 @@ ROSLIB.Service.prototype.callService = function(request, callback, failedCallbac
   };
   this.ros.callOnConnection(call);
 };
+
+module.exports = Service;

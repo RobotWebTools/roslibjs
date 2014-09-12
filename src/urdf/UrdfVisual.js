@@ -3,6 +3,16 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
+var Pose = require('../math/Pose');
+var Vector3 = require('../math/Vector3');
+var Quaternion = require('../math/Quaternion');
+
+var UrdfCylinder = require('./UrdfCylinder');
+var UrdfBox = require('./UrdfBox');
+var UrdfMaterial = require('./UrdfMaterial');
+var UrdfMesh = require('./UrdfMesh');
+var UrdfSphere = require('./UrdfSphere');
+
 /**
  * A Visual element in a URDF.
  *
@@ -10,7 +20,7 @@
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-ROSLIB.UrdfVisual = function(options) {
+function UrdfVisual(options) {
   options = options || {};
   var that = this;
   var xml = options.xml;
@@ -28,14 +38,14 @@ ROSLIB.UrdfVisual = function(options) {
     var origins = xml.getElementsByTagName('origin');
     if (origins.length === 0) {
       // use the identity as the default
-      that.origin = new ROSLIB.Pose();
+      that.origin = new Pose();
     } else {
       // Check the XYZ
       var xyz = origins[0].getAttribute('xyz');
-      var position = new ROSLIB.Vector3();
+      var position = new Vector3();
       if (xyz) {
         xyz = xyz.split(' ');
-        position = new ROSLIB.Vector3({
+        position = new Vector3({
           x : parseFloat(xyz[0]),
           y : parseFloat(xyz[1]),
           z : parseFloat(xyz[2])
@@ -44,7 +54,7 @@ ROSLIB.UrdfVisual = function(options) {
 
       // Check the RPY
       var rpy = origins[0].getAttribute('rpy');
-      var orientation = new ROSLIB.Quaternion();
+      var orientation = new Quaternion();
       if (rpy) {
         rpy = rpy.split(' ');
         // Convert from RPY
@@ -63,7 +73,7 @@ ROSLIB.UrdfVisual = function(options) {
         var w = Math.cos(phi) * Math.cos(the) * Math.cos(psi) + Math.sin(phi) * Math.sin(the)
             * Math.sin(psi);
 
-        orientation = new ROSLIB.Quaternion({
+        orientation = new Quaternion({
           x : x,
           y : y,
           z : z,
@@ -71,7 +81,7 @@ ROSLIB.UrdfVisual = function(options) {
         });
         orientation.normalize();
       }
-      that.origin = new ROSLIB.Pose({
+      that.origin = new Pose({
         position : position,
         orientation : orientation
       });
@@ -92,19 +102,19 @@ ROSLIB.UrdfVisual = function(options) {
       // Check the type
       var type = shape.nodeName;
       if (type === 'sphere') {
-        that.geometry = new ROSLIB.UrdfSphere({
+        that.geometry = new UrdfSphere({
           xml : shape
         });
       } else if (type === 'box') {
-        that.geometry = new ROSLIB.UrdfBox({
+        that.geometry = new UrdfBox({
           xml : shape
         });
       } else if (type === 'cylinder') {
-        that.geometry = new ROSLIB.UrdfCylinder({
+        that.geometry = new UrdfCylinder({
           xml : shape
         });
       } else if (type === 'mesh') {
-        that.geometry = new ROSLIB.UrdfMesh({
+        that.geometry = new UrdfMesh({
           xml : shape
         });
       } else {
@@ -115,7 +125,7 @@ ROSLIB.UrdfVisual = function(options) {
     // Material
     var materials = xml.getElementsByTagName('material');
     if (materials.length > 0) {
-      that.material = new ROSLIB.UrdfMaterial({
+      that.material = new UrdfMaterial({
         xml : materials[0]
       });
     }
@@ -123,5 +133,6 @@ ROSLIB.UrdfVisual = function(options) {
 
   // Pass it to the XML parser
   initXml(xml);
-};
+}
 
+module.exports = UrdfVisual;

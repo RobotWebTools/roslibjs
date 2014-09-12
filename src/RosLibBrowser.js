@@ -1,0 +1,1 @@
+global.ROSLIB = require('./RosLib');

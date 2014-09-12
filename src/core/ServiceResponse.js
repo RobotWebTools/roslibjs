@@ -8,11 +8,13 @@
  * @constructor
  * @param values - object matching the fields defined in the .srv definition file
  */
-ROSLIB.ServiceResponse = function(values) {
+function ServiceResponse(values) {
   var that = this;
   values = values || {};
 
   Object.keys(values).forEach(function(name) {
     that[name] = values[name];
   });
-};
+}
+
+module.exports = ServiceResponse;

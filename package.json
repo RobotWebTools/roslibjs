@@ -1,0 +1,54 @@
+{
+  "name": "roslibjs",
+  "main": "./src/RosLib.js",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-browserify": "^3.0.1",
+    "grunt-contrib-clean": "~0.4.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-watch": "~0.3.1",
+    "grunt-jsdoc": "~0.3.0",
+    "grunt-karma": "^0.9.0",
+    "grunt-mocha-test": "^0.11.0",
+    "karma-chai": "^0.1.0",
+    "karma-mocha": "^0.1.9",
+    "karma-phantomjs-launcher": "^0.1.4"
+  },
+  "dependencies": {
+    "canvas": "1.1.3",
+    "eventemitter2": "~0.4.13",
+    "nodejs-websocket": "~0.1.4",
+    "xmlshim": "~0.0.9"
+  },
+  "browser": {
+    "canvas": "./src/util/shim/canvas.js",
+    "eventemitter2": "./src/util/shim/EventEmitter2.js",
+    "./src/util/WebSocket.js": "./src/util/shim/WebSocket.js",
+    "./src/util/DOMParser.js": "./src/util/shim/DOMParser.js"
+  },
+  "description": "roslibjs",
+  "version": "0.9.0",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "grunt test",
+    "publish": "grunt build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RobotWebTools/roslibjs/releases"
+  },
+  "keywords": [
+    "ROS"
+  ],
+  "authors": [
+    "Russell Toris (rctoris@wpi.edu)",
+    "Jihoon Lee (jihoonlee.in@gmail.com)",
+    "Brandon Alexander (balexander@willowgarage.com)",
+    "David Gossow (dgossow@willowgarage.com)",
+    "Benjamin Pitzer (ben.pitzer@gmail.com)"
+  ]
+}

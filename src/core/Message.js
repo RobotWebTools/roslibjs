@@ -8,11 +8,13 @@
  * @constructor
  * @param values - object matching the fields defined in the .msg definition file
  */
-ROSLIB.Message = function(values) {
+function Message(values) {
   var that = this;
   values = values || {};
 
   Object.keys(values).forEach(function(name) {
     that[name] = values[name];
   });
-};
+}
+
+module.exports = Message;

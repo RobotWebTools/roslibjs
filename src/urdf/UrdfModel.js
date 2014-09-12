@@ -3,6 +3,13 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
+var UrdfMaterial = require('./UrdfMaterial');
+var UrdfLink = require('./UrdfLink');
+var DOMParser = require('../util/DOMParser');
+
+// See https://developer.mozilla.org/docs/XPathResult#Constants
+var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
+
 /**
  * A URDF Model can be used to parse a given URDF into the appropriate elements.
  *
@@ -11,7 +18,7 @@
  *  * xml - the XML element to parse
  *  * string - the XML element to parse as a string
  */
-ROSLIB.UrdfModel = function(options) {
+function UrdfModel(options) {
   options = options || {};
   var that = this;
   var xml = options.xml;
@@ -26,7 +33,7 @@ ROSLIB.UrdfModel = function(options) {
    */
   var initXml = function(xmlDoc) {
     // Get the robot tag
-    var robotXml = xmlDoc.evaluate('//robot', xmlDoc, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    var robotXml = xmlDoc.evaluate('//robot', xmlDoc, null, XPATH_FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 
     // Get the robot name
     that.name = robotXml.getAttribute('name');
@@ -35,7 +42,7 @@ ROSLIB.UrdfModel = function(options) {
     for (var n in robotXml.childNodes) {
       var node = robotXml.childNodes[n];
       if (node.tagName === 'material') {
-        var material = new ROSLIB.UrdfMaterial({
+        var material = new UrdfMaterial({
           xml : node
         });
         // Make sure this is unique
@@ -45,7 +52,7 @@ ROSLIB.UrdfModel = function(options) {
           that.materials[material.name] = material;
         }
       } else if (node.tagName === 'link') {
-        var link = new ROSLIB.UrdfLink({
+        var link = new UrdfLink({
           xml : node
         });
         // Make sure this is unique
@@ -76,4 +83,6 @@ ROSLIB.UrdfModel = function(options) {
   }
   // Pass it to the XML parser
   initXml(xml);
-};
+}
+
+module.exports = UrdfModel;
