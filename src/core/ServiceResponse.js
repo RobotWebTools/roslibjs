@@ -2,6 +2,8 @@
  * @author Brandon Alexander - balexander@willowgarage.com
  */
 
+var assign = require('object-assign');
+
 /**
  * A ServiceResponse is returned from the service call.
  *
@@ -9,12 +11,7 @@
  * @param values - object matching the fields defined in the .srv definition file
  */
 function ServiceResponse(values) {
-  var that = this;
-  values = values || {};
-
-  Object.keys(values).forEach(function(name) {
-    that[name] = values[name];
-  });
+  assign(this, values);
 }
 
 module.exports = ServiceResponse;

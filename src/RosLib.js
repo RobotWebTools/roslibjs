@@ -3,7 +3,7 @@
  */
 
 var ROSLIB = this.ROSLIB || {
-  REVISION : '0.10.0-SNAPSHOT',
+  REVISION : '0.10.0-SNAPSHOT'
 };
 
 ROSLIB.Ros = require('./core/Ros');
@@ -35,10 +35,7 @@ ROSLIB.UrdfModel = require('./urdf/UrdfModel');
 ROSLIB.UrdfSphere = require('./urdf/UrdfSphere');
 ROSLIB.UrdfVisual = require('./urdf/UrdfVisual');
 
-//URDF types
-var UrdfTypes = require('./urdf/UrdfTypes');
-Object.keys(UrdfTypes).forEach(function(type) {
-	ROSLIB[type] = UrdfTypes[type];
-});
+// Add URDF types
+require('object-assign')(ROSLIB, require('./urdf/UrdfTypes'));
 
 module.exports = ROSLIB;
