@@ -1,7 +1,6 @@
 {
   "globals": {
-    "module": true,
-    "EventEmitter2" : true
+    "global": true
   },
   "curly": true,
   "eqeqeq": true,
@@ -13,9 +12,8 @@
   "undef": true,
   "boss": false,
   "eqnull": false,
-  "browser": true,
+  "node": true,
   "devel": true,
-  "es5": true,
   "strict": false,
   "trailing": true,
   "quotmark": "single",

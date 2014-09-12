@@ -9,11 +9,11 @@ module.exports = function(config) {
     // Testing frameworks
     frameworks: ['mocha', 'chai'],
 
-
     // List of files / patterns to load in the browser
     files: [
-      "../include/EventEmitter2/eventemitter2.js",
+      "../node_modules/eventemitter2/lib/eventemitter2.js",
       "../build/roslib.js",
+      "./require-shim.js",
       "*.test.js"
     ],
 
