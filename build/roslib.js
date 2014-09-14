@@ -615,7 +615,7 @@ module.exports = Param;
 var Canvas = require('canvas');
 var Image = Canvas.Image || global.Image;
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
-var WebSocket = require('../util/WebSocket');
+var WebSocket = require('ws');
 
 var Service = require('./Service');
 var ServiceRequest = require('./ServiceRequest');
@@ -987,7 +987,7 @@ Ros.prototype.decodeTypeDefs = function(defs) {
 
 module.exports = Ros;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../util/WebSocket":31,"./Service":10,"./ServiceRequest":11,"canvas":32,"eventemitter2":30}],10:[function(require,module,exports){
+},{"./Service":10,"./ServiceRequest":11,"canvas":32,"eventemitter2":30,"ws":31}],10:[function(require,module,exports){
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */

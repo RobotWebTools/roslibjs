@@ -7,16 +7,34 @@ roslibjs Build Setup
 
  1. Install [Node.js](http://nodejs.org/) for your environment
  2. Install the build task runner, [Grunt](http://gruntjs.com/)
+ 	
  	```sh
 	$ [sudo] npm install -g grunt
  	```
+
  3. Install the [Cario](http://cairographics.org/) graphics library
  	- [System specific instaructions](https://github.com/Automattic/node-canvas/wiki/_pages)
  4. Install the dependencies and build dependencies
+	
 	```sh
 	$ cd /path/to/roslibjs/
    	$ [sudo] npm install
 	```
+	
+
+Easy installation for Ubuntu. `cd` to your local copy of this project.
+
+```sh
+# Install Node.js and NPM
+curl -sL https://deb.nodesource.com/setup | sudo bash -
+sudo apt-get install nodejs
+
+# Install Cario
+sudo apt-get install libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++
+
+# Install this projects Deps
+sudo npm install
+```
 
 ### Build with Grunt
 

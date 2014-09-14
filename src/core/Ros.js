@@ -5,7 +5,7 @@
 var Canvas = require('canvas');
 var Image = Canvas.Image || global.Image;
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
-var WebSocket = require('../util/WebSocket');
+var WebSocket = require('ws');
 
 var Service = require('./Service');
 var ServiceRequest = require('./ServiceRequest');
