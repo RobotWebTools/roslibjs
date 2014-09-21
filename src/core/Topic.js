@@ -29,8 +29,8 @@ ROSLIB.Topic = function(options) {
   this.queue_size = options.queue_size || 100;
 
   // Check for valid compression types
-  if (this.compression && this.compression !== 'png' && this.compression !==
-    'none') {
+  if (this.compression && this.compression !== 'png' &&
+        this.compression !== 'none') {
     this.emit('warning', this.compression +
       ' compression is not supported. No compression will be used.');
   }
@@ -58,10 +58,10 @@ ROSLIB.Topic.prototype.subscribe = function(callback) {
     that.emit('message', message);
   });
 
-  this.id = 'subscribe:' + this.name + ':' + (++this.ros.idCounter);
+  this.subscribeId = 'subscribe:' + this.name + ':' + (++this.ros.idCounter);
   this.ros.callOnConnection({
     op: 'subscribe',
-    id: this.id,
+    id: this.subscribeId,
     type: this.messageType,
     topic: this.name,
     compression: this.compression,
