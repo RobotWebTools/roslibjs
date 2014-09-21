@@ -61,11 +61,10 @@ ROSLIB.Topic.prototype.subscribe = function(callback) {
     that.emit('message', message);
   });
 
-  this.ros.idCounter++;
-  var subscribeId = 'subscribe:' + this.name + ':' + this.ros.idCounter;
+  this.subscribeId = 'subscribe:' + this.name + ':' + (++this.ros.idCounter);
   var call = {
     op : 'subscribe',
-    id : subscribeId,
+    id : this.subscribeId,
     type : this.messageType,
     topic : this.name,
     compression : this.compression,
@@ -81,11 +80,10 @@ ROSLIB.Topic.prototype.subscribe = function(callback) {
  */
 ROSLIB.Topic.prototype.unsubscribe = function() {
   this.ros.removeAllListeners([ this.name ]);
-  this.ros.idCounter++;
-  var unsubscribeId = 'unsubscribe:' + this.name + ':' + this.ros.idCounter;
+    
   var call = {
     op : 'unsubscribe',
-    id : unsubscribeId,
+    id : this.subscribeId,
     topic : this.name
   };
   this.ros.callOnConnection(call);
@@ -119,10 +117,9 @@ ROSLIB.Topic.prototype.unadvertise = function() {
   if (!this.isAdvertised) {
     return;
   }
-  var unadvertiseId = this.advertiseId;
   var call = {
     op : 'unadvertise',
-    id : unadvertiseId,
+    id : this.advertiseId,
     topic : this.name
   };
   this.ros.callOnConnection(call);
