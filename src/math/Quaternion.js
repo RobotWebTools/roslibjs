@@ -17,7 +17,7 @@ ROSLIB.Quaternion = function(options) {
   this.x = options.x || 0;
   this.y = options.y || 0;
   this.z = options.z || 0;
-  this.w = options.w || 1;
+  this.w = (options.w !== undefined) ? options.w : 1;
 };
 
 /**
