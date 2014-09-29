@@ -1115,7 +1115,8 @@ function Topic(options) {
   this.queue_size = options.queue_size || 100;
 
   // Check for valid compression types
-  if (this.compression && this.compression !== 'png' && this.compression !== 'none') {
+  if (this.compression && this.compression !== 'png' &&
+        this.compression !== 'none') {
     this.emit('warning', this.compression +
       ' compression is not supported. No compression will be used.');
   }
@@ -1138,28 +1139,21 @@ Topic.prototype.__proto__ = EventEmitter2.prototype;
  */
 Topic.prototype.subscribe = function(callback) {
   var that = this;
-
-  this.on('message', function(message) {
-    callback(message);
-  });
-
+  this.on('message', callback);
   this.ros.on(this.name, function(data) {
     var message = new Message(data);
     that.emit('message', message);
   });
 
-  this.ros.idCounter++;
-  var subscribeId = 'subscribe:' + this.name + ':' + this.ros.idCounter;
-  var call = {
-    op : 'subscribe',
-    id : subscribeId,
-    type : this.messageType,
-    topic : this.name,
-    compression : this.compression,
-    throttle_rate : this.throttle_rate
-  };
-
-  this.ros.callOnConnection(call);
+  this.subscribeId = 'subscribe:' + this.name + ':' + (++this.ros.idCounter);
+  this.ros.callOnConnection({
+    op: 'subscribe',
+    id: this.subscribeId,
+    type: this.messageType,
+    topic: this.name,
+    compression: this.compression,
+    throttle_rate: this.throttle_rate
+  });
 };
 
 /**
@@ -1167,15 +1161,12 @@ Topic.prototype.subscribe = function(callback) {
  * all subscribe callbacks.
  */
 Topic.prototype.unsubscribe = function() {
-  this.ros.removeAllListeners([ this.name ]);
-  this.ros.idCounter++;
-  var unsubscribeId = 'unsubscribe:' + this.name + ':' + this.ros.idCounter;
-  var call = {
-    op : 'unsubscribe',
-    id : unsubscribeId,
-    topic : this.name
-  };
-  this.ros.callOnConnection(call);
+  this.ros.removeAllListeners([this.name]);
+  this.ros.callOnConnection({
+    op: 'unsubscribe',
+    id: this.subscribeId,
+    topic: this.name
+  });
 };
 
 /**
@@ -1185,17 +1176,15 @@ Topic.prototype.advertise = function() {
   if (this.isAdvertised) {
     return;
   }
-  this.ros.idCounter++;
-  this.advertiseId = 'advertise:' + this.name + ':' + this.ros.idCounter;
-  var call = {
-    op : 'advertise',
-    id : this.advertiseId,
-    type : this.messageType,
-    topic : this.name,
-    latch : this.latch,
-    queue_size : this.queue_size
-  };
-  this.ros.callOnConnection(call);
+  this.advertiseId = 'advertise:' + this.name + ':' + (++this.ros.idCounter);
+  this.ros.callOnConnection({
+    op: 'advertise',
+    id: this.advertiseId,
+    type: this.messageType,
+    topic: this.name,
+    latch: this.latch,
+    queue_size: this.queue_size
+  });
   this.isAdvertised = true;
 };
 
@@ -1206,13 +1195,11 @@ Topic.prototype.unadvertise = function() {
   if (!this.isAdvertised) {
     return;
   }
-  var unadvertiseId = this.advertiseId;
-  var call = {
-    op : 'unadvertise',
-    id : unadvertiseId,
-    topic : this.name
-  };
-  this.ros.callOnConnection(call);
+  this.ros.callOnConnection({
+    op: 'unadvertise',
+    id: this.advertiseId,
+    topic: this.name
+  });
   this.isAdvertised = false;
 };
 
@@ -1223,22 +1210,22 @@ Topic.prototype.unadvertise = function() {
  */
 Topic.prototype.publish = function(message) {
   if (!this.isAdvertised) {
-      this.advertise();
+    this.advertise();
   }
 
   this.ros.idCounter++;
-  var publishId = 'publish:' + this.name + ':' + this.ros.idCounter;
   var call = {
-    op : 'publish',
-    id : publishId,
-    topic : this.name,
-    msg : message,
-    latch : this.latch
+    op: 'publish',
+    id: 'publish:' + this.name + ':' + this.ros.idCounter,
+    topic: this.name,
+    msg: message,
+    latch: this.latch
   };
   this.ros.callOnConnection(call);
 };
 
 module.exports = Topic;
+
 },{"./Message":7,"eventemitter2":30}],14:[function(require,module,exports){
 /**
  * @author David Gossow - dgossow@willowgarage.com

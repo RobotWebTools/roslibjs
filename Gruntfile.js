@@ -21,15 +21,19 @@ module.exports = function(grunt) {
       build: {
         configFile: './test/karma.conf.js',
         singleRun: true,
-        browsers: ['PhantomJS']
+        browsers: ['Firefox']
       }
     },
     mochaTest: {
+      options: {
+          reporter: 'spec',
+          timeout: 5000
+      },
       test: {
-        options: {
-          reporter: 'spec'
-        },
-        src: ['test/**/*.test.js']
+        src: ['test/*.test.js']
+      },
+      examples: {
+        src: ['test/examples/*.js']
       }
     },
     uglify: {
@@ -95,9 +99,8 @@ module.exports = function(grunt) {
 
 
   grunt.registerTask('dev', ['browserify', 'watch']);
-  grunt.registerTask('test', ['jshint', 'mochaTest', 'browserify', 'karma']);
+  grunt.registerTask('test', ['jshint', 'mochaTest:test', 'browserify', 'karma']);
   grunt.registerTask('build', ['test', 'uglify']);
   grunt.registerTask('build_and_watch', ['watch']);
   grunt.registerTask('doc', ['clean', 'jsdoc']);
 };
-
