@@ -57,11 +57,12 @@ Topic.prototype.__proto__ = EventEmitter2.prototype;
 Topic.prototype.subscribe = function(callback) {
   var that = this;
   this.on('message', callback);
+
+  if (this.subscribeId) { return; }
   this.ros.on(this.name, function(data) {
     var message = new Message(data);
     that.emit('message', message);
   });
-
   this.subscribeId = 'subscribe:' + this.name + ':' + (++this.ros.idCounter);
   this.ros.callOnConnection({
     op: 'subscribe',
@@ -78,12 +79,14 @@ Topic.prototype.subscribe = function(callback) {
  * all subscribe callbacks.
  */
 Topic.prototype.unsubscribe = function() {
+  if (!this.subscribeId) { return; }
   this.ros.removeAllListeners([this.name]);
   this.ros.callOnConnection({
     op: 'unsubscribe',
     id: this.subscribeId,
     topic: this.name
   });
+  this.subscribeId = null;
 };
 
 /**
