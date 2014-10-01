@@ -6,7 +6,7 @@ var ROSLIB = this.ROSLIB || {
   REVISION : '0.10.0-SNAPSHOT'
 };
 
-ROSLIB.Ros = require('./core/Ros');
+var Ros = ROSLIB.Ros = require('./core/Ros');
 ROSLIB.Topic = require('./core/Topic');
 ROSLIB.Message = require('./core/Message');
 ROSLIB.Param = require('./core/Param');
@@ -37,5 +37,13 @@ ROSLIB.UrdfVisual = require('./urdf/UrdfVisual');
 
 // Add URDF types
 require('object-assign')(ROSLIB, require('./urdf/UrdfTypes'));
+
+['ActionClient', 'Param', 'Service', 'SimpleActionServer', 'Topic', 'TFClient'].forEach(function(className) {
+    var Class = ROSLIB[className];
+    Ros.prototype[className] = function(options) {
+        options.ros = this;
+        return new Class(options);
+    };
+});
 
 module.exports = ROSLIB;
