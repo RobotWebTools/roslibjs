@@ -2,6 +2,9 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
+var Vector3 = require('./Vector3');
+var Quaternion = require('./Quaternion');
+
 /**
  * A Pose in 3D space. Values are copied into this object.
  *
@@ -10,19 +13,19 @@
  *   * position - the Vector3 describing the position
  *   * orientation - the ROSLIB.Quaternion describing the orientation
  */
-ROSLIB.Pose = function(options) {
+function Pose(options) {
   options = options || {};
   // copy the values into this object if they exist
-  this.position = new ROSLIB.Vector3(options.position);
-  this.orientation = new ROSLIB.Quaternion(options.orientation);
-};
+  this.position = new Vector3(options.position);
+  this.orientation = new Quaternion(options.orientation);
+}
 
 /**
  * Apply a transform against this pose.
  *
  * @param tf the transform
  */
-ROSLIB.Pose.prototype.applyTransform = function(tf) {
+Pose.prototype.applyTransform = function(tf) {
   this.position.multiplyQuaternion(tf.rotation);
   this.position.add(tf.translation);
   var tmp = tf.rotation.clone();
@@ -35,6 +38,8 @@ ROSLIB.Pose.prototype.applyTransform = function(tf) {
  *
  * @returns the cloned pose
  */
-ROSLIB.Pose.prototype.clone = function() {
-  return new ROSLIB.Pose(this);
+Pose.prototype.clone = function() {
+  return new Pose(this);
 };
+
+module.exports = Pose;

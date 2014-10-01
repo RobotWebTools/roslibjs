@@ -10,7 +10,7 @@
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-ROSLIB.UrdfColor = function(options) {
+function UrdfColor(options) {
   options = options || {};
   var that = this;
   var xml = options.xml;
@@ -36,4 +36,6 @@ ROSLIB.UrdfColor = function(options) {
 
   // Pass it to the XML parser
   initXml(xml);
-};
+}
+
+module.exports = UrdfColor;

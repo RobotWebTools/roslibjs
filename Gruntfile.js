@@ -2,10 +2,10 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    concat: {
-      build: {
-        src  : ['../src/*.js', '../src/**/*.js'],
-        dest : '../build/roslib.js'
+    browserify: {
+      dist: {
+        src: ['./src/RosLibBrowser.js'],
+        dest: './build/roslib.js'
       }
     },
     jshint: {
@@ -14,14 +14,26 @@ module.exports = function(grunt) {
       },
       files: [
         'Gruntfile.js',
-        '../build/roslib.js'
+        './src/**/*.js'
       ]
     },
     karma: {
       build: {
-        configFile: '../test/karma.conf.js',
+        configFile: './test/karma.conf.js',
         singleRun: true,
-        browsers: ['PhantomJS']
+        browsers: ['Firefox']
+      }
+    },
+    mochaTest: {
+      options: {
+          reporter: 'spec',
+          timeout: 5000
+      },
+      test: {
+        src: ['test/*.test.js']
+      },
+      examples: {
+        src: ['test/examples/*.js']
       }
     },
     uglify: {
@@ -29,8 +41,8 @@ module.exports = function(grunt) {
         report: 'min'
       },
       build: {
-        src: '../build/roslib.js',
-        dest: '../build/roslib.min.js'
+        src: './build/roslib.js',
+        dest: './build/roslib.min.js'
       }
     },
     watch: {
@@ -42,7 +54,7 @@ module.exports = function(grunt) {
           '../src/*.js',
           '../src/**/*.js'
         ],
-        tasks: ['concat']
+        tasks: ['browserify']
       },
       build_and_watch: {
         options: {
@@ -51,8 +63,8 @@ module.exports = function(grunt) {
         files: [
           'Gruntfile.js',
           '.jshintrc',
-          '../src/*.js',
-          '../src/**/*.js'
+          './src/*.js',
+          './src/**/*.js'
         ],
         tasks: ['build']
       }
@@ -66,27 +78,29 @@ module.exports = function(grunt) {
     jsdoc: {
       doc: {
         src: [
-          '../src/*.js',
-          '../src/**/*.js'
+          './src/*.js',
+          './src/**/*.js'
         ],
         options: {
-          destination: '../doc'
+          destination: './doc'
         }
       }
     }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-mocha-test');
 
-  grunt.registerTask('dev', ['concat', 'watch']);
-  grunt.registerTask('build', ['concat', 'jshint', 'karma', 'uglify']);
+
+  grunt.registerTask('dev', ['browserify', 'watch']);
+  grunt.registerTask('test', ['jshint', 'mochaTest:test', 'browserify', 'karma']);
+  grunt.registerTask('build', ['test', 'uglify']);
   grunt.registerTask('build_and_watch', ['watch']);
   grunt.registerTask('doc', ['clean', 'jsdoc']);
 };
-

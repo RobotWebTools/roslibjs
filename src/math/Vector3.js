@@ -11,19 +11,19 @@
  *   * y - the y value
  *   * z - the z value
  */
-ROSLIB.Vector3 = function(options) {
+function Vector3(options) {
   options = options || {};
   this.x = options.x || 0;
   this.y = options.y || 0;
   this.z = options.z || 0;
-};
+}
 
 /**
  * Set the values of this vector to the sum of itself and the given vector.
  *
  * @param v the vector to add with
  */
-ROSLIB.Vector3.prototype.add = function(v) {
+Vector3.prototype.add = function(v) {
   this.x += v.x;
   this.y += v.y;
   this.z += v.z;
@@ -34,7 +34,7 @@ ROSLIB.Vector3.prototype.add = function(v) {
  *
  * @param v the vector to subtract with
  */
-ROSLIB.Vector3.prototype.subtract = function(v) {
+Vector3.prototype.subtract = function(v) {
   this.x -= v.x;
   this.y -= v.y;
   this.z -= v.z;
@@ -45,7 +45,7 @@ ROSLIB.Vector3.prototype.subtract = function(v) {
  *
  * @param q - the quaternion to multiply with
  */
-ROSLIB.Vector3.prototype.multiplyQuaternion = function(q) {
+Vector3.prototype.multiplyQuaternion = function(q) {
   var ix = q.w * this.x + q.y * this.z - q.z * this.y;
   var iy = q.w * this.y + q.z * this.x - q.x * this.z;
   var iz = q.w * this.z + q.x * this.y - q.y * this.x;
@@ -60,6 +60,8 @@ ROSLIB.Vector3.prototype.multiplyQuaternion = function(q) {
  *
  * @returns the cloned vector
  */
-ROSLIB.Vector3.prototype.clone = function() {
-  return new ROSLIB.Vector3(this);
+Vector3.prototype.clone = function() {
+  return new Vector3(this);
 };
+
+module.exports = Vector3;

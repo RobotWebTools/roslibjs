@@ -9,14 +9,19 @@ module.exports = function(config) {
     // Testing frameworks
     frameworks: ['mocha', 'chai'],
 
-
     // List of files / patterns to load in the browser
     files: [
-      "../include/EventEmitter2/eventemitter2.js",
-      "../build/roslib.js",
-      "*.test.js"
+      '../node_modules/eventemitter2/lib/eventemitter2.js',
+      '../build/roslib.js',
+      './require-shim.js',
+      '*.test.js'
     ],
 
+    client: {
+        mocha: {
+            timeout: 10000
+        }
+    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit'
@@ -37,7 +42,7 @@ module.exports = function(config) {
 
     // level of logging
     // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-    logLevel: "LOG_INFO",
+    logLevel: 'LOG_INFO',
 
 
     // enable / disable watching file and executing tests whenever any file changes
@@ -52,7 +57,7 @@ module.exports = function(config) {
     // - Safari (only Mac)
     // - PhantomJS
     // - IE (only Windows)
-    browsers: ['PhantomJS'],
+    browsers: ['Firefox'],
 
 
     // If browser does not capture in given timeout [ms], kill it
