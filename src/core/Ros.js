@@ -2,6 +2,15 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
+var Canvas = require('canvas');
+var Image = Canvas.Image || global.Image;
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
+var WebSocket = require('ws');
+
+var Service = require('./Service');
+var ServiceRequest = require('./ServiceRequest');
+
+
 /**
  * Manages connection to the server and all interactions with ROS.
  *
@@ -16,7 +25,7 @@
  * @param options - possible keys include:
  *   * url (optional) - the WebSocket URL for rosbridge (can be specified later with `connect`)
  */
-ROSLIB.Ros = function(options) {
+function Ros(options) {
   options = options || {};
   var url = options.url;
   this.socket = null;
@@ -29,15 +38,16 @@ ROSLIB.Ros = function(options) {
   if (url) {
     this.connect(url);
   }
-};
-ROSLIB.Ros.prototype.__proto__ = EventEmitter2.prototype;
+}
+
+Ros.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
  * Connect to the specified WebSocket.
  *
  * @param url - WebSocket URL for Rosbridge
  */
-ROSLIB.Ros.prototype.connect = function(url) {
+Ros.prototype.connect = function(url) {
   var that = this;
 
   /**
@@ -82,7 +92,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
     // When the image loads, extracts the raw data (JSON message).
     image.onload = function() {
       // Creates a local canvas to draw on.
-      var canvas = document.createElement('canvas');
+      var canvas = new Canvas();
       var context = canvas.getContext('2d');
 
       // Sets width and height.
@@ -142,7 +152,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
 /**
  * Disconnect from the WebSocket server.
  */
-ROSLIB.Ros.prototype.close = function() {
+Ros.prototype.close = function() {
   if (this.socket) {
     this.socket.close();
   }
@@ -159,7 +169,7 @@ ROSLIB.Ros.prototype.close = function() {
  * @param level - User level as a string given by the client.
  * @param end - End time of the client's session.
  */
-ROSLIB.Ros.prototype.authenticate = function(mac, client, dest, rand, t, level, end) {
+Ros.prototype.authenticate = function(mac, client, dest, rand, t, level, end) {
   // create the request
   var auth = {
     op : 'auth',
@@ -179,7 +189,7 @@ ROSLIB.Ros.prototype.authenticate = function(mac, client, dest, rand, t, level, 
  * Sends the message over the WebSocket, but queues the message up if not yet
  * connected.
  */
-ROSLIB.Ros.prototype.callOnConnection = function(message) {
+Ros.prototype.callOnConnection = function(message) {
   var that = this;
   var messageJson = JSON.stringify(message);
 
@@ -198,14 +208,14 @@ ROSLIB.Ros.prototype.callOnConnection = function(message) {
  * @param callback function with params:
  *   * topics - Array of topic names
  */
-ROSLIB.Ros.prototype.getTopics = function(callback) {
-  var topicsClient = new ROSLIB.Service({
+Ros.prototype.getTopics = function(callback) {
+  var topicsClient = new Service({
     ros : this,
     name : '/rosapi/topics',
     serviceType : 'rosapi/Topics'
   });
 
-  var request = new ROSLIB.ServiceRequest();
+  var request = new ServiceRequest();
 
   topicsClient.callService(request, function(result) {
     callback(result.topics);
@@ -218,14 +228,14 @@ ROSLIB.Ros.prototype.getTopics = function(callback) {
  * @param callback - function with the following params:
  *   * services - array of service names
  */
-ROSLIB.Ros.prototype.getServices = function(callback) {
-  var servicesClient = new ROSLIB.Service({
+Ros.prototype.getServices = function(callback) {
+  var servicesClient = new Service({
     ros : this,
     name : '/rosapi/services',
     serviceType : 'rosapi/Services'
   });
 
-  var request = new ROSLIB.ServiceRequest();
+  var request = new ServiceRequest();
 
   servicesClient.callService(request, function(result) {
     callback(result.services);
@@ -238,14 +248,14 @@ ROSLIB.Ros.prototype.getServices = function(callback) {
  * @param callback - function with the following params:
  *   * nodes - array of node names
  */
-ROSLIB.Ros.prototype.getNodes = function(callback) {
-  var nodesClient = new ROSLIB.Service({
+Ros.prototype.getNodes = function(callback) {
+  var nodesClient = new Service({
     ros : this,
     name : '/rosapi/nodes',
     serviceType : 'rosapi/Nodes'
   });
 
-  var request = new ROSLIB.ServiceRequest();
+  var request = new ServiceRequest();
 
   nodesClient.callService(request, function(result) {
     callback(result.nodes);
@@ -258,14 +268,14 @@ ROSLIB.Ros.prototype.getNodes = function(callback) {
  * @param callback function with params:
  *  * params - array of param names.
  */
-ROSLIB.Ros.prototype.getParams = function(callback) {
-  var paramsClient = new ROSLIB.Service({
+Ros.prototype.getParams = function(callback) {
+  var paramsClient = new Service({
     ros : this,
     name : '/rosapi/get_param_names',
     serviceType : 'rosapi/GetParamNames'
   });
 
-  var request = new ROSLIB.ServiceRequest();
+  var request = new ServiceRequest();
   paramsClient.callService(request, function(result) {
     callback(result.names);
   });
@@ -277,13 +287,13 @@ ROSLIB.Ros.prototype.getParams = function(callback) {
  * @param callback - function with params:
  *   * type - String of the topic type
  */
-ROSLIB.Ros.prototype.getTopicType = function(topic, callback) {
-  var topicTypeClient = new ROSLIB.Service({
+Ros.prototype.getTopicType = function(topic, callback) {
+  var topicTypeClient = new Service({
     ros : this,
     name : '/rosapi/topic_type',
     serviceType : 'rosapi/TopicType'
   });
-  var request = new ROSLIB.ServiceRequest({
+  var request = new ServiceRequest({
     topic: topic
   });
   topicTypeClient.callService(request, function(result) {
@@ -298,13 +308,13 @@ ROSLIB.Ros.prototype.getTopicType = function(topic, callback) {
  *   * details - Array of the message detail
  * @param message - String of a topic type
  */
-ROSLIB.Ros.prototype.getMessageDetails = function(message, callback) {
-  var messageDetailClient = new ROSLIB.Service({
+Ros.prototype.getMessageDetails = function(message, callback) {
+  var messageDetailClient = new Service({
     ros : this,
     name : '/rosapi/message_details',
     serviceType : 'rosapi/MessageDetails'
   });
-  var request = new ROSLIB.ServiceRequest({
+  var request = new ServiceRequest({
     type: message
   });
   messageDetailClient.callService(request, function(result) {
@@ -317,7 +327,7 @@ ROSLIB.Ros.prototype.getMessageDetails = function(message, callback) {
  *
  * @param defs - array of type_def dictionary
  */
-ROSLIB.Ros.prototype.decodeTypeDefs = function(defs) {
+Ros.prototype.decodeTypeDefs = function(defs) {
   var that = this;
 
   // calls itself recursively to resolve type definition using hints.
@@ -363,3 +373,6 @@ ROSLIB.Ros.prototype.decodeTypeDefs = function(defs) {
   
   return decodeTypeDefsRec(defs[0], defs);
 };
+
+
+module.exports = Ros;

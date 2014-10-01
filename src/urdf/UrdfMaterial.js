@@ -3,6 +3,8 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
+var UrdfColor = require('./UrdfColor');
+
 /**
  * A Material element in a URDF.
  *
@@ -10,7 +12,7 @@
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-ROSLIB.UrdfMaterial = function(options) {
+function UrdfMaterial(options) {
   options = options || {};
   var that = this;
   var xml = options.xml;
@@ -36,7 +38,7 @@ ROSLIB.UrdfMaterial = function(options) {
     var colors = xml.getElementsByTagName('color');
     if (colors.length > 0) {
       // Parse the RBGA string
-      that.color = new ROSLIB.UrdfColor({
+      that.color = new UrdfColor({
         xml : colors[0]
       });
     }
@@ -44,4 +46,6 @@ ROSLIB.UrdfMaterial = function(options) {
 
   // Pass it to the XML parser
   initXml(xml);
-};
+}
+
+module.exports = UrdfMaterial;

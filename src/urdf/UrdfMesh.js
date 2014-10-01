@@ -3,6 +3,9 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
+var Vector3 = require('../math/Vector3');
+var UrdfTypes = require('./UrdfTypes');
+
 /**
  * A Mesh element in a URDF.
  *
@@ -10,7 +13,7 @@
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-ROSLIB.UrdfMesh = function(options) {
+function UrdfMesh(options) {
   options = options || {};
   var that = this;
   var xml = options.xml;
@@ -24,7 +27,7 @@ ROSLIB.UrdfMesh = function(options) {
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
-    that.type = ROSLIB.URDF_MESH;
+    that.type = UrdfTypes.URDF_MESH;
     that.filename = xml.getAttribute('filename');
 
     // Check for a scale
@@ -32,7 +35,7 @@ ROSLIB.UrdfMesh = function(options) {
     if (scale) {
       // Get the XYZ
       var xyz = scale.split(' ');
-      that.scale = new ROSLIB.Vector3({
+      that.scale = new Vector3({
         x : parseFloat(xyz[0]),
         y : parseFloat(xyz[1]),
         z : parseFloat(xyz[2])
@@ -42,5 +45,6 @@ ROSLIB.UrdfMesh = function(options) {
 
   // Pass it to the XML parser
   initXml(xml);
-};
+}
 
+module.exports = UrdfMesh;

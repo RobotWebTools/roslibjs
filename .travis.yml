@@ -1,17 +1,28 @@
 language: node_js
-
 node_js:
   - "0.10"
+addons:
+  firefox: "31.0" # 3.4->31.0
+os:
+  - linux
+before_install:
+  # node-canvas dependency
+  - sudo apt-get install libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++
+  # ROS deps for examples
+  - sudo sh -c 'echo "deb http://packages.ros.org/ros-shadow-fixed/ubuntu precise main" > /etc/apt/sources.list.d/ros-latest.list'
+  - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
+  - sudo apt-get update -qq
+  - sudo apt-get install ros-hydro-ros-base
+  - sudo apt-get install ros-hydro-rosbridge-server ros-hydro-tf2-web-republisher ros-hydro-common-tutorials ros-hydro-rospy-tutorials ros-hydro-actionlib-tutorials
+  - npm install -g grunt-cli karma-cli
 
-branches:
-  only:
-    - master
-    - develop
-
+  # Set up Xfvb for Firefox headless testing
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
 before_script:
-  - npm install -g karma grunt-cli
-  - cd utils
-  - npm install .
-
+  - source /opt/ros/hydro/setup.bash
+  - sh test/examples/setup_examples.sh
 script:
-  - grunt build
+  - rostopic list
+  - npm test
+  - npm run test-examples

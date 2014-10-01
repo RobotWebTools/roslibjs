@@ -1,20 +1,96 @@
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+'use strict';
+
+function ToObject(val) {
+	if (val == null) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
+}
+
+module.exports = Object.assign || function (target, source) {
+	var pendingException;
+	var from;
+	var keys;
+	var to = ToObject(target);
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = arguments[s];
+		keys = Object.keys(Object(from));
+
+		for (var i = 0; i < keys.length; i++) {
+			try {
+				to[keys[i]] = from[keys[i]];
+			} catch (err) {
+				if (pendingException === undefined) {
+					pendingException = err;
+				}
+			}
+		}
+	}
+
+	if (pendingException) {
+		throw pendingException;
+	}
+
+	return to;
+};
+
+},{}],2:[function(require,module,exports){
 /**
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var ROSLIB = ROSLIB || {
+var ROSLIB = this.ROSLIB || {
   REVISION : '0.10.0-SNAPSHOT'
 };
 
-//URDF types
-ROSLIB.URDF_SPHERE = 0;
-ROSLIB.URDF_BOX = 1;
-ROSLIB.URDF_CYLINDER = 2;
-ROSLIB.URDF_MESH = 3;
+ROSLIB.Ros = require('./core/Ros');
+ROSLIB.Topic = require('./core/Topic');
+ROSLIB.Message = require('./core/Message');
+ROSLIB.Param = require('./core/Param');
+ROSLIB.Service = require('./core/Service');
+ROSLIB.ServiceRequest = require('./core/ServiceRequest');
+ROSLIB.ServiceResponse = require('./core/ServiceResponse');
 
+ROSLIB.ActionClient = require('./actionlib/ActionClient');
+ROSLIB.Goal = require('./actionlib/Goal');
+ROSLIB.SimpleActionServer = require('./actionlib/SimpleActionServer');
+
+ROSLIB.Pose = require('./math/Pose');
+ROSLIB.Quaternion = require('./math/Quaternion');
+ROSLIB.Transform = require('./math/Transform');
+ROSLIB.Vector3 = require('./math/Vector3');
+
+ROSLIB.TFClient = require('./tf/TFClient');
+
+ROSLIB.UrdfBox = require('./urdf/UrdfBox');
+ROSLIB.UrdfColor = require('./urdf/UrdfColor');
+ROSLIB.UrdfCylinder = require('./urdf/UrdfCylinder');
+ROSLIB.UrdfLink = require('./urdf/UrdfLink');
+ROSLIB.UrdfMaterial = require('./urdf/UrdfMaterial');
+ROSLIB.UrdfMesh = require('./urdf/UrdfMesh');
+ROSLIB.UrdfModel = require('./urdf/UrdfModel');
+ROSLIB.UrdfSphere = require('./urdf/UrdfSphere');
+ROSLIB.UrdfVisual = require('./urdf/UrdfVisual');
+
+// Add URDF types
+require('object-assign')(ROSLIB, require('./urdf/UrdfTypes'));
+
+module.exports = ROSLIB;
+},{"./actionlib/ActionClient":4,"./actionlib/Goal":5,"./actionlib/SimpleActionServer":6,"./core/Message":7,"./core/Param":8,"./core/Ros":9,"./core/Service":10,"./core/ServiceRequest":11,"./core/ServiceResponse":12,"./core/Topic":13,"./math/Pose":14,"./math/Quaternion":15,"./math/Transform":16,"./math/Vector3":17,"./tf/TFClient":18,"./urdf/UrdfBox":19,"./urdf/UrdfColor":20,"./urdf/UrdfCylinder":21,"./urdf/UrdfLink":22,"./urdf/UrdfMaterial":23,"./urdf/UrdfMesh":24,"./urdf/UrdfModel":25,"./urdf/UrdfSphere":26,"./urdf/UrdfTypes":27,"./urdf/UrdfVisual":28,"object-assign":1}],3:[function(require,module,exports){
+(function (global){
+global.ROSLIB = require('./RosLib');
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./RosLib":2}],4:[function(require,module,exports){
 /**
  * @author Russell Toris - rctoris@wpi.edu
  */
+
+var Topic = require('../core/Topic');
+var Message = require('../core/Message');
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 /**
  * An actionlib action client.
@@ -32,7 +108,7 @@ ROSLIB.URDF_MESH = 3;
  *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
  *   * timeout - the timeout length when connecting to the action server
  */
-ROSLIB.ActionClient = function(options) {
+function ActionClient(options) {
   var that = this;
   options = options || {};
   this.ros = options.ros;
@@ -45,31 +121,31 @@ ROSLIB.ActionClient = function(options) {
   var receivedStatus = false;
 
   // create the topics associated with actionlib
-  var feedbackListener = new ROSLIB.Topic({
+  var feedbackListener = new Topic({
     ros : this.ros,
     name : this.serverName + '/feedback',
     messageType : this.actionName + 'Feedback'
   });
 
-  var statusListener = new ROSLIB.Topic({
+  var statusListener = new Topic({
     ros : this.ros,
     name : this.serverName + '/status',
     messageType : 'actionlib_msgs/GoalStatusArray'
   });
 
-  var resultListener = new ROSLIB.Topic({
+  var resultListener = new Topic({
     ros : this.ros,
     name : this.serverName + '/result',
     messageType : this.actionName + 'Result'
   });
 
-  this.goalTopic = new ROSLIB.Topic({
+  this.goalTopic = new Topic({
     ros : this.ros,
     name : this.serverName + '/goal',
     messageType : this.actionName + 'Goal'
   });
 
-  this.cancelTopic = new ROSLIB.Topic({
+  this.cancelTopic = new Topic({
     ros : this.ros,
     name : this.serverName + '/cancel',
     messageType : 'actionlib_msgs/GoalID'
@@ -117,21 +193,26 @@ ROSLIB.ActionClient = function(options) {
       }
     }, this.timeout);
   }
-};
-ROSLIB.ActionClient.prototype.__proto__ = EventEmitter2.prototype;
+}
+
+ActionClient.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
  * Cancel all goals associated with this ActionClient.
  */
-ROSLIB.ActionClient.prototype.cancel = function() {
-  var cancelMessage = new ROSLIB.Message();
+ActionClient.prototype.cancel = function() {
+  var cancelMessage = new Message();
   this.cancelTopic.publish(cancelMessage);
 };
 
-
+module.exports = ActionClient;
+},{"../core/Message":7,"../core/Topic":13,"eventemitter2":30}],5:[function(require,module,exports){
 /**
  * @author Russell Toris - rctoris@wpi.edu
  */
+
+var Message = require('../core/Message');
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 /**
  * An actionlib goal goal is associated with an action server.
@@ -144,7 +225,7 @@ ROSLIB.ActionClient.prototype.cancel = function() {
  *   * actionClient - the ROSLIB.ActionClient to use with this goal
  *   * goalMessage - The JSON object containing the goal for the action server
  */
-ROSLIB.Goal = function(options) {
+function Goal(options) {
   var that = this;
   this.actionClient = options.actionClient;
   this.goalMessage = options.goalMessage;
@@ -156,7 +237,7 @@ ROSLIB.Goal = function(options) {
   // Create a random ID
   this.goalID = 'goal_' + Math.random() + '_' + date.getTime();
   // Fill in the goal message
-  this.goalMessage = new ROSLIB.Message({
+  this.goalMessage = new Message({
     goal_id : {
       stamp : {
         secs : 0,
@@ -182,15 +263,16 @@ ROSLIB.Goal = function(options) {
 
   // Add the goal
   this.actionClient.goals[this.goalID] = this;
-};
-ROSLIB.Goal.prototype.__proto__ = EventEmitter2.prototype;
+}
+
+Goal.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
  * Send the goal to the action server.
  *
  * @param timeout (optional) - a timeout length for the goal's result
  */
-ROSLIB.Goal.prototype.send = function(timeout) {
+Goal.prototype.send = function(timeout) {
   var that = this;
   that.actionClient.goalTopic.publish(that.goalMessage);
   if (timeout) {
@@ -205,16 +287,22 @@ ROSLIB.Goal.prototype.send = function(timeout) {
 /**
  * Cancel the current goal.
  */
-ROSLIB.Goal.prototype.cancel = function() {
-  var cancelMessage = new ROSLIB.Message({
+Goal.prototype.cancel = function() {
+  var cancelMessage = new Message({
     id : this.goalID
   });
   this.actionClient.cancelTopic.publish(cancelMessage);
 };
 
+module.exports = Goal;
+},{"../core/Message":7,"eventemitter2":30}],6:[function(require,module,exports){
 /**
  * @author Laura Lindzey - lindzey@gmail.com
  */
+
+var Topic = require('../core/Topic');
+var Message = require('../core/Message');
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 /**
  * An actionlib action server client.
@@ -230,7 +318,7 @@ ROSLIB.Goal.prototype.cancel = function() {
  *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
  */
 
-ROSLIB.SimpleActionServer = function(options) {
+function SimpleActionServer(options) {
     var that = this;
     options = options || {};
     this.ros = options.ros;
@@ -238,21 +326,21 @@ ROSLIB.SimpleActionServer = function(options) {
     this.actionName = options.actionName;
 
     // create and advertise publishers
-    this.feedbackPublisher = new ROSLIB.Topic({
+    this.feedbackPublisher = new Topic({
         ros : this.ros,
         name : this.serverName + '/feedback',
         messageType : this.actionName + 'Feedback'
     });
     this.feedbackPublisher.advertise();
 
-    var statusPublisher = new ROSLIB.Topic({
+    var statusPublisher = new Topic({
         ros : this.ros,
         name : this.serverName + '/status',
         messageType : 'actionlib_msgs/GoalStatusArray'
     });
     statusPublisher.advertise();
 
-    this.resultPublisher = new ROSLIB.Topic({
+    this.resultPublisher = new Topic({
         ros : this.ros,
         name : this.serverName + '/result',
         messageType : this.actionName + 'Result'
@@ -260,20 +348,20 @@ ROSLIB.SimpleActionServer = function(options) {
     this.resultPublisher.advertise();
 
     // create and subscribe to listeners
-    var goalListener = new ROSLIB.Topic({
+    var goalListener = new Topic({
         ros : this.ros,
         name : this.serverName + '/goal',
         messageType : this.actionName + 'Goal'
     });
 
-    var cancelListener = new ROSLIB.Topic({
+    var cancelListener = new Topic({
         ros : this.ros,
         name : this.serverName + '/cancel',
         messageType : 'actionlib_msgs/GoalID'
     });
 
     // Track the goals and their status in order to publish status...
-    this.statusMessage = new ROSLIB.Message({
+    this.statusMessage = new Message({
         header : {
             stamp : {secs : 0, nsecs : 100},
             frame_id : ''
@@ -353,18 +441,18 @@ ROSLIB.SimpleActionServer = function(options) {
         statusPublisher.publish(that.statusMessage);
     }, 500); // publish every 500ms
 
-};
+}
 
-ROSLIB.SimpleActionServer.prototype.__proto__ = EventEmitter2.prototype;
+SimpleActionServer.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
 *  Set action state to succeeded and return to client
 */
 
-ROSLIB.SimpleActionServer.prototype.setSucceeded = function(result2) {
+SimpleActionServer.prototype.setSucceeded = function(result2) {
     
 
-    var resultMessage = new ROSLIB.Message({
+    var resultMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 3},
         result : result2
     });
@@ -384,9 +472,9 @@ ROSLIB.SimpleActionServer.prototype.setSucceeded = function(result2) {
 *  Function to send feedback
 */
 
-ROSLIB.SimpleActionServer.prototype.sendFeedback = function(feedback2) {
+SimpleActionServer.prototype.sendFeedback = function(feedback2) {
 
-    var feedbackMessage = new ROSLIB.Message({
+    var feedbackMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 1},
         feedback : feedback2
     });
@@ -397,10 +485,10 @@ ROSLIB.SimpleActionServer.prototype.sendFeedback = function(feedback2) {
 *  Handle case where client requests preemption
 */
 
-ROSLIB.SimpleActionServer.prototype.setPreempted = function() {
+SimpleActionServer.prototype.setPreempted = function() {
 
     this.statusMessage.status_list = [];
-    var resultMessage = new ROSLIB.Message({
+    var resultMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 2},
     });
     this.resultPublisher.publish(resultMessage);
@@ -414,9 +502,13 @@ ROSLIB.SimpleActionServer.prototype.setPreempted = function() {
     }
 };
 
+module.exports = SimpleActionServer;
+},{"../core/Message":7,"../core/Topic":13,"eventemitter2":30}],7:[function(require,module,exports){
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
+
+var assign = require('object-assign');
 
 /**
  * Message objects are used for publishing and subscribing to and from topics.
@@ -424,18 +516,18 @@ ROSLIB.SimpleActionServer.prototype.setPreempted = function() {
  * @constructor
  * @param values - object matching the fields defined in the .msg definition file
  */
-ROSLIB.Message = function(values) {
-  var that = this;
-  values = values || {};
+function Message(values) {
+  assign(this, values);
+}
 
-  Object.keys(values).forEach(function(name) {
-    that[name] = values[name];
-  });
-};
-
+module.exports = Message;
+},{"object-assign":1}],8:[function(require,module,exports){
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
+
+var Service = require('./Service');
+var ServiceRequest = require('./ServiceRequest');
 
 /**
  * A ROS parameter.
@@ -445,11 +537,11 @@ ROSLIB.Message = function(values) {
  *   * ros - the ROSLIB.Ros connection handle
  *   * name - the param name, like max_vel_x
  */
-ROSLIB.Param = function(options) {
+function Param(options) {
   options = options || {};
   this.ros = options.ros;
   this.name = options.name;
-};
+}
 
 /**
  * Fetches the value of the param.
@@ -457,14 +549,14 @@ ROSLIB.Param = function(options) {
  * @param callback - function with the following params:
  *  * value - the value of the param from ROS.
  */
-ROSLIB.Param.prototype.get = function(callback) {
-  var paramClient = new ROSLIB.Service({
+Param.prototype.get = function(callback) {
+  var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/get_param',
     serviceType : 'rosapi/GetParam'
   });
 
-  var request = new ROSLIB.ServiceRequest({
+  var request = new ServiceRequest({
     name : this.name
   });
 
@@ -479,14 +571,14 @@ ROSLIB.Param.prototype.get = function(callback) {
  *
  * @param value - value to set param to.
  */
-ROSLIB.Param.prototype.set = function(value) {
-  var paramClient = new ROSLIB.Service({
+Param.prototype.set = function(value) {
+  var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/set_param',
     serviceType : 'rosapi/SetParam'
   });
 
-  var request = new ROSLIB.ServiceRequest({
+  var request = new ServiceRequest({
     name : this.name,
     value : JSON.stringify(value)
   });
@@ -498,14 +590,14 @@ ROSLIB.Param.prototype.set = function(value) {
 /**
  * Delete this parameter on the ROS server.
  */
-ROSLIB.Param.prototype.delete = function() {
-  var paramClient = new ROSLIB.Service({
+Param.prototype.delete = function() {
+  var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/delete_param',
     serviceType : 'rosapi/DeleteParam'
   });
 
-  var request = new ROSLIB.ServiceRequest({
+  var request = new ServiceRequest({
     name : this.name
   });
 
@@ -513,9 +605,21 @@ ROSLIB.Param.prototype.delete = function() {
   });
 };
 
+module.exports = Param;
+},{"./Service":10,"./ServiceRequest":11}],9:[function(require,module,exports){
+(function (global){
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
+
+var Canvas = require('canvas');
+var Image = Canvas.Image || global.Image;
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
+var WebSocket = require('ws');
+
+var Service = require('./Service');
+var ServiceRequest = require('./ServiceRequest');
+
 
 /**
  * Manages connection to the server and all interactions with ROS.
@@ -531,7 +635,7 @@ ROSLIB.Param.prototype.delete = function() {
  * @param options - possible keys include:
  *   * url (optional) - the WebSocket URL for rosbridge (can be specified later with `connect`)
  */
-ROSLIB.Ros = function(options) {
+function Ros(options) {
   options = options || {};
   var url = options.url;
   this.socket = null;
@@ -544,15 +648,16 @@ ROSLIB.Ros = function(options) {
   if (url) {
     this.connect(url);
   }
-};
-ROSLIB.Ros.prototype.__proto__ = EventEmitter2.prototype;
+}
+
+Ros.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
  * Connect to the specified WebSocket.
  *
  * @param url - WebSocket URL for Rosbridge
  */
-ROSLIB.Ros.prototype.connect = function(url) {
+Ros.prototype.connect = function(url) {
   var that = this;
 
   /**
@@ -597,7 +702,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
     // When the image loads, extracts the raw data (JSON message).
     image.onload = function() {
       // Creates a local canvas to draw on.
-      var canvas = document.createElement('canvas');
+      var canvas = new Canvas();
       var context = canvas.getContext('2d');
 
       // Sets width and height.
@@ -657,7 +762,7 @@ ROSLIB.Ros.prototype.connect = function(url) {
 /**
  * Disconnect from the WebSocket server.
  */
-ROSLIB.Ros.prototype.close = function() {
+Ros.prototype.close = function() {
   if (this.socket) {
     this.socket.close();
   }
@@ -674,7 +779,7 @@ ROSLIB.Ros.prototype.close = function() {
  * @param level - User level as a string given by the client.
  * @param end - End time of the client's session.
  */
-ROSLIB.Ros.prototype.authenticate = function(mac, client, dest, rand, t, level, end) {
+Ros.prototype.authenticate = function(mac, client, dest, rand, t, level, end) {
   // create the request
   var auth = {
     op : 'auth',
@@ -694,7 +799,7 @@ ROSLIB.Ros.prototype.authenticate = function(mac, client, dest, rand, t, level, 
  * Sends the message over the WebSocket, but queues the message up if not yet
  * connected.
  */
-ROSLIB.Ros.prototype.callOnConnection = function(message) {
+Ros.prototype.callOnConnection = function(message) {
   var that = this;
   var messageJson = JSON.stringify(message);
 
@@ -713,14 +818,14 @@ ROSLIB.Ros.prototype.callOnConnection = function(message) {
  * @param callback function with params:
  *   * topics - Array of topic names
  */
-ROSLIB.Ros.prototype.getTopics = function(callback) {
-  var topicsClient = new ROSLIB.Service({
+Ros.prototype.getTopics = function(callback) {
+  var topicsClient = new Service({
     ros : this,
     name : '/rosapi/topics',
     serviceType : 'rosapi/Topics'
   });
 
-  var request = new ROSLIB.ServiceRequest();
+  var request = new ServiceRequest();
 
   topicsClient.callService(request, function(result) {
     callback(result.topics);
@@ -733,14 +838,14 @@ ROSLIB.Ros.prototype.getTopics = function(callback) {
  * @param callback - function with the following params:
  *   * services - array of service names
  */
-ROSLIB.Ros.prototype.getServices = function(callback) {
-  var servicesClient = new ROSLIB.Service({
+Ros.prototype.getServices = function(callback) {
+  var servicesClient = new Service({
     ros : this,
     name : '/rosapi/services',
     serviceType : 'rosapi/Services'
   });
 
-  var request = new ROSLIB.ServiceRequest();
+  var request = new ServiceRequest();
 
   servicesClient.callService(request, function(result) {
     callback(result.services);
@@ -753,14 +858,14 @@ ROSLIB.Ros.prototype.getServices = function(callback) {
  * @param callback - function with the following params:
  *   * nodes - array of node names
  */
-ROSLIB.Ros.prototype.getNodes = function(callback) {
-  var nodesClient = new ROSLIB.Service({
+Ros.prototype.getNodes = function(callback) {
+  var nodesClient = new Service({
     ros : this,
     name : '/rosapi/nodes',
     serviceType : 'rosapi/Nodes'
   });
 
-  var request = new ROSLIB.ServiceRequest();
+  var request = new ServiceRequest();
 
   nodesClient.callService(request, function(result) {
     callback(result.nodes);
@@ -773,14 +878,14 @@ ROSLIB.Ros.prototype.getNodes = function(callback) {
  * @param callback function with params:
  *  * params - array of param names.
  */
-ROSLIB.Ros.prototype.getParams = function(callback) {
-  var paramsClient = new ROSLIB.Service({
+Ros.prototype.getParams = function(callback) {
+  var paramsClient = new Service({
     ros : this,
     name : '/rosapi/get_param_names',
     serviceType : 'rosapi/GetParamNames'
   });
 
-  var request = new ROSLIB.ServiceRequest();
+  var request = new ServiceRequest();
   paramsClient.callService(request, function(result) {
     callback(result.names);
   });
@@ -792,13 +897,13 @@ ROSLIB.Ros.prototype.getParams = function(callback) {
  * @param callback - function with params:
  *   * type - String of the topic type
  */
-ROSLIB.Ros.prototype.getTopicType = function(topic, callback) {
-  var topicTypeClient = new ROSLIB.Service({
+Ros.prototype.getTopicType = function(topic, callback) {
+  var topicTypeClient = new Service({
     ros : this,
     name : '/rosapi/topic_type',
     serviceType : 'rosapi/TopicType'
   });
-  var request = new ROSLIB.ServiceRequest({
+  var request = new ServiceRequest({
     topic: topic
   });
   topicTypeClient.callService(request, function(result) {
@@ -813,13 +918,13 @@ ROSLIB.Ros.prototype.getTopicType = function(topic, callback) {
  *   * details - Array of the message detail
  * @param message - String of a topic type
  */
-ROSLIB.Ros.prototype.getMessageDetails = function(message, callback) {
-  var messageDetailClient = new ROSLIB.Service({
+Ros.prototype.getMessageDetails = function(message, callback) {
+  var messageDetailClient = new Service({
     ros : this,
     name : '/rosapi/message_details',
     serviceType : 'rosapi/MessageDetails'
   });
-  var request = new ROSLIB.ServiceRequest({
+  var request = new ServiceRequest({
     type: message
   });
   messageDetailClient.callService(request, function(result) {
@@ -832,7 +937,7 @@ ROSLIB.Ros.prototype.getMessageDetails = function(message, callback) {
  *
  * @param defs - array of type_def dictionary
  */
-ROSLIB.Ros.prototype.decodeTypeDefs = function(defs) {
+Ros.prototype.decodeTypeDefs = function(defs) {
   var that = this;
 
   // calls itself recursively to resolve type definition using hints.
@@ -879,9 +984,15 @@ ROSLIB.Ros.prototype.decodeTypeDefs = function(defs) {
   return decodeTypeDefsRec(defs[0], defs);
 };
 
+
+module.exports = Ros;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./Service":10,"./ServiceRequest":11,"canvas":32,"eventemitter2":30,"ws":31}],10:[function(require,module,exports){
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
+
+var ServiceResponse = require('./ServiceResponse');
 
 /**
  * A ROS service client.
@@ -892,12 +1003,12 @@ ROSLIB.Ros.prototype.decodeTypeDefs = function(defs) {
  *   * name - the service name, like /add_two_ints
  *   * serviceType - the service type, like 'rospy_tutorials/AddTwoInts'
  */
-ROSLIB.Service = function(options) {
+function Service(options) {
   options = options || {};
   this.ros = options.ros;
   this.name = options.name;
   this.serviceType = options.serviceType;
-};
+}
 
 /**
  * Calls the service. Returns the service response in the callback.
@@ -908,7 +1019,7 @@ ROSLIB.Service = function(options) {
  * @param failedCallback - the callback function when the service call failed (optional). Params:
  *   * error - the error message reported by ROS
  */
-ROSLIB.Service.prototype.callService = function(request, callback, failedCallback) {
+Service.prototype.callService = function(request, callback, failedCallback) {
   this.ros.idCounter++;
   var serviceCallId = 'call_service:' + this.name + ':' + this.ros.idCounter;
 
@@ -918,7 +1029,7 @@ ROSLIB.Service.prototype.callService = function(request, callback, failedCallbac
         failedCallback(message.values);
       }
     } else {
-      var response = new ROSLIB.ServiceResponse(message.values);
+      var response = new ServiceResponse(message.values);
       callback(response);
     }
   });
@@ -932,9 +1043,13 @@ ROSLIB.Service.prototype.callService = function(request, callback, failedCallbac
   this.ros.callOnConnection(call);
 };
 
+module.exports = Service;
+},{"./ServiceResponse":12}],11:[function(require,module,exports){
 /**
  * @author Brandon Alexander - balexander@willowgarage.com
  */
+
+var assign = require('object-assign');
 
 /**
  * A ServiceRequest is passed into the service call.
@@ -942,18 +1057,17 @@ ROSLIB.Service.prototype.callService = function(request, callback, failedCallbac
  * @constructor
  * @param values - object matching the fields defined in the .srv definition file
  */
-ROSLIB.ServiceRequest = function(values) {
-  var that = this;
-  values = values || {};
+function ServiceRequest(values) {
+  assign(this, values);
+}
 
-  Object.keys(values).forEach(function(name) {
-    that[name] = values[name];
-  });
-};
-
+module.exports = ServiceRequest;
+},{"object-assign":1}],12:[function(require,module,exports){
 /**
  * @author Brandon Alexander - balexander@willowgarage.com
  */
+
+var assign = require('object-assign');
 
 /**
  * A ServiceResponse is returned from the service call.
@@ -961,18 +1075,18 @@ ROSLIB.ServiceRequest = function(values) {
  * @constructor
  * @param values - object matching the fields defined in the .srv definition file
  */
-ROSLIB.ServiceResponse = function(values) {
-  var that = this;
-  values = values || {};
+function ServiceResponse(values) {
+  assign(this, values);
+}
 
-  Object.keys(values).forEach(function(name) {
-    that[name] = values[name];
-  });
-};
-
+module.exports = ServiceResponse;
+},{"object-assign":1}],13:[function(require,module,exports){
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
+
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
+var Message = require('./Message');
 
 /**
  * Publish and/or subscribe to a topic in ROS.
@@ -989,7 +1103,7 @@ ROSLIB.ServiceResponse = function(values) {
  *   * compression - the type of compression to use, like 'png'
  *   * throttle_rate - the rate at which to throttle the topics
  */
-ROSLIB.Topic = function(options) {
+function Topic(options) {
   options = options || {};
   this.ros = options.ros;
   this.name = options.name;
@@ -1001,7 +1115,8 @@ ROSLIB.Topic = function(options) {
   this.queue_size = options.queue_size || 100;
 
   // Check for valid compression types
-  if (this.compression && this.compression !== 'png' && this.compression !== 'none') {
+  if (this.compression && this.compression !== 'png' &&
+        this.compression !== 'none') {
     this.emit('warning', this.compression +
       ' compression is not supported. No compression will be used.');
   }
@@ -1011,8 +1126,9 @@ ROSLIB.Topic = function(options) {
     this.emit('warning', this.throttle_rate + ' is not allowed. Set to 0');
     this.throttle_rate = 0;
   }
-};
-ROSLIB.Topic.prototype.__proto__ = EventEmitter2.prototype;
+}
+
+Topic.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
  * Every time a message is published for the given topic, the callback
@@ -1021,83 +1137,69 @@ ROSLIB.Topic.prototype.__proto__ = EventEmitter2.prototype;
  * @param callback - function with the following params:
  *   * message - the published message
  */
-ROSLIB.Topic.prototype.subscribe = function(callback) {
+Topic.prototype.subscribe = function(callback) {
   var that = this;
-
-  this.on('message', function(message) {
-    callback(message);
-  });
-
+  this.on('message', callback);
   this.ros.on(this.name, function(data) {
-    var message = new ROSLIB.Message(data);
+    var message = new Message(data);
     that.emit('message', message);
   });
 
-  this.ros.idCounter++;
-  var subscribeId = 'subscribe:' + this.name + ':' + this.ros.idCounter;
-  var call = {
-    op : 'subscribe',
-    id : subscribeId,
-    type : this.messageType,
-    topic : this.name,
-    compression : this.compression,
-    throttle_rate : this.throttle_rate
-  };
-
-  this.ros.callOnConnection(call);
+  this.subscribeId = 'subscribe:' + this.name + ':' + (++this.ros.idCounter);
+  this.ros.callOnConnection({
+    op: 'subscribe',
+    id: this.subscribeId,
+    type: this.messageType,
+    topic: this.name,
+    compression: this.compression,
+    throttle_rate: this.throttle_rate
+  });
 };
 
 /**
  * Unregisters as a subscriber for the topic. Unsubscribing will remove
  * all subscribe callbacks.
  */
-ROSLIB.Topic.prototype.unsubscribe = function() {
-  this.ros.removeAllListeners([ this.name ]);
-  this.ros.idCounter++;
-  var unsubscribeId = 'unsubscribe:' + this.name + ':' + this.ros.idCounter;
-  var call = {
-    op : 'unsubscribe',
-    id : unsubscribeId,
-    topic : this.name
-  };
-  this.ros.callOnConnection(call);
+Topic.prototype.unsubscribe = function() {
+  this.ros.removeAllListeners([this.name]);
+  this.ros.callOnConnection({
+    op: 'unsubscribe',
+    id: this.subscribeId,
+    topic: this.name
+  });
 };
 
 /**
  * Registers as a publisher for the topic.
  */
-ROSLIB.Topic.prototype.advertise = function() {
+Topic.prototype.advertise = function() {
   if (this.isAdvertised) {
     return;
   }
-  this.ros.idCounter++;
-  this.advertiseId = 'advertise:' + this.name + ':' + this.ros.idCounter;
-  var call = {
-    op : 'advertise',
-    id : this.advertiseId,
-    type : this.messageType,
-    topic : this.name,
-    latch : this.latch,
-    queue_size : this.queue_size
-  };
-  this.ros.callOnConnection(call);
+  this.advertiseId = 'advertise:' + this.name + ':' + (++this.ros.idCounter);
+  this.ros.callOnConnection({
+    op: 'advertise',
+    id: this.advertiseId,
+    type: this.messageType,
+    topic: this.name,
+    latch: this.latch,
+    queue_size: this.queue_size
+  });
   this.isAdvertised = true;
 };
 
 /**
  * Unregisters as a publisher for the topic.
  */
-ROSLIB.Topic.prototype.unadvertise = function() {
+Topic.prototype.unadvertise = function() {
   if (!this.isAdvertised) {
     return;
   }
-  var unadvertiseId = this.advertiseId;
-  var call = {
-    op : 'unadvertise',
-    id : unadvertiseId,
-    topic : this.name
-  };
-  this.ros.callOnConnection(call);
+  this.ros.callOnConnection({
+    op: 'unadvertise',
+    id: this.advertiseId,
+    topic: this.name
+  });
   this.isAdvertised = false;
 };
 
@@ -1106,26 +1208,31 @@ ROSLIB.Topic.prototype.unadvertise = function() {
  *
  * @param message - A ROSLIB.Message object.
  */
-ROSLIB.Topic.prototype.publish = function(message) {
+Topic.prototype.publish = function(message) {
   if (!this.isAdvertised) {
-      this.advertise();
+    this.advertise();
   }
 
   this.ros.idCounter++;
-  var publishId = 'publish:' + this.name + ':' + this.ros.idCounter;
   var call = {
-    op : 'publish',
-    id : publishId,
-    topic : this.name,
-    msg : message,
-    latch : this.latch
+    op: 'publish',
+    id: 'publish:' + this.name + ':' + this.ros.idCounter,
+    topic: this.name,
+    msg: message,
+    latch: this.latch
   };
   this.ros.callOnConnection(call);
 };
 
+module.exports = Topic;
+
+},{"./Message":7,"eventemitter2":30}],14:[function(require,module,exports){
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
+
+var Vector3 = require('./Vector3');
+var Quaternion = require('./Quaternion');
 
 /**
  * A Pose in 3D space. Values are copied into this object.
@@ -1135,19 +1242,19 @@ ROSLIB.Topic.prototype.publish = function(message) {
  *   * position - the Vector3 describing the position
  *   * orientation - the ROSLIB.Quaternion describing the orientation
  */
-ROSLIB.Pose = function(options) {
+function Pose(options) {
   options = options || {};
   // copy the values into this object if they exist
-  this.position = new ROSLIB.Vector3(options.position);
-  this.orientation = new ROSLIB.Quaternion(options.orientation);
-};
+  this.position = new Vector3(options.position);
+  this.orientation = new Quaternion(options.orientation);
+}
 
 /**
  * Apply a transform against this pose.
  *
  * @param tf the transform
  */
-ROSLIB.Pose.prototype.applyTransform = function(tf) {
+Pose.prototype.applyTransform = function(tf) {
   this.position.multiplyQuaternion(tf.rotation);
   this.position.add(tf.translation);
   var tmp = tf.rotation.clone();
@@ -1160,10 +1267,12 @@ ROSLIB.Pose.prototype.applyTransform = function(tf) {
  *
  * @returns the cloned pose
  */
-ROSLIB.Pose.prototype.clone = function() {
-  return new ROSLIB.Pose(this);
+Pose.prototype.clone = function() {
+  return new Pose(this);
 };
 
+module.exports = Pose;
+},{"./Quaternion":15,"./Vector3":17}],15:[function(require,module,exports){
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
@@ -1178,18 +1287,18 @@ ROSLIB.Pose.prototype.clone = function() {
  *   * z - the z value
  *   * w - the w value
  */
-ROSLIB.Quaternion = function(options) {
+function Quaternion(options) {
   options = options || {};
   this.x = options.x || 0;
   this.y = options.y || 0;
   this.z = options.z || 0;
   this.w = options.w || 1;
-};
+}
 
 /**
  * Perform a conjugation on this quaternion.
  */
-ROSLIB.Quaternion.prototype.conjugate = function() {
+Quaternion.prototype.conjugate = function() {
   this.x *= -1;
   this.y *= -1;
   this.z *= -1;
@@ -1198,7 +1307,7 @@ ROSLIB.Quaternion.prototype.conjugate = function() {
 /**
  * Perform a normalization on this quaternion.
  */
-ROSLIB.Quaternion.prototype.normalize = function() {
+Quaternion.prototype.normalize = function() {
   var l = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
   if (l === 0) {
     this.x = 0;
@@ -1217,7 +1326,7 @@ ROSLIB.Quaternion.prototype.normalize = function() {
 /**
  * Convert this quaternion into its inverse.
  */
-ROSLIB.Quaternion.prototype.invert = function() {
+Quaternion.prototype.invert = function() {
   this.conjugate();
   this.normalize();
 };
@@ -1227,7 +1336,7 @@ ROSLIB.Quaternion.prototype.invert = function() {
  *
  * @param q the quaternion to multiply with
  */
-ROSLIB.Quaternion.prototype.multiply = function(q) {
+Quaternion.prototype.multiply = function(q) {
   var newX = this.x * q.w + this.y * q.z - this.z * q.y + this.w * q.x;
   var newY = -this.x * q.z + this.y * q.w + this.z * q.x + this.w * q.y;
   var newZ = this.x * q.y - this.y * q.x + this.z * q.w + this.w * q.z;
@@ -1243,13 +1352,18 @@ ROSLIB.Quaternion.prototype.multiply = function(q) {
  *
  * @returns the cloned quaternion
  */
-ROSLIB.Quaternion.prototype.clone = function() {
-  return new ROSLIB.Quaternion(this);
+Quaternion.prototype.clone = function() {
+  return new Quaternion(this);
 };
 
+module.exports = Quaternion;
+},{}],16:[function(require,module,exports){
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
+
+var Vector3 = require('./Vector3');
+var Quaternion = require('./Quaternion');
 
 /**
  * A Transform in 3-space. Values are copied into this object.
@@ -1259,22 +1373,24 @@ ROSLIB.Quaternion.prototype.clone = function() {
  *   * translation - the Vector3 describing the translation
  *   * rotation - the ROSLIB.Quaternion describing the rotation
  */
-ROSLIB.Transform = function(options) {
+function Transform(options) {
   options = options || {};
   // Copy the values into this object if they exist
-  this.translation = new ROSLIB.Vector3(options.translation);
-  this.rotation = new ROSLIB.Quaternion(options.rotation);
-};
+  this.translation = new Vector3(options.translation);
+  this.rotation = new Quaternion(options.rotation);
+}
 
 /**
  * Clone a copy of this transform.
  *
  * @returns the cloned transform
  */
-ROSLIB.Transform.prototype.clone = function() {
-  return new ROSLIB.Transform(this);
+Transform.prototype.clone = function() {
+  return new Transform(this);
 };
 
+module.exports = Transform;
+},{"./Quaternion":15,"./Vector3":17}],17:[function(require,module,exports){
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
@@ -1288,19 +1404,19 @@ ROSLIB.Transform.prototype.clone = function() {
  *   * y - the y value
  *   * z - the z value
  */
-ROSLIB.Vector3 = function(options) {
+function Vector3(options) {
   options = options || {};
   this.x = options.x || 0;
   this.y = options.y || 0;
   this.z = options.z || 0;
-};
+}
 
 /**
  * Set the values of this vector to the sum of itself and the given vector.
  *
  * @param v the vector to add with
  */
-ROSLIB.Vector3.prototype.add = function(v) {
+Vector3.prototype.add = function(v) {
   this.x += v.x;
   this.y += v.y;
   this.z += v.z;
@@ -1311,7 +1427,7 @@ ROSLIB.Vector3.prototype.add = function(v) {
  *
  * @param v the vector to subtract with
  */
-ROSLIB.Vector3.prototype.subtract = function(v) {
+Vector3.prototype.subtract = function(v) {
   this.x -= v.x;
   this.y -= v.y;
   this.z -= v.z;
@@ -1322,7 +1438,7 @@ ROSLIB.Vector3.prototype.subtract = function(v) {
  *
  * @param q - the quaternion to multiply with
  */
-ROSLIB.Vector3.prototype.multiplyQuaternion = function(q) {
+Vector3.prototype.multiplyQuaternion = function(q) {
   var ix = q.w * this.x + q.y * this.z - q.z * this.y;
   var iy = q.w * this.y + q.z * this.x - q.x * this.z;
   var iz = q.w * this.z + q.x * this.y - q.y * this.x;
@@ -1337,13 +1453,19 @@ ROSLIB.Vector3.prototype.multiplyQuaternion = function(q) {
  *
  * @returns the cloned vector
  */
-ROSLIB.Vector3.prototype.clone = function() {
-  return new ROSLIB.Vector3(this);
+Vector3.prototype.clone = function() {
+  return new Vector3(this);
 };
 
+module.exports = Vector3;
+},{}],18:[function(require,module,exports){
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
+
+var ActionClient = require('../actionlib/ActionClient');
+var Goal = require('../actionlib/Goal');
+var Transform = require('../math/Transform');
 
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
@@ -1357,7 +1479,7 @@ ROSLIB.Vector3.prototype.clone = function() {
  *   * rate - the rate for the TF republisher
  *   * goalUpdateDelay - the goal update delay for the TF republisher
  */
-ROSLIB.TFClient = function(options) {
+function TFClient(options) {
   options = options || {};
   this.ros = options.ros;
   this.fixedFrame = options.fixedFrame || '/base_link';
@@ -1371,12 +1493,12 @@ ROSLIB.TFClient = function(options) {
   this.goalUpdateRequested = false;
 
   // Create an ActionClient
-  this.actionClient = new ROSLIB.ActionClient({
+  this.actionClient = new ActionClient({
     ros : this.ros,
     serverName : '/tf2_web_republisher',
     actionName : 'tf2_web_republisher/TFSubscriptionAction'
   });
-};
+}
 
 /**
  * Process the incoming TF message and send them out using the callback
@@ -1384,7 +1506,7 @@ ROSLIB.TFClient = function(options) {
  *
  * @param tf - the TF message from the server
  */
-ROSLIB.TFClient.prototype.processFeedback = function(tf) {
+TFClient.prototype.processFeedback = function(tf) {
   var that = this;
   tf.transforms.forEach(function(transform) {
     var frameID = transform.child_frame_id;
@@ -1393,7 +1515,7 @@ ROSLIB.TFClient.prototype.processFeedback = function(tf) {
     }
     var info = that.frameInfos[frameID];
     if (info !== undefined) {
-      info.transform = new ROSLIB.Transform({
+      info.transform = new Transform({
         translation : transform.transform.translation,
         rotation : transform.transform.rotation
       });
@@ -1408,7 +1530,7 @@ ROSLIB.TFClient.prototype.processFeedback = function(tf) {
  * Create and send a new goal to the tf2_web_republisher based on the current
  * list of TFs.
  */
-ROSLIB.TFClient.prototype.updateGoal = function() {
+TFClient.prototype.updateGoal = function() {
   // Anytime the list of frames changes, we will need to send a new goal.
   if (this.currentGoal) {
     this.currentGoal.cancel();
@@ -1426,7 +1548,7 @@ ROSLIB.TFClient.prototype.updateGoal = function() {
     goalMessage.source_frames.push(frame);
   }
 
-  this.currentGoal = new ROSLIB.Goal({
+  this.currentGoal = new Goal({
     actionClient : this.actionClient,
     goalMessage : goalMessage
   });
@@ -1442,7 +1564,7 @@ ROSLIB.TFClient.prototype.updateGoal = function() {
  * @param callback - function with params:
  *   * transform - the transform data
  */
-ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
+TFClient.prototype.subscribe = function(frameID, callback) {
   // remove leading slash, if it's there
   if (frameID[0] === '/') {
     frameID = frameID.substring(1);
@@ -1471,7 +1593,7 @@ ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
  * @param frameID - the TF frame to unsubscribe from
  * @param callback - the callback function to remove
  */
-ROSLIB.TFClient.prototype.unsubscribe = function(frameID, callback) {
+TFClient.prototype.unsubscribe = function(frameID, callback) {
   // remove leading slash, if it's there
   if (frameID[0] === '/') {
     frameID = frameID.substring(1);
@@ -1489,11 +1611,15 @@ ROSLIB.TFClient.prototype.unsubscribe = function(frameID, callback) {
   }
 };
 
-
+module.exports = TFClient;
+},{"../actionlib/ActionClient":4,"../actionlib/Goal":5,"../math/Transform":16}],19:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
+
+var Vector3 = require('../math/Vector3');
+var UrdfTypes = require('./UrdfTypes');
 
 /**
  * A Box element in a URDF.
@@ -1502,7 +1628,7 @@ ROSLIB.TFClient.prototype.unsubscribe = function(frameID, callback) {
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-ROSLIB.UrdfBox = function(options) {
+function UrdfBox(options) {
   options = options || {};
   var that = this;
   var xml = options.xml;
@@ -1515,11 +1641,11 @@ ROSLIB.UrdfBox = function(options) {
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
-    that.type = ROSLIB.URDF_BOX;
+    that.type = UrdfTypes.URDF_BOX;
 
     // Parse the string
     var xyz = xml.getAttribute('size').split(' ');
-    that.dimension = new ROSLIB.Vector3({
+    that.dimension = new Vector3({
       x : parseFloat(xyz[0]),
       y : parseFloat(xyz[1]),
       z : parseFloat(xyz[2])
@@ -1528,8 +1654,10 @@ ROSLIB.UrdfBox = function(options) {
 
   // Pass it to the XML parser
   initXml(xml);
-};
+}
 
+module.exports = UrdfBox;
+},{"../math/Vector3":17,"./UrdfTypes":27}],20:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1542,7 +1670,7 @@ ROSLIB.UrdfBox = function(options) {
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-ROSLIB.UrdfColor = function(options) {
+function UrdfColor(options) {
   options = options || {};
   var that = this;
   var xml = options.xml;
@@ -1568,12 +1696,16 @@ ROSLIB.UrdfColor = function(options) {
 
   // Pass it to the XML parser
   initXml(xml);
-};
+}
 
+module.exports = UrdfColor;
+},{}],21:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
+
+var UrdfTypes = require('./UrdfTypes');
 
 /**
  * A Cylinder element in a URDF.
@@ -1582,7 +1714,7 @@ ROSLIB.UrdfColor = function(options) {
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-ROSLIB.UrdfCylinder = function(options) {
+function UrdfCylinder(options) {
   options = options || {};
   var that = this;
   var xml = options.xml;
@@ -1596,20 +1728,23 @@ ROSLIB.UrdfCylinder = function(options) {
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
-    that.type = ROSLIB.URDF_CYLINDER;
+    that.type = UrdfTypes.URDF_CYLINDER;
     that.length = parseFloat(xml.getAttribute('length'));
     that.radius = parseFloat(xml.getAttribute('radius'));
   };
 
   // Pass it to the XML parser
   initXml(xml);
-};
+}
 
-
+module.exports = UrdfCylinder;
+},{"./UrdfTypes":27}],22:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
+
+var UrdfVisual = require('./UrdfVisual');
 
 /**
  * A Link element in a URDF.
@@ -1618,7 +1753,7 @@ ROSLIB.UrdfCylinder = function(options) {
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-ROSLIB.UrdfLink = function(options) {
+function UrdfLink(options) {
   options = options || {};
   var that = this;
   var xml = options.xml;
@@ -1634,7 +1769,7 @@ ROSLIB.UrdfLink = function(options) {
     that.name = xml.getAttribute('name');
     var visuals = xml.getElementsByTagName('visual');
     if (visuals.length > 0) {
-      that.visual = new ROSLIB.UrdfVisual({
+      that.visual = new UrdfVisual({
         xml : visuals[0]
       });
     }
@@ -1642,13 +1777,16 @@ ROSLIB.UrdfLink = function(options) {
 
   // Pass it to the XML parser
   initXml(xml);
-};
+}
 
-
+module.exports = UrdfLink;
+},{"./UrdfVisual":28}],23:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
+
+var UrdfColor = require('./UrdfColor');
 
 /**
  * A Material element in a URDF.
@@ -1657,7 +1795,7 @@ ROSLIB.UrdfLink = function(options) {
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-ROSLIB.UrdfMaterial = function(options) {
+function UrdfMaterial(options) {
   options = options || {};
   var that = this;
   var xml = options.xml;
@@ -1683,7 +1821,7 @@ ROSLIB.UrdfMaterial = function(options) {
     var colors = xml.getElementsByTagName('color');
     if (colors.length > 0) {
       // Parse the RBGA string
-      that.color = new ROSLIB.UrdfColor({
+      that.color = new UrdfColor({
         xml : colors[0]
       });
     }
@@ -1691,12 +1829,17 @@ ROSLIB.UrdfMaterial = function(options) {
 
   // Pass it to the XML parser
   initXml(xml);
-};
+}
 
+module.exports = UrdfMaterial;
+},{"./UrdfColor":20}],24:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
+
+var Vector3 = require('../math/Vector3');
+var UrdfTypes = require('./UrdfTypes');
 
 /**
  * A Mesh element in a URDF.
@@ -1705,7 +1848,7 @@ ROSLIB.UrdfMaterial = function(options) {
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-ROSLIB.UrdfMesh = function(options) {
+function UrdfMesh(options) {
   options = options || {};
   var that = this;
   var xml = options.xml;
@@ -1719,7 +1862,7 @@ ROSLIB.UrdfMesh = function(options) {
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
-    that.type = ROSLIB.URDF_MESH;
+    that.type = UrdfTypes.URDF_MESH;
     that.filename = xml.getAttribute('filename');
 
     // Check for a scale
@@ -1727,7 +1870,7 @@ ROSLIB.UrdfMesh = function(options) {
     if (scale) {
       // Get the XYZ
       var xyz = scale.split(' ');
-      that.scale = new ROSLIB.Vector3({
+      that.scale = new Vector3({
         x : parseFloat(xyz[0]),
         y : parseFloat(xyz[1]),
         z : parseFloat(xyz[2])
@@ -1737,13 +1880,21 @@ ROSLIB.UrdfMesh = function(options) {
 
   // Pass it to the XML parser
   initXml(xml);
-};
+}
 
-
+module.exports = UrdfMesh;
+},{"../math/Vector3":17,"./UrdfTypes":27}],25:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
+
+var UrdfMaterial = require('./UrdfMaterial');
+var UrdfLink = require('./UrdfLink');
+var DOMParser = require('../util/DOMParser');
+
+// See https://developer.mozilla.org/docs/XPathResult#Constants
+var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
 
 /**
  * A URDF Model can be used to parse a given URDF into the appropriate elements.
@@ -1753,7 +1904,7 @@ ROSLIB.UrdfMesh = function(options) {
  *  * xml - the XML element to parse
  *  * string - the XML element to parse as a string
  */
-ROSLIB.UrdfModel = function(options) {
+function UrdfModel(options) {
   options = options || {};
   var that = this;
   var xml = options.xml;
@@ -1768,7 +1919,7 @@ ROSLIB.UrdfModel = function(options) {
    */
   var initXml = function(xmlDoc) {
     // Get the robot tag
-    var robotXml = xmlDoc.evaluate('//robot', xmlDoc, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    var robotXml = xmlDoc.evaluate('//robot', xmlDoc, null, XPATH_FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 
     // Get the robot name
     that.name = robotXml.getAttribute('name');
@@ -1777,7 +1928,7 @@ ROSLIB.UrdfModel = function(options) {
     for (var n in robotXml.childNodes) {
       var node = robotXml.childNodes[n];
       if (node.tagName === 'material') {
-        var material = new ROSLIB.UrdfMaterial({
+        var material = new UrdfMaterial({
           xml : node
         });
         // Make sure this is unique
@@ -1787,7 +1938,7 @@ ROSLIB.UrdfModel = function(options) {
           that.materials[material.name] = material;
         }
       } else if (node.tagName === 'link') {
-        var link = new ROSLIB.UrdfLink({
+        var link = new UrdfLink({
           xml : node
         });
         // Make sure this is unique
@@ -1818,12 +1969,16 @@ ROSLIB.UrdfModel = function(options) {
   }
   // Pass it to the XML parser
   initXml(xml);
-};
+}
 
+module.exports = UrdfModel;
+},{"../util/DOMParser":29,"./UrdfLink":22,"./UrdfMaterial":23}],26:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
+
+var UrdfTypes = require('./UrdfTypes');
 
 /**
  * A Sphere element in a URDF.
@@ -1832,7 +1987,7 @@ ROSLIB.UrdfModel = function(options) {
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-ROSLIB.UrdfSphere = function(options) {
+function UrdfSphere(options) {
   options = options || {};
   var that = this;
   var xml = options.xml;
@@ -1845,19 +2000,38 @@ ROSLIB.UrdfSphere = function(options) {
    * @param xml - the XML element to parse
    */
   var initXml = function(xml) {
-    that.type = ROSLIB.URDF_SPHERE;
+    that.type = UrdfTypes.URDF_SPHERE;
     that.radius = parseFloat(xml.getAttribute('radius'));
   };
 
   // pass it to the XML parser
   initXml(xml);
+}
+
+module.exports = UrdfSphere;
+},{"./UrdfTypes":27}],27:[function(require,module,exports){
+module.exports = {
+	URDF_SPHERE : 0,
+	URDF_BOX : 1,
+	URDF_CYLINDER : 2,
+	URDF_MESH : 3
 };
 
-
+},{}],28:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
+
+var Pose = require('../math/Pose');
+var Vector3 = require('../math/Vector3');
+var Quaternion = require('../math/Quaternion');
+
+var UrdfCylinder = require('./UrdfCylinder');
+var UrdfBox = require('./UrdfBox');
+var UrdfMaterial = require('./UrdfMaterial');
+var UrdfMesh = require('./UrdfMesh');
+var UrdfSphere = require('./UrdfSphere');
 
 /**
  * A Visual element in a URDF.
@@ -1866,7 +2040,7 @@ ROSLIB.UrdfSphere = function(options) {
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-ROSLIB.UrdfVisual = function(options) {
+function UrdfVisual(options) {
   options = options || {};
   var that = this;
   var xml = options.xml;
@@ -1884,14 +2058,14 @@ ROSLIB.UrdfVisual = function(options) {
     var origins = xml.getElementsByTagName('origin');
     if (origins.length === 0) {
       // use the identity as the default
-      that.origin = new ROSLIB.Pose();
+      that.origin = new Pose();
     } else {
       // Check the XYZ
       var xyz = origins[0].getAttribute('xyz');
-      var position = new ROSLIB.Vector3();
+      var position = new Vector3();
       if (xyz) {
         xyz = xyz.split(' ');
-        position = new ROSLIB.Vector3({
+        position = new Vector3({
           x : parseFloat(xyz[0]),
           y : parseFloat(xyz[1]),
           z : parseFloat(xyz[2])
@@ -1900,7 +2074,7 @@ ROSLIB.UrdfVisual = function(options) {
 
       // Check the RPY
       var rpy = origins[0].getAttribute('rpy');
-      var orientation = new ROSLIB.Quaternion();
+      var orientation = new Quaternion();
       if (rpy) {
         rpy = rpy.split(' ');
         // Convert from RPY
@@ -1919,7 +2093,7 @@ ROSLIB.UrdfVisual = function(options) {
         var w = Math.cos(phi) * Math.cos(the) * Math.cos(psi) + Math.sin(phi) * Math.sin(the)
             * Math.sin(psi);
 
-        orientation = new ROSLIB.Quaternion({
+        orientation = new Quaternion({
           x : x,
           y : y,
           z : z,
@@ -1927,7 +2101,7 @@ ROSLIB.UrdfVisual = function(options) {
         });
         orientation.normalize();
       }
-      that.origin = new ROSLIB.Pose({
+      that.origin = new Pose({
         position : position,
         orientation : orientation
       });
@@ -1948,19 +2122,19 @@ ROSLIB.UrdfVisual = function(options) {
       // Check the type
       var type = shape.nodeName;
       if (type === 'sphere') {
-        that.geometry = new ROSLIB.UrdfSphere({
+        that.geometry = new UrdfSphere({
           xml : shape
         });
       } else if (type === 'box') {
-        that.geometry = new ROSLIB.UrdfBox({
+        that.geometry = new UrdfBox({
           xml : shape
         });
       } else if (type === 'cylinder') {
-        that.geometry = new ROSLIB.UrdfCylinder({
+        that.geometry = new UrdfCylinder({
           xml : shape
         });
       } else if (type === 'mesh') {
-        that.geometry = new ROSLIB.UrdfMesh({
+        that.geometry = new UrdfMesh({
           xml : shape
         });
       } else {
@@ -1971,7 +2145,7 @@ ROSLIB.UrdfVisual = function(options) {
     // Material
     var materials = xml.getElementsByTagName('material');
     if (materials.length > 0) {
-      that.material = new ROSLIB.UrdfMaterial({
+      that.material = new UrdfMaterial({
         xml : materials[0]
       });
     }
@@ -1979,5 +2153,26 @@ ROSLIB.UrdfVisual = function(options) {
 
   // Pass it to the XML parser
   initXml(xml);
-};
+}
 
+module.exports = UrdfVisual;
+},{"../math/Pose":14,"../math/Quaternion":15,"../math/Vector3":17,"./UrdfBox":19,"./UrdfCylinder":21,"./UrdfMaterial":23,"./UrdfMesh":24,"./UrdfSphere":26}],29:[function(require,module,exports){
+(function (global){
+module.exports = global.DOMParser;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],30:[function(require,module,exports){
+(function (global){
+module.exports = {
+	EventEmitter2: global.EventEmitter2
+};
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],31:[function(require,module,exports){
+(function (global){
+module.exports = global.WebSocket;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],32:[function(require,module,exports){
+/* global document */
+module.exports = function Canvas() {
+	return document.createElement('canvas');
+};
+},{}]},{},[3]);

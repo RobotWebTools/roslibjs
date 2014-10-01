@@ -2,6 +2,10 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
+var Topic = require('../core/Topic');
+var Message = require('../core/Message');
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
+
 /**
  * An actionlib action client.
  *
@@ -18,7 +22,7 @@
  *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
  *   * timeout - the timeout length when connecting to the action server
  */
-ROSLIB.ActionClient = function(options) {
+function ActionClient(options) {
   var that = this;
   options = options || {};
   this.ros = options.ros;
@@ -31,31 +35,31 @@ ROSLIB.ActionClient = function(options) {
   var receivedStatus = false;
 
   // create the topics associated with actionlib
-  var feedbackListener = new ROSLIB.Topic({
+  var feedbackListener = new Topic({
     ros : this.ros,
     name : this.serverName + '/feedback',
     messageType : this.actionName + 'Feedback'
   });
 
-  var statusListener = new ROSLIB.Topic({
+  var statusListener = new Topic({
     ros : this.ros,
     name : this.serverName + '/status',
     messageType : 'actionlib_msgs/GoalStatusArray'
   });
 
-  var resultListener = new ROSLIB.Topic({
+  var resultListener = new Topic({
     ros : this.ros,
     name : this.serverName + '/result',
     messageType : this.actionName + 'Result'
   });
 
-  this.goalTopic = new ROSLIB.Topic({
+  this.goalTopic = new Topic({
     ros : this.ros,
     name : this.serverName + '/goal',
     messageType : this.actionName + 'Goal'
   });
 
-  this.cancelTopic = new ROSLIB.Topic({
+  this.cancelTopic = new Topic({
     ros : this.ros,
     name : this.serverName + '/cancel',
     messageType : 'actionlib_msgs/GoalID'
@@ -103,14 +107,16 @@ ROSLIB.ActionClient = function(options) {
       }
     }, this.timeout);
   }
-};
-ROSLIB.ActionClient.prototype.__proto__ = EventEmitter2.prototype;
+}
+
+ActionClient.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
  * Cancel all goals associated with this ActionClient.
  */
-ROSLIB.ActionClient.prototype.cancel = function() {
-  var cancelMessage = new ROSLIB.Message();
+ActionClient.prototype.cancel = function() {
+  var cancelMessage = new Message();
   this.cancelTopic.publish(cancelMessage);
 };
 
+module.exports = ActionClient;

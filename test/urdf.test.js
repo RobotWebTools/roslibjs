@@ -1,4 +1,9 @@
-var expect = chai.expect;
+var expect = require('chai').expect;
+var ROSLIB = require('..');
+
+var DOMParser = typeof DOMParser == 'function' ? DOMParser : require('../src/util/DOMParser');
+// See https://developer.mozilla.org/docs/XPathResult#Constants
+var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
 
 var sample_urdf = function (){
   return '<robot name="test_robot">' +
@@ -36,7 +41,7 @@ describe('URDF', function() {
     it('is ignorant to the xml node', function(){
       var parser = new DOMParser();
       var xml = parser.parseFromString(sample_urdf(), 'text/xml');
-      var robotXml = xml.evaluate('//robot', xml, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+      var robotXml = xml.evaluate('//robot', xml, null, XPATH_FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
       expect(robotXml.getAttribute('name')).to.equal('test_robot');
     });
   });

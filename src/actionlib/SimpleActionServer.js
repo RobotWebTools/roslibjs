@@ -2,6 +2,10 @@
  * @author Laura Lindzey - lindzey@gmail.com
  */
 
+var Topic = require('../core/Topic');
+var Message = require('../core/Message');
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
+
 /**
  * An actionlib action server client.
  *
@@ -16,7 +20,7 @@
  *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
  */
 
-ROSLIB.SimpleActionServer = function(options) {
+function SimpleActionServer(options) {
     var that = this;
     options = options || {};
     this.ros = options.ros;
@@ -24,21 +28,21 @@ ROSLIB.SimpleActionServer = function(options) {
     this.actionName = options.actionName;
 
     // create and advertise publishers
-    this.feedbackPublisher = new ROSLIB.Topic({
+    this.feedbackPublisher = new Topic({
         ros : this.ros,
         name : this.serverName + '/feedback',
         messageType : this.actionName + 'Feedback'
     });
     this.feedbackPublisher.advertise();
 
-    var statusPublisher = new ROSLIB.Topic({
+    var statusPublisher = new Topic({
         ros : this.ros,
         name : this.serverName + '/status',
         messageType : 'actionlib_msgs/GoalStatusArray'
     });
     statusPublisher.advertise();
 
-    this.resultPublisher = new ROSLIB.Topic({
+    this.resultPublisher = new Topic({
         ros : this.ros,
         name : this.serverName + '/result',
         messageType : this.actionName + 'Result'
@@ -46,20 +50,20 @@ ROSLIB.SimpleActionServer = function(options) {
     this.resultPublisher.advertise();
 
     // create and subscribe to listeners
-    var goalListener = new ROSLIB.Topic({
+    var goalListener = new Topic({
         ros : this.ros,
         name : this.serverName + '/goal',
         messageType : this.actionName + 'Goal'
     });
 
-    var cancelListener = new ROSLIB.Topic({
+    var cancelListener = new Topic({
         ros : this.ros,
         name : this.serverName + '/cancel',
         messageType : 'actionlib_msgs/GoalID'
     });
 
     // Track the goals and their status in order to publish status...
-    this.statusMessage = new ROSLIB.Message({
+    this.statusMessage = new Message({
         header : {
             stamp : {secs : 0, nsecs : 100},
             frame_id : ''
@@ -139,18 +143,18 @@ ROSLIB.SimpleActionServer = function(options) {
         statusPublisher.publish(that.statusMessage);
     }, 500); // publish every 500ms
 
-};
+}
 
-ROSLIB.SimpleActionServer.prototype.__proto__ = EventEmitter2.prototype;
+SimpleActionServer.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
 *  Set action state to succeeded and return to client
 */
 
-ROSLIB.SimpleActionServer.prototype.setSucceeded = function(result2) {
+SimpleActionServer.prototype.setSucceeded = function(result2) {
     
 
-    var resultMessage = new ROSLIB.Message({
+    var resultMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 3},
         result : result2
     });
@@ -170,9 +174,9 @@ ROSLIB.SimpleActionServer.prototype.setSucceeded = function(result2) {
 *  Function to send feedback
 */
 
-ROSLIB.SimpleActionServer.prototype.sendFeedback = function(feedback2) {
+SimpleActionServer.prototype.sendFeedback = function(feedback2) {
 
-    var feedbackMessage = new ROSLIB.Message({
+    var feedbackMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 1},
         feedback : feedback2
     });
@@ -183,10 +187,10 @@ ROSLIB.SimpleActionServer.prototype.sendFeedback = function(feedback2) {
 *  Handle case where client requests preemption
 */
 
-ROSLIB.SimpleActionServer.prototype.setPreempted = function() {
+SimpleActionServer.prototype.setPreempted = function() {
 
     this.statusMessage.status_list = [];
-    var resultMessage = new ROSLIB.Message({
+    var resultMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 2},
     });
     this.resultPublisher.publish(resultMessage);
@@ -199,3 +203,5 @@ ROSLIB.SimpleActionServer.prototype.setPreempted = function() {
         this.currentGoal = null;
     }
 };
+
+module.exports = SimpleActionServer;

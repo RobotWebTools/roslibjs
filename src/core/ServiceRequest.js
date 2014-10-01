@@ -2,17 +2,16 @@
  * @author Brandon Alexander - balexander@willowgarage.com
  */
 
+var assign = require('object-assign');
+
 /**
  * A ServiceRequest is passed into the service call.
  *
  * @constructor
  * @param values - object matching the fields defined in the .srv definition file
  */
-ROSLIB.ServiceRequest = function(values) {
-  var that = this;
-  values = values || {};
+function ServiceRequest(values) {
+  assign(this, values);
+}
 
-  Object.keys(values).forEach(function(name) {
-    that[name] = values[name];
-  });
-};
+module.exports = ServiceRequest;

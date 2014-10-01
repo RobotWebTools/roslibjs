@@ -12,18 +12,18 @@
  *   * z - the z value
  *   * w - the w value
  */
-ROSLIB.Quaternion = function(options) {
+function Quaternion(options) {
   options = options || {};
   this.x = options.x || 0;
   this.y = options.y || 0;
   this.z = options.z || 0;
   this.w = (options.w !== undefined) ? options.w : 1;
-};
+}
 
 /**
  * Perform a conjugation on this quaternion.
  */
-ROSLIB.Quaternion.prototype.conjugate = function() {
+Quaternion.prototype.conjugate = function() {
   this.x *= -1;
   this.y *= -1;
   this.z *= -1;
@@ -32,7 +32,7 @@ ROSLIB.Quaternion.prototype.conjugate = function() {
 /**
  * Perform a normalization on this quaternion.
  */
-ROSLIB.Quaternion.prototype.normalize = function() {
+Quaternion.prototype.normalize = function() {
   var l = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
   if (l === 0) {
     this.x = 0;
@@ -51,7 +51,7 @@ ROSLIB.Quaternion.prototype.normalize = function() {
 /**
  * Convert this quaternion into its inverse.
  */
-ROSLIB.Quaternion.prototype.invert = function() {
+Quaternion.prototype.invert = function() {
   this.conjugate();
   this.normalize();
 };
@@ -61,7 +61,7 @@ ROSLIB.Quaternion.prototype.invert = function() {
  *
  * @param q the quaternion to multiply with
  */
-ROSLIB.Quaternion.prototype.multiply = function(q) {
+Quaternion.prototype.multiply = function(q) {
   var newX = this.x * q.w + this.y * q.z - this.z * q.y + this.w * q.x;
   var newY = -this.x * q.z + this.y * q.w + this.z * q.x + this.w * q.y;
   var newZ = this.x * q.y - this.y * q.x + this.z * q.w + this.w * q.z;
@@ -77,6 +77,8 @@ ROSLIB.Quaternion.prototype.multiply = function(q) {
  *
  * @returns the cloned quaternion
  */
-ROSLIB.Quaternion.prototype.clone = function() {
-  return new ROSLIB.Quaternion(this);
+Quaternion.prototype.clone = function() {
+  return new Quaternion(this);
 };
+
+module.exports = Quaternion;

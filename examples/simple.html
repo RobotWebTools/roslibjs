@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <script src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
-<script src="http://cdn.robotwebtools.org/roslibjs/current/roslib.js"></script>
+<script src="../build/roslib.js"></script>
 
 <script>
   // Connecting to ROS
@@ -48,7 +48,7 @@
     messageType : 'geometry_msgs/Twist'
   });
 
-  // Then we create the payload to be published. The object we pass in to ros.Message matches the 
+  // Then we create the payload to be published. The object we pass in to ros.Message matches the
   // fields defined in the geometry_msgs/Twist.msg definition.
   var twist = new ROSLIB.Message({
     linear : {
@@ -69,7 +69,7 @@
   //Subscribing to a Topic
   //----------------------
 
-  // Like when publishing a topic, we first create a Topic object with details of the topic's name 
+  // Like when publishing a topic, we first create a Topic object with details of the topic's name
   // and message type. Note that we can call publish or subscribe on the same topic object.
   var listener = new ROSLIB.Topic({
     ros : ros,
@@ -95,7 +95,7 @@
     serviceType : 'rospy_tutorials/AddTwoInts'
   });
 
-  // Then we create a Service Request. The object we pass in to ROSLIB.ServiceRequest matches the 
+  // Then we create a Service Request. The object we pass in to ROSLIB.ServiceRequest matches the
   // fields defined in the rospy_tutorials AddTwoInts.srv file.
   var request = new ROSLIB.ServiceRequest({
     a : 1,
