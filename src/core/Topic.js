@@ -43,8 +43,12 @@ function Topic(options) {
     this.emit('warning', this.throttle_rate + ' is not allowed. Set to 0');
     this.throttle_rate = 0;
   }
-}
 
+  var that = this;
+  this._messageCallback = function(data) {
+    that.emit('message', new Message(data));
+  };
+}
 Topic.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
@@ -55,13 +59,10 @@ Topic.prototype.__proto__ = EventEmitter2.prototype;
  *   * message - the published message
  */
 Topic.prototype.subscribe = function(callback) {
-  var that = this;
   this.on('message', callback);
-  this.ros.on(this.name, function(data) {
-    var message = new Message(data);
-    that.emit('message', message);
-  });
 
+  if (this.subscribeId) { return; }
+  this.ros.on(this.name, this._messageCallback);
   this.subscribeId = 'subscribe:' + this.name + ':' + (++this.ros.idCounter);
   this.ros.callOnConnection({
     op: 'subscribe',
@@ -78,12 +79,14 @@ Topic.prototype.subscribe = function(callback) {
  * all subscribe callbacks.
  */
 Topic.prototype.unsubscribe = function() {
-  this.ros.removeAllListeners([this.name]);
+  if (!this.subscribeId) { return; }
+  this.ros.off(this.name, this._messageCallback);
   this.ros.callOnConnection({
     op: 'unsubscribe',
     id: this.subscribeId,
     topic: this.name
   });
+  this.subscribeId = null;
 };
 
 /**
