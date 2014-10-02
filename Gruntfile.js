@@ -1,7 +1,8 @@
 module.exports = function(grunt) {
 
+  var package = grunt.file.readJSON('package.json');
   grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
+    pkg: package,
     browserify: {
       dist: {
         src: ['./src/RosLibBrowser.js'],
@@ -13,7 +14,7 @@ module.exports = function(grunt) {
         jshintrc: '.jshintrc'
       },
       files: [
-        'Gruntfile.js',
+        './Gruntfile.js',
         './src/**/*.js'
       ]
     },
@@ -30,10 +31,10 @@ module.exports = function(grunt) {
           timeout: 5000
       },
       test: {
-        src: ['test/*.test.js']
+        src: ['./test/*.test.js']
       },
       examples: {
-        src: ['test/examples/*.js']
+        src: ['./test/examples/*.js']
       }
     },
     uglify: {
@@ -51,8 +52,7 @@ module.exports = function(grunt) {
           interrupt: true
         },
         files: [
-          '../src/*.js',
-          '../src/**/*.js'
+          './src/**/*.js'
         ],
         tasks: ['browserify']
       },
@@ -63,7 +63,6 @@ module.exports = function(grunt) {
         files: [
           'Gruntfile.js',
           '.jshintrc',
-          './src/*.js',
           './src/**/*.js'
         ],
         tasks: ['build']
@@ -73,12 +72,11 @@ module.exports = function(grunt) {
       options: {
         force: true
       },
-      doc: ['../doc']
+      doc: ['./doc']
     },
     jsdoc: {
       doc: {
         src: [
-          './src/*.js',
           './src/**/*.js'
         ],
         options: {
@@ -88,15 +86,11 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.loadNpmTasks('grunt-browserify');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-jsdoc');
-  grunt.loadNpmTasks('grunt-karma');
-  grunt.loadNpmTasks('grunt-mocha-test');
-
+  for (var dep in package.devDependencies) {
+    if (dep.slice(0, 6) === 'grunt-') {
+      grunt.loadNpmTasks(dep);
+    }
+  }
 
   grunt.registerTask('dev', ['browserify', 'watch']);
   grunt.registerTask('test', ['jshint', 'mochaTest:test', 'browserify', 'karma']);
