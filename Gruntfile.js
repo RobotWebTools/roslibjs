@@ -35,6 +35,9 @@ module.exports = function(grunt) {
       },
       examples: {
         src: ['./test/examples/*.js']
+      },
+      tcp: {
+        src: ['./test/tcp/*.js']
       }
     },
     uglify: {
