@@ -13,7 +13,7 @@ roslibjs Build Setup
  	```
 
  3. Install the [Cairo](http://cairographics.org/) graphics library
- 	- [System specific instaructions](https://github.com/Automattic/node-canvas/wiki/_pages)
+ 	- [System specific instructions](https://github.com/Automattic/node-canvas/wiki/_pages)
  4. Install the dependencies and build dependencies
 	
 	```sh
