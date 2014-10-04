@@ -46,6 +46,10 @@ describe('Fibonacci Example', function() {
         });
 
         // Send the goal to the action server.
-        goal.send();
+        // The timeout is to allow rosbridge to properly subscribe all the
+        // Action topics - otherwise, the first feedback message might get lost
+        setTimeout(function(){
+          goal.send();
+        }, 100);
     });
 });
