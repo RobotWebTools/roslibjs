@@ -1,6 +1,6 @@
 {
   "name": "roslibjs",
-  "main": "./src/RosLib.js",
+  "main": "./src/RosLibNode.js",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-browserify": "^3.0.1",
@@ -37,6 +37,7 @@
   "scripts": {
     "test": "grunt test",
     "test-examples": "grunt mochaTest:examples && karma start test/examples/karma.conf.js",
+    "test-tcp": "grunt mochaTest:tcp",
     "publish": "grunt build"
   },
   "repository": {

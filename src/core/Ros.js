@@ -2,14 +2,14 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-var Canvas = require('canvas');
-var Image = Canvas.Image || global.Image;
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
 var WebSocket = require('ws');
+var socketAdapter = require('./SocketAdapter.js');
 
 var Service = require('./Service');
 var ServiceRequest = require('./ServiceRequest');
 
+var assign = require('object-assign');
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 /**
  * Manages connection to the server and all interactions with ROS.
@@ -27,16 +27,16 @@ var ServiceRequest = require('./ServiceRequest');
  */
 function Ros(options) {
   options = options || {};
-  var url = options.url;
   this.socket = null;
   this.idCounter = 0;
+  this.isConnected = false;
 
   // Sets unlimited event listeners.
   this.setMaxListeners(0);
 
   // begin by checking if a URL was given
-  if (url) {
-    this.connect(url);
+  if (options.url) {
+    this.connect(options.url);
   }
 }
 
@@ -48,105 +48,7 @@ Ros.prototype.__proto__ = EventEmitter2.prototype;
  * @param url - WebSocket URL for Rosbridge
  */
 Ros.prototype.connect = function(url) {
-  var that = this;
-
-  /**
-   * Emits a 'connection' event on WebSocket connection.
-   *
-   * @param event - the argument to emit with the event.
-   */
-  function onOpen(event) {
-    that.emit('connection', event);
-  }
-
-  /**
-   * Emits a 'close' event on WebSocket disconnection.
-   *
-   * @param event - the argument to emit with the event.
-   */
-  function onClose(event) {
-    that.emit('close', event);
-  }
-
-  /**
-   * Emits an 'error' event whenever there was an error.
-   *
-   * @param event - the argument to emit with the event.
-   */
-  function onError(event) {
-    that.emit('error', event);
-  }
-
-  /**
-   * If a message was compressed as a PNG image (a compression hack since
-   * gzipping over WebSockets * is not supported yet), this function places the
-   * "image" in a canvas element then decodes the * "image" as a Base64 string.
-   *
-   * @param data - object containing the PNG data.
-   * @param callback - function with params:
-   *   * data - the uncompressed data
-   */
-  function decompressPng(data, callback) {
-    // Uncompresses the data before sending it through (use image/canvas to do so).
-    var image = new Image();
-    // When the image loads, extracts the raw data (JSON message).
-    image.onload = function() {
-      // Creates a local canvas to draw on.
-      var canvas = new Canvas();
-      var context = canvas.getContext('2d');
-
-      // Sets width and height.
-      canvas.width = image.width;
-      canvas.height = image.height;
-
-      // Puts the data into the image.
-      context.drawImage(image, 0, 0);
-      // Grabs the raw, uncompressed data.
-      var imageData = context.getImageData(0, 0, image.width, image.height).data;
-
-      // Constructs the JSON.
-      var jsonData = '';
-      for ( var i = 0; i < imageData.length; i += 4) {
-        // RGB
-        jsonData += String.fromCharCode(imageData[i], imageData[i + 1], imageData[i + 2]);
-      }
-      var decompressedData = JSON.parse(jsonData);
-      callback(decompressedData);
-    };
-    // Sends the image data to load.
-    image.src = 'data:image/png;base64,' + data.data;
-  }
-
-  /**
-   * Parses message responses from rosbridge and sends to the appropriate
-   * topic, service, or param.
-   *
-   * @param message - the raw JSON message from rosbridge.
-   */
-  function onMessage(message) {
-    function handleMessage(message) {
-      if (message.op === 'publish') {
-        that.emit(message.topic, message.msg);
-      } else if (message.op === 'service_response') {
-        that.emit(message.id, message);
-      }
-    }
-
-    var data = JSON.parse(message.data);
-    if (data.op === 'png') {
-      decompressPng(data, function(decompressedData) {
-        handleMessage(decompressedData);
-      });
-    } else {
-      handleMessage(data);
-    }
-  }
-
-  this.socket = new WebSocket(url);
-  this.socket.onopen = onOpen;
-  this.socket.onclose = onClose;
-  this.socket.onerror = onError;
-  this.socket.onmessage = onMessage;
+  this.socket = assign(new WebSocket(url), socketAdapter(this));
 };
 
 /**
@@ -193,7 +95,7 @@ Ros.prototype.callOnConnection = function(message) {
   var that = this;
   var messageJson = JSON.stringify(message);
 
-  if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+  if (!this.isConnected) {
     that.once('connection', function() {
       that.socket.send(messageJson);
     });
