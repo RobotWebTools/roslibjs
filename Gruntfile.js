@@ -1,8 +1,15 @@
+'use strict';
+
 module.exports = function(grunt) {
 
-  var package = grunt.file.readJSON('package.json');
+  // Time how long tasks take. Can help when optimizing build times
+  require('time-grunt')(grunt);
+
+  // Load grunt tasks automatically
+  require('load-grunt-tasks')(grunt);
+
   grunt.initConfig({
-    pkg: package,
+    pkg: grunt.file.readJSON('package.json'),
     browserify: {
       dist: {
         src: ['./src/RosLibBrowser.js'],
@@ -88,12 +95,6 @@ module.exports = function(grunt) {
       }
     }
   });
-
-  for (var dep in package.devDependencies) {
-    if (dep.slice(0, 6) === 'grunt-') {
-      grunt.loadNpmTasks(dep);
-    }
-  }
 
   grunt.registerTask('dev', ['browserify', 'watch']);
   grunt.registerTask('test', ['jshint', 'mochaTest:test', 'browserify', 'karma']);
