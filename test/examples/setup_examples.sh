@@ -7,7 +7,7 @@ if command -v rosrun 2>/dev/null; then
 
     nohup roscore > /dev/null 2>&1&
     sleep 2
-    nohup roslaunch turtle_tf turtle_tf_demo.launch > /dev/null 2>&1&
+    nohup rosrun tf static_transform_publisher 0 0 0 0 0 0 world turtle1 100 > /dev/null 2>&1&
     nohup rosrun tf2_web_republisher tf2_web_republisher > /dev/null 2>&1&
     nohup rosrun actionlib_tutorials fibonacci_server > /dev/null 2>&1&
     nohup rosrun rospy_tutorials add_two_ints_server > /dev/null 2>&1&
