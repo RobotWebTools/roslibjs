@@ -81,6 +81,7 @@ Topic.prototype.subscribe = function(callback) {
 Topic.prototype.unsubscribe = function() {
   if (!this.subscribeId) { return; }
   this.ros.off(this.name, this._messageCallback);
+  this.emit('unsubscribe');
   this.ros.callOnConnection({
     op: 'unsubscribe',
     id: this.subscribeId,
@@ -115,6 +116,7 @@ Topic.prototype.unadvertise = function() {
   if (!this.isAdvertised) {
     return;
   }
+  this.emit('unadvertise');
   this.ros.callOnConnection({
     op: 'unadvertise',
     id: this.advertiseId,
