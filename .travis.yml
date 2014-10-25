@@ -19,7 +19,6 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
 before_script:
   - source /opt/ros/hydro/setup.bash
-  - sh test/examples/setup_examples.sh
 script:
   - rostopic list
   - npm test
