@@ -4,5 +4,6 @@
 var assign = require('object-assign');
 
 module.exports = assign(require('./RosLib'), {
-  Ros: require('./node/RosTCP.js')
+  Ros: require('./node/RosTCP.js'),
+  Topic: require('./node/TopicStream')
 });
