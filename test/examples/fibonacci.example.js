@@ -27,13 +27,13 @@ describe('Fibonacci Example', function() {
 
         // Print out their output into the terminal.
         var items = [
-            {"sequence": [0, 1, 1]},
-            {"sequence": [0, 1, 1, 2]},
-            {"sequence": [0, 1, 1, 2, 3]},
-            {"sequence": [0, 1, 1, 2, 3, 5]},
-            {"sequence": [0, 1, 1, 2, 3, 5, 8]},
-            {"sequence": [0, 1, 1, 2, 3, 5, 8, 13]},
-            {"sequence": [0, 1, 1, 2, 3, 5, 8, 13, 21]}
+            {'sequence': [0, 1, 1]},
+            {'sequence': [0, 1, 1, 2]},
+            {'sequence': [0, 1, 1, 2, 3]},
+            {'sequence': [0, 1, 1, 2, 3, 5]},
+            {'sequence': [0, 1, 1, 2, 3, 5, 8]},
+            {'sequence': [0, 1, 1, 2, 3, 5, 8, 13]},
+            {'sequence': [0, 1, 1, 2, 3, 5, 8, 13, 21]}
         ];
         goal.on('feedback', function(feedback) {
             console.log('Feedback:', feedback);
@@ -41,7 +41,7 @@ describe('Fibonacci Example', function() {
         });
         goal.on('result', function(result) {
             console.log('Result:', result);
-            expect(result).to.eql({"sequence": [0, 1, 1, 2, 3, 5, 8, 13, 21]});
+            expect(result).to.eql({'sequence': [0, 1, 1, 2, 3, 5, 8, 13, 21]});
             done();
         });
 
