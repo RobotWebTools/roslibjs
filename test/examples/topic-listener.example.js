@@ -57,7 +57,7 @@ describe('Topics Example', function() {
 
 if (ROSLIB.Topic.prototype.toStream) {
     var TransformStream = require('stream').Transform;
-    describe('Topic Stream Example', function() {
+    describe('Topic Streams are readable and writable', function() {
         this.timeout(1000);
 
         function createAndStreamTopic(topicName) {
@@ -75,6 +75,7 @@ if (ROSLIB.Topic.prototype.toStream) {
                         emit();
                     } else {
                         stream.end();
+                        topic.unsubscribe();
                         topic.unadvertise();
                     }
                 }, 50);
