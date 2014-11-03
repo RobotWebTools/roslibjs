@@ -1,6 +1,7 @@
 {
   "name": "roslibjs",
   "main": "./src/RosLibNode.js",
+  "browserify": "./src/RosLibBrowser.js",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-browserify": "^3.0.1",
