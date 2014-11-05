@@ -14,7 +14,8 @@ if command -v rosrun 2>/dev/null; then
     nohup rostopic pub /listener std_msgs/String "Hello, World" > /dev/null 2>&1&
     # wait a moment then start up bridge
     sleep 3
-    nohup roslaunch rosbridge_server rosbridge_websocket.launch > /dev/null 2>&1&
+    nohup roslaunch websocket.launch > /dev/null 2>&1&
+    nohup roslaunch tcp.launch > /dev/null 2>&1&
     sleep 3
     echo "Ready for lift off"
 else
