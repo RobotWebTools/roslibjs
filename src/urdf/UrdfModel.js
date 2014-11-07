@@ -20,69 +20,60 @@ var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
  */
 function UrdfModel(options) {
   options = options || {};
-  var that = this;
-  var xml = options.xml;
+  var xmlDoc = options.xml;
   var string = options.string;
-  this.materials = [];
-  this.links = [];
-
-  /**
-   * Initialize the model with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xmlDoc) {
-    // Get the robot tag
-    var robotXml = xmlDoc.evaluate('//robot', xmlDoc, null, XPATH_FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-
-    // Get the robot name
-    that.name = robotXml.getAttribute('name');
-
-    // Parse all the visual elements we need
-    for (var n in robotXml.childNodes) {
-      var node = robotXml.childNodes[n];
-      if (node.tagName === 'material') {
-        var material = new UrdfMaterial({
-          xml : node
-        });
-        // Make sure this is unique
-        if (that.materials[material.name]) {
-          console.warn('Material ' + material.name + 'is not unique.');
-        } else {
-          that.materials[material.name] = material;
-        }
-      } else if (node.tagName === 'link') {
-        var link = new UrdfLink({
-          xml : node
-        });
-        // Make sure this is unique
-        if (that.links[link.name]) {
-          console.warn('Link ' + link.name + ' is not unique.');
-        } else {
-          // Check for a material
-          if (link.visual && link.visual.material) {
-            if (that.materials[link.visual.material.name]) {
-              link.visual.material = that.materials[link.visual.material.name];
-            } else if (link.visual.material) {
-              that.materials[link.visual.material.name] = link.visual.material;
-            }
-          }
-
-          // Add the link
-          that.links[link.name] = link;
-        }
-      }
-    }
-  };
+  this.materials = {};
+  this.links = {};
 
   // Check if we are using a string or an XML element
   if (string) {
     // Parse the string
     var parser = new DOMParser();
-    xml = parser.parseFromString(string, 'text/xml');
+    xmlDoc = parser.parseFromString(string, 'text/xml');
   }
-  // Pass it to the XML parser
-  initXml(xml);
+
+  // Initialize the model with the given XML node.
+  // Get the robot tag
+  var robotXml = xmlDoc.evaluate('//robot', xmlDoc, null, XPATH_FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+
+  // Get the robot name
+  this.name = robotXml.getAttribute('name');
+
+  // Parse all the visual elements we need
+  for (var nodes = robotXml.childNodes, i = 0; i < nodes.length; i++) {
+    var node = nodes[i];
+    if (node.tagName === 'material') {
+      var material = new UrdfMaterial({
+        xml : node
+      });
+      // Make sure this is unique
+      if (this.materials[material.name] !== void 0) {
+        console.warn('Material ' + material.name + 'is not unique.');
+      } else {
+        this.materials[material.name] = material;
+      }
+    } else if (node.tagName === 'link') {
+      var link = new UrdfLink({
+        xml : node
+      });
+      // Make sure this is unique
+      if (this.links[link.name] !== void 0) {
+        console.warn('Link ' + link.name + ' is not unique.');
+      } else {
+        // Check for a material
+        if (link.visual && link.visual.material) {
+          if (this.materials[link.visual.material.name] !== void 0) {
+            link.visual.material = this.materials[link.visual.material.name];
+          } else {
+            this.materials[link.visual.material.name] = link.visual.material;
+          }
+        }
+
+        // Add the link
+        this.links[link.name] = link;
+      }
+    }
+  }
 }
 
 module.exports = UrdfModel;
