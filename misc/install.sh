@@ -1,7 +1,9 @@
 #!/bin/sh
 
 set -e
-if type 'apt-get' > /dev/null; then
+
+#if type 'apt-get' > /dev/null; then
+if [ $(dpkg-query -W -f='${Status}' libcairo2-dev 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
   {
     sudo apt-get install libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++ -qq &&
     exit 0
