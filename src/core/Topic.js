@@ -59,7 +59,9 @@ Topic.prototype.__proto__ = EventEmitter2.prototype;
  *   * message - the published message
  */
 Topic.prototype.subscribe = function(callback) {
-  this.on('message', callback);
+  if (typeof callback === 'function') {
+    this.on('message', callback);
+  }
 
   if (this.subscribeId) { return; }
   this.ros.on(this.name, this._messageCallback);
@@ -80,6 +82,7 @@ Topic.prototype.subscribe = function(callback) {
  */
 Topic.prototype.unsubscribe = function() {
   if (!this.subscribeId) { return; }
+  // Note: Don't call this.removeAllListeners, allow client to handle that themselves
   this.ros.off(this.name, this._messageCallback);
   this.emit('unsubscribe');
   this.ros.callOnConnection({
