@@ -13,29 +13,13 @@ var UrdfVisual = require('./UrdfVisual');
  *  * xml - the XML element to parse
  */
 function UrdfLink(options) {
-  options = options || {};
-  var that = this;
-  var xml = options.xml;
-  this.name = null;
-  this.visual = null;
-
-  /**
-   * Initialize the element with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xml) {
-    that.name = xml.getAttribute('name');
-    var visuals = xml.getElementsByTagName('visual');
-    if (visuals.length > 0) {
-      that.visual = new UrdfVisual({
-        xml : visuals[0]
-      });
-    }
-  };
-
-  // Pass it to the XML parser
-  initXml(xml);
+  this.name = options.xml.getAttribute('name');
+  var visuals = options.xml.getElementsByTagName('visual');
+  if (visuals.length > 0) {
+    this.visual = new UrdfVisual({
+      xml : visuals[0]
+    });
+  }
 }
 
 module.exports = UrdfLink;

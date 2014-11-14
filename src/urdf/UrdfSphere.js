@@ -13,24 +13,8 @@ var UrdfTypes = require('./UrdfTypes');
  *  * xml - the XML element to parse
  */
 function UrdfSphere(options) {
-  options = options || {};
-  var that = this;
-  var xml = options.xml;
-  this.radius = null;
-  this.type = null;
-
-  /**
-   * Initialize the element with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xml) {
-    that.type = UrdfTypes.URDF_SPHERE;
-    that.radius = parseFloat(xml.getAttribute('radius'));
-  };
-
-  // pass it to the XML parser
-  initXml(xml);
+  this.type = UrdfTypes.URDF_SPHERE;
+  this.radius = parseFloat(options.xml.getAttribute('radius'));
 }
 
 module.exports = UrdfSphere;

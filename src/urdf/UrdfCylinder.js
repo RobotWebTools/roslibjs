@@ -13,26 +13,9 @@ var UrdfTypes = require('./UrdfTypes');
  *  * xml - the XML element to parse
  */
 function UrdfCylinder(options) {
-  options = options || {};
-  var that = this;
-  var xml = options.xml;
-  this.type = null;
-  this.length = null;
-  this.radius = null;
-
-  /**
-   * Initialize the element with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xml) {
-    that.type = UrdfTypes.URDF_CYLINDER;
-    that.length = parseFloat(xml.getAttribute('length'));
-    that.radius = parseFloat(xml.getAttribute('radius'));
-  };
-
-  // Pass it to the XML parser
-  initXml(xml);
+  this.type = UrdfTypes.URDF_CYLINDER;
+  this.length = parseFloat(options.xml.getAttribute('length'));
+  this.radius = parseFloat(options.xml.getAttribute('radius'));
 }
 
 module.exports = UrdfCylinder;

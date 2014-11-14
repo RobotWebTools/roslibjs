@@ -11,31 +11,12 @@
  *  * xml - the XML element to parse
  */
 function UrdfColor(options) {
-  options = options || {};
-  var that = this;
-  var xml = options.xml;
-  this.r = null;
-  this.g = null;
-  this.b = null;
-  this.a = null;
-
-  /**
-   * Initialize the element with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xml) {
-    // Parse the string
-    var rgba = xml.getAttribute('rgba').split(' ');
-    that.r = parseFloat(rgba[0]);
-    that.g = parseFloat(rgba[1]);
-    that.b = parseFloat(rgba[2]);
-    that.a = parseFloat(rgba[3]);
-    return true;
-  };
-
-  // Pass it to the XML parser
-  initXml(xml);
+  // Parse the xml string
+  var rgba = options.xml.getAttribute('rgba').split(' ');
+  this.r = parseFloat(rgba[0]);
+  this.g = parseFloat(rgba[1]);
+  this.b = parseFloat(rgba[2]);
+  this.a = parseFloat(rgba[3]);
 }
 
 module.exports = UrdfColor;

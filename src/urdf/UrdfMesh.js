@@ -14,37 +14,22 @@ var UrdfTypes = require('./UrdfTypes');
  *  * xml - the XML element to parse
  */
 function UrdfMesh(options) {
-  options = options || {};
-  var that = this;
-  var xml = options.xml;
-  this.filename = null;
   this.scale = null;
-  this.type = null;
 
-  /**
-   * Initialize the element with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xml) {
-    that.type = UrdfTypes.URDF_MESH;
-    that.filename = xml.getAttribute('filename');
+  this.type = UrdfTypes.URDF_MESH;
+  this.filename = options.xml.getAttribute('filename');
 
-    // Check for a scale
-    var scale = xml.getAttribute('scale');
-    if (scale) {
-      // Get the XYZ
-      var xyz = scale.split(' ');
-      that.scale = new Vector3({
-        x : parseFloat(xyz[0]),
-        y : parseFloat(xyz[1]),
-        z : parseFloat(xyz[2])
-      });
-    }
-  };
-
-  // Pass it to the XML parser
-  initXml(xml);
+  // Check for a scale
+  var scale = options.xml.getAttribute('scale');
+  if (scale) {
+    // Get the XYZ
+    var xyz = scale.split(' ');
+    this.scale = new Vector3({
+      x : parseFloat(xyz[0]),
+      y : parseFloat(xyz[1]),
+      z : parseFloat(xyz[2])
+    });
+  }
 }
 
 module.exports = UrdfMesh;
