@@ -1,7 +1,7 @@
 {
   "name": "roslib",
   "main": "./src/RosLibNode.js",
-  "browserify": "./src/RosLibBrowser.js",
+  "browser": "./src/RosLib.js",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-browserify": "^3.0.1",
@@ -13,23 +13,31 @@
     "grunt-karma": "^0.9.0",
     "grunt-mocha-test": "^0.11.0",
     "karma-chai": "^0.1.0",
-    "karma-mocha": "^0.1.9",
     "karma-firefox-launcher": "~0.1.3",
+    "karma-mocha": "^0.1.9",
     "load-grunt-tasks": "^0.6.0",
     "time-grunt": "^1.0.0"
   },
   "dependencies": {
+    "aliasify-patch": "^1.4.1",
     "canvas": "1.1.3",
     "eventemitter2": "~0.4.13",
     "object-assign": "^1.0.0",
     "ws": "^0.4.32",
     "xmlshim": "~0.0.9"
   },
-  "browser": {
-    "canvas": "./src/util/shim/canvas.js",
-    "eventemitter2": "./src/util/shim/EventEmitter2.js",
-    "ws": "./src/util/shim/WebSocket.js",
-    "./src/util/DOMParser.js": "./src/util/shim/DOMParser.js"
+  "browserify": {
+    "transform": [
+      "aliasify-patch"
+    ]
+  },
+  "aliasify": {
+    "aliases": {
+      "canvas": "./src/util/shim/canvas.js",
+      "eventemitter2": "./src/util/shim/EventEmitter2.js",
+      "ws": "./src/util/shim/WebSocket.js",
+      "./src/util/DOMParser.js": "./src/util/shim/DOMParser.js"
+    }
   },
   "homepage": "https://www.robotwebtools.org",
   "description": "The standard ROS Javascript Library",
