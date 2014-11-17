@@ -1,5 +1,9 @@
 {
   "name": "roslib",
+  "homepage": "https://www.robotwebtools.org",
+  "description": "The standard ROS Javascript Library",
+  "version": "0.9.1",
+  "license": "BSD",
   "main": "./src/RosLibNode.js",
   "browser": "./src/RosLib.js",
   "devDependencies": {
@@ -39,10 +43,6 @@
       "./src/util/DOMParser.js": "./src/util/shim/DOMParser.js"
     }
   },
-  "homepage": "https://www.robotwebtools.org",
-  "description": "The standard ROS Javascript Library",
-  "version": "0.9.0",
-  "license": "BSD",
   "directories": {
     "example": "examples",
     "test": "test"
