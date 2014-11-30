@@ -1,7 +1,0 @@
-<launch>
-  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
-  <node name="tf_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 /world /turtle1 100" />
-  <node name="tf2_web_republisher" pkg="tf2_web_republisher" type="tf2_web_republisher" />
-  <node name="add_two_ints_server" pkg="rospy_tutorials" type="add_two_ints_server" />
-  <node name="hello_world_publisher" pkg="rostopic" type="rostopic" args='pub /listener std_msgs/String "Hello, World"' />
-</launch>

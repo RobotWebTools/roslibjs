@@ -12,7 +12,7 @@ var expectedTopics = [
 describe('Example topics are live', function(done) {
     it('getTopics', function(done) {
         var ros = new ROSLIB.Ros({
-            port: 9090
+            port: 9091
         });
         ros.getTopics(function(topics) {
             expectedTopics.forEach(function(topic) {
