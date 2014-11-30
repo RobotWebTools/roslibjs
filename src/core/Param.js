@@ -47,7 +47,7 @@ Param.prototype.get = function(callback) {
  *
  * @param value - value to set param to.
  */
-Param.prototype.set = function(value) {
+Param.prototype.set = function(value, callback) {
   var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/set_param',
@@ -59,14 +59,13 @@ Param.prototype.set = function(value) {
     value : JSON.stringify(value)
   });
 
-  paramClient.callService(request, function() {
-  });
+  paramClient.callService(request, callback);
 };
 
 /**
  * Delete this parameter on the ROS server.
  */
-Param.prototype.delete = function() {
+Param.prototype.delete = function(callback) {
   var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/delete_param',
@@ -77,8 +76,7 @@ Param.prototype.delete = function() {
     name : this.name
   });
 
-  paramClient.callService(request, function() {
-  });
+  paramClient.callService(request, callback);
 };
 
 module.exports = Param;
