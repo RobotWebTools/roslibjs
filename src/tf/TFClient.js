@@ -2,7 +2,8 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
-var ActionClient = require('../actionlib/ActionClient');
+var Service = require('../core/Service.js');
+var ServiceRequest = require('../core/ServiceRequest.js');
 var Goal = require('../actionlib/Goal');
 var Transform = require('../math/Transform');
 
@@ -17,6 +18,7 @@ var Transform = require('../math/Transform');
  *   * transThres - the translation threshold for the TF republisher
  *   * rate - the rate for the TF republisher
  *   * goalUpdateDelay - the goal update delay for the TF republisher
+ *   * topicTimeout - the timeout parameter for the TF republisher
  */
 function TFClient(options) {
   options = options || {};
@@ -26,16 +28,22 @@ function TFClient(options) {
   this.transThres = options.transThres || 0.01;
   this.rate = options.rate || 10.0;
   this.goalUpdateDelay = options.goalUpdateDelay || 50;
+  var seconds = options.topicTimeout || 2.0;
+  var secs = Math.floor(seconds);
+  var nsecs = Math.floor((seconds - secs) * 1000000000);
+  this.topicTimeout = {
+    secs: secs,
+    nsecs: nsecs
+  };
 
-  this.currentGoal = false;
+  this.currentTopic = false;
   this.frameInfos = {};
   this.goalUpdateRequested = false;
 
-  // Create an ActionClient
-  this.actionClient = new ActionClient({
-    ros : this.ros,
-    serverName : '/tf2_web_republisher',
-    actionName : 'tf2_web_republisher/TFSubscriptionAction'
+  // Create a Service client
+  this.serviceClient = this.ros.Service({
+    name: '/republish_tfs',
+    serviceType: 'tf2_web_republisher/RepublishTFs'
   });
 }
 
@@ -70,30 +78,40 @@ TFClient.prototype.processFeedback = function(tf) {
  * list of TFs.
  */
 TFClient.prototype.updateGoal = function() {
-  // Anytime the list of frames changes, we will need to send a new goal.
-  if (this.currentGoal) {
-    this.currentGoal.cancel();
-  }
-
-  var goalMessage = {
+  var request = new ServiceRequest({
     source_frames : [],
     target_frame : this.fixedFrame,
     angular_thres : this.angularThres,
     trans_thres : this.transThres,
-    rate : this.rate
-  };
+    rate : this.rate,
+    timeout: this.topicTimeout
+  });
 
   for (var frame in this.frameInfos) {
-    goalMessage.source_frames.push(frame);
+    request.source_frames.push(frame);
+  }
+  this.serviceClient.callService(request, this.processResponse.bind(this));
+  this.goalUpdateRequested = false;
+};
+
+/**
+ * Process the service response and subscribe to the tf republisher
+ * topic
+ *
+ * @param response the service response containing the topic name
+ */
+TFClient.prototype.processResponse = function(response) {
+  // if we subscribed to a topic before, unsubscribe so
+  // the republisher stops publishing it
+  if (this.currentTopic) {
+    this.currentTopic.unsubscribe();
   }
 
-  this.currentGoal = new Goal({
-    actionClient : this.actionClient,
-    goalMessage : goalMessage
+  this.currentTopic = this.ros.Topic({
+    name: response.topic_name,
+    messageType: 'tf2_web_republisher/TFArray'
   });
-  this.currentGoal.on('feedback', this.processFeedback.bind(this));
-  this.currentGoal.send();
-  this.goalUpdateRequested = false;
+  this.currentTopic.subscribe(this.processFeedback.bind(this));
 };
 
 /**
