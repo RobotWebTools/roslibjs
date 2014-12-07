@@ -4,7 +4,6 @@
 
 var Service = require('../core/Service.js');
 var ServiceRequest = require('../core/ServiceRequest.js');
-var Goal = require('../actionlib/Goal');
 var Transform = require('../math/Transform');
 
 /**
@@ -17,7 +16,8 @@ var Transform = require('../math/Transform');
  *   * angularThres - the angular threshold for the TF republisher
  *   * transThres - the translation threshold for the TF republisher
  *   * rate - the rate for the TF republisher
- *   * goalUpdateDelay - the goal update delay for the TF republisher
+ *   * serviceUpdateDelay - the time to wait after a new subscription
+ *                          to call the TF republisher service again
  *   * topicTimeout - the timeout parameter for the TF republisher
  */
 function TFClient(options) {
@@ -27,7 +27,7 @@ function TFClient(options) {
   this.angularThres = options.angularThres || 2.0;
   this.transThres = options.transThres || 0.01;
   this.rate = options.rate || 10.0;
-  this.goalUpdateDelay = options.goalUpdateDelay || 50;
+  this.serviceUpdateDelay = options.serviceUpdateDelay || 50;
   var seconds = options.topicTimeout || 2.0;
   var secs = Math.floor(seconds);
   var nsecs = Math.floor((seconds - secs) * 1000000000);
@@ -38,7 +38,7 @@ function TFClient(options) {
 
   this.currentTopic = false;
   this.frameInfos = {};
-  this.goalUpdateRequested = false;
+  this.serviceUpdateRequested = false;
 
   // Create a Service client
   this.serviceClient = this.ros.Service({
@@ -53,7 +53,7 @@ function TFClient(options) {
  *
  * @param tf - the TF message from the server
  */
-TFClient.prototype.processFeedback = function(tf) {
+TFClient.prototype.processTFArray = function(tf) {
   var that = this;
   tf.transforms.forEach(function(transform) {
     var frameID = transform.child_frame_id;
@@ -91,7 +91,7 @@ TFClient.prototype.updateGoal = function() {
     request.source_frames.push(frame);
   }
   this.serviceClient.callService(request, this.processResponse.bind(this));
-  this.goalUpdateRequested = false;
+  this.serviceUpdateRequested = false;
 };
 
 /**
@@ -111,7 +111,7 @@ TFClient.prototype.processResponse = function(response) {
     name: response.topic_name,
     messageType: 'tf2_web_republisher/TFArray'
   });
-  this.currentTopic.subscribe(this.processFeedback.bind(this));
+  this.currentTopic.subscribe(this.processTFArray.bind(this));
 };
 
 /**
@@ -131,9 +131,9 @@ TFClient.prototype.subscribe = function(frameID, callback) {
     this.frameInfos[frameID] = {
       cbs : []
     };
-    if (!this.goalUpdateRequested) {
-      setTimeout(this.updateGoal.bind(this), this.goalUpdateDelay);
-      this.goalUpdateRequested = true;
+    if (!this.serviceUpdateRequested) {
+      setTimeout(this.updateGoal.bind(this), this.serviceUpdateDelay);
+      this.serviceUpdateRequested = true;
     }
   } else {
     // if we already have a transform, call back immediately
