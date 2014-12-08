@@ -10,7 +10,6 @@ function ToObject(val) {
 }
 
 module.exports = Object.assign || function (target, source) {
-	var pendingException;
 	var from;
 	var keys;
 	var to = ToObject(target);
@@ -20,24 +19,19 @@ module.exports = Object.assign || function (target, source) {
 		keys = Object.keys(Object(from));
 
 		for (var i = 0; i < keys.length; i++) {
-			try {
-				to[keys[i]] = from[keys[i]];
-			} catch (err) {
-				if (pendingException === undefined) {
-					pendingException = err;
-				}
-			}
+			to[keys[i]] = from[keys[i]];
 		}
-	}
-
-	if (pendingException) {
-		throw pendingException;
 	}
 
 	return to;
 };
 
 },{}],2:[function(require,module,exports){
+exports.XMLSerializer = XMLSerializer;
+exports.DOMParser = DOMParser;
+exports.implementation = document.implementation;
+
+},{}],3:[function(require,module,exports){
 /**
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -46,7 +40,7 @@ var ROSLIB = this.ROSLIB || {
   REVISION : '0.10.0-SNAPSHOT'
 };
 
-ROSLIB.Ros = require('./core/Ros');
+var Ros = ROSLIB.Ros = require('./core/Ros');
 ROSLIB.Topic = require('./core/Topic');
 ROSLIB.Message = require('./core/Message');
 ROSLIB.Param = require('./core/Param');
@@ -78,19 +72,27 @@ ROSLIB.UrdfVisual = require('./urdf/UrdfVisual');
 // Add URDF types
 require('object-assign')(ROSLIB, require('./urdf/UrdfTypes'));
 
+['ActionClient', 'Param', 'Service', 'SimpleActionServer', 'Topic', 'TFClient'].forEach(function(className) {
+    var Class = ROSLIB[className];
+    Ros.prototype[className] = function(options) {
+        options.ros = this;
+        return new Class(options);
+    };
+});
+
 module.exports = ROSLIB;
-},{"./actionlib/ActionClient":4,"./actionlib/Goal":5,"./actionlib/SimpleActionServer":6,"./core/Message":7,"./core/Param":8,"./core/Ros":9,"./core/Service":10,"./core/ServiceRequest":11,"./core/ServiceResponse":12,"./core/Topic":13,"./math/Pose":14,"./math/Quaternion":15,"./math/Transform":16,"./math/Vector3":17,"./tf/TFClient":18,"./urdf/UrdfBox":19,"./urdf/UrdfColor":20,"./urdf/UrdfCylinder":21,"./urdf/UrdfLink":22,"./urdf/UrdfMaterial":23,"./urdf/UrdfMesh":24,"./urdf/UrdfModel":25,"./urdf/UrdfSphere":26,"./urdf/UrdfTypes":27,"./urdf/UrdfVisual":28,"object-assign":1}],3:[function(require,module,exports){
+},{"./actionlib/ActionClient":5,"./actionlib/Goal":6,"./actionlib/SimpleActionServer":7,"./core/Message":8,"./core/Param":9,"./core/Ros":10,"./core/Service":11,"./core/ServiceRequest":12,"./core/ServiceResponse":13,"./core/Topic":15,"./math/Pose":16,"./math/Quaternion":17,"./math/Transform":18,"./math/Vector3":19,"./tf/TFClient":20,"./urdf/UrdfBox":21,"./urdf/UrdfColor":22,"./urdf/UrdfCylinder":23,"./urdf/UrdfLink":24,"./urdf/UrdfMaterial":25,"./urdf/UrdfMesh":26,"./urdf/UrdfModel":27,"./urdf/UrdfSphere":28,"./urdf/UrdfTypes":29,"./urdf/UrdfVisual":30,"object-assign":1}],4:[function(require,module,exports){
 (function (global){
 global.ROSLIB = require('./RosLib');
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./RosLib":2}],4:[function(require,module,exports){
+},{"./RosLib":3}],5:[function(require,module,exports){
 /**
  * @author Russell Toris - rctoris@wpi.edu
  */
 
 var Topic = require('../core/Topic');
 var Message = require('../core/Message');
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
+var EventEmitter2 = require('./../util/shim/EventEmitter2.js').EventEmitter2;
 
 /**
  * An actionlib action client.
@@ -206,13 +208,13 @@ ActionClient.prototype.cancel = function() {
 };
 
 module.exports = ActionClient;
-},{"../core/Message":7,"../core/Topic":13,"eventemitter2":30}],5:[function(require,module,exports){
+},{"../core/Message":8,"../core/Topic":15,"./../util/shim/EventEmitter2.js":32}],6:[function(require,module,exports){
 /**
  * @author Russell Toris - rctoris@wpi.edu
  */
 
 var Message = require('../core/Message');
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
+var EventEmitter2 = require('./../util/shim/EventEmitter2.js').EventEmitter2;
 
 /**
  * An actionlib goal goal is associated with an action server.
@@ -295,14 +297,14 @@ Goal.prototype.cancel = function() {
 };
 
 module.exports = Goal;
-},{"../core/Message":7,"eventemitter2":30}],6:[function(require,module,exports){
+},{"../core/Message":8,"./../util/shim/EventEmitter2.js":32}],7:[function(require,module,exports){
 /**
  * @author Laura Lindzey - lindzey@gmail.com
  */
 
 var Topic = require('../core/Topic');
 var Message = require('../core/Message');
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
+var EventEmitter2 = require('./../util/shim/EventEmitter2.js').EventEmitter2;
 
 /**
  * An actionlib action server client.
@@ -503,7 +505,7 @@ SimpleActionServer.prototype.setPreempted = function() {
 };
 
 module.exports = SimpleActionServer;
-},{"../core/Message":7,"../core/Topic":13,"eventemitter2":30}],7:[function(require,module,exports){
+},{"../core/Message":8,"../core/Topic":15,"./../util/shim/EventEmitter2.js":32}],8:[function(require,module,exports){
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
@@ -521,7 +523,7 @@ function Message(values) {
 }
 
 module.exports = Message;
-},{"object-assign":1}],8:[function(require,module,exports){
+},{"object-assign":1}],9:[function(require,module,exports){
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
@@ -606,20 +608,19 @@ Param.prototype.delete = function() {
 };
 
 module.exports = Param;
-},{"./Service":10,"./ServiceRequest":11}],9:[function(require,module,exports){
-(function (global){
+},{"./Service":11,"./ServiceRequest":12}],10:[function(require,module,exports){
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-var Canvas = require('canvas');
-var Image = Canvas.Image || global.Image;
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
-var WebSocket = require('ws');
+var WebSocket = require('./../util/shim/WebSocket.js');
+var socketAdapter = require('./SocketAdapter.js');
 
 var Service = require('./Service');
 var ServiceRequest = require('./ServiceRequest');
 
+var assign = require('object-assign');
+var EventEmitter2 = require('./../util/shim/EventEmitter2.js').EventEmitter2;
 
 /**
  * Manages connection to the server and all interactions with ROS.
@@ -637,16 +638,16 @@ var ServiceRequest = require('./ServiceRequest');
  */
 function Ros(options) {
   options = options || {};
-  var url = options.url;
   this.socket = null;
   this.idCounter = 0;
+  this.isConnected = false;
 
   // Sets unlimited event listeners.
   this.setMaxListeners(0);
 
   // begin by checking if a URL was given
-  if (url) {
-    this.connect(url);
+  if (options.url) {
+    this.connect(options.url);
   }
 }
 
@@ -658,105 +659,7 @@ Ros.prototype.__proto__ = EventEmitter2.prototype;
  * @param url - WebSocket URL for Rosbridge
  */
 Ros.prototype.connect = function(url) {
-  var that = this;
-
-  /**
-   * Emits a 'connection' event on WebSocket connection.
-   *
-   * @param event - the argument to emit with the event.
-   */
-  function onOpen(event) {
-    that.emit('connection', event);
-  }
-
-  /**
-   * Emits a 'close' event on WebSocket disconnection.
-   *
-   * @param event - the argument to emit with the event.
-   */
-  function onClose(event) {
-    that.emit('close', event);
-  }
-
-  /**
-   * Emits an 'error' event whenever there was an error.
-   *
-   * @param event - the argument to emit with the event.
-   */
-  function onError(event) {
-    that.emit('error', event);
-  }
-
-  /**
-   * If a message was compressed as a PNG image (a compression hack since
-   * gzipping over WebSockets * is not supported yet), this function places the
-   * "image" in a canvas element then decodes the * "image" as a Base64 string.
-   *
-   * @param data - object containing the PNG data.
-   * @param callback - function with params:
-   *   * data - the uncompressed data
-   */
-  function decompressPng(data, callback) {
-    // Uncompresses the data before sending it through (use image/canvas to do so).
-    var image = new Image();
-    // When the image loads, extracts the raw data (JSON message).
-    image.onload = function() {
-      // Creates a local canvas to draw on.
-      var canvas = new Canvas();
-      var context = canvas.getContext('2d');
-
-      // Sets width and height.
-      canvas.width = image.width;
-      canvas.height = image.height;
-
-      // Puts the data into the image.
-      context.drawImage(image, 0, 0);
-      // Grabs the raw, uncompressed data.
-      var imageData = context.getImageData(0, 0, image.width, image.height).data;
-
-      // Constructs the JSON.
-      var jsonData = '';
-      for ( var i = 0; i < imageData.length; i += 4) {
-        // RGB
-        jsonData += String.fromCharCode(imageData[i], imageData[i + 1], imageData[i + 2]);
-      }
-      var decompressedData = JSON.parse(jsonData);
-      callback(decompressedData);
-    };
-    // Sends the image data to load.
-    image.src = 'data:image/png;base64,' + data.data;
-  }
-
-  /**
-   * Parses message responses from rosbridge and sends to the appropriate
-   * topic, service, or param.
-   *
-   * @param message - the raw JSON message from rosbridge.
-   */
-  function onMessage(message) {
-    function handleMessage(message) {
-      if (message.op === 'publish') {
-        that.emit(message.topic, message.msg);
-      } else if (message.op === 'service_response') {
-        that.emit(message.id, message);
-      }
-    }
-
-    var data = JSON.parse(message.data);
-    if (data.op === 'png') {
-      decompressPng(data, function(decompressedData) {
-        handleMessage(decompressedData);
-      });
-    } else {
-      handleMessage(data);
-    }
-  }
-
-  this.socket = new WebSocket(url);
-  this.socket.onopen = onOpen;
-  this.socket.onclose = onClose;
-  this.socket.onerror = onError;
-  this.socket.onmessage = onMessage;
+  this.socket = assign(new WebSocket(url), socketAdapter(this));
 };
 
 /**
@@ -803,7 +706,7 @@ Ros.prototype.callOnConnection = function(message) {
   var that = this;
   var messageJson = JSON.stringify(message);
 
-  if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+  if (!this.isConnected) {
     that.once('connection', function() {
       that.socket.send(messageJson);
     });
@@ -986,8 +889,7 @@ Ros.prototype.decodeTypeDefs = function(defs) {
 
 
 module.exports = Ros;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./Service":10,"./ServiceRequest":11,"canvas":32,"eventemitter2":30,"ws":31}],10:[function(require,module,exports){
+},{"./../util/shim/EventEmitter2.js":32,"./../util/shim/WebSocket.js":33,"./Service":11,"./ServiceRequest":12,"./SocketAdapter.js":14,"object-assign":1}],11:[function(require,module,exports){
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
@@ -1044,7 +946,7 @@ Service.prototype.callService = function(request, callback, failedCallback) {
 };
 
 module.exports = Service;
-},{"./ServiceResponse":12}],11:[function(require,module,exports){
+},{"./ServiceResponse":13}],12:[function(require,module,exports){
 /**
  * @author Brandon Alexander - balexander@willowgarage.com
  */
@@ -1062,7 +964,7 @@ function ServiceRequest(values) {
 }
 
 module.exports = ServiceRequest;
-},{"object-assign":1}],12:[function(require,module,exports){
+},{"object-assign":1}],13:[function(require,module,exports){
 /**
  * @author Brandon Alexander - balexander@willowgarage.com
  */
@@ -1080,12 +982,129 @@ function ServiceResponse(values) {
 }
 
 module.exports = ServiceResponse;
-},{"object-assign":1}],13:[function(require,module,exports){
+},{"object-assign":1}],14:[function(require,module,exports){
+(function (global){
+/**
+ * Socket event handling utilities for handling events on either
+ * WebSocket and TCP sockets
+ *
+ * Note to anyone reviewing this code: these functions are called
+ * in the context of their parent object, unless bound
+ */
+'use strict';
+
+var Canvas = require('./../util/shim/canvas.js');
+var Image = Canvas.Image || global.Image;
+var WebSocket = require('./../util/shim/WebSocket.js');
+
+/**
+ * If a message was compressed as a PNG image (a compression hack since
+ * gzipping over WebSockets * is not supported yet), this function places the
+ * "image" in a canvas element then decodes the * "image" as a Base64 string.
+ *
+ * @param data - object containing the PNG data.
+ * @param callback - function with params:
+ *   * data - the uncompressed data
+ */
+function decompressPng(data, callback) {
+  // Uncompresses the data before sending it through (use image/canvas to do so).
+  var image = new Image();
+  // When the image loads, extracts the raw data (JSON message).
+  image.onload = function() {
+    // Creates a local canvas to draw on.
+    var canvas = new Canvas();
+    var context = canvas.getContext('2d');
+
+    // Sets width and height.
+    canvas.width = image.width;
+    canvas.height = image.height;
+
+    // Puts the data into the image.
+    context.drawImage(image, 0, 0);
+    // Grabs the raw, uncompressed data.
+    var imageData = context.getImageData(0, 0, image.width, image.height).data;
+
+    // Constructs the JSON.
+    var jsonData = '';
+    for (var i = 0; i < imageData.length; i += 4) {
+      // RGB
+      jsonData += String.fromCharCode(imageData[i], imageData[i + 1], imageData[i + 2]);
+    }
+    callback(JSON.parse(jsonData));
+  };
+  // Sends the image data to load.
+  image.src = 'data:image/png;base64,' + data.data;
+}
+
+/**
+ * Events listeners for a WebSocket or TCP socket to a JavaScript
+ * ROS Client. Sets up Messages for a given topic to trigger an
+ * event on the ROS client.
+ */
+function SocketAdapter(client) {
+  function handleMessage(message) {
+    if (message.op === 'publish') {
+      client.emit(message.topic, message.msg);
+    } else if (message.op === 'service_response') {
+      client.emit(message.id, message);
+    }
+  }
+
+  return {
+    /**
+     * Emits a 'connection' event on WebSocket connection.
+     *
+     * @param event - the argument to emit with the event.
+     */
+    onopen: function onOpen(event) {
+      client.isConnected = true;
+      client.emit('connection', event);
+    },
+
+    /**
+     * Emits a 'close' event on WebSocket disconnection.
+     *
+     * @param event - the argument to emit with the event.
+     */
+    onclose: function onClose(event) {
+      client.isConnected = false;
+      client.emit('close', event);
+    },
+
+    /**
+     * Emits an 'error' event whenever there was an error.
+     *
+     * @param event - the argument to emit with the event.
+     */
+    onerror: function onError(event) {
+      client.emit('error', event);
+    },
+
+    /**
+     * Parses message responses from rosbridge and sends to the appropriate
+     * topic, service, or param.
+     *
+     * @param message - the raw JSON message from rosbridge.
+     */
+    onmessage: function onMessage(message) {
+      var data = JSON.parse(typeof message === 'string' ? message : message.data);
+      if (data.op === 'png') {
+        decompressPng(data, handleMessage);
+      } else {
+        handleMessage(data);
+      }
+    }
+  };
+}
+
+module.exports = SocketAdapter;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./../util/shim/WebSocket.js":33,"./../util/shim/canvas.js":34}],15:[function(require,module,exports){
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
+var EventEmitter2 = require('./../util/shim/EventEmitter2.js').EventEmitter2;
 var Message = require('./Message');
 
 /**
@@ -1126,8 +1145,12 @@ function Topic(options) {
     this.emit('warning', this.throttle_rate + ' is not allowed. Set to 0');
     this.throttle_rate = 0;
   }
-}
 
+  var that = this;
+  this._messageCallback = function(data) {
+    that.emit('message', new Message(data));
+  };
+}
 Topic.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
@@ -1138,13 +1161,12 @@ Topic.prototype.__proto__ = EventEmitter2.prototype;
  *   * message - the published message
  */
 Topic.prototype.subscribe = function(callback) {
-  var that = this;
-  this.on('message', callback);
-  this.ros.on(this.name, function(data) {
-    var message = new Message(data);
-    that.emit('message', message);
-  });
+  if (typeof callback === 'function') {
+    this.on('message', callback);
+  }
 
+  if (this.subscribeId) { return; }
+  this.ros.on(this.name, this._messageCallback);
   this.subscribeId = 'subscribe:' + this.name + ':' + (++this.ros.idCounter);
   this.ros.callOnConnection({
     op: 'subscribe',
@@ -1161,12 +1183,16 @@ Topic.prototype.subscribe = function(callback) {
  * all subscribe callbacks.
  */
 Topic.prototype.unsubscribe = function() {
-  this.ros.removeAllListeners([this.name]);
+  if (!this.subscribeId) { return; }
+  // Note: Don't call this.removeAllListeners, allow client to handle that themselves
+  this.ros.off(this.name, this._messageCallback);
+  this.emit('unsubscribe');
   this.ros.callOnConnection({
     op: 'unsubscribe',
     id: this.subscribeId,
     topic: this.name
   });
+  this.subscribeId = null;
 };
 
 /**
@@ -1195,6 +1221,7 @@ Topic.prototype.unadvertise = function() {
   if (!this.isAdvertised) {
     return;
   }
+  this.emit('unadvertise');
   this.ros.callOnConnection({
     op: 'unadvertise',
     id: this.advertiseId,
@@ -1226,7 +1253,7 @@ Topic.prototype.publish = function(message) {
 
 module.exports = Topic;
 
-},{"./Message":7,"eventemitter2":30}],14:[function(require,module,exports){
+},{"./../util/shim/EventEmitter2.js":32,"./Message":8}],16:[function(require,module,exports){
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
@@ -1272,7 +1299,7 @@ Pose.prototype.clone = function() {
 };
 
 module.exports = Pose;
-},{"./Quaternion":15,"./Vector3":17}],15:[function(require,module,exports){
+},{"./Quaternion":17,"./Vector3":19}],17:[function(require,module,exports){
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
@@ -1292,7 +1319,7 @@ function Quaternion(options) {
   this.x = options.x || 0;
   this.y = options.y || 0;
   this.z = options.z || 0;
-  this.w = options.w || 1;
+  this.w = (typeof options.w === 'number') ? options.w : 1;
 }
 
 /**
@@ -1357,7 +1384,7 @@ Quaternion.prototype.clone = function() {
 };
 
 module.exports = Quaternion;
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
@@ -1390,7 +1417,7 @@ Transform.prototype.clone = function() {
 };
 
 module.exports = Transform;
-},{"./Quaternion":15,"./Vector3":17}],17:[function(require,module,exports){
+},{"./Quaternion":17,"./Vector3":19}],19:[function(require,module,exports){
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
@@ -1458,7 +1485,7 @@ Vector3.prototype.clone = function() {
 };
 
 module.exports = Vector3;
-},{}],18:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 /**
  * @author David Gossow - dgossow@willowgarage.com
  */
@@ -1612,7 +1639,7 @@ TFClient.prototype.unsubscribe = function(frameID, callback) {
 };
 
 module.exports = TFClient;
-},{"../actionlib/ActionClient":4,"../actionlib/Goal":5,"../math/Transform":16}],19:[function(require,module,exports){
+},{"../actionlib/ActionClient":5,"../actionlib/Goal":6,"../math/Transform":18}],21:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1629,35 +1656,20 @@ var UrdfTypes = require('./UrdfTypes');
  *  * xml - the XML element to parse
  */
 function UrdfBox(options) {
-  options = options || {};
-  var that = this;
-  var xml = options.xml;
   this.dimension = null;
-  this.type = null;
+  this.type = UrdfTypes.URDF_BOX;
 
-  /**
-   * Initialize the element with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xml) {
-    that.type = UrdfTypes.URDF_BOX;
-
-    // Parse the string
-    var xyz = xml.getAttribute('size').split(' ');
-    that.dimension = new Vector3({
-      x : parseFloat(xyz[0]),
-      y : parseFloat(xyz[1]),
-      z : parseFloat(xyz[2])
-    });
-  };
-
-  // Pass it to the XML parser
-  initXml(xml);
+  // Parse the xml string
+  var xyz = options.xml.getAttribute('size').split(' ');
+  this.dimension = new Vector3({
+    x : parseFloat(xyz[0]),
+    y : parseFloat(xyz[1]),
+    z : parseFloat(xyz[2])
+  });
 }
 
 module.exports = UrdfBox;
-},{"../math/Vector3":17,"./UrdfTypes":27}],20:[function(require,module,exports){
+},{"../math/Vector3":19,"./UrdfTypes":29}],22:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1671,35 +1683,16 @@ module.exports = UrdfBox;
  *  * xml - the XML element to parse
  */
 function UrdfColor(options) {
-  options = options || {};
-  var that = this;
-  var xml = options.xml;
-  this.r = null;
-  this.g = null;
-  this.b = null;
-  this.a = null;
-
-  /**
-   * Initialize the element with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xml) {
-    // Parse the string
-    var rgba = xml.getAttribute('rgba').split(' ');
-    that.r = parseFloat(rgba[0]);
-    that.g = parseFloat(rgba[1]);
-    that.b = parseFloat(rgba[2]);
-    that.a = parseFloat(rgba[3]);
-    return true;
-  };
-
-  // Pass it to the XML parser
-  initXml(xml);
+  // Parse the xml string
+  var rgba = options.xml.getAttribute('rgba').split(' ');
+  this.r = parseFloat(rgba[0]);
+  this.g = parseFloat(rgba[1]);
+  this.b = parseFloat(rgba[2]);
+  this.a = parseFloat(rgba[3]);
 }
 
 module.exports = UrdfColor;
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1715,30 +1708,13 @@ var UrdfTypes = require('./UrdfTypes');
  *  * xml - the XML element to parse
  */
 function UrdfCylinder(options) {
-  options = options || {};
-  var that = this;
-  var xml = options.xml;
-  this.type = null;
-  this.length = null;
-  this.radius = null;
-
-  /**
-   * Initialize the element with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xml) {
-    that.type = UrdfTypes.URDF_CYLINDER;
-    that.length = parseFloat(xml.getAttribute('length'));
-    that.radius = parseFloat(xml.getAttribute('radius'));
-  };
-
-  // Pass it to the XML parser
-  initXml(xml);
+  this.type = UrdfTypes.URDF_CYLINDER;
+  this.length = parseFloat(options.xml.getAttribute('length'));
+  this.radius = parseFloat(options.xml.getAttribute('radius'));
 }
 
 module.exports = UrdfCylinder;
-},{"./UrdfTypes":27}],22:[function(require,module,exports){
+},{"./UrdfTypes":29}],24:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1754,33 +1730,17 @@ var UrdfVisual = require('./UrdfVisual');
  *  * xml - the XML element to parse
  */
 function UrdfLink(options) {
-  options = options || {};
-  var that = this;
-  var xml = options.xml;
-  this.name = null;
-  this.visual = null;
-
-  /**
-   * Initialize the element with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xml) {
-    that.name = xml.getAttribute('name');
-    var visuals = xml.getElementsByTagName('visual');
-    if (visuals.length > 0) {
-      that.visual = new UrdfVisual({
-        xml : visuals[0]
-      });
-    }
-  };
-
-  // Pass it to the XML parser
-  initXml(xml);
+  this.name = options.xml.getAttribute('name');
+  var visuals = options.xml.getElementsByTagName('visual');
+  if (visuals.length > 0) {
+    this.visual = new UrdfVisual({
+      xml : visuals[0]
+    });
+  }
 }
 
 module.exports = UrdfLink;
-},{"./UrdfVisual":28}],23:[function(require,module,exports){
+},{"./UrdfVisual":30}],25:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1796,43 +1756,29 @@ var UrdfColor = require('./UrdfColor');
  *  * xml - the XML element to parse
  */
 function UrdfMaterial(options) {
-  options = options || {};
-  var that = this;
-  var xml = options.xml;
-  this.name = null;
   this.textureFilename = null;
   this.color = null;
 
-  /**
-   * Initialize the element with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xml) {
-    that.name = xml.getAttribute('name');
+  this.name = options.xml.getAttribute('name');
 
-    // Texture
-    var textures = xml.getElementsByTagName('texture');
-    if (textures.length > 0) {
-      that.textureFilename = textures[0].getAttribute('filename');
-    }
+  // Texture
+  var textures = options.xml.getElementsByTagName('texture');
+  if (textures.length > 0) {
+    this.textureFilename = textures[0].getAttribute('filename');
+  }
 
-    // Color
-    var colors = xml.getElementsByTagName('color');
-    if (colors.length > 0) {
-      // Parse the RBGA string
-      that.color = new UrdfColor({
-        xml : colors[0]
-      });
-    }
-  };
-
-  // Pass it to the XML parser
-  initXml(xml);
+  // Color
+  var colors = options.xml.getElementsByTagName('color');
+  if (colors.length > 0) {
+    // Parse the RBGA string
+    this.color = new UrdfColor({
+      xml : colors[0]
+    });
+  }
 }
 
 module.exports = UrdfMaterial;
-},{"./UrdfColor":20}],24:[function(require,module,exports){
+},{"./UrdfColor":22}],26:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1849,41 +1795,26 @@ var UrdfTypes = require('./UrdfTypes');
  *  * xml - the XML element to parse
  */
 function UrdfMesh(options) {
-  options = options || {};
-  var that = this;
-  var xml = options.xml;
-  this.filename = null;
   this.scale = null;
-  this.type = null;
 
-  /**
-   * Initialize the element with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xml) {
-    that.type = UrdfTypes.URDF_MESH;
-    that.filename = xml.getAttribute('filename');
+  this.type = UrdfTypes.URDF_MESH;
+  this.filename = options.xml.getAttribute('filename');
 
-    // Check for a scale
-    var scale = xml.getAttribute('scale');
-    if (scale) {
-      // Get the XYZ
-      var xyz = scale.split(' ');
-      that.scale = new Vector3({
-        x : parseFloat(xyz[0]),
-        y : parseFloat(xyz[1]),
-        z : parseFloat(xyz[2])
-      });
-    }
-  };
-
-  // Pass it to the XML parser
-  initXml(xml);
+  // Check for a scale
+  var scale = options.xml.getAttribute('scale');
+  if (scale) {
+    // Get the XYZ
+    var xyz = scale.split(' ');
+    this.scale = new Vector3({
+      x : parseFloat(xyz[0]),
+      y : parseFloat(xyz[1]),
+      z : parseFloat(xyz[2])
+    });
+  }
 }
 
 module.exports = UrdfMesh;
-},{"../math/Vector3":17,"./UrdfTypes":27}],25:[function(require,module,exports){
+},{"../math/Vector3":19,"./UrdfTypes":29}],27:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1906,73 +1837,64 @@ var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
  */
 function UrdfModel(options) {
   options = options || {};
-  var that = this;
-  var xml = options.xml;
+  var xmlDoc = options.xml;
   var string = options.string;
-  this.materials = [];
-  this.links = [];
-
-  /**
-   * Initialize the model with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xmlDoc) {
-    // Get the robot tag
-    var robotXml = xmlDoc.evaluate('//robot', xmlDoc, null, XPATH_FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-
-    // Get the robot name
-    that.name = robotXml.getAttribute('name');
-
-    // Parse all the visual elements we need
-    for (var n in robotXml.childNodes) {
-      var node = robotXml.childNodes[n];
-      if (node.tagName === 'material') {
-        var material = new UrdfMaterial({
-          xml : node
-        });
-        // Make sure this is unique
-        if (that.materials[material.name]) {
-          console.warn('Material ' + material.name + 'is not unique.');
-        } else {
-          that.materials[material.name] = material;
-        }
-      } else if (node.tagName === 'link') {
-        var link = new UrdfLink({
-          xml : node
-        });
-        // Make sure this is unique
-        if (that.links[link.name]) {
-          console.warn('Link ' + link.name + ' is not unique.');
-        } else {
-          // Check for a material
-          if (link.visual && link.visual.material) {
-            if (that.materials[link.visual.material.name]) {
-              link.visual.material = that.materials[link.visual.material.name];
-            } else if (link.visual.material) {
-              that.materials[link.visual.material.name] = link.visual.material;
-            }
-          }
-
-          // Add the link
-          that.links[link.name] = link;
-        }
-      }
-    }
-  };
+  this.materials = {};
+  this.links = {};
 
   // Check if we are using a string or an XML element
   if (string) {
     // Parse the string
     var parser = new DOMParser();
-    xml = parser.parseFromString(string, 'text/xml');
+    xmlDoc = parser.parseFromString(string, 'text/xml');
   }
-  // Pass it to the XML parser
-  initXml(xml);
+
+  // Initialize the model with the given XML node.
+  // Get the robot tag
+  var robotXml = xmlDoc.evaluate('//robot', xmlDoc, null, XPATH_FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+
+  // Get the robot name
+  this.name = robotXml.getAttribute('name');
+
+  // Parse all the visual elements we need
+  for (var nodes = robotXml.childNodes, i = 0; i < nodes.length; i++) {
+    var node = nodes[i];
+    if (node.tagName === 'material') {
+      var material = new UrdfMaterial({
+        xml : node
+      });
+      // Make sure this is unique
+      if (this.materials[material.name] !== void 0) {
+        console.warn('Material ' + material.name + 'is not unique.');
+      } else {
+        this.materials[material.name] = material;
+      }
+    } else if (node.tagName === 'link') {
+      var link = new UrdfLink({
+        xml : node
+      });
+      // Make sure this is unique
+      if (this.links[link.name] !== void 0) {
+        console.warn('Link ' + link.name + ' is not unique.');
+      } else {
+        // Check for a material
+        if (link.visual && link.visual.material) {
+          if (this.materials[link.visual.material.name] !== void 0) {
+            link.visual.material = this.materials[link.visual.material.name];
+          } else {
+            this.materials[link.visual.material.name] = link.visual.material;
+          }
+        }
+
+        // Add the link
+        this.links[link.name] = link;
+      }
+    }
+  }
 }
 
 module.exports = UrdfModel;
-},{"../util/DOMParser":29,"./UrdfLink":22,"./UrdfMaterial":23}],26:[function(require,module,exports){
+},{"../util/DOMParser":31,"./UrdfLink":24,"./UrdfMaterial":25}],28:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1988,28 +1910,12 @@ var UrdfTypes = require('./UrdfTypes');
  *  * xml - the XML element to parse
  */
 function UrdfSphere(options) {
-  options = options || {};
-  var that = this;
-  var xml = options.xml;
-  this.radius = null;
-  this.type = null;
-
-  /**
-   * Initialize the element with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xml) {
-    that.type = UrdfTypes.URDF_SPHERE;
-    that.radius = parseFloat(xml.getAttribute('radius'));
-  };
-
-  // pass it to the XML parser
-  initXml(xml);
+  this.type = UrdfTypes.URDF_SPHERE;
+  this.radius = parseFloat(options.xml.getAttribute('radius'));
 }
 
 module.exports = UrdfSphere;
-},{"./UrdfTypes":27}],27:[function(require,module,exports){
+},{"./UrdfTypes":29}],29:[function(require,module,exports){
 module.exports = {
 	URDF_SPHERE : 0,
 	URDF_BOX : 1,
@@ -2017,7 +1923,7 @@ module.exports = {
 	URDF_MESH : 3
 };
 
-},{}],28:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -2041,138 +1947,125 @@ var UrdfSphere = require('./UrdfSphere');
  *  * xml - the XML element to parse
  */
 function UrdfVisual(options) {
-  options = options || {};
-  var that = this;
   var xml = options.xml;
   this.origin = null;
   this.geometry = null;
   this.material = null;
 
-  /**
-   * Initialize the element with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xml) {
-    // Origin
-    var origins = xml.getElementsByTagName('origin');
-    if (origins.length === 0) {
-      // use the identity as the default
-      that.origin = new Pose();
+  // Origin
+  var origins = xml.getElementsByTagName('origin');
+  if (origins.length === 0) {
+    // use the identity as the default
+    this.origin = new Pose();
+  } else {
+    // Check the XYZ
+    var xyz = origins[0].getAttribute('xyz');
+    var position = new Vector3();
+    if (xyz) {
+      xyz = xyz.split(' ');
+      position = new Vector3({
+        x : parseFloat(xyz[0]),
+        y : parseFloat(xyz[1]),
+        z : parseFloat(xyz[2])
+      });
+    }
+
+    // Check the RPY
+    var rpy = origins[0].getAttribute('rpy');
+    var orientation = new Quaternion();
+    if (rpy) {
+      rpy = rpy.split(' ');
+      // Convert from RPY
+      var roll = parseFloat(rpy[0]);
+      var pitch = parseFloat(rpy[1]);
+      var yaw = parseFloat(rpy[2]);
+      var phi = roll / 2.0;
+      var the = pitch / 2.0;
+      var psi = yaw / 2.0;
+      var x = Math.sin(phi) * Math.cos(the) * Math.cos(psi) - Math.cos(phi) * Math.sin(the)
+          * Math.sin(psi);
+      var y = Math.cos(phi) * Math.sin(the) * Math.cos(psi) + Math.sin(phi) * Math.cos(the)
+          * Math.sin(psi);
+      var z = Math.cos(phi) * Math.cos(the) * Math.sin(psi) - Math.sin(phi) * Math.sin(the)
+          * Math.cos(psi);
+      var w = Math.cos(phi) * Math.cos(the) * Math.cos(psi) + Math.sin(phi) * Math.sin(the)
+          * Math.sin(psi);
+
+      orientation = new Quaternion({
+        x : x,
+        y : y,
+        z : z,
+        w : w
+      });
+      orientation.normalize();
+    }
+    this.origin = new Pose({
+      position : position,
+      orientation : orientation
+    });
+  }
+
+  // Geometry
+  var geoms = xml.getElementsByTagName('geometry');
+  if (geoms.length > 0) {
+    var geom = geoms[0];
+    var shape = null;
+    // Check for the shape
+    for (var i = 0; i < geom.childNodes.length; i++) {
+      var node = geom.childNodes[i];
+      if (node.nodeType === 1) {
+        shape = node;
+        break;
+      }
+    }
+    // Check the type
+    var type = shape.nodeName;
+    if (type === 'sphere') {
+      this.geometry = new UrdfSphere({
+        xml : shape
+      });
+    } else if (type === 'box') {
+      this.geometry = new UrdfBox({
+        xml : shape
+      });
+    } else if (type === 'cylinder') {
+      this.geometry = new UrdfCylinder({
+        xml : shape
+      });
+    } else if (type === 'mesh') {
+      this.geometry = new UrdfMesh({
+        xml : shape
+      });
     } else {
-      // Check the XYZ
-      var xyz = origins[0].getAttribute('xyz');
-      var position = new Vector3();
-      if (xyz) {
-        xyz = xyz.split(' ');
-        position = new Vector3({
-          x : parseFloat(xyz[0]),
-          y : parseFloat(xyz[1]),
-          z : parseFloat(xyz[2])
-        });
-      }
-
-      // Check the RPY
-      var rpy = origins[0].getAttribute('rpy');
-      var orientation = new Quaternion();
-      if (rpy) {
-        rpy = rpy.split(' ');
-        // Convert from RPY
-        var roll = parseFloat(rpy[0]);
-        var pitch = parseFloat(rpy[1]);
-        var yaw = parseFloat(rpy[2]);
-        var phi = roll / 2.0;
-        var the = pitch / 2.0;
-        var psi = yaw / 2.0;
-        var x = Math.sin(phi) * Math.cos(the) * Math.cos(psi) - Math.cos(phi) * Math.sin(the)
-            * Math.sin(psi);
-        var y = Math.cos(phi) * Math.sin(the) * Math.cos(psi) + Math.sin(phi) * Math.cos(the)
-            * Math.sin(psi);
-        var z = Math.cos(phi) * Math.cos(the) * Math.sin(psi) - Math.sin(phi) * Math.sin(the)
-            * Math.cos(psi);
-        var w = Math.cos(phi) * Math.cos(the) * Math.cos(psi) + Math.sin(phi) * Math.sin(the)
-            * Math.sin(psi);
-
-        orientation = new Quaternion({
-          x : x,
-          y : y,
-          z : z,
-          w : w
-        });
-        orientation.normalize();
-      }
-      that.origin = new Pose({
-        position : position,
-        orientation : orientation
-      });
+      console.warn('Unknown geometry type ' + type);
     }
+  }
 
-    // Geometry
-    var geoms = xml.getElementsByTagName('geometry');
-    if (geoms.length > 0) {
-      var shape = null;
-      // Check for the shape
-      for (var n in geoms[0].childNodes) {
-        var node = geoms[0].childNodes[n];
-        if (node.nodeType === 1) {
-          shape = node;
-          break;
-        }
-      }
-      // Check the type
-      var type = shape.nodeName;
-      if (type === 'sphere') {
-        that.geometry = new UrdfSphere({
-          xml : shape
-        });
-      } else if (type === 'box') {
-        that.geometry = new UrdfBox({
-          xml : shape
-        });
-      } else if (type === 'cylinder') {
-        that.geometry = new UrdfCylinder({
-          xml : shape
-        });
-      } else if (type === 'mesh') {
-        that.geometry = new UrdfMesh({
-          xml : shape
-        });
-      } else {
-        console.warn('Unknown geometry type ' + type);
-      }
-    }
-
-    // Material
-    var materials = xml.getElementsByTagName('material');
-    if (materials.length > 0) {
-      that.material = new UrdfMaterial({
-        xml : materials[0]
-      });
-    }
-  };
-
-  // Pass it to the XML parser
-  initXml(xml);
+  // Material
+  var materials = xml.getElementsByTagName('material');
+  if (materials.length > 0) {
+    this.material = new UrdfMaterial({
+      xml : materials[0]
+    });
+  }
 }
 
 module.exports = UrdfVisual;
-},{"../math/Pose":14,"../math/Quaternion":15,"../math/Vector3":17,"./UrdfBox":19,"./UrdfCylinder":21,"./UrdfMaterial":23,"./UrdfMesh":24,"./UrdfSphere":26}],29:[function(require,module,exports){
-(function (global){
-module.exports = global.DOMParser;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],30:[function(require,module,exports){
+},{"../math/Pose":16,"../math/Quaternion":17,"../math/Vector3":19,"./UrdfBox":21,"./UrdfCylinder":23,"./UrdfMaterial":25,"./UrdfMesh":26,"./UrdfSphere":28}],31:[function(require,module,exports){
+module.exports = require('xmlshim').DOMParser;
+},{"xmlshim":2}],32:[function(require,module,exports){
 (function (global){
 module.exports = {
 	EventEmitter2: global.EventEmitter2
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],31:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 (function (global){
 module.exports = global.WebSocket;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],32:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /* global document */
 module.exports = function Canvas() {
 	return document.createElement('canvas');
 };
-},{}]},{},[3]);
+},{}]},{},[4]);
