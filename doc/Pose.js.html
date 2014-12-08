@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>JSDoc: Source: math/Pose.js</title>
-    
+
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
@@ -16,18 +16,21 @@
 <body>
 
 <div id="main">
-    
+
     <h1 class="page-title">Source: math/Pose.js</h1>
-    
+
     
 
 
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>/**
+            <pre class="prettyprint source linenums"><code>/**
  * @author David Gossow - dgossow@willowgarage.com
  */
+
+var Vector3 = require('./Vector3');
+var Quaternion = require('./Quaternion');
 
 /**
  * A Pose in 3D space. Values are copied into this object.
@@ -37,19 +40,19 @@
  *   * position - the Vector3 describing the position
  *   * orientation - the ROSLIB.Quaternion describing the orientation
  */
-ROSLIB.Pose = function(options) {
+function Pose(options) {
   options = options || {};
   // copy the values into this object if they exist
-  this.position = new ROSLIB.Vector3(options.position);
-  this.orientation = new ROSLIB.Quaternion(options.orientation);
-};
+  this.position = new Vector3(options.position);
+  this.orientation = new Quaternion(options.orientation);
+}
 
 /**
  * Apply a transform against this pose.
  *
  * @param tf the transform
  */
-ROSLIB.Pose.prototype.applyTransform = function(tf) {
+Pose.prototype.applyTransform = function(tf) {
   this.position.multiplyQuaternion(tf.rotation);
   this.position.add(tf.translation);
   var tmp = tf.rotation.clone();
@@ -62,10 +65,11 @@ ROSLIB.Pose.prototype.applyTransform = function(tf) {
  *
  * @returns the cloned pose
  */
-ROSLIB.Pose.prototype.clone = function() {
-  return new ROSLIB.Pose(this);
+Pose.prototype.clone = function() {
+  return new Pose(this);
 };
-</code></pre>
+
+module.exports = Pose;</code></pre>
         </article>
     </section>
 
@@ -75,15 +79,16 @@ ROSLIB.Pose.prototype.clone = function() {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="ROSLIB.ActionClient.html">ActionClient</a></li><li><a href="ROSLIB.Goal.html">Goal</a></li><li><a href="ROSLIB.Message.html">Message</a></li><li><a href="ROSLIB.Param.html">Param</a></li><li><a href="ROSLIB.Pose.html">Pose</a></li><li><a href="ROSLIB.Quaternion.html">Quaternion</a></li><li><a href="ROSLIB.Ros.html">Ros</a></li><li><a href="ROSLIB.Service.html">Service</a></li><li><a href="ROSLIB.ServiceRequest.html">ServiceRequest</a></li><li><a href="ROSLIB.ServiceResponse.html">ServiceResponse</a></li><li><a href="ROSLIB.SimpleActionServer.html">SimpleActionServer</a></li><li><a href="ROSLIB.TFClient.html">TFClient</a></li><li><a href="ROSLIB.Topic.html">Topic</a></li><li><a href="ROSLIB.Transform.html">Transform</a></li><li><a href="ROSLIB.UrdfBox.html">UrdfBox</a></li><li><a href="ROSLIB.UrdfColor.html">UrdfColor</a></li><li><a href="ROSLIB.UrdfCylinder.html">UrdfCylinder</a></li><li><a href="ROSLIB.UrdfLink.html">UrdfLink</a></li><li><a href="ROSLIB.UrdfMaterial.html">UrdfMaterial</a></li><li><a href="ROSLIB.UrdfMesh.html">UrdfMesh</a></li><li><a href="ROSLIB.UrdfModel.html">UrdfModel</a></li><li><a href="ROSLIB.UrdfSphere.html">UrdfSphere</a></li><li><a href="ROSLIB.UrdfVisual.html">UrdfVisual</a></li><li><a href="ROSLIB.Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="global.html#ActionClient">ActionClient</a></li><li><a href="Goal.html">Goal</a></li><li><a href="global.html#Message">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="global.html#Pose">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="global.html#Service">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="global.html#ServiceResponse">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="global.html#Topic">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="global.html#UrdfColor">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="global.html#UrdfMaterial">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="global.html#UrdfVisual">UrdfVisual</a></li><li><a href="global.html#Vector3">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#assign">assign</a></li><li><a href="global.html#decompressPng">decompressPng</a></li><li><a href="global.html#EventEmitter2">EventEmitter2</a></li><li><a href="global.html#onclose">onclose</a></li><li><a href="global.html#onerror">onerror</a></li><li><a href="global.html#onmessage">onmessage</a></li><li><a href="global.html#onopen">onopen</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li><li><a href="global.html#RosTCP">RosTCP</a></li><li><a href="global.html#SocketAdapter">SocketAdapter</a></li><li><a href="global.html#UrdfTypes">UrdfTypes</a></li><li><a href="global.html#WebSocket">WebSocket</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Tue Sep 09 2014 09:58:55 GMT-0400 (EDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Mon Dec 08 2014 09:12:53 GMT-0500 (EST)
 </footer>
 
 <script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
 </body>
 </html>

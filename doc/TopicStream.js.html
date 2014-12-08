@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: urdf/UrdfMesh.js</title>
+    <title>JSDoc: Source: node/TopicStream.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: urdf/UrdfMesh.js</h1>
+    <h1 class="page-title">Source: node/TopicStream.js</h1>
 
     
 
@@ -25,41 +25,43 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * @author Benjamin Pitzer - ben.pitzer@gmail.com
- * @author Russell Toris - rctoris@wpi.edu
- */
-
-var Vector3 = require('../math/Vector3');
-var UrdfTypes = require('./UrdfTypes');
+            <pre class="prettyprint source linenums"><code>var Topic = require('../core/Topic');
+var DuplexStream = require('stream').Duplex;
 
 /**
- * A Mesh element in a URDF.
- *
- * @constructor
- * @param options - object with following keys:
- *  * xml - the XML element to parse
+ * Publish a connected ROS topic to a duplex
+ * stream. This stream can be piped to, which will
+ * publish to the topic
  */
-function UrdfMesh(options) {
-  this.scale = null;
+Topic.prototype.toStream = function(transform) {
+    var topic = this;
+    var hasTransform = typeof transform === 'function';
 
-  this.type = UrdfTypes.URDF_MESH;
-  this.filename = options.xml.getAttribute('filename');
-
-  // Check for a scale
-  var scale = options.xml.getAttribute('scale');
-  if (scale) {
-    // Get the XYZ
-    var xyz = scale.split(' ');
-    this.scale = new Vector3({
-      x : parseFloat(xyz[0]),
-      y : parseFloat(xyz[1]),
-      z : parseFloat(xyz[2])
+    var stream = new DuplexStream({
+        objectMode: true
     });
-  }
-}
+    stream._read = function() {};
+    
+    // Publish to the topic if someone pipes to stream
+    stream._write = function(chunk, encoding, callback) {
+        if (hasTransform) {
+            chunk = transform(chunk);
+        }
+        if (chunk) {
+            topic.publish(chunk);
+        }
+        callback();
+    };
+    
+    this.subscribe(function(message) {
+        stream.push(message);
+    });
+    this.on('unsubscribe', stream.push.bind(stream, null));
 
-module.exports = UrdfMesh;</code></pre>
+    return stream;
+};
+
+module.exports = Topic;</code></pre>
         </article>
     </section>
 

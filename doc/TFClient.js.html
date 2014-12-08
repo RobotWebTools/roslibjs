@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>JSDoc: Source: tf/TFClient.js</title>
-    
+
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
@@ -16,18 +16,22 @@
 <body>
 
 <div id="main">
-    
+
     <h1 class="page-title">Source: tf/TFClient.js</h1>
-    
+
     
 
 
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>/**
+            <pre class="prettyprint source linenums"><code>/**
  * @author David Gossow - dgossow@willowgarage.com
  */
+
+var ActionClient = require('../actionlib/ActionClient');
+var Goal = require('../actionlib/Goal');
+var Transform = require('../math/Transform');
 
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
@@ -41,7 +45,7 @@
  *   * rate - the rate for the TF republisher
  *   * goalUpdateDelay - the goal update delay for the TF republisher
  */
-ROSLIB.TFClient = function(options) {
+function TFClient(options) {
   options = options || {};
   this.ros = options.ros;
   this.fixedFrame = options.fixedFrame || '/base_link';
@@ -55,12 +59,12 @@ ROSLIB.TFClient = function(options) {
   this.goalUpdateRequested = false;
 
   // Create an ActionClient
-  this.actionClient = new ROSLIB.ActionClient({
+  this.actionClient = new ActionClient({
     ros : this.ros,
     serverName : '/tf2_web_republisher',
     actionName : 'tf2_web_republisher/TFSubscriptionAction'
   });
-};
+}
 
 /**
  * Process the incoming TF message and send them out using the callback
@@ -68,7 +72,7 @@ ROSLIB.TFClient = function(options) {
  *
  * @param tf - the TF message from the server
  */
-ROSLIB.TFClient.prototype.processFeedback = function(tf) {
+TFClient.prototype.processFeedback = function(tf) {
   var that = this;
   tf.transforms.forEach(function(transform) {
     var frameID = transform.child_frame_id;
@@ -77,7 +81,7 @@ ROSLIB.TFClient.prototype.processFeedback = function(tf) {
     }
     var info = that.frameInfos[frameID];
     if (info !== undefined) {
-      info.transform = new ROSLIB.Transform({
+      info.transform = new Transform({
         translation : transform.transform.translation,
         rotation : transform.transform.rotation
       });
@@ -92,7 +96,7 @@ ROSLIB.TFClient.prototype.processFeedback = function(tf) {
  * Create and send a new goal to the tf2_web_republisher based on the current
  * list of TFs.
  */
-ROSLIB.TFClient.prototype.updateGoal = function() {
+TFClient.prototype.updateGoal = function() {
   // Anytime the list of frames changes, we will need to send a new goal.
   if (this.currentGoal) {
     this.currentGoal.cancel();
@@ -110,7 +114,7 @@ ROSLIB.TFClient.prototype.updateGoal = function() {
     goalMessage.source_frames.push(frame);
   }
 
-  this.currentGoal = new ROSLIB.Goal({
+  this.currentGoal = new Goal({
     actionClient : this.actionClient,
     goalMessage : goalMessage
   });
@@ -126,7 +130,7 @@ ROSLIB.TFClient.prototype.updateGoal = function() {
  * @param callback - function with params:
  *   * transform - the transform data
  */
-ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
+TFClient.prototype.subscribe = function(frameID, callback) {
   // remove leading slash, if it's there
   if (frameID[0] === '/') {
     frameID = frameID.substring(1);
@@ -155,7 +159,7 @@ ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
  * @param frameID - the TF frame to unsubscribe from
  * @param callback - the callback function to remove
  */
-ROSLIB.TFClient.prototype.unsubscribe = function(frameID, callback) {
+TFClient.prototype.unsubscribe = function(frameID, callback) {
   // remove leading slash, if it's there
   if (frameID[0] === '/') {
     frameID = frameID.substring(1);
@@ -173,7 +177,7 @@ ROSLIB.TFClient.prototype.unsubscribe = function(frameID, callback) {
   }
 };
 
-</code></pre>
+module.exports = TFClient;</code></pre>
         </article>
     </section>
 
@@ -183,15 +187,16 @@ ROSLIB.TFClient.prototype.unsubscribe = function(frameID, callback) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="ROSLIB.ActionClient.html">ActionClient</a></li><li><a href="ROSLIB.Goal.html">Goal</a></li><li><a href="ROSLIB.Message.html">Message</a></li><li><a href="ROSLIB.Param.html">Param</a></li><li><a href="ROSLIB.Pose.html">Pose</a></li><li><a href="ROSLIB.Quaternion.html">Quaternion</a></li><li><a href="ROSLIB.Ros.html">Ros</a></li><li><a href="ROSLIB.Service.html">Service</a></li><li><a href="ROSLIB.ServiceRequest.html">ServiceRequest</a></li><li><a href="ROSLIB.ServiceResponse.html">ServiceResponse</a></li><li><a href="ROSLIB.SimpleActionServer.html">SimpleActionServer</a></li><li><a href="ROSLIB.TFClient.html">TFClient</a></li><li><a href="ROSLIB.Topic.html">Topic</a></li><li><a href="ROSLIB.Transform.html">Transform</a></li><li><a href="ROSLIB.UrdfBox.html">UrdfBox</a></li><li><a href="ROSLIB.UrdfColor.html">UrdfColor</a></li><li><a href="ROSLIB.UrdfCylinder.html">UrdfCylinder</a></li><li><a href="ROSLIB.UrdfLink.html">UrdfLink</a></li><li><a href="ROSLIB.UrdfMaterial.html">UrdfMaterial</a></li><li><a href="ROSLIB.UrdfMesh.html">UrdfMesh</a></li><li><a href="ROSLIB.UrdfModel.html">UrdfModel</a></li><li><a href="ROSLIB.UrdfSphere.html">UrdfSphere</a></li><li><a href="ROSLIB.UrdfVisual.html">UrdfVisual</a></li><li><a href="ROSLIB.Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="global.html#ActionClient">ActionClient</a></li><li><a href="Goal.html">Goal</a></li><li><a href="global.html#Message">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="global.html#Pose">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="global.html#Service">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="global.html#ServiceResponse">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="global.html#Topic">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="global.html#UrdfColor">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="global.html#UrdfMaterial">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="global.html#UrdfVisual">UrdfVisual</a></li><li><a href="global.html#Vector3">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#assign">assign</a></li><li><a href="global.html#decompressPng">decompressPng</a></li><li><a href="global.html#EventEmitter2">EventEmitter2</a></li><li><a href="global.html#onclose">onclose</a></li><li><a href="global.html#onerror">onerror</a></li><li><a href="global.html#onmessage">onmessage</a></li><li><a href="global.html#onopen">onopen</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li><li><a href="global.html#RosTCP">RosTCP</a></li><li><a href="global.html#SocketAdapter">SocketAdapter</a></li><li><a href="global.html#UrdfTypes">UrdfTypes</a></li><li><a href="global.html#WebSocket">WebSocket</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Tue Sep 09 2014 09:58:55 GMT-0400 (EDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Mon Dec 08 2014 09:12:53 GMT-0500 (EST)
 </footer>
 
 <script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
 </body>
 </html>

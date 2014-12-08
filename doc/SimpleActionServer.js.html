@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>JSDoc: Source: actionlib/SimpleActionServer.js</title>
-    
+
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
@@ -16,18 +16,22 @@
 <body>
 
 <div id="main">
-    
+
     <h1 class="page-title">Source: actionlib/SimpleActionServer.js</h1>
-    
+
     
 
 
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>/**
+            <pre class="prettyprint source linenums"><code>/**
  * @author Laura Lindzey - lindzey@gmail.com
  */
+
+var Topic = require('../core/Topic');
+var Message = require('../core/Message');
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 /**
  * An actionlib action server client.
@@ -43,7 +47,7 @@
  *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
  */
 
-ROSLIB.SimpleActionServer = function(options) {
+function SimpleActionServer(options) {
     var that = this;
     options = options || {};
     this.ros = options.ros;
@@ -51,21 +55,21 @@ ROSLIB.SimpleActionServer = function(options) {
     this.actionName = options.actionName;
 
     // create and advertise publishers
-    this.feedbackPublisher = new ROSLIB.Topic({
+    this.feedbackPublisher = new Topic({
         ros : this.ros,
         name : this.serverName + '/feedback',
         messageType : this.actionName + 'Feedback'
     });
     this.feedbackPublisher.advertise();
 
-    var statusPublisher = new ROSLIB.Topic({
+    var statusPublisher = new Topic({
         ros : this.ros,
         name : this.serverName + '/status',
         messageType : 'actionlib_msgs/GoalStatusArray'
     });
     statusPublisher.advertise();
 
-    this.resultPublisher = new ROSLIB.Topic({
+    this.resultPublisher = new Topic({
         ros : this.ros,
         name : this.serverName + '/result',
         messageType : this.actionName + 'Result'
@@ -73,20 +77,20 @@ ROSLIB.SimpleActionServer = function(options) {
     this.resultPublisher.advertise();
 
     // create and subscribe to listeners
-    var goalListener = new ROSLIB.Topic({
+    var goalListener = new Topic({
         ros : this.ros,
         name : this.serverName + '/goal',
         messageType : this.actionName + 'Goal'
     });
 
-    var cancelListener = new ROSLIB.Topic({
+    var cancelListener = new Topic({
         ros : this.ros,
         name : this.serverName + '/cancel',
         messageType : 'actionlib_msgs/GoalID'
     });
 
     // Track the goals and their status in order to publish status...
-    this.statusMessage = new ROSLIB.Message({
+    this.statusMessage = new Message({
         header : {
             stamp : {secs : 0, nsecs : 100},
             frame_id : ''
@@ -132,23 +136,23 @@ ROSLIB.SimpleActionServer = function(options) {
     cancelListener.subscribe(function(cancelMessage) {
 
         // cancel ALL goals if both empty
-        if(cancelMessage.stamp.secs === 0 && cancelMessage.stamp.secs === 0 && cancelMessage.id === '') {
+        if(cancelMessage.stamp.secs === 0 &amp;&amp; cancelMessage.stamp.secs === 0 &amp;&amp; cancelMessage.id === '') {
             that.nextGoal = null;
             if(that.currentGoal) {
                 that.emit('cancel');
             }
         } else { // treat id and stamp independently
-            if(that.currentGoal && cancelMessage.id === that.currentGoal.goal_id.id) {
+            if(that.currentGoal &amp;&amp; cancelMessage.id === that.currentGoal.goal_id.id) {
                 that.emit('cancel');
-            } else if(that.nextGoal && cancelMessage.id === that.nextGoal.goal_id.id) {
+            } else if(that.nextGoal &amp;&amp; cancelMessage.id === that.nextGoal.goal_id.id) {
                 that.nextGoal = null;
             }
 
-            if(that.nextGoal && isEarlier(that.nextGoal.goal_id.stamp,
+            if(that.nextGoal &amp;&amp; isEarlier(that.nextGoal.goal_id.stamp,
                                           cancelMessage.stamp)) {
                 that.nextGoal = null;
             }
-            if(that.currentGoal && isEarlier(that.currentGoal.goal_id.stamp,
+            if(that.currentGoal &amp;&amp; isEarlier(that.currentGoal.goal_id.stamp,
                                              cancelMessage.stamp)) {
                 
                 that.emit('cancel');
@@ -166,18 +170,18 @@ ROSLIB.SimpleActionServer = function(options) {
         statusPublisher.publish(that.statusMessage);
     }, 500); // publish every 500ms
 
-};
+}
 
-ROSLIB.SimpleActionServer.prototype.__proto__ = EventEmitter2.prototype;
+SimpleActionServer.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
 *  Set action state to succeeded and return to client
 */
 
-ROSLIB.SimpleActionServer.prototype.setSucceeded = function(result2) {
+SimpleActionServer.prototype.setSucceeded = function(result2) {
     
 
-    var resultMessage = new ROSLIB.Message({
+    var resultMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 3},
         result : result2
     });
@@ -197,9 +201,9 @@ ROSLIB.SimpleActionServer.prototype.setSucceeded = function(result2) {
 *  Function to send feedback
 */
 
-ROSLIB.SimpleActionServer.prototype.sendFeedback = function(feedback2) {
+SimpleActionServer.prototype.sendFeedback = function(feedback2) {
 
-    var feedbackMessage = new ROSLIB.Message({
+    var feedbackMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 1},
         feedback : feedback2
     });
@@ -210,10 +214,10 @@ ROSLIB.SimpleActionServer.prototype.sendFeedback = function(feedback2) {
 *  Handle case where client requests preemption
 */
 
-ROSLIB.SimpleActionServer.prototype.setPreempted = function() {
+SimpleActionServer.prototype.setPreempted = function() {
 
     this.statusMessage.status_list = [];
-    var resultMessage = new ROSLIB.Message({
+    var resultMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 2},
     });
     this.resultPublisher.publish(resultMessage);
@@ -226,7 +230,8 @@ ROSLIB.SimpleActionServer.prototype.setPreempted = function() {
         this.currentGoal = null;
     }
 };
-</code></pre>
+
+module.exports = SimpleActionServer;</code></pre>
         </article>
     </section>
 
@@ -236,15 +241,16 @@ ROSLIB.SimpleActionServer.prototype.setPreempted = function() {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="ROSLIB.ActionClient.html">ActionClient</a></li><li><a href="ROSLIB.Goal.html">Goal</a></li><li><a href="ROSLIB.Message.html">Message</a></li><li><a href="ROSLIB.Param.html">Param</a></li><li><a href="ROSLIB.Pose.html">Pose</a></li><li><a href="ROSLIB.Quaternion.html">Quaternion</a></li><li><a href="ROSLIB.Ros.html">Ros</a></li><li><a href="ROSLIB.Service.html">Service</a></li><li><a href="ROSLIB.ServiceRequest.html">ServiceRequest</a></li><li><a href="ROSLIB.ServiceResponse.html">ServiceResponse</a></li><li><a href="ROSLIB.SimpleActionServer.html">SimpleActionServer</a></li><li><a href="ROSLIB.TFClient.html">TFClient</a></li><li><a href="ROSLIB.Topic.html">Topic</a></li><li><a href="ROSLIB.Transform.html">Transform</a></li><li><a href="ROSLIB.UrdfBox.html">UrdfBox</a></li><li><a href="ROSLIB.UrdfColor.html">UrdfColor</a></li><li><a href="ROSLIB.UrdfCylinder.html">UrdfCylinder</a></li><li><a href="ROSLIB.UrdfLink.html">UrdfLink</a></li><li><a href="ROSLIB.UrdfMaterial.html">UrdfMaterial</a></li><li><a href="ROSLIB.UrdfMesh.html">UrdfMesh</a></li><li><a href="ROSLIB.UrdfModel.html">UrdfModel</a></li><li><a href="ROSLIB.UrdfSphere.html">UrdfSphere</a></li><li><a href="ROSLIB.UrdfVisual.html">UrdfVisual</a></li><li><a href="ROSLIB.Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="global.html#ActionClient">ActionClient</a></li><li><a href="Goal.html">Goal</a></li><li><a href="global.html#Message">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="global.html#Pose">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="global.html#Service">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="global.html#ServiceResponse">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="global.html#Topic">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="global.html#UrdfColor">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="global.html#UrdfMaterial">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="global.html#UrdfVisual">UrdfVisual</a></li><li><a href="global.html#Vector3">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#assign">assign</a></li><li><a href="global.html#decompressPng">decompressPng</a></li><li><a href="global.html#EventEmitter2">EventEmitter2</a></li><li><a href="global.html#onclose">onclose</a></li><li><a href="global.html#onerror">onerror</a></li><li><a href="global.html#onmessage">onmessage</a></li><li><a href="global.html#onopen">onopen</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li><li><a href="global.html#RosTCP">RosTCP</a></li><li><a href="global.html#SocketAdapter">SocketAdapter</a></li><li><a href="global.html#UrdfTypes">UrdfTypes</a></li><li><a href="global.html#WebSocket">WebSocket</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Tue Sep 09 2014 09:58:55 GMT-0400 (EDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Mon Dec 08 2014 09:12:53 GMT-0500 (EST)
 </footer>
 
 <script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>JSDoc: Class: Ros</title>
-    
+
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
@@ -16,37 +16,35 @@
 <body>
 
 <div id="main">
-    
+
     <h1 class="page-title">Class: Ros</h1>
-    
+
     
 
 
 
 <section>
-    
+
 <header>
     <h2>
-        <span class="ancestors"><a href="global.html#ROSLIB">ROSLIB</a>.</span>
-    
     Ros
     </h2>
     
-</header>  
+</header>
 
 <article>
     <div class="container-overview">
     
-    
+
     
         
 <dt>
     <h4 class="name" id="Ros"><span class="type-signature"></span>new Ros<span class="signature">(options)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         Manages connection to the server and all interactions with ROS.
@@ -61,126 +59,134 @@ Emits the following events:
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>options</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">possible keys include:
   * url (optional) - the WebSocket URL for rosbridge (can be specified later with `connect`)</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
     
-    
+
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Ros.js.html">core/Ros.js</a>, line 19
+        <a href="Ros.js.html">core/Ros.js</a>, <a href="Ros.js.html#line28">line 28</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
 </dd>
 
     
     </div>
+
     
+
     
+
     
+
     
+
+     
+
     
+
     
-    
-    
-    
-    
-    
-    
-    
+
     
         <h3 class="subsection-title">Methods</h3>
-        
+
         <dl>
             
 <dt>
     <h4 class="name" id="authenticate"><span class="type-signature"></span>authenticate<span class="signature">(mac, client, dest, rand, t, level, end)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         Sends an authorization request to the server.
@@ -188,203 +194,209 @@ Emits the following events:
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>mac</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">MAC (hash) string given by the trusted source.</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>client</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">IP of the client.</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>dest</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">IP of the destination.</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>rand</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">Random string given by the trusted source.</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>t</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">Time of the authorization request.</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>level</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">User level as a string given by the client.</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>end</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">End time of the client's session.</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
     
-    
+
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Ros.js.html">core/Ros.js</a>, line 162
+        <a href="Ros.js.html">core/Ros.js</a>, <a href="Ros.js.html#line74">line 74</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
 </dd>
 
@@ -392,11 +404,11 @@ Emits the following events:
             
 <dt>
     <h4 class="name" id="callOnConnection"><span class="type-signature"></span>callOnConnection<span class="signature">()</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         Sends the message over the WebSocket, but queues the message up if not yet
@@ -405,52 +417,58 @@ connected.
     
 
     
+
     
+
     
-    
-    
-    
+
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Ros.js.html">core/Ros.js</a>, line 182
+        <a href="Ros.js.html">core/Ros.js</a>, <a href="Ros.js.html#line94">line 94</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
 </dd>
 
@@ -458,11 +476,11 @@ connected.
             
 <dt>
     <h4 class="name" id="close"><span class="type-signature"></span>close<span class="signature">()</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         Disconnect from the WebSocket server.
@@ -470,52 +488,58 @@ connected.
     
 
     
+
     
+
     
-    
-    
-    
+
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Ros.js.html">core/Ros.js</a>, line 145
+        <a href="Ros.js.html">core/Ros.js</a>, <a href="Ros.js.html#line57">line 57</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
 </dd>
 
@@ -523,11 +547,11 @@ connected.
             
 <dt>
     <h4 class="name" id="connect"><span class="type-signature"></span>connect<span class="signature">(url)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         Connect to the specified WebSocket.
@@ -535,95 +559,101 @@ connected.
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>url</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">WebSocket URL for Rosbridge</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
     
-    
+
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Ros.js.html">core/Ros.js</a>, line 40
+        <a href="Ros.js.html">core/Ros.js</a>, <a href="Ros.js.html#line50">line 50</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
 </dd>
 
@@ -631,11 +661,11 @@ connected.
             
 <dt>
     <h4 class="name" id="decodeTypeDefs"><span class="type-signature"></span>decodeTypeDefs<span class="signature">(defs)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         Decode a typedefs into a dictionary like `rosmsg show foo/bar`
@@ -643,95 +673,101 @@ connected.
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>defs</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">array of type_def dictionary</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
     
-    
+
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Ros.js.html">core/Ros.js</a>, line 320
+        <a href="Ros.js.html">core/Ros.js</a>, <a href="Ros.js.html#line232">line 232</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
 </dd>
 
@@ -739,11 +775,11 @@ connected.
             
 <dt>
     <h4 class="name" id="getMessageDetails"><span class="type-signature"></span>getMessageDetails<span class="signature">(callback, message)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         Retrieves a detail of ROS message.
@@ -751,114 +787,120 @@ connected.
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>callback</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">function with params:
   * details - Array of the message detail</td>
         </tr>
-	
-	
-	
+
+    
+
         <tr>
             
                 <td class="name"><code>message</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">String of a topic type</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
     
-    
+
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Ros.js.html">core/Ros.js</a>, line 301
+        <a href="Ros.js.html">core/Ros.js</a>, <a href="Ros.js.html#line213">line 213</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
 </dd>
 
@@ -866,11 +908,11 @@ connected.
             
 <dt>
     <h4 class="name" id="getNodes"><span class="type-signature"></span>getNodes<span class="signature">(callback)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         Retrieves list of active node names in ROS.
@@ -878,96 +920,102 @@ connected.
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>callback</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">function with the following params:
   * nodes - array of node names</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
     
-    
+
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Ros.js.html">core/Ros.js</a>, line 241
+        <a href="Ros.js.html">core/Ros.js</a>, <a href="Ros.js.html#line153">line 153</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
 </dd>
 
@@ -975,11 +1023,11 @@ connected.
             
 <dt>
     <h4 class="name" id="getParams"><span class="type-signature"></span>getParams<span class="signature">(callback)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         Retrieves list of param names from the ROS Parameter Server.
@@ -987,96 +1035,102 @@ connected.
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>callback</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">function with params:
  * params - array of param names.</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
     
-    
+
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Ros.js.html">core/Ros.js</a>, line 261
+        <a href="Ros.js.html">core/Ros.js</a>, <a href="Ros.js.html#line173">line 173</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
 </dd>
 
@@ -1084,11 +1138,11 @@ connected.
             
 <dt>
     <h4 class="name" id="getServices"><span class="type-signature"></span>getServices<span class="signature">(callback)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         Retrieves list of active service names in ROS.
@@ -1096,96 +1150,102 @@ connected.
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>callback</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">function with the following params:
   * services - array of service names</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
     
-    
+
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Ros.js.html">core/Ros.js</a>, line 221
+        <a href="Ros.js.html">core/Ros.js</a>, <a href="Ros.js.html#line133">line 133</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
 </dd>
 
@@ -1193,11 +1253,11 @@ connected.
             
 <dt>
     <h4 class="name" id="getTopics"><span class="type-signature"></span>getTopics<span class="signature">(callback)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         Retrieves list of topics in ROS as an array.
@@ -1205,96 +1265,102 @@ connected.
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>callback</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">function with params:
   * topics - Array of topic names</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
     
-    
+
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Ros.js.html">core/Ros.js</a>, line 201
+        <a href="Ros.js.html">core/Ros.js</a>, <a href="Ros.js.html#line113">line 113</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
 </dd>
 
@@ -1302,11 +1368,11 @@ connected.
             
 <dt>
     <h4 class="name" id="getTopicType"><span class="type-signature"></span>getTopicType<span class="signature">(callback)</span><span class="type-signature"></span></h4>
-    
+
     
 </dt>
 <dd>
-    
+
     
     <div class="description">
         Retrieves a type of ROS topic.
@@ -1314,108 +1380,114 @@ connected.
     
 
     
+
     
-    
-    
+
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
         <tr>
             
                 <td class="name"><code>callback</code></td>
             
-            
+
             <td class="type">
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last">function with params:
   * type - String of the topic type</td>
         </tr>
-	
-	
-	</tbody>
+
+    
+    </tbody>
 </table>
     
-    
+
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Ros.js.html">core/Ros.js</a>, line 280
+        <a href="Ros.js.html">core/Ros.js</a>, <a href="Ros.js.html#line192">line 192</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
+
     
+
     
+
     
+
     
+
     
+
     
-    
+
     
 </dd>
 
         </dl>
     
+
     
-    
-    
+
     
 </article>
 
-</section>  
+</section>
 
 
 
@@ -1423,15 +1495,16 @@ connected.
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="ROSLIB.ActionClient.html">ActionClient</a></li><li><a href="ROSLIB.Goal.html">Goal</a></li><li><a href="ROSLIB.Message.html">Message</a></li><li><a href="ROSLIB.Param.html">Param</a></li><li><a href="ROSLIB.Pose.html">Pose</a></li><li><a href="ROSLIB.Quaternion.html">Quaternion</a></li><li><a href="ROSLIB.Ros.html">Ros</a></li><li><a href="ROSLIB.Service.html">Service</a></li><li><a href="ROSLIB.ServiceRequest.html">ServiceRequest</a></li><li><a href="ROSLIB.ServiceResponse.html">ServiceResponse</a></li><li><a href="ROSLIB.SimpleActionServer.html">SimpleActionServer</a></li><li><a href="ROSLIB.TFClient.html">TFClient</a></li><li><a href="ROSLIB.Topic.html">Topic</a></li><li><a href="ROSLIB.Transform.html">Transform</a></li><li><a href="ROSLIB.UrdfBox.html">UrdfBox</a></li><li><a href="ROSLIB.UrdfColor.html">UrdfColor</a></li><li><a href="ROSLIB.UrdfCylinder.html">UrdfCylinder</a></li><li><a href="ROSLIB.UrdfLink.html">UrdfLink</a></li><li><a href="ROSLIB.UrdfMaterial.html">UrdfMaterial</a></li><li><a href="ROSLIB.UrdfMesh.html">UrdfMesh</a></li><li><a href="ROSLIB.UrdfModel.html">UrdfModel</a></li><li><a href="ROSLIB.UrdfSphere.html">UrdfSphere</a></li><li><a href="ROSLIB.UrdfVisual.html">UrdfVisual</a></li><li><a href="ROSLIB.Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="global.html#ActionClient">ActionClient</a></li><li><a href="Goal.html">Goal</a></li><li><a href="global.html#Message">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="global.html#Pose">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="global.html#Service">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="global.html#ServiceResponse">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="global.html#Topic">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="global.html#UrdfColor">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="global.html#UrdfMaterial">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="global.html#UrdfVisual">UrdfVisual</a></li><li><a href="global.html#Vector3">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#assign">assign</a></li><li><a href="global.html#decompressPng">decompressPng</a></li><li><a href="global.html#EventEmitter2">EventEmitter2</a></li><li><a href="global.html#onclose">onclose</a></li><li><a href="global.html#onerror">onerror</a></li><li><a href="global.html#onmessage">onmessage</a></li><li><a href="global.html#onopen">onopen</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li><li><a href="global.html#RosTCP">RosTCP</a></li><li><a href="global.html#SocketAdapter">SocketAdapter</a></li><li><a href="global.html#UrdfTypes">UrdfTypes</a></li><li><a href="global.html#WebSocket">WebSocket</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Tue Sep 09 2014 09:58:55 GMT-0400 (EDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Mon Dec 08 2014 09:12:53 GMT-0500 (EST)
 </footer>
 
 <script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
 </body>
 </html>

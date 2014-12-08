@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: urdf/UrdfMesh.js</title>
+    <title>JSDoc: Source: node/RosTCP.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: urdf/UrdfMesh.js</h1>
+    <h1 class="page-title">Source: node/RosTCP.js</h1>
 
     
 
@@ -25,41 +25,60 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * @author Benjamin Pitzer - ben.pitzer@gmail.com
- * @author Russell Toris - rctoris@wpi.edu
- */
-
-var Vector3 = require('../math/Vector3');
-var UrdfTypes = require('./UrdfTypes');
+            <pre class="prettyprint source linenums"><code>var Ros = require('../core/Ros');
+var net = require('net');
+var socketAdapter = require('../core/SocketAdapter.js');
+var util = require('util');
 
 /**
- * A Mesh element in a URDF.
- *
- * @constructor
- * @param options - object with following keys:
- *  * xml - the XML element to parse
- */
-function UrdfMesh(options) {
-  this.scale = null;
+ * Same as core Ros except supports TCP connections
+ */ 
+function RosTCP(options) {
+  options = options || {};
+  if (!options.encoding) {
+    util.debug('ROSLib uses utf8 encoding by default.' +
+      'It would be more efficent to use ascii (if possible)');
+  }
+  this.encoding = options.encoding || 'utf8';
+  Ros.call(this, options);
 
-  this.type = UrdfTypes.URDF_MESH;
-  this.filename = options.xml.getAttribute('filename');
-
-  // Check for a scale
-  var scale = options.xml.getAttribute('scale');
-  if (scale) {
-    // Get the XYZ
-    var xyz = scale.split(' ');
-    this.scale = new Vector3({
-      x : parseFloat(xyz[0]),
-      y : parseFloat(xyz[1]),
-      z : parseFloat(xyz[2])
+  if (!this.socket &amp;&amp; (options.host || options.port)) {
+    this.connect({
+      host: options.host,
+      port: options.port
     });
   }
 }
 
-module.exports = UrdfMesh;</code></pre>
+util.inherits(RosTCP, Ros);
+
+/**
+ * Connects to a live socket
+ *
+ * * url (String|Int|Object): Address and port to connect to (see http://nodejs.org/api/net.html)
+ *     format {host: String, port: Int} or (port:Int), or "host:port"
+ */
+RosTCP.prototype.connect = function(url) {
+  if (typeof url === 'string' &amp;&amp; url.slice(0, 5) === 'ws://') {
+    Ros.prototype.connect.call(this, url);
+  } else {
+    var events = socketAdapter(this);
+    this.socket = net.connect(url)
+      .on('data', events.onmessage)
+      .on('close', events.onclose)
+      .on('error', events.onerror)
+      .on('connect', events.onopen);
+    this.socket.setEncoding(this.encoding);
+    this.socket.setTimeout(0);
+
+    // Little hack for call on connection
+    this.socket.send = this.socket.write;
+    // Similarly for close
+    this.socket.close = this.socket.end;
+  }
+};
+
+module.exports = RosTCP;</code></pre>
         </article>
     </section>
 

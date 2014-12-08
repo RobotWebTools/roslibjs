@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: urdf/UrdfMesh.js</title>
+    <title>JSDoc: Class: UrdfMaterial</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,51 +17,165 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: urdf/UrdfMesh.js</h1>
+    <h1 class="page-title">Class: UrdfMaterial</h1>
 
     
 
 
+
+<section>
+
+<header>
+    <h2>
+    UrdfMaterial
+    </h2>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
- * @author Benjamin Pitzer - ben.pitzer@gmail.com
- * @author Russell Toris - rctoris@wpi.edu
- */
+</header>
 
-var Vector3 = require('../math/Vector3');
-var UrdfTypes = require('./UrdfTypes');
+<article>
+    <div class="container-overview">
+    
 
-/**
- * A Mesh element in a URDF.
- *
- * @constructor
- * @param options - object with following keys:
- *  * xml - the XML element to parse
- */
-function UrdfMesh(options) {
-  this.scale = null;
+    
+        
+<dt>
+    <h4 class="name" id="UrdfMaterial"><span class="type-signature"></span>new UrdfMaterial<span class="signature">(options)</span><span class="type-signature"></span></h4>
 
-  this.type = UrdfTypes.URDF_MESH;
-  this.filename = options.xml.getAttribute('filename');
+    
+</dt>
+<dd>
 
-  // Check for a scale
-  var scale = options.xml.getAttribute('scale');
-  if (scale) {
-    // Get the XYZ
-    var xyz = scale.split(' ');
-    this.scale = new Vector3({
-      x : parseFloat(xyz[0]),
-      y : parseFloat(xyz[1]),
-      z : parseFloat(xyz[2])
-    });
-  }
-}
+    
+    <div class="description">
+        A Material element in a URDF.
+    </div>
+    
 
-module.exports = UrdfMesh;</code></pre>
-        </article>
-    </section>
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">object with following keys:
+ * xml - the XML element to parse</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="UrdfMaterial.js.html">urdf/UrdfMaterial.js</a>, <a href="UrdfMaterial.js.html#line15">line 15</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
