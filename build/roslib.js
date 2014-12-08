@@ -1491,8 +1491,8 @@ module.exports = Vector3;
  * @author David Gossow - dgossow@willowgarage.com
  */
 
-var ActionClient = require('../actionlib/ActionClient');
-var Goal = require('../actionlib/Goal');
+var Service = require('../core/Service.js');
+var ServiceRequest = require('../core/ServiceRequest.js');
 var Transform = require('../math/Transform');
 
 /**
@@ -1505,7 +1505,9 @@ var Transform = require('../math/Transform');
  *   * angularThres - the angular threshold for the TF republisher
  *   * transThres - the translation threshold for the TF republisher
  *   * rate - the rate for the TF republisher
- *   * goalUpdateDelay - the goal update delay for the TF republisher
+ *   * serviceUpdateDelay - the time to wait after a new subscription
+ *                          to call the TF republisher service again
+ *   * topicTimeout - the timeout parameter for the TF republisher
  */
 function TFClient(options) {
   options = options || {};
@@ -1514,17 +1516,23 @@ function TFClient(options) {
   this.angularThres = options.angularThres || 2.0;
   this.transThres = options.transThres || 0.01;
   this.rate = options.rate || 10.0;
-  this.goalUpdateDelay = options.goalUpdateDelay || 50;
+  this.serviceUpdateDelay = options.serviceUpdateDelay || 50;
+  var seconds = options.topicTimeout || 2.0;
+  var secs = Math.floor(seconds);
+  var nsecs = Math.floor((seconds - secs) * 1000000000);
+  this.topicTimeout = {
+    secs: secs,
+    nsecs: nsecs
+  };
 
-  this.currentGoal = false;
+  this.currentTopic = false;
   this.frameInfos = {};
-  this.goalUpdateRequested = false;
+  this.serviceUpdateRequested = false;
 
-  // Create an ActionClient
-  this.actionClient = new ActionClient({
-    ros : this.ros,
-    serverName : '/tf2_web_republisher',
-    actionName : 'tf2_web_republisher/TFSubscriptionAction'
+  // Create a Service client
+  this.serviceClient = this.ros.Service({
+    name: '/republish_tfs',
+    serviceType: 'tf2_web_republisher/RepublishTFs'
   });
 }
 
@@ -1534,7 +1542,7 @@ function TFClient(options) {
  *
  * @param tf - the TF message from the server
  */
-TFClient.prototype.processFeedback = function(tf) {
+TFClient.prototype.processTFArray = function(tf) {
   var that = this;
   tf.transforms.forEach(function(transform) {
     var frameID = transform.child_frame_id;
@@ -1559,30 +1567,40 @@ TFClient.prototype.processFeedback = function(tf) {
  * list of TFs.
  */
 TFClient.prototype.updateGoal = function() {
-  // Anytime the list of frames changes, we will need to send a new goal.
-  if (this.currentGoal) {
-    this.currentGoal.cancel();
-  }
-
-  var goalMessage = {
+  var request = new ServiceRequest({
     source_frames : [],
     target_frame : this.fixedFrame,
     angular_thres : this.angularThres,
     trans_thres : this.transThres,
-    rate : this.rate
-  };
+    rate : this.rate,
+    timeout: this.topicTimeout
+  });
 
   for (var frame in this.frameInfos) {
-    goalMessage.source_frames.push(frame);
+    request.source_frames.push(frame);
+  }
+  this.serviceClient.callService(request, this.processResponse.bind(this));
+  this.serviceUpdateRequested = false;
+};
+
+/**
+ * Process the service response and subscribe to the tf republisher
+ * topic
+ *
+ * @param response the service response containing the topic name
+ */
+TFClient.prototype.processResponse = function(response) {
+  // if we subscribed to a topic before, unsubscribe so
+  // the republisher stops publishing it
+  if (this.currentTopic) {
+    this.currentTopic.unsubscribe();
   }
 
-  this.currentGoal = new Goal({
-    actionClient : this.actionClient,
-    goalMessage : goalMessage
+  this.currentTopic = this.ros.Topic({
+    name: response.topic_name,
+    messageType: 'tf2_web_republisher/TFArray'
   });
-  this.currentGoal.on('feedback', this.processFeedback.bind(this));
-  this.currentGoal.send();
-  this.goalUpdateRequested = false;
+  this.currentTopic.subscribe(this.processTFArray.bind(this));
 };
 
 /**
@@ -1602,9 +1620,9 @@ TFClient.prototype.subscribe = function(frameID, callback) {
     this.frameInfos[frameID] = {
       cbs : []
     };
-    if (!this.goalUpdateRequested) {
-      setTimeout(this.updateGoal.bind(this), this.goalUpdateDelay);
-      this.goalUpdateRequested = true;
+    if (!this.serviceUpdateRequested) {
+      setTimeout(this.updateGoal.bind(this), this.serviceUpdateDelay);
+      this.serviceUpdateRequested = true;
     }
   } else {
     // if we already have a transform, call back immediately
@@ -1640,7 +1658,8 @@ TFClient.prototype.unsubscribe = function(frameID, callback) {
 };
 
 module.exports = TFClient;
-},{"../actionlib/ActionClient":5,"../actionlib/Goal":6,"../math/Transform":18}],21:[function(require,module,exports){
+
+},{"../core/Service.js":11,"../core/ServiceRequest.js":12,"../math/Transform":18}],21:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
