@@ -37,7 +37,7 @@ exports.implementation = document.implementation;
  */
 
 var ROSLIB = this.ROSLIB || {
-  REVISION : '0.10.0-SNAPSHOT'
+  REVISION : '0.10.0'
 };
 
 var Ros = ROSLIB.Ros = require('./core/Ros');
@@ -81,6 +81,7 @@ require('object-assign')(ROSLIB, require('./urdf/UrdfTypes'));
 });
 
 module.exports = ROSLIB;
+
 },{"./actionlib/ActionClient":5,"./actionlib/Goal":6,"./actionlib/SimpleActionServer":7,"./core/Message":8,"./core/Param":9,"./core/Ros":10,"./core/Service":11,"./core/ServiceRequest":12,"./core/ServiceResponse":13,"./core/Topic":15,"./math/Pose":16,"./math/Quaternion":17,"./math/Transform":18,"./math/Vector3":19,"./tf/TFClient":20,"./urdf/UrdfBox":21,"./urdf/UrdfColor":22,"./urdf/UrdfCylinder":23,"./urdf/UrdfLink":24,"./urdf/UrdfMaterial":25,"./urdf/UrdfMesh":26,"./urdf/UrdfModel":27,"./urdf/UrdfSphere":28,"./urdf/UrdfTypes":29,"./urdf/UrdfVisual":30,"object-assign":1}],4:[function(require,module,exports){
 (function (global){
 global.ROSLIB = require('./RosLib');

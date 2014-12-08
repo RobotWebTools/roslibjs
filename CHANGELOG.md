@@ -1,3 +1,16 @@
+2014-12-08 - **0.10.0**
+ * Refactor Karma testing and build configuration [(megawac)](https://github.com/megawac/)
+ * Remove testing invalid XML [(megawac)](https://github.com/megawac/)
+ * Use the correct id when unsubbing a Topic [(megawac)](https://github.com/megawac/)
+ * Simplify core/Topic [(megawac)](https://github.com/megawac/)
+ * Make source files UMD compliant [(megawac)](https://github.com/megawac/)
+ * Refactor tests to support node [(megawac)](https://github.com/megawac/)
+ * Allow multiple subscriptions to a topic [(megawac)](https://github.com/megawac/)
+ * Unsubscribe should not remove other topic's listeners [(megawac)](https://github.com/megawac/)
+ * Alternative syntax for create Topics, Services, Params, etc [(megawac)](https://github.com/megawac/)
+ * Fixed quaternion default value issue [Akin Sisbot]
+ * TCP connections to ROS bridge for node [(megawac)](https://github.com/megawac/)
+
 2014-09-09 - **0.9.0**
  * Add connection status indicator to roslibjs examples [(T045T)](https://github.com/T045T/)
  * Add a bower.json to publish this as a Bower packagee [(Rayman)](https://github.com/Rayman/)
