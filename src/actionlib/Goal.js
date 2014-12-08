@@ -2,6 +2,9 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
+var Message = require('../core/Message');
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
+
 /**
  * An actionlib goal goal is associated with an action server.
  *
@@ -13,7 +16,7 @@
  *   * actionClient - the ROSLIB.ActionClient to use with this goal
  *   * goalMessage - The JSON object containing the goal for the action server
  */
-ROSLIB.Goal = function(options) {
+function Goal(options) {
   var that = this;
   this.actionClient = options.actionClient;
   this.goalMessage = options.goalMessage;
@@ -25,7 +28,7 @@ ROSLIB.Goal = function(options) {
   // Create a random ID
   this.goalID = 'goal_' + Math.random() + '_' + date.getTime();
   // Fill in the goal message
-  this.goalMessage = new ROSLIB.Message({
+  this.goalMessage = new Message({
     goal_id : {
       stamp : {
         secs : 0,
@@ -51,15 +54,16 @@ ROSLIB.Goal = function(options) {
 
   // Add the goal
   this.actionClient.goals[this.goalID] = this;
-};
-ROSLIB.Goal.prototype.__proto__ = EventEmitter2.prototype;
+}
+
+Goal.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
  * Send the goal to the action server.
  *
  * @param timeout (optional) - a timeout length for the goal's result
  */
-ROSLIB.Goal.prototype.send = function(timeout) {
+Goal.prototype.send = function(timeout) {
   var that = this;
   that.actionClient.goalTopic.publish(that.goalMessage);
   if (timeout) {
@@ -74,9 +78,11 @@ ROSLIB.Goal.prototype.send = function(timeout) {
 /**
  * Cancel the current goal.
  */
-ROSLIB.Goal.prototype.cancel = function() {
-  var cancelMessage = new ROSLIB.Message({
+Goal.prototype.cancel = function() {
+  var cancelMessage = new Message({
     id : this.goalID
   });
   this.actionClient.cancelTopic.publish(cancelMessage);
 };
+
+module.exports = Goal;

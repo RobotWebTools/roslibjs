@@ -3,6 +3,8 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
+var UrdfVisual = require('./UrdfVisual');
+
 /**
  * A Link element in a URDF.
  *
@@ -10,29 +12,14 @@
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-ROSLIB.UrdfLink = function(options) {
-  options = options || {};
-  var that = this;
-  var xml = options.xml;
-  this.name = null;
-  this.visual = null;
+function UrdfLink(options) {
+  this.name = options.xml.getAttribute('name');
+  var visuals = options.xml.getElementsByTagName('visual');
+  if (visuals.length > 0) {
+    this.visual = new UrdfVisual({
+      xml : visuals[0]
+    });
+  }
+}
 
-  /**
-   * Initialize the element with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xml) {
-    that.name = xml.getAttribute('name');
-    var visuals = xml.getElementsByTagName('visual');
-    if (visuals.length > 0) {
-      that.visual = new ROSLIB.UrdfVisual({
-        xml : visuals[0]
-      });
-    }
-  };
-
-  // Pass it to the XML parser
-  initXml(xml);
-};
-
+module.exports = UrdfLink;

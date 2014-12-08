@@ -1,11 +1,43 @@
-var expect = chai.expect;
+var expect = require('chai').expect;
+var ROSLIB = require('..');
+
+var DOMParser = typeof DOMParser == 'function' ? DOMParser : require('../src/util/DOMParser');
+// See https://developer.mozilla.org/docs/XPathResult#Constants
+var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
 
 var sample_urdf = function (){
   return '<robot name="test_robot">' +
-    '  <link name="link1" />'+
-    '  <link name="link2" />'+
-    '  <link name="link3" />'+
-    '  <link name="link4" />'+
+    '  <link name="link1">'+ // test well-behaved versions of the basic shapes
+    '    <visual>'+
+    '      <geometry>'+
+    '        <sphere radius="1" />'+
+    '      </geometry>'+
+    '    </visual>'+
+    '  </link>'+
+    '  <link name="link2">'+
+    '    <visual>'+
+    '      <geometry>'+
+    '        <box size="0.5 0.5 0.5" />'+
+    '      </geometry>'+
+    '    </visual>'+
+    '  </link>'+
+    '  <link name="link3">'+
+    '    <visual>'+
+    '      <geometry>'+
+    '        <cylinder radius="0.2" length="2" />'+
+    '      </geometry>'+
+    '    </visual>'+
+    '  </link>'+
+    '  <link name="link4">'+ // and an extra one with a material
+    '    <visual>'+
+    '      <geometry>'+
+    '        <box size="1 1 1" />'+
+    '      </geometry>'+
+    '      <material name="red">'+
+    '        <color rgba="1 0 0 1" />'+
+    '      </material>'+
+    '    </visual>'+
+    '  </link>'+
     '  <joint name="joint1" type="continuous">'+
     '    <parent link="link1"/>'+
     '    <child link="link2"/>'+
@@ -33,13 +65,30 @@ describe('URDF', function() {
       expect(urdfModel.name).to.equal('test_robot');
     });
 
+    it('should correctly construct visual elements', function() {
+      var urdfModel = new ROSLIB.UrdfModel({
+        string: sample_urdf()
+      });
+
+      // Check all the visual elements
+      expect(urdfModel.links['link1'].visual.geometry.radius).to.equal(1.0);
+      expect(urdfModel.links['link2'].visual.geometry.dimension.x).to.equal(0.5);
+      expect(urdfModel.links['link2'].visual.geometry.dimension.y).to.equal(0.5);
+      expect(urdfModel.links['link2'].visual.geometry.dimension.z).to.equal(0.5);
+      expect(urdfModel.links['link3'].visual.geometry.length).to.equal(2.0);
+      expect(urdfModel.links['link3'].visual.geometry.radius).to.equal(0.2);
+
+      expect(urdfModel.links['link4'].visual.material.name).to.equal('red');
+      expect(urdfModel.links['link4'].visual.material.color.r).to.equal(1.0);
+      expect(urdfModel.links['link4'].visual.material.color.g).to.equal(0);
+      expect(urdfModel.links['link4'].visual.material.color.b).to.equal(0);
+      expect(urdfModel.links['link4'].visual.material.color.a).to.equal(1.0);
+    });
+
     it('is ignorant to the xml node', function(){
       var parser = new DOMParser();
-      var xml1 = parser.parseFromString("", 'text/xml');
-      var xml2 = parser.parseFromString(sample_urdf(), 'text/xml');
-      var robotXml = xml1.evaluate('//robot', xml2, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-      expect(robotXml.getAttribute('name')).to.equal('test_robot');
-      var robotXml = xml2.evaluate('//robot', xml2, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+      var xml = parser.parseFromString(sample_urdf(), 'text/xml');
+      var robotXml = xml.evaluate('//robot', xml, null, XPATH_FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
       expect(robotXml.getAttribute('name')).to.equal('test_robot');
     });
   });

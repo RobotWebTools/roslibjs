@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <script src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
-<script src="http://cdn.robotwebtools.org/roslibjs/current/roslib.js"></script>
+<script src="../build/roslib.js"></script>
 
 <script>
   // Connecting to ROS
@@ -41,14 +41,14 @@
 
       if (that.canceled === true ) {
         console.log("Action server preempted");
-        
+
         that.fibonacciServer.setPreempted();
       }
       console.log(fibonacciSequence);
       //send feedback
       var feedback = { sequence: fibonacciSequence };
       that.fibonacciServer.sendFeedback(fibonacciSequence);
-    }      
+    }
 
     //send result
     var result = { sequence: fibonacciSequence};

@@ -1,3 +1,6 @@
 .idea
 .vagrant
 node_modules
+*.out
+*.log
+*.tar.gz

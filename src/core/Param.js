@@ -2,6 +2,9 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
+var Service = require('./Service');
+var ServiceRequest = require('./ServiceRequest');
+
 /**
  * A ROS parameter.
  *
@@ -10,11 +13,11 @@
  *   * ros - the ROSLIB.Ros connection handle
  *   * name - the param name, like max_vel_x
  */
-ROSLIB.Param = function(options) {
+function Param(options) {
   options = options || {};
   this.ros = options.ros;
   this.name = options.name;
-};
+}
 
 /**
  * Fetches the value of the param.
@@ -22,14 +25,14 @@ ROSLIB.Param = function(options) {
  * @param callback - function with the following params:
  *  * value - the value of the param from ROS.
  */
-ROSLIB.Param.prototype.get = function(callback) {
-  var paramClient = new ROSLIB.Service({
+Param.prototype.get = function(callback) {
+  var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/get_param',
     serviceType : 'rosapi/GetParam'
   });
 
-  var request = new ROSLIB.ServiceRequest({
+  var request = new ServiceRequest({
     name : this.name
   });
 
@@ -44,14 +47,14 @@ ROSLIB.Param.prototype.get = function(callback) {
  *
  * @param value - value to set param to.
  */
-ROSLIB.Param.prototype.set = function(value) {
-  var paramClient = new ROSLIB.Service({
+Param.prototype.set = function(value) {
+  var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/set_param',
     serviceType : 'rosapi/SetParam'
   });
 
-  var request = new ROSLIB.ServiceRequest({
+  var request = new ServiceRequest({
     name : this.name,
     value : JSON.stringify(value)
   });
@@ -63,17 +66,19 @@ ROSLIB.Param.prototype.set = function(value) {
 /**
  * Delete this parameter on the ROS server.
  */
-ROSLIB.Param.prototype.delete = function() {
-  var paramClient = new ROSLIB.Service({
+Param.prototype.delete = function() {
+  var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/delete_param',
     serviceType : 'rosapi/DeleteParam'
   });
 
-  var request = new ROSLIB.ServiceRequest({
+  var request = new ServiceRequest({
     name : this.name
   });
 
   paramClient.callService(request, function() {
   });
 };
+
+module.exports = Param;

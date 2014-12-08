@@ -2,6 +2,10 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
+var ActionClient = require('../actionlib/ActionClient');
+var Goal = require('../actionlib/Goal');
+var Transform = require('../math/Transform');
+
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
  *
@@ -14,7 +18,7 @@
  *   * rate - the rate for the TF republisher
  *   * goalUpdateDelay - the goal update delay for the TF republisher
  */
-ROSLIB.TFClient = function(options) {
+function TFClient(options) {
   options = options || {};
   this.ros = options.ros;
   this.fixedFrame = options.fixedFrame || '/base_link';
@@ -28,12 +32,12 @@ ROSLIB.TFClient = function(options) {
   this.goalUpdateRequested = false;
 
   // Create an ActionClient
-  this.actionClient = new ROSLIB.ActionClient({
+  this.actionClient = new ActionClient({
     ros : this.ros,
     serverName : '/tf2_web_republisher',
     actionName : 'tf2_web_republisher/TFSubscriptionAction'
   });
-};
+}
 
 /**
  * Process the incoming TF message and send them out using the callback
@@ -41,7 +45,7 @@ ROSLIB.TFClient = function(options) {
  *
  * @param tf - the TF message from the server
  */
-ROSLIB.TFClient.prototype.processFeedback = function(tf) {
+TFClient.prototype.processFeedback = function(tf) {
   var that = this;
   tf.transforms.forEach(function(transform) {
     var frameID = transform.child_frame_id;
@@ -50,7 +54,7 @@ ROSLIB.TFClient.prototype.processFeedback = function(tf) {
     }
     var info = that.frameInfos[frameID];
     if (info !== undefined) {
-      info.transform = new ROSLIB.Transform({
+      info.transform = new Transform({
         translation : transform.transform.translation,
         rotation : transform.transform.rotation
       });
@@ -65,7 +69,7 @@ ROSLIB.TFClient.prototype.processFeedback = function(tf) {
  * Create and send a new goal to the tf2_web_republisher based on the current
  * list of TFs.
  */
-ROSLIB.TFClient.prototype.updateGoal = function() {
+TFClient.prototype.updateGoal = function() {
   // Anytime the list of frames changes, we will need to send a new goal.
   if (this.currentGoal) {
     this.currentGoal.cancel();
@@ -83,7 +87,7 @@ ROSLIB.TFClient.prototype.updateGoal = function() {
     goalMessage.source_frames.push(frame);
   }
 
-  this.currentGoal = new ROSLIB.Goal({
+  this.currentGoal = new Goal({
     actionClient : this.actionClient,
     goalMessage : goalMessage
   });
@@ -99,7 +103,7 @@ ROSLIB.TFClient.prototype.updateGoal = function() {
  * @param callback - function with params:
  *   * transform - the transform data
  */
-ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
+TFClient.prototype.subscribe = function(frameID, callback) {
   // remove leading slash, if it's there
   if (frameID[0] === '/') {
     frameID = frameID.substring(1);
@@ -128,7 +132,7 @@ ROSLIB.TFClient.prototype.subscribe = function(frameID, callback) {
  * @param frameID - the TF frame to unsubscribe from
  * @param callback - the callback function to remove
  */
-ROSLIB.TFClient.prototype.unsubscribe = function(frameID, callback) {
+TFClient.prototype.unsubscribe = function(frameID, callback) {
   // remove leading slash, if it's there
   if (frameID[0] === '/') {
     frameID = frameID.substring(1);
@@ -146,3 +150,4 @@ ROSLIB.TFClient.prototype.unsubscribe = function(frameID, callback) {
   }
 };
 
+module.exports = TFClient;

@@ -3,6 +3,9 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
+var Vector3 = require('../math/Vector3');
+var UrdfTypes = require('./UrdfTypes');
+
 /**
  * A Box element in a URDF.
  *
@@ -10,30 +13,17 @@
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-ROSLIB.UrdfBox = function(options) {
-  options = options || {};
-  var that = this;
-  var xml = options.xml;
+function UrdfBox(options) {
   this.dimension = null;
-  this.type = null;
+  this.type = UrdfTypes.URDF_BOX;
 
-  /**
-   * Initialize the element with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xml) {
-    that.type = ROSLIB.URDF_BOX;
+  // Parse the xml string
+  var xyz = options.xml.getAttribute('size').split(' ');
+  this.dimension = new Vector3({
+    x : parseFloat(xyz[0]),
+    y : parseFloat(xyz[1]),
+    z : parseFloat(xyz[2])
+  });
+}
 
-    // Parse the string
-    var xyz = xml.getAttribute('size').split(' ');
-    that.dimension = new ROSLIB.Vector3({
-      x : parseFloat(xyz[0]),
-      y : parseFloat(xyz[1]),
-      z : parseFloat(xyz[2])
-    });
-  };
-
-  // Pass it to the XML parser
-  initXml(xml);
-};
+module.exports = UrdfBox;

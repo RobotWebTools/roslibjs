@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <script src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
-<script src="http://cdn.robotwebtools.org/roslibjs/current/roslib.js"></script>
+<script src="../build/roslib.js"></script>
 
 <script>
   /**
-   * Setup all visualization elements when the page is loaded. 
+   * Setup all visualization elements when the page is loaded.
    */
   function init() {
     // Connect to ROS.
@@ -20,13 +20,13 @@
       ros : ros,
       name : 'robot_description'
     });
-  
+
     param.get(function(param) {
       // Setup the loader for the URDF.
       var urdfModel = new ROSLIB.UrdfModel({
         string : param
       });
-      
+
       console.log(urdfModel);
     });
     // If there is an error on the backend, an 'error' emit will be emitted.
@@ -37,7 +37,7 @@
       document.getElementById('error').style.display = 'inline';
       console.log(error);
     });
-  
+
     // Find out exactly when we made a connection.
     ros.on('connection', function() {
       console.log('Connection made!');
@@ -46,7 +46,7 @@
       document.getElementById('closed').style.display = 'none';
       document.getElementById('connected').style.display = 'inline';
     });
-  
+
     ros.on('close', function() {
       console.log('Connection closed.');
       document.getElementById('connecting').style.display = 'none';

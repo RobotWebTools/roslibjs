@@ -3,6 +3,8 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
+var UrdfTypes = require('./UrdfTypes');
+
 /**
  * A Sphere element in a URDF.
  *
@@ -10,24 +12,9 @@
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-ROSLIB.UrdfSphere = function(options) {
-  options = options || {};
-  var that = this;
-  var xml = options.xml;
-  this.radius = null;
-  this.type = null;
+function UrdfSphere(options) {
+  this.type = UrdfTypes.URDF_SPHERE;
+  this.radius = parseFloat(options.xml.getAttribute('radius'));
+}
 
-  /**
-   * Initialize the element with the given XML node.
-   *
-   * @param xml - the XML element to parse
-   */
-  var initXml = function(xml) {
-    that.type = ROSLIB.URDF_SPHERE;
-    that.radius = parseFloat(xml.getAttribute('radius'));
-  };
-
-  // pass it to the XML parser
-  initXml(xml);
-};
-
+module.exports = UrdfSphere;
