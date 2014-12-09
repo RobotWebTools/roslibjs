@@ -46,14 +46,10 @@ function TFClient(options) {
  * @param tf - the TF message from the server
  */
 TFClient.prototype.processFeedback = function(tf) {
-  var that = this;
   tf.transforms.forEach(function(transform) {
-    var frameID = transform.child_frame_id;
-    if (frameID[0] === '/') {
-      frameID = frameID.substring(1);
-    }
-    var info = that.frameInfos[frameID];
-    if (info !== undefined) {
+    var frameID = transform.child_frame_id.trimLeft('/');
+    var info = this.frameInfos[frameID];
+    if (info) {
       info.transform = new Transform({
         translation : transform.transform.translation,
         rotation : transform.transform.rotation
@@ -62,7 +58,7 @@ TFClient.prototype.processFeedback = function(tf) {
         cb(info.transform);
       });
     }
-  });
+  }, this);
 };
 
 /**
@@ -76,16 +72,12 @@ TFClient.prototype.updateGoal = function() {
   }
 
   var goalMessage = {
-    source_frames : [],
+    source_frames : Object.keys(this.frameInfos),
     target_frame : this.fixedFrame,
     angular_thres : this.angularThres,
     trans_thres : this.transThres,
     rate : this.rate
   };
-
-  for (var frame in this.frameInfos) {
-    goalMessage.source_frames.push(frame);
-  }
 
   this.currentGoal = new Goal({
     actionClient : this.actionClient,
@@ -105,23 +97,20 @@ TFClient.prototype.updateGoal = function() {
  */
 TFClient.prototype.subscribe = function(frameID, callback) {
   // remove leading slash, if it's there
-  if (frameID[0] === '/') {
-    frameID = frameID.substring(1);
-  }
+  frameID = frameID.trimLeft('/');
   // if there is no callback registered for the given frame, create emtpy callback list
-  if (this.frameInfos[frameID] === undefined) {
+  if (!this.frameInfos[frameID]) {
     this.frameInfos[frameID] = {
-      cbs : []
+      cbs: []
     };
     if (!this.goalUpdateRequested) {
       setTimeout(this.updateGoal.bind(this), this.goalUpdateDelay);
       this.goalUpdateRequested = true;
     }
-  } else {
-    // if we already have a transform, call back immediately
-    if (this.frameInfos[frameID].transform !== undefined) {
-      callback(this.frameInfos[frameID].transform);
-    }
+  }
+  // if we already have a transform, call back immediately
+  else if (this.frameInfos[frameID].transform) {
+    callback(this.frameInfos[frameID].transform);
   }
   this.frameInfos[frameID].cbs.push(callback);
 };
@@ -134,19 +123,15 @@ TFClient.prototype.subscribe = function(frameID, callback) {
  */
 TFClient.prototype.unsubscribe = function(frameID, callback) {
   // remove leading slash, if it's there
-  if (frameID[0] === '/') {
-    frameID = frameID.substring(1);
-  }
+  frameID = frameID.trimLeft('/');
   var info = this.frameInfos[frameID];
-  if (info !== undefined) {
-    var cbIndex = info.cbs.indexOf(callback);
-    if (cbIndex >= 0) {
-      info.cbs.splice(cbIndex, 1);
-      if (info.cbs.length === 0) {
-        delete this.frameInfos[frameID];
-      }
-      this.needUpdate = true;
+  for (var cbs = info && info.cbs || [], idx = cbs.length; idx--;) {
+    if (cbs[idx] === callback) {
+      cbs.splice(idx, 1);
     }
+  }
+  if (!callback || cbs.length === 0) {
+    delete this.frameInfos[frameID];
   }
 };
 
