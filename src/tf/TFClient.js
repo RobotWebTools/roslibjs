@@ -46,7 +46,7 @@ function TFClient(options) {
   this.republisherUpdateRequested = false;
 
   // Create an Action client
-  this.actionclient = this.ros.ActionClient({
+  this.actionClient = this.ros.ActionClient({
     serverName : '/tf2_web_republisher',
     actionName : 'tf2_web_republisher/TFSubscriptionAction'
   });
@@ -98,7 +98,7 @@ TFClient.prototype.updateGoal = function() {
   };
 
   for (var frame in this.frameInfos) {
-    request.source_frames.push(frame);
+    goalMessage.source_frames.push(frame);
   }
 
   // if we're running in groovy compatibility mode (the default)
