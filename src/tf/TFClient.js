@@ -112,7 +112,7 @@ TFClient.prototype.updateGoal = function() {
       goalMessage : goalMessage
     });
 
-    this.currentGoal.on('feedback', this.processTFArray.bind(this));
+    this.currentGoal.on('feedback', this.processTFArray);
     this.currentGoal.send();
   }
   else {
