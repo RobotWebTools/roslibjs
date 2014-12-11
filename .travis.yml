@@ -11,7 +11,18 @@ before_install:
   - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
   - sudo apt-get update -qq
   - sudo apt-get install ros-hydro-ros-base
-  - sudo apt-get install ros-hydro-rosbridge-server ros-hydro-tf2-web-republisher ros-hydro-common-tutorials ros-hydro-rospy-tutorials ros-hydro-actionlib-tutorials
+  # temp local install of tf2_web_republisher
+  # - sudo apt-get install ros-hydro-rosbridge-server ros-hydro-tf2-web-republisher ros-hydro-common-tutorials ros-hydro-rospy-tutorials ros-hydro-actionlib-tutorials
+  - sudo apt-get install ros-hydro-rosbridge-server ros-hydro-common-tutorials ros-hydro-rospy-tutorials ros-hydro-actionlib-tutorials
+  - sudo apt-get install python-catkin-pkg python-rosdep ros-hydro-catkin -qq
+  - sudo rosdep init
+  - rosdep update
+  - mkdir -p /tmp/ws/src
+  - ln -s `pwd` /tmp/ws/roslibjs
+  - cd /tmp/ws/src
+  - git clone https://github.com/RobotWebTools/tf2_web_republisher.git
+  - cd ../
+  - rosdep install --from-paths src --ignore-src --rosdistro hydro -y
   - npm install -g grunt-cli karma-cli
 
   # Set up Xfvb for Firefox headless testing
@@ -19,6 +30,10 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
 before_script:
   - source /opt/ros/hydro/setup.bash
+  - catkin_make
+  - catkin_make install
+  - source install/setup.bash
+  - cd roslibjs
   - sh test/examples/setup_examples.sh
 script:
   - rostopic list
