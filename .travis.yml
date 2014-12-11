@@ -23,6 +23,7 @@ before_install:
   - git clone https://github.com/RobotWebTools/tf2_web_republisher.git
   - cd ../
   - rosdep install --from-paths src --ignore-src --rosdistro hydro -y
+  - cd /tmp/ws/roslibjs
   - npm install -g grunt-cli karma-cli
 
   # Set up Xfvb for Firefox headless testing
@@ -30,10 +31,11 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
 before_script:
   - source /opt/ros/hydro/setup.bash
+  - cd /tmp/ws
   - catkin_make
   - catkin_make install
   - source install/setup.bash
-  - cd roslibjs
+  - cd /tmp/ws/roslibjs
   - sh test/examples/setup_examples.sh
 script:
   - rostopic list
