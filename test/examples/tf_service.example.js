@@ -1,7 +1,7 @@
 var expect = require('chai').expect;
 var ROSLIB = require('../..');
 
-describe('TF2 Republisher Example', function() {
+describe('TF2 Republisher Service Example', function() {
     it('tf republisher', function(done) {
         var ros = new ROSLIB.Ros({
           // Use the service interface to tf2_web_republisher
