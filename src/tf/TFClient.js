@@ -46,7 +46,7 @@ function TFClient(options) {
   this.republisherUpdateRequested = false;
 
   // Create an Action client
-  this.actionclient = this.ros.ActionClien({
+  this.actionclient = this.ros.ActionClient({
     serverName : '/tf2_web_republisher',
     actionName : 'tf2_web_republisher/TFSubscriptionAction'
   });
