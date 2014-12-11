@@ -2,8 +2,12 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
+var ActionClient = require('../actionlib/ActionClient');
+var Goal = require('../actionlib/Goal');
+
 var Service = require('../core/Service.js');
 var ServiceRequest = require('../core/ServiceRequest.js');
+
 var Transform = require('../math/Transform');
 
 /**
@@ -16,8 +20,8 @@ var Transform = require('../math/Transform');
  *   * angularThres - the angular threshold for the TF republisher
  *   * transThres - the translation threshold for the TF republisher
  *   * rate - the rate for the TF republisher
- *   * serviceUpdateDelay - the time to wait after a new subscription
- *                          to call the TF republisher service again
+ *   * updateDelay - the time (in ms) to wait after a new subscription
+ *                   to update the TF republisher's list of TFs
  *   * topicTimeout - the timeout parameter for the TF republisher
  */
 function TFClient(options) {
@@ -27,7 +31,7 @@ function TFClient(options) {
   this.angularThres = options.angularThres || 2.0;
   this.transThres = options.transThres || 0.01;
   this.rate = options.rate || 10.0;
-  this.serviceUpdateDelay = options.serviceUpdateDelay || 50;
+  this.updateDelay = options.updateDelay || 50;
   var seconds = options.topicTimeout || 2.0;
   var secs = Math.floor(seconds);
   var nsecs = Math.floor((seconds - secs) * 1000000000);
@@ -36,9 +40,16 @@ function TFClient(options) {
     nsecs: nsecs
   };
 
+  this.currentGoal = false;
   this.currentTopic = false;
   this.frameInfos = {};
-  this.serviceUpdateRequested = false;
+  this.republisherUpdateRequested = false;
+
+  // Create an Action client
+  this.actionclient = this.ros.ActionClien({
+    serverName : '/tf2_web_republisher',
+    actionName : 'tf2_web_republisher/TFSubscriptionAction'
+  });
 
   // Create a Service client
   this.serviceClient = this.ros.Service({
@@ -74,24 +85,47 @@ TFClient.prototype.processTFArray = function(tf) {
 };
 
 /**
- * Create and send a new goal to the tf2_web_republisher based on the current
- * list of TFs.
+ * Create and send a new goal (or service request) to the tf2_web_republisher
+ * based on the current list of TFs.
  */
 TFClient.prototype.updateGoal = function() {
-  var request = new ServiceRequest({
+  var goalMessage = {
     source_frames : [],
     target_frame : this.fixedFrame,
     angular_thres : this.angularThres,
     trans_thres : this.transThres,
-    rate : this.rate,
-    timeout: this.topicTimeout
-  });
+    rate : this.rate
+  };
 
   for (var frame in this.frameInfos) {
     request.source_frames.push(frame);
   }
-  this.serviceClient.callService(request, this.processResponse.bind(this));
-  this.serviceUpdateRequested = false;
+
+  // if we're running in groovy compatibility mode (the default)
+  // then use the action interface to tf2_web_republisher
+  if(this.ros.groovyCompatibility) {
+    if (this.currentGoal) {
+      this.currentGoal.cancel();
+    }
+    this.currentGoal = new Goal({
+      actionClient : this.actionClient,
+      goalMessage : goalMessage
+    });
+
+    this.currentGoal.on('feedback', this.processTFArray.bind(this));
+    this.currentGoal.send();
+  }
+  else {
+    // otherwise, use the service interface
+    // The service interface has the same parameters as the action,
+    // plus the timeout
+    goalMessage.timeout = this.topicTimeout;
+    var request = new ServiceRequest(goalMessage);
+
+    this.serviceClient.callService(request, this.processResponse.bind(this));
+  }
+
+  this.republisherUpdateRequested = false;
 };
 
 /**
@@ -131,9 +165,9 @@ TFClient.prototype.subscribe = function(frameID, callback) {
     this.frameInfos[frameID] = {
       cbs : []
     };
-    if (!this.serviceUpdateRequested) {
-      setTimeout(this.updateGoal.bind(this), this.serviceUpdateDelay);
-      this.serviceUpdateRequested = true;
+    if (!this.republisherUpdateRequested) {
+      setTimeout(this.updateGoal.bind(this), this.updateDelay);
+      this.republisherUpdateRequested = true;
     }
   } else {
     // if we already have a transform, call back immediately
