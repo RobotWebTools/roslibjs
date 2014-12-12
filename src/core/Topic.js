@@ -79,6 +79,10 @@ Topic.prototype.subscribe = function(callback) {
 /**
  * Unregisters as a subscriber for the topic. Unsubscribing will remove
  * all subscribe callbacks.
+ *
+ * @param callback - the optional callback to unregister, if
+ *     * provided and other listeners are registered the topic won't
+ *     * unsubscribe, just stop emitting to the passed listener
  */
 Topic.prototype.unsubscribe = function(callback) {
   if (callback) {
