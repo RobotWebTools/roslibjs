@@ -80,7 +80,12 @@ Topic.prototype.subscribe = function(callback) {
  * Unregisters as a subscriber for the topic. Unsubscribing will remove
  * all subscribe callbacks.
  */
-Topic.prototype.unsubscribe = function() {
+Topic.prototype.unsubscribe = function(callback) {
+  if (callback) {
+    this.off('message', callback);
+    // If there is any other callbacks still subscribed don't unsubscribe
+    if (this.listeners('message').length) { return; }
+  }
   if (!this.subscribeId) { return; }
   // Note: Don't call this.removeAllListeners, allow client to handle that themselves
   this.ros.off(this.name, this._messageCallback);
