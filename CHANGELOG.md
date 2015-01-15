@@ -30,7 +30,7 @@
 
 2014-05-13 - **r7**
  * Removed sending value as a message field in GetParam service call [(mitchellwills)](https://github.com/mitchellwills/)
- * Update UrdfBox.js [(Vegekou)](https://github.com/Vegekou/)
+ * Update UrdfBox.js [(rbonghi)](https://github.com/rbonghi/)
  * Send 'latch' parameter to publish and advertise commands [(adamantivm)](https://github.com/adamantivm/)
  * Fixed ros service call parameter order [(Pro)](https://github.com/Pro/)
  * Added error message from rosbridge to failedCallback [(Pro)](https://github.com/Pro/)
