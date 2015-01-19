@@ -1,6 +1,7 @@
 {
   "globals": {
-    "global": true
+    "global": true,
+    "window": true
   },
   "curly": true,
   "eqeqeq": true,

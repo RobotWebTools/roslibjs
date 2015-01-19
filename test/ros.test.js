@@ -11,6 +11,7 @@ describe('ROS', function() {
       // of this test proves the 'warn' property will be set with default
       // EventEmitter2 settings.
       var callCount = 50;
+      window = {};
       var eventEmitter = new EventEmitter2();
       for (var i = 0; i < callCount; i++) {
         eventEmitter.on('foo', function() { });

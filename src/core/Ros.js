@@ -44,6 +44,7 @@ function Ros(options) {
 
   // begin by checking if a URL was given
   if (options.url) {
+    this.socketio = (options.url.indexOf('http') !== -1);
     this.connect(options.url);
   }
 }
@@ -56,7 +57,17 @@ Ros.prototype.__proto__ = EventEmitter2.prototype;
  * @param url - WebSocket URL for Rosbridge
  */
 Ros.prototype.connect = function(url) {
-  this.socket = assign(new WebSocket(url), socketAdapter(this));
+  if( window.hasOwnProperty('io') && this.socketio){
+    this.socket = assign(window['io'](url), socketAdapter(this));
+
+    this.socket.on('connect', this.socket.onopen);
+    this.socket.on('data', this.socket.onmessage);
+    this.socket.on('close', this.socket.onclose);
+    this.socket.on('error', this.socket.onerror);
+  }else{
+    this.socket = assign(new WebSocket(url), socketAdapter(this));
+  }
+
 };
 
 /**
@@ -102,13 +113,19 @@ Ros.prototype.authenticate = function(mac, client, dest, rand, t, level, end) {
 Ros.prototype.callOnConnection = function(message) {
   var that = this;
   var messageJson = JSON.stringify(message);
+  var emitter = null;
+  if( window.hasOwnProperty('io')  && this.socketio ){
+    emitter = function(msg){that.socket.emit('operation', msg);};
+  }else{
+    emitter = function(msg){that.socket.send(msg);};
+  }
 
   if (!this.isConnected) {
     that.once('connection', function() {
-      that.socket.send(messageJson);
+      emitter(messageJson);
     });
   } else {
-    that.socket.send(messageJson);
+    emitter(messageJson);
   }
 };
 
@@ -280,7 +297,7 @@ Ros.prototype.decodeTypeDefs = function(defs) {
     }
     return typeDefDict;
   };
-  
+
   return decodeTypeDefsRec(defs[0], defs);
 };
 
