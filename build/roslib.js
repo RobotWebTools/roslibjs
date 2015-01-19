@@ -668,7 +668,7 @@ Ros.prototype.__proto__ = EventEmitter2.prototype;
  */
 Ros.prototype.connect = function(url) {
   if( window.hasOwnProperty('io') && this.socketio){
-    this.socket = assign(window['io'](url), socketAdapter(this));
+    this.socket = assign(window['io'](url, {'force new connection': true}), socketAdapter(this));
 
     this.socket.on('connect', this.socket.onopen);
     this.socket.on('data', this.socket.onmessage);
