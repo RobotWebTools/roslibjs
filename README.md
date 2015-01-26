@@ -1,7 +1,5 @@
-roslibjs + socketio
+roslibjs
 ========
-
-This forks adds the possibility to connect roslib to the rosbridge using socketio, allowing to use socketio's fallbacks. The connection will follow the standard used in firos.
 
 #### The Standard ROS JavaScript Library
 For full documentation, see [the ROS wiki](http://ros.org/wiki/roslibjs) or check out some [working demos](http://robotwebtools.org/).
