@@ -22,8 +22,8 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  *  * <serviceID> - a service response came from rosbridge with the given ID
  *
  * @constructor
- * @param options - possible keys include:
- *   * url (optional) - the WebSocket URL for rosbridge (can be specified later with `connect`)
+ * @param options - possible keys include: <br>
+ *   * url (optional) - (can be specified later with `connect`) the WebSocket URL for rosbridge or the node server url to connect using socket.io (if socket.io exists in the page) <br>
  *   * groovyCompatibility - don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools (defaults to true)
  */
 function Ros(options) {
@@ -44,6 +44,7 @@ function Ros(options) {
 
   // begin by checking if a URL was given
   if (options.url) {
+    this.socketio = (options.url.indexOf('http') !== -1);
     this.connect(options.url);
   }
 }
@@ -56,7 +57,17 @@ Ros.prototype.__proto__ = EventEmitter2.prototype;
  * @param url - WebSocket URL for Rosbridge
  */
 Ros.prototype.connect = function(url) {
-  this.socket = assign(new WebSocket(url), socketAdapter(this));
+  if( typeof(io) !== 'undefined' && this.socketio){
+    this.socket = assign(io(url, {'force new connection': true}), socketAdapter(this));
+
+    this.socket.on('connect', this.socket.onopen);
+    this.socket.on('data', this.socket.onmessage);
+    this.socket.on('close', this.socket.onclose);
+    this.socket.on('error', this.socket.onerror);
+  }else{
+    this.socket = assign(new WebSocket(url), socketAdapter(this));
+  }
+
 };
 
 /**
@@ -102,13 +113,19 @@ Ros.prototype.authenticate = function(mac, client, dest, rand, t, level, end) {
 Ros.prototype.callOnConnection = function(message) {
   var that = this;
   var messageJson = JSON.stringify(message);
+  var emitter = null;
+  if( typeof(io) !== 'undefined' && this.socketio ){
+    emitter = function(msg){that.socket.emit('operation', msg);};
+  }else{
+    emitter = function(msg){that.socket.send(msg);};
+  }
 
   if (!this.isConnected) {
     that.once('connection', function() {
-      that.socket.send(messageJson);
+      emitter(messageJson);
     });
   } else {
-    that.socket.send(messageJson);
+    emitter(messageJson);
   }
 };
 
@@ -280,7 +297,7 @@ Ros.prototype.decodeTypeDefs = function(defs) {
     }
     return typeDefDict;
   };
-  
+
   return decodeTypeDefsRec(defs[0], defs);
 };
 

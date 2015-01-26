@@ -28,7 +28,8 @@
     "eventemitter2": "~0.4.13",
     "object-assign": "^2.0.0",
     "ws": "^0.4.32",
-    "xmlshim": "~0.0.9"
+    "xmlshim": "~0.0.9",
+    "socket.io": "1.2.1"
   },
   "browserify": {
     "transform": [

@@ -1,4 +1,4 @@
-roslibjs [![Build Status](https://api.travis-ci.org/RobotWebTools/roslibjs.png)](https://travis-ci.org/RobotWebTools/roslibjs)
+roslibjs
 ========
 
 #### The Standard ROS JavaScript Library

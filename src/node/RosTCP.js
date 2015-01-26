@@ -1,11 +1,14 @@
 var Ros = require('../core/Ros');
+var SocketIO = require('./SocketIO');
 var net = require('net');
 var socketAdapter = require('../core/SocketAdapter.js');
 var util = require('util');
 
 /**
- * Same as core Ros except supports TCP connections
- */ 
+ * Same as core Ros except supports TCP connections,
+ * also can receive a socket.io instance (options.socketio) or server intance (option.http)
+ * to connect to the front using socket.io
+ */
 function RosTCP(options) {
   options = options || {};
   if (!options.encoding) {
@@ -20,6 +23,9 @@ function RosTCP(options) {
       host: options.host,
       port: options.port
     });
+  }
+  if(options.http || options.socketio){
+    this.io = new SocketIO(options, this);
   }
 }
 

@@ -1,6 +1,7 @@
 {
   "globals": {
-    "global": true
+    "global": true,
+    "io": true
   },
   "curly": true,
   "eqeqeq": true,
