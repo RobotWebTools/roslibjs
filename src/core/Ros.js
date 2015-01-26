@@ -22,8 +22,8 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  *  * <serviceID> - a service response came from rosbridge with the given ID
  *
  * @constructor
- * @param options - possible keys include:
- *   * url (optional) - the WebSocket URL for rosbridge (can be specified later with `connect`)
+ * @param options - possible keys include: <br>
+ *   * url (optional) - (can be specified later with `connect`) the WebSocket URL for rosbridge or the node server url to connect using socket.io (if socket.io exists in the page) <br>
  *   * groovyCompatibility - don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools (defaults to true)
  */
 function Ros(options) {
