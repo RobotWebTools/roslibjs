@@ -667,8 +667,8 @@ Ros.prototype.__proto__ = EventEmitter2.prototype;
  * @param url - WebSocket URL for Rosbridge
  */
 Ros.prototype.connect = function(url) {
-  if( window.hasOwnProperty('io') && this.socketio){
-    this.socket = assign(window['io'](url, {'force new connection': true}), socketAdapter(this));
+  if( typeof(io) !== 'undefined' && this.socketio){
+    this.socket = assign(io(url, {'force new connection': true}), socketAdapter(this));
 
     this.socket.on('connect', this.socket.onopen);
     this.socket.on('data', this.socket.onmessage);
@@ -724,7 +724,7 @@ Ros.prototype.callOnConnection = function(message) {
   var that = this;
   var messageJson = JSON.stringify(message);
   var emitter = null;
-  if( window.hasOwnProperty('io')  && this.socketio ){
+  if( typeof(io) !== 'undefined' && this.socketio ){
     emitter = function(msg){that.socket.emit('operation', msg);};
   }else{
     emitter = function(msg){that.socket.send(msg);};
