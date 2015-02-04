@@ -37,7 +37,7 @@ exports.implementation = document.implementation;
  */
 
 var ROSLIB = this.ROSLIB || {
-  REVISION : '0.10.0'
+  REVISION : '0.11.0'
 };
 
 var Ros = ROSLIB.Ros = require('./core/Ros');
@@ -574,7 +574,7 @@ Param.prototype.get = function(callback) {
  *
  * @param value - value to set param to.
  */
-Param.prototype.set = function(value) {
+Param.prototype.set = function(value, callback) {
   var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/set_param',
@@ -586,14 +586,13 @@ Param.prototype.set = function(value) {
     value : JSON.stringify(value)
   });
 
-  paramClient.callService(request, function() {
-  });
+  paramClient.callService(request, callback);
 };
 
 /**
  * Delete this parameter on the ROS server.
  */
-Param.prototype.delete = function() {
+Param.prototype.delete = function(callback) {
   var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/delete_param',
@@ -604,8 +603,7 @@ Param.prototype.delete = function() {
     name : this.name
   });
 
-  paramClient.callService(request, function() {
-  });
+  paramClient.callService(request, callback);
 };
 
 module.exports = Param;
@@ -636,12 +634,20 @@ var EventEmitter2 = require('./../util/shim/EventEmitter2.js').EventEmitter2;
  * @constructor
  * @param options - possible keys include:
  *   * url (optional) - the WebSocket URL for rosbridge (can be specified later with `connect`)
+ *   * groovyCompatibility - don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools (defaults to true)
  */
 function Ros(options) {
   options = options || {};
   this.socket = null;
   this.idCounter = 0;
   this.isConnected = false;
+
+  if (typeof options.groovyCompatibility === 'undefined') {
+    this.groovyCompatibility = true;
+  }
+  else {
+    this.groovyCompatibility = options.groovyCompatibility;
+  }
 
   // Sets unlimited event listeners.
   this.setMaxListeners(0);
@@ -890,6 +896,7 @@ Ros.prototype.decodeTypeDefs = function(defs) {
 
 
 module.exports = Ros;
+
 },{"./../util/shim/EventEmitter2.js":32,"./../util/shim/WebSocket.js":33,"./Service":11,"./ServiceRequest":12,"./SocketAdapter.js":14,"object-assign":1}],11:[function(require,module,exports){
 /**
  * @author Brandon Alexander - baalexander@gmail.com
@@ -923,19 +930,19 @@ function Service(options) {
  *   * error - the error message reported by ROS
  */
 Service.prototype.callService = function(request, callback, failedCallback) {
-  this.ros.idCounter++;
-  var serviceCallId = 'call_service:' + this.name + ':' + this.ros.idCounter;
+  var serviceCallId = 'call_service:' + this.name + ':' + (++this.ros.idCounter);
 
-  this.ros.once(serviceCallId, function(message) {
-    if (message.result !== undefined && message.result === false) {
-      if (typeof failedCallback === 'function') {
-        failedCallback(message.values);
+  if (callback || failedCallback) {
+    this.ros.once(serviceCallId, function(message) {
+      if (message.result !== undefined && message.result === false) {
+        if (typeof failedCallback === 'function') {
+          failedCallback(message.values);
+        }
+      } else if (typeof callback === 'function') {
+        callback(new ServiceResponse(message.values));
       }
-    } else {
-      var response = new ServiceResponse(message.values);
-      callback(response);
-    }
-  });
+    });
+  }
 
   var call = {
     op : 'call_service',
@@ -1182,8 +1189,17 @@ Topic.prototype.subscribe = function(callback) {
 /**
  * Unregisters as a subscriber for the topic. Unsubscribing will remove
  * all subscribe callbacks.
+ *
+ * @param callback - the optional callback to unregister, if
+ *     * provided and other listeners are registered the topic won't
+ *     * unsubscribe, just stop emitting to the passed listener
  */
-Topic.prototype.unsubscribe = function() {
+Topic.prototype.unsubscribe = function(callback) {
+  if (callback) {
+    this.off('message', callback);
+    // If there is any other callbacks still subscribed don't unsubscribe
+    if (this.listeners('message').length) { return; }
+  }
   if (!this.subscribeId) { return; }
   // Note: Don't call this.removeAllListeners, allow client to handle that themselves
   this.ros.off(this.name, this._messageCallback);
@@ -1493,6 +1509,10 @@ module.exports = Vector3;
 
 var ActionClient = require('../actionlib/ActionClient');
 var Goal = require('../actionlib/Goal');
+
+var Service = require('../core/Service.js');
+var ServiceRequest = require('../core/ServiceRequest.js');
+
 var Transform = require('../math/Transform');
 
 /**
@@ -1505,7 +1525,9 @@ var Transform = require('../math/Transform');
  *   * angularThres - the angular threshold for the TF republisher
  *   * transThres - the translation threshold for the TF republisher
  *   * rate - the rate for the TF republisher
- *   * goalUpdateDelay - the goal update delay for the TF republisher
+ *   * updateDelay - the time (in ms) to wait after a new subscription
+ *                   to update the TF republisher's list of TFs
+ *   * topicTimeout - the timeout parameter for the TF republisher
  */
 function TFClient(options) {
   options = options || {};
@@ -1514,17 +1536,30 @@ function TFClient(options) {
   this.angularThres = options.angularThres || 2.0;
   this.transThres = options.transThres || 0.01;
   this.rate = options.rate || 10.0;
-  this.goalUpdateDelay = options.goalUpdateDelay || 50;
+  this.updateDelay = options.updateDelay || 50;
+  var seconds = options.topicTimeout || 2.0;
+  var secs = Math.floor(seconds);
+  var nsecs = Math.floor((seconds - secs) * 1000000000);
+  this.topicTimeout = {
+    secs: secs,
+    nsecs: nsecs
+  };
 
   this.currentGoal = false;
+  this.currentTopic = false;
   this.frameInfos = {};
-  this.goalUpdateRequested = false;
+  this.republisherUpdateRequested = false;
 
-  // Create an ActionClient
-  this.actionClient = new ActionClient({
-    ros : this.ros,
+  // Create an Action client
+  this.actionClient = this.ros.ActionClient({
     serverName : '/tf2_web_republisher',
     actionName : 'tf2_web_republisher/TFSubscriptionAction'
+  });
+
+  // Create a Service client
+  this.serviceClient = this.ros.Service({
+    name: '/republish_tfs',
+    serviceType: 'tf2_web_republisher/RepublishTFs'
   });
 }
 
@@ -1534,15 +1569,12 @@ function TFClient(options) {
  *
  * @param tf - the TF message from the server
  */
-TFClient.prototype.processFeedback = function(tf) {
+TFClient.prototype.processTFArray = function(tf) {
   var that = this;
   tf.transforms.forEach(function(transform) {
-    var frameID = transform.child_frame_id;
-    if (frameID[0] === '/') {
-      frameID = frameID.substring(1);
-    }
-    var info = that.frameInfos[frameID];
-    if (info !== undefined) {
+    var frameID = transform.child_frame_id.trimLeft('/');
+    var info = this.frameInfos[frameID];
+    if (info) {
       info.transform = new Transform({
         translation : transform.transform.translation,
         rotation : transform.transform.rotation
@@ -1551,38 +1583,67 @@ TFClient.prototype.processFeedback = function(tf) {
         cb(info.transform);
       });
     }
-  });
+  }, this);
 };
 
 /**
- * Create and send a new goal to the tf2_web_republisher based on the current
- * list of TFs.
+ * Create and send a new goal (or service request) to the tf2_web_republisher
+ * based on the current list of TFs.
  */
 TFClient.prototype.updateGoal = function() {
-  // Anytime the list of frames changes, we will need to send a new goal.
-  if (this.currentGoal) {
-    this.currentGoal.cancel();
-  }
-
   var goalMessage = {
-    source_frames : [],
+    source_frames : Object.keys(this.frameInfos),
     target_frame : this.fixedFrame,
     angular_thres : this.angularThres,
     trans_thres : this.transThres,
     rate : this.rate
   };
 
-  for (var frame in this.frameInfos) {
-    goalMessage.source_frames.push(frame);
+  // if we're running in groovy compatibility mode (the default)
+  // then use the action interface to tf2_web_republisher
+  if(this.ros.groovyCompatibility) {
+    if (this.currentGoal) {
+      this.currentGoal.cancel();
+    }
+    this.currentGoal = new Goal({
+      actionClient : this.actionClient,
+      goalMessage : goalMessage
+    });
+
+    this.currentGoal.on('feedback', this.processTFArray.bind(this));
+    this.currentGoal.send();
+  }
+  else {
+    // otherwise, use the service interface
+    // The service interface has the same parameters as the action,
+    // plus the timeout
+    goalMessage.timeout = this.topicTimeout;
+    var request = new ServiceRequest(goalMessage);
+
+    this.serviceClient.callService(request, this.processResponse.bind(this));
   }
 
-  this.currentGoal = new Goal({
-    actionClient : this.actionClient,
-    goalMessage : goalMessage
+  this.republisherUpdateRequested = false;
+};
+
+/**
+ * Process the service response and subscribe to the tf republisher
+ * topic
+ *
+ * @param response the service response containing the topic name
+ */
+TFClient.prototype.processResponse = function(response) {
+  // if we subscribed to a topic before, unsubscribe so
+  // the republisher stops publishing it
+  if (this.currentTopic) {
+    this.currentTopic.unsubscribe();
+  }
+
+  this.currentTopic = this.ros.Topic({
+    name: response.topic_name,
+    messageType: 'tf2_web_republisher/TFArray'
   });
-  this.currentGoal.on('feedback', this.processFeedback.bind(this));
-  this.currentGoal.send();
-  this.goalUpdateRequested = false;
+  this.currentTopic.subscribe(this.processTFArray.bind(this));
 };
 
 /**
@@ -1594,23 +1655,20 @@ TFClient.prototype.updateGoal = function() {
  */
 TFClient.prototype.subscribe = function(frameID, callback) {
   // remove leading slash, if it's there
-  if (frameID[0] === '/') {
-    frameID = frameID.substring(1);
-  }
+  frameID = frameID.trimLeft('/');
   // if there is no callback registered for the given frame, create emtpy callback list
-  if (this.frameInfos[frameID] === undefined) {
+  if (!this.frameInfos[frameID]) {
     this.frameInfos[frameID] = {
-      cbs : []
+      cbs: []
     };
-    if (!this.goalUpdateRequested) {
-      setTimeout(this.updateGoal.bind(this), this.goalUpdateDelay);
-      this.goalUpdateRequested = true;
+    if (!this.republisherUpdateRequested) {
+      setTimeout(this.updateGoal.bind(this), this.updateDelay);
+      this.republisherUpdateRequested = true;
     }
-  } else {
-    // if we already have a transform, call back immediately
-    if (this.frameInfos[frameID].transform !== undefined) {
-      callback(this.frameInfos[frameID].transform);
-    }
+  }
+  // if we already have a transform, call back immediately
+  else if (this.frameInfos[frameID].transform) {
+    callback(this.frameInfos[frameID].transform);
   }
   this.frameInfos[frameID].cbs.push(callback);
 };
@@ -1623,24 +1681,21 @@ TFClient.prototype.subscribe = function(frameID, callback) {
  */
 TFClient.prototype.unsubscribe = function(frameID, callback) {
   // remove leading slash, if it's there
-  if (frameID[0] === '/') {
-    frameID = frameID.substring(1);
-  }
+  frameID = frameID.trimLeft('/');
   var info = this.frameInfos[frameID];
-  if (info !== undefined) {
-    var cbIndex = info.cbs.indexOf(callback);
-    if (cbIndex >= 0) {
-      info.cbs.splice(cbIndex, 1);
-      if (info.cbs.length === 0) {
-        delete this.frameInfos[frameID];
-      }
-      this.needUpdate = true;
+  for (var cbs = info && info.cbs || [], idx = cbs.length; idx--;) {
+    if (cbs[idx] === callback) {
+      cbs.splice(idx, 1);
     }
+  }
+  if (!callback || cbs.length === 0) {
+    delete this.frameInfos[frameID];
   }
 };
 
 module.exports = TFClient;
-},{"../actionlib/ActionClient":5,"../actionlib/Goal":6,"../math/Transform":18}],21:[function(require,module,exports){
+
+},{"../actionlib/ActionClient":5,"../actionlib/Goal":6,"../core/Service.js":11,"../core/ServiceRequest.js":12,"../math/Transform":18}],21:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu

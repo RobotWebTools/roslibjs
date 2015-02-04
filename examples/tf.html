@@ -8,7 +8,12 @@
 <script>
   // Connecting to ROS
   // -----------------
-  var ros = new ROSLIB.Ros();
+  var ros = new ROSLIB.Ros({
+    // set this to false to use the new service interface to
+    // tf2_web_republisher. true is the default and means roslibjs
+    // will use the action interface
+    groovyCompatibility : true
+  });
 
   // If there is an error on the backend, an 'error' emit will be emitted.
   ros.on('error', function(error) {

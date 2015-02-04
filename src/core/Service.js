@@ -30,19 +30,19 @@ function Service(options) {
  *   * error - the error message reported by ROS
  */
 Service.prototype.callService = function(request, callback, failedCallback) {
-  this.ros.idCounter++;
-  var serviceCallId = 'call_service:' + this.name + ':' + this.ros.idCounter;
+  var serviceCallId = 'call_service:' + this.name + ':' + (++this.ros.idCounter);
 
-  this.ros.once(serviceCallId, function(message) {
-    if (message.result !== undefined && message.result === false) {
-      if (typeof failedCallback === 'function') {
-        failedCallback(message.values);
+  if (callback || failedCallback) {
+    this.ros.once(serviceCallId, function(message) {
+      if (message.result !== undefined && message.result === false) {
+        if (typeof failedCallback === 'function') {
+          failedCallback(message.values);
+        }
+      } else if (typeof callback === 'function') {
+        callback(new ServiceResponse(message.values));
       }
-    } else {
-      var response = new ServiceResponse(message.values);
-      callback(response);
-    }
-  });
+    });
+  }
 
   var call = {
     op : 'call_service',
