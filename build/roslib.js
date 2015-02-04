@@ -37,7 +37,7 @@ exports.implementation = document.implementation;
  */
 
 var ROSLIB = this.ROSLIB || {
-  REVISION : '0.12.0-SNAPSHOT'
+  REVISION : '0.12.0'
 };
 
 var Ros = ROSLIB.Ros = require('./core/Ros');
@@ -634,20 +634,12 @@ var EventEmitter2 = require('./../util/shim/EventEmitter2.js').EventEmitter2;
  * @constructor
  * @param options - possible keys include:
  *   * url (optional) - the WebSocket URL for rosbridge (can be specified later with `connect`)
- *   * groovyCompatibility - don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools (defaults to true)
  */
 function Ros(options) {
   options = options || {};
   this.socket = null;
   this.idCounter = 0;
   this.isConnected = false;
-
-  if (typeof options.groovyCompatibility === 'undefined') {
-    this.groovyCompatibility = true;
-  }
-  else {
-    this.groovyCompatibility = options.groovyCompatibility;
-  }
 
   // Sets unlimited event listeners.
   this.setMaxListeners(0);

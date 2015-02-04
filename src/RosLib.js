@@ -3,7 +3,7 @@
  */
 
 var ROSLIB = this.ROSLIB || {
-  REVISION : '0.12.0-SNAPSHOT'
+  REVISION : '0.12.0'
 };
 
 var Ros = ROSLIB.Ros = require('./core/Ros');
