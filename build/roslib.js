@@ -37,7 +37,7 @@ exports.implementation = document.implementation;
  */
 
 var ROSLIB = this.ROSLIB || {
-  REVISION : '0.12.0'
+  REVISION : '0.13.0-SNAPSHOT'
 };
 
 var Ros = ROSLIB.Ros = require('./core/Ros');
