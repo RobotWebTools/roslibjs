@@ -1,3 +1,12 @@
+2014-02-04 - **0.11.0**
+ * Change TFClient to use the service interface rather than the action one [(T045T)](https://github.com/T045T/)
+ * Simplify TFClient and allow unsubscribe by key [(megawac)](https://github.com/megawac/)
+ * Add groovyCompatibility option to Ros [(T045T)](https://github.com/T045T/)
+ * Fix the param tests [(megawac)](https://github.com/megawac/)
+ * Allow unsubbing a particular listner without affecting others [(megawac)](https://github.com/megawac/)
+ * Add tests for set sans callback [(megawac)](https://github.com/megawac/)
+ * Make registering as a subscriber or publisher an option for the streaming API [(megawac)](https://github.com/megawac/)
+
 2014-12-08 - **0.10.0**
  * Refactor Karma testing and build configuration [(megawac)](https://github.com/megawac/)
  * Remove testing invalid XML [(megawac)](https://github.com/megawac/)

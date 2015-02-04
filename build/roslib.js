@@ -37,7 +37,7 @@ exports.implementation = document.implementation;
  */
 
 var ROSLIB = this.ROSLIB || {
-  REVISION : '0.11.0-SNAPSHOT'
+  REVISION : '0.11.0'
 };
 
 var Ros = ROSLIB.Ros = require('./core/Ros');
@@ -574,7 +574,7 @@ Param.prototype.get = function(callback) {
  *
  * @param value - value to set param to.
  */
-Param.prototype.set = function(value) {
+Param.prototype.set = function(value, callback) {
   var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/set_param',
@@ -586,14 +586,13 @@ Param.prototype.set = function(value) {
     value : JSON.stringify(value)
   });
 
-  paramClient.callService(request, function() {
-  });
+  paramClient.callService(request, callback);
 };
 
 /**
  * Delete this parameter on the ROS server.
  */
-Param.prototype.delete = function() {
+Param.prototype.delete = function(callback) {
   var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/delete_param',
@@ -604,8 +603,7 @@ Param.prototype.delete = function() {
     name : this.name
   });
 
-  paramClient.callService(request, function() {
-  });
+  paramClient.callService(request, callback);
 };
 
 module.exports = Param;
@@ -932,19 +930,19 @@ function Service(options) {
  *   * error - the error message reported by ROS
  */
 Service.prototype.callService = function(request, callback, failedCallback) {
-  this.ros.idCounter++;
-  var serviceCallId = 'call_service:' + this.name + ':' + this.ros.idCounter;
+  var serviceCallId = 'call_service:' + this.name + ':' + (++this.ros.idCounter);
 
-  this.ros.once(serviceCallId, function(message) {
-    if (message.result !== undefined && message.result === false) {
-      if (typeof failedCallback === 'function') {
-        failedCallback(message.values);
+  if (callback || failedCallback) {
+    this.ros.once(serviceCallId, function(message) {
+      if (message.result !== undefined && message.result === false) {
+        if (typeof failedCallback === 'function') {
+          failedCallback(message.values);
+        }
+      } else if (typeof callback === 'function') {
+        callback(new ServiceResponse(message.values));
       }
-    } else {
-      var response = new ServiceResponse(message.values);
-      callback(response);
-    }
-  });
+    });
+  }
 
   var call = {
     op : 'call_service',
@@ -1191,8 +1189,17 @@ Topic.prototype.subscribe = function(callback) {
 /**
  * Unregisters as a subscriber for the topic. Unsubscribing will remove
  * all subscribe callbacks.
+ *
+ * @param callback - the optional callback to unregister, if
+ *     * provided and other listeners are registered the topic won't
+ *     * unsubscribe, just stop emitting to the passed listener
  */
-Topic.prototype.unsubscribe = function() {
+Topic.prototype.unsubscribe = function(callback) {
+  if (callback) {
+    this.off('message', callback);
+    // If there is any other callbacks still subscribed don't unsubscribe
+    if (this.listeners('message').length) { return; }
+  }
   if (!this.subscribeId) { return; }
   // Note: Don't call this.removeAllListeners, allow client to handle that themselves
   this.ros.off(this.name, this._messageCallback);
@@ -1544,7 +1551,7 @@ function TFClient(options) {
   this.republisherUpdateRequested = false;
 
   // Create an Action client
-  this.actionclient = this.ros.ActionClien({
+  this.actionClient = this.ros.ActionClient({
     serverName : '/tf2_web_republisher',
     actionName : 'tf2_web_republisher/TFSubscriptionAction'
   });
@@ -1565,12 +1572,9 @@ function TFClient(options) {
 TFClient.prototype.processTFArray = function(tf) {
   var that = this;
   tf.transforms.forEach(function(transform) {
-    var frameID = transform.child_frame_id;
-    if (frameID[0] === '/') {
-      frameID = frameID.substring(1);
-    }
-    var info = that.frameInfos[frameID];
-    if (info !== undefined) {
+    var frameID = transform.child_frame_id.trimLeft('/');
+    var info = this.frameInfos[frameID];
+    if (info) {
       info.transform = new Transform({
         translation : transform.transform.translation,
         rotation : transform.transform.rotation
@@ -1579,7 +1583,7 @@ TFClient.prototype.processTFArray = function(tf) {
         cb(info.transform);
       });
     }
-  });
+  }, this);
 };
 
 /**
@@ -1588,16 +1592,12 @@ TFClient.prototype.processTFArray = function(tf) {
  */
 TFClient.prototype.updateGoal = function() {
   var goalMessage = {
-    source_frames : [],
+    source_frames : Object.keys(this.frameInfos),
     target_frame : this.fixedFrame,
     angular_thres : this.angularThres,
     trans_thres : this.transThres,
     rate : this.rate
   };
-
-  for (var frame in this.frameInfos) {
-    request.source_frames.push(frame);
-  }
 
   // if we're running in groovy compatibility mode (the default)
   // then use the action interface to tf2_web_republisher
@@ -1655,23 +1655,20 @@ TFClient.prototype.processResponse = function(response) {
  */
 TFClient.prototype.subscribe = function(frameID, callback) {
   // remove leading slash, if it's there
-  if (frameID[0] === '/') {
-    frameID = frameID.substring(1);
-  }
+  frameID = frameID.trimLeft('/');
   // if there is no callback registered for the given frame, create emtpy callback list
-  if (this.frameInfos[frameID] === undefined) {
+  if (!this.frameInfos[frameID]) {
     this.frameInfos[frameID] = {
-      cbs : []
+      cbs: []
     };
     if (!this.republisherUpdateRequested) {
       setTimeout(this.updateGoal.bind(this), this.updateDelay);
       this.republisherUpdateRequested = true;
     }
-  } else {
-    // if we already have a transform, call back immediately
-    if (this.frameInfos[frameID].transform !== undefined) {
-      callback(this.frameInfos[frameID].transform);
-    }
+  }
+  // if we already have a transform, call back immediately
+  else if (this.frameInfos[frameID].transform) {
+    callback(this.frameInfos[frameID].transform);
   }
   this.frameInfos[frameID].cbs.push(callback);
 };
@@ -1684,19 +1681,15 @@ TFClient.prototype.subscribe = function(frameID, callback) {
  */
 TFClient.prototype.unsubscribe = function(frameID, callback) {
   // remove leading slash, if it's there
-  if (frameID[0] === '/') {
-    frameID = frameID.substring(1);
-  }
+  frameID = frameID.trimLeft('/');
   var info = this.frameInfos[frameID];
-  if (info !== undefined) {
-    var cbIndex = info.cbs.indexOf(callback);
-    if (cbIndex >= 0) {
-      info.cbs.splice(cbIndex, 1);
-      if (info.cbs.length === 0) {
-        delete this.frameInfos[frameID];
-      }
-      this.needUpdate = true;
+  for (var cbs = info && info.cbs || [], idx = cbs.length; idx--;) {
+    if (cbs[idx] === callback) {
+      cbs.splice(idx, 1);
     }
+  }
+  if (!callback || cbs.length === 0) {
+    delete this.frameInfos[frameID];
   }
 };
 
