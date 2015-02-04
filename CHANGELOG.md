@@ -1,3 +1,6 @@
+2014-02-04 - **0.12.0**
+ * Reverted to old TF client [(rctoris)](https://github.com/rctoris/)
+
 2014-02-04 - **0.11.0**
  * Change TFClient to use the service interface rather than the action one [(T045T)](https://github.com/T045T/)
  * Simplify TFClient and allow unsubscribe by key [(megawac)](https://github.com/megawac/)
