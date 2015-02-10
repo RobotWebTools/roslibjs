@@ -14,7 +14,7 @@ function UrdfJoint(options) {
   this.type = options.xml.getAttribute('type');
   
   var limits = options.xml.getElementsByTagName('limit');
-  if (visuals.length > 0) {
+  if (limits.length > 0) {
     this.minval = parseFloat( limits[0].getAttribute('lower') );
     this.maxval = parseFloat( limits[0].getAttribute('upper') );
   }
