@@ -5,6 +5,7 @@
 
 var UrdfMaterial = require('./UrdfMaterial');
 var UrdfLink = require('./UrdfLink');
+var UrdfJoint = require('./UrdfJoint');
 var DOMParser = require('../util/DOMParser');
 
 // See https://developer.mozilla.org/docs/XPathResult#Constants
@@ -24,6 +25,7 @@ function UrdfModel(options) {
   var string = options.string;
   this.materials = {};
   this.links = {};
+  this.joints = {};
 
   // Check if we are using a string or an XML element
   if (string) {
@@ -72,6 +74,11 @@ function UrdfModel(options) {
         // Add the link
         this.links[link.name] = link;
       }
+    } else if (node.tagName === 'joint') {
+      var joint = new UrdfJoint({
+        xml : node
+      });
+      this.joints[joint.name] = joint;
     }
   }
 }
