@@ -6,44 +6,17 @@ var ROSLIB = this.ROSLIB || {
   REVISION : '0.13.0-SNAPSHOT'
 };
 
-var Ros = ROSLIB.Ros = require('./core/Ros');
-ROSLIB.Topic = require('./core/Topic');
-ROSLIB.Message = require('./core/Message');
-ROSLIB.Param = require('./core/Param');
-ROSLIB.Service = require('./core/Service');
-ROSLIB.ServiceRequest = require('./core/ServiceRequest');
-ROSLIB.ServiceResponse = require('./core/ServiceResponse');
+var assign = require('object-assign');
 
-ROSLIB.ActionClient = require('./actionlib/ActionClient');
-ROSLIB.Goal = require('./actionlib/Goal');
-ROSLIB.SimpleActionServer = require('./actionlib/SimpleActionServer');
+// Add core components
+assign(ROSLIB, require('./core'));
 
-ROSLIB.Pose = require('./math/Pose');
-ROSLIB.Quaternion = require('./math/Quaternion');
-ROSLIB.Transform = require('./math/Transform');
-ROSLIB.Vector3 = require('./math/Vector3');
+assign(ROSLIB, require('./actionlib'));
 
-ROSLIB.TFClient = require('./tf/TFClient');
+assign(ROSLIB, require('./math'));
 
-ROSLIB.UrdfBox = require('./urdf/UrdfBox');
-ROSLIB.UrdfColor = require('./urdf/UrdfColor');
-ROSLIB.UrdfCylinder = require('./urdf/UrdfCylinder');
-ROSLIB.UrdfLink = require('./urdf/UrdfLink');
-ROSLIB.UrdfMaterial = require('./urdf/UrdfMaterial');
-ROSLIB.UrdfMesh = require('./urdf/UrdfMesh');
-ROSLIB.UrdfModel = require('./urdf/UrdfModel');
-ROSLIB.UrdfSphere = require('./urdf/UrdfSphere');
-ROSLIB.UrdfVisual = require('./urdf/UrdfVisual');
+assign(ROSLIB, require('./tf'));
 
-// Add URDF types
-require('object-assign')(ROSLIB, require('./urdf/UrdfTypes'));
-
-['ActionClient', 'Param', 'Service', 'SimpleActionServer', 'Topic', 'TFClient'].forEach(function(className) {
-    var Class = ROSLIB[className];
-    Ros.prototype[className] = function(options) {
-        options.ros = this;
-        return new Class(options);
-    };
-});
+assign(ROSLIB, require('./urdf'));
 
 module.exports = ROSLIB;

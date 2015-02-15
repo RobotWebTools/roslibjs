@@ -24,6 +24,7 @@ before_install:
   - cd ../
   - rosdep install --from-paths src --ignore-src --rosdistro hydro -y
   - cd /tmp/ws/roslibjs
+  - npm install -g npm
   - npm install -g grunt-cli karma-cli
 
   # Set up Xfvb for Firefox headless testing
