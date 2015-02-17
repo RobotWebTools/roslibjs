@@ -125,6 +125,29 @@ Ros.prototype.getTopics = function(callback) {
 };
 
 /**
+ * Retrieves Topics in ROS as an array as specific type
+ *
+ * @param topic_type topic type to find:
+ * @param callback function with params:
+ *   * topics - Array of topic names
+ */
+Ros.prototype.getTopicsForType = function(topic_type, callback) {
+  var topicsForTypeClient = new Service({
+    ros : this,
+    name : '/rosapi/topics_for_type',
+    serviceType : 'rosapi/TopicsForType'
+  });
+
+  var request = new ServiceRequest({
+    type: topic_type
+  });
+
+  topicsForTypeClient.callService(request, function(result) {
+    callback(result.topics);
+  });
+};
+
+/**
  * Retrieves list of active service names in ROS.
  *
  * @param callback - function with the following params:
@@ -140,6 +163,29 @@ Ros.prototype.getServices = function(callback) {
   var request = new ServiceRequest();
 
   servicesClient.callService(request, function(result) {
+    callback(result.services);
+  });
+};
+
+/**
+ * Retrieves list of services in ROS as an array as specific type
+ *
+ * @param service_type service type to find:
+ * @param callback function with params:
+ *   * topics - Array of service names
+ */
+Ros.prototype.getServicesForType = function(service_type, callback) {
+  var servicesForTypeClient = new Service({
+    ros : this,
+    name : '/rosapi/services_for_type',
+    serviceType : 'rosapi/ServicesForType'
+  });
+
+  var request = new ServiceRequest({
+    type: service_type
+  });
+
+  servicesForTypeClient.callService(request, function(result) {
     callback(result.services);
   });
 };
