@@ -63,11 +63,15 @@ function UrdfModel(options) {
         console.warn('Link ' + link.name + ' is not unique.');
       } else {
         // Check for a material
-        if (link.visual && link.visual.material) {
-          if (this.materials[link.visual.material.name] !== void 0) {
-            link.visual.material = this.materials[link.visual.material.name];
-          } else {
-            this.materials[link.visual.material.name] = link.visual.material;
+        for( var j=0; j<link.visuals.length; j++ )
+        {
+          var mat = link.visuals[j].material; 
+          if ( mat !== null ) {
+            if (this.materials[mat.name] !== void 0) {
+              link.visuals[j].material = this.materials[mat.name];
+            } else {
+              this.materials[mat.name] = mat;
+            }
           }
         }
 
