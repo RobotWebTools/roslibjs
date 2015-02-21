@@ -50,7 +50,11 @@ function UrdfModel(options) {
       });
       // Make sure this is unique
       if (this.materials[material.name] !== void 0) {
-        console.warn('Material ' + material.name + 'is not unique.');
+        if( this.materials[material.name].isLink() ) {
+          this.materials[material.name].assign( material );
+        } else {
+          console.warn('Material ' + material.name + 'is not unique.');
+        }
       } else {
         this.materials[material.name] = material;
       }

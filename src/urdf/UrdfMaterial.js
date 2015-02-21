@@ -34,4 +34,14 @@ function UrdfMaterial(options) {
   }
 }
 
+UrdfMaterial.prototype.isLink = function() {
+  return this.color === null && this.textureFilename === null;
+};
+
+UrdfMaterial.prototype.assign = function(obj) {
+  for( var key in obj ) {
+    this[key] = obj[key];
+  }
+};
+
 module.exports = UrdfMaterial;
