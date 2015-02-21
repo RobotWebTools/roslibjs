@@ -38,10 +38,10 @@ UrdfMaterial.prototype.isLink = function() {
   return this.color === null && this.textureFilename === null;
 };
 
+var assign = require('object-assign');
+
 UrdfMaterial.prototype.assign = function(obj) {
-  for( var key in obj ) {
-    this[key] = obj[key];
-  }
+    return assign(this, obj);
 };
 
 module.exports = UrdfMaterial;
