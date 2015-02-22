@@ -72,7 +72,8 @@ Topic.prototype.subscribe = function(callback) {
     type: this.messageType,
     topic: this.name,
     compression: this.compression,
-    throttle_rate: this.throttle_rate
+    throttle_rate: this.throttle_rate,
+    queue_length: this.queue_size
   });
 };
 
