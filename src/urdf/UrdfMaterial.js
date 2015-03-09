@@ -34,4 +34,14 @@ function UrdfMaterial(options) {
   }
 }
 
+UrdfMaterial.prototype.isLink = function() {
+  return this.color === null && this.textureFilename === null;
+};
+
+var assign = require('object-assign');
+
+UrdfMaterial.prototype.assign = function(obj) {
+    return assign(this, obj);
+};
+
 module.exports = UrdfMaterial;
