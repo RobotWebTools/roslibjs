@@ -14,11 +14,13 @@ var UrdfVisual = require('./UrdfVisual');
  */
 function UrdfLink(options) {
   this.name = options.xml.getAttribute('name');
+  this.visuals = [];
   var visuals = options.xml.getElementsByTagName('visual');
-  if (visuals.length > 0) {
-    this.visual = new UrdfVisual({
-      xml : visuals[0]
-    });
+
+  for( var i=0; i<visuals.length; i++ ) {
+    this.visuals.push( new UrdfVisual({
+      xml : visuals[i]
+    }) );
   }
 }
 

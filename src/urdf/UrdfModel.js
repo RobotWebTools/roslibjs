@@ -5,6 +5,7 @@
 
 var UrdfMaterial = require('./UrdfMaterial');
 var UrdfLink = require('./UrdfLink');
+var UrdfJoint = require('./UrdfJoint');
 var DOMParser = require('../util/DOMParser');
 
 // See https://developer.mozilla.org/docs/XPathResult#Constants
@@ -24,6 +25,7 @@ function UrdfModel(options) {
   var string = options.string;
   this.materials = {};
   this.links = {};
+  this.joints = {};
 
   // Check if we are using a string or an XML element
   if (string) {
@@ -48,7 +50,11 @@ function UrdfModel(options) {
       });
       // Make sure this is unique
       if (this.materials[material.name] !== void 0) {
-        console.warn('Material ' + material.name + 'is not unique.');
+        if( this.materials[material.name].isLink() ) {
+          this.materials[material.name].assign( material );
+        } else {
+          console.warn('Material ' + material.name + 'is not unique.');
+        }
       } else {
         this.materials[material.name] = material;
       }
@@ -61,17 +67,26 @@ function UrdfModel(options) {
         console.warn('Link ' + link.name + ' is not unique.');
       } else {
         // Check for a material
-        if (link.visual && link.visual.material) {
-          if (this.materials[link.visual.material.name] !== void 0) {
-            link.visual.material = this.materials[link.visual.material.name];
-          } else {
-            this.materials[link.visual.material.name] = link.visual.material;
+        for( var j=0; j<link.visuals.length; j++ )
+        {
+          var mat = link.visuals[j].material; 
+          if ( mat !== null ) {
+            if (this.materials[mat.name] !== void 0) {
+              link.visuals[j].material = this.materials[mat.name];
+            } else {
+              this.materials[mat.name] = mat;
+            }
           }
         }
 
         // Add the link
         this.links[link.name] = link;
       }
+    } else if (node.tagName === 'joint') {
+      var joint = new UrdfJoint({
+        xml : node
+      });
+      this.joints[joint.name] = joint;
     }
   }
 }

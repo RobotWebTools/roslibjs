@@ -18,7 +18,10 @@ var Message = require('./Message');
  *   * name - the topic name, like /cmd_vel
  *   * messageType - the message type, like 'std_msgs/String'
  *   * compression - the type of compression to use, like 'png'
- *   * throttle_rate - the rate at which to throttle the topics
+ *   * throttle_rate - the rate (in ms in between messages) at which to throttle the topics
+ *   * queue_size - the queue created at bridge side for re-publishing webtopics (defaults to 100)
+ *   * latch - latch the topic when publishing
+ *   * queue_length - the queue length at bridge side used when subscribing (defaults to 0, no queueing).
  */
 function Topic(options) {
   options = options || {};
@@ -30,6 +33,7 @@ function Topic(options) {
   this.throttle_rate = options.throttle_rate || 0;
   this.latch = options.latch || false;
   this.queue_size = options.queue_size || 100;
+  this.queue_length = options.queue_length || 0;
 
   // Check for valid compression types
   if (this.compression && this.compression !== 'png' &&
@@ -72,13 +76,15 @@ Topic.prototype.subscribe = function(callback) {
     type: this.messageType,
     topic: this.name,
     compression: this.compression,
-    throttle_rate: this.throttle_rate
+    throttle_rate: this.throttle_rate,
+    queue_length: this.queue_length
   });
 };
 
 /**
- * Unregisters as a subscriber for the topic. Unsubscribing will remove
- * all subscribe callbacks.
+ * Unregisters as a subscriber for the topic. Unsubscribing stop remove
+ * all subscribe callbacks. To remove a call back, you must explicitly
+ * pass the callback function in.
  *
  * @param callback - the optional callback to unregister, if
  *     * provided and other listeners are registered the topic won't
