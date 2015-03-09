@@ -152,6 +152,29 @@ Ros.prototype.getTopics = function(callback) {
 };
 
 /**
+ * Retrieves Topics in ROS as an array as specific type
+ *
+ * @param topicType topic type to find:
+ * @param callback function with params:
+ *   * topics - Array of topic names
+ */
+Ros.prototype.getTopicsForType = function(topicType, callback) {
+  var topicsForTypeClient = new Service({
+    ros : this,
+    name : '/rosapi/topics_for_type',
+    serviceType : 'rosapi/TopicsForType'
+  });
+
+  var request = new ServiceRequest({
+    type: topicType
+  });
+
+  topicsForTypeClient.callService(request, function(result) {
+    callback(result.topics);
+  });
+};
+
+/**
  * Retrieves list of active service names in ROS.
  *
  * @param callback - function with the following params:
@@ -167,6 +190,29 @@ Ros.prototype.getServices = function(callback) {
   var request = new ServiceRequest();
 
   servicesClient.callService(request, function(result) {
+    callback(result.services);
+  });
+};
+
+/**
+ * Retrieves list of services in ROS as an array as specific type
+ *
+ * @param serviceType service type to find:
+ * @param callback function with params:
+ *   * topics - Array of service names
+ */
+Ros.prototype.getServicesForType = function(serviceType, callback) {
+  var servicesForTypeClient = new Service({
+    ros : this,
+    name : '/rosapi/services_for_type',
+    serviceType : 'rosapi/ServicesForType'
+  });
+
+  var request = new ServiceRequest({
+    type: serviceType
+  });
+
+  servicesForTypeClient.callService(request, function(result) {
     callback(result.services);
   });
 };
@@ -315,13 +361,13 @@ module.exports = Ros;
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="global.html#ActionClient">ActionClient</a></li><li><a href="Goal.html">Goal</a></li><li><a href="global.html#Message">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="global.html#Pose">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="global.html#Service">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="global.html#ServiceResponse">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="global.html#Topic">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="global.html#UrdfColor">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="global.html#UrdfMaterial">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="global.html#UrdfVisual">UrdfVisual</a></li><li><a href="global.html#Vector3">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#assign">assign</a></li><li><a href="global.html#decompressPng">decompressPng</a></li><li><a href="global.html#EventEmitter2">EventEmitter2</a></li><li><a href="global.html#onclose">onclose</a></li><li><a href="global.html#onerror">onerror</a></li><li><a href="global.html#onmessage">onmessage</a></li><li><a href="global.html#onopen">onopen</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li><li><a href="global.html#RosTCP">RosTCP</a></li><li><a href="global.html#SocketAdapter">SocketAdapter</a></li><li><a href="global.html#UrdfTypes">UrdfTypes</a></li><li><a href="global.html#WebSocket">WebSocket</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="global.html#ActionClient">ActionClient</a></li><li><a href="Goal.html">Goal</a></li><li><a href="global.html#Message">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="global.html#Pose">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="global.html#Service">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="global.html#ServiceResponse">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="global.html#Topic">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="global.html#UrdfColor">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="global.html#UrdfMaterial">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="global.html#UrdfVisual">UrdfVisual</a></li><li><a href="global.html#Vector3">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#assign">assign</a></li><li><a href="global.html#decompressPng">decompressPng</a></li><li><a href="global.html#EventEmitter2">EventEmitter2</a></li><li><a href="global.html#onclose">onclose</a></li><li><a href="global.html#onerror">onerror</a></li><li><a href="global.html#onmessage">onmessage</a></li><li><a href="global.html#onopen">onopen</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li><li><a href="global.html#RosTCP">RosTCP</a></li><li><a href="global.html#SocketAdapter">SocketAdapter</a></li><li><a href="global.html#UrdfTypes">UrdfTypes</a></li><li><a href="global.html#WebSocket">WebSocket</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Wed Feb 04 2015 11:42:55 GMT-0500 (EST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Mon Mar 09 2015 09:50:02 GMT-0400 (EDT)
 </footer>
 
 <script> prettyPrint(); </script>

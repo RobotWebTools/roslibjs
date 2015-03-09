@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: UrdfVisual</title>
+    <title>JSDoc: Source: urdf/UrdfJoint.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,165 +17,40 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: UrdfVisual</h1>
+    <h1 class="page-title">Source: urdf/UrdfJoint.js</h1>
 
     
 
 
-
-<section>
-
-<header>
-    <h2>
-    UrdfVisual
-    </h2>
     
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @author David V. Lu!!  davidvlu@gmail.com
+ */
 
-<article>
-    <div class="container-overview">
-    
+/**
+ * A Joint element in a URDF.
+ *
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ */
+function UrdfJoint(options) {
+  this.name = options.xml.getAttribute('name');
+  this.type = options.xml.getAttribute('type');
+  
+  var limits = options.xml.getElementsByTagName('limit');
+  if (limits.length > 0) {
+    this.minval = parseFloat( limits[0].getAttribute('lower') );
+    this.maxval = parseFloat( limits[0].getAttribute('upper') );
+  }
+}
 
-    
-        
-<dt>
-    <h4 class="name" id="UrdfVisual"><span class="type-signature"></span>new UrdfVisual<span class="signature">(options)</span><span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        A Visual element in a URDF.
-    </div>
-    
-
-    
-
-    
-
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">object with following keys:
- * xml - the XML element to parse</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-    
-
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="UrdfVisual.js.html">urdf/UrdfVisual.js</a>, <a href="UrdfVisual.js.html#line23">line 23</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+module.exports = UrdfJoint;
+</code></pre>
+        </article>
+    </section>
 
 
 
