@@ -37,7 +37,7 @@ exports.implementation = document.implementation;
  */
 
 var ROSLIB = this.ROSLIB || {
-  REVISION : '0.13.0-SNAPSHOT'
+  REVISION : '0.13.0'
 };
 
 var assign = require('object-assign');
@@ -719,6 +719,29 @@ Ros.prototype.getTopics = function(callback) {
 };
 
 /**
+ * Retrieves Topics in ROS as an array as specific type
+ *
+ * @param topicType topic type to find:
+ * @param callback function with params:
+ *   * topics - Array of topic names
+ */
+Ros.prototype.getTopicsForType = function(topicType, callback) {
+  var topicsForTypeClient = new Service({
+    ros : this,
+    name : '/rosapi/topics_for_type',
+    serviceType : 'rosapi/TopicsForType'
+  });
+
+  var request = new ServiceRequest({
+    type: topicType
+  });
+
+  topicsForTypeClient.callService(request, function(result) {
+    callback(result.topics);
+  });
+};
+
+/**
  * Retrieves list of active service names in ROS.
  *
  * @param callback - function with the following params:
@@ -734,6 +757,29 @@ Ros.prototype.getServices = function(callback) {
   var request = new ServiceRequest();
 
   servicesClient.callService(request, function(result) {
+    callback(result.services);
+  });
+};
+
+/**
+ * Retrieves list of services in ROS as an array as specific type
+ *
+ * @param serviceType service type to find:
+ * @param callback function with params:
+ *   * topics - Array of service names
+ */
+Ros.prototype.getServicesForType = function(serviceType, callback) {
+  var servicesForTypeClient = new Service({
+    ros : this,
+    name : '/rosapi/services_for_type',
+    serviceType : 'rosapi/ServicesForType'
+  });
+
+  var request = new ServiceRequest({
+    type: serviceType
+  });
+
+  servicesForTypeClient.callService(request, function(result) {
     callback(result.services);
   });
 };
@@ -1104,7 +1150,10 @@ var Message = require('./Message');
  *   * name - the topic name, like /cmd_vel
  *   * messageType - the message type, like 'std_msgs/String'
  *   * compression - the type of compression to use, like 'png'
- *   * throttle_rate - the rate at which to throttle the topics
+ *   * throttle_rate - the rate (in ms in between messages) at which to throttle the topics
+ *   * queue_size - the queue created at bridge side for re-publishing webtopics (defaults to 100)
+ *   * latch - latch the topic when publishing
+ *   * queue_length - the queue length at bridge side used when subscribing (defaults to 0, no queueing).
  */
 function Topic(options) {
   options = options || {};
@@ -1116,6 +1165,7 @@ function Topic(options) {
   this.throttle_rate = options.throttle_rate || 0;
   this.latch = options.latch || false;
   this.queue_size = options.queue_size || 100;
+  this.queue_length = options.queue_length || 0;
 
   // Check for valid compression types
   if (this.compression && this.compression !== 'png' &&
@@ -1158,13 +1208,15 @@ Topic.prototype.subscribe = function(callback) {
     type: this.messageType,
     topic: this.name,
     compression: this.compression,
-    throttle_rate: this.throttle_rate
+    throttle_rate: this.throttle_rate,
+    queue_length: this.queue_length
   });
 };
 
 /**
- * Unregisters as a subscriber for the topic. Unsubscribing will remove
- * all subscribe callbacks.
+ * Unregisters as a subscriber for the topic. Unsubscribing stop remove
+ * all subscribe callbacks. To remove a call back, you must explicitly
+ * pass the callback function in.
  *
  * @param callback - the optional callback to unregister, if
  *     * provided and other listeners are registered the topic won't
@@ -1340,6 +1392,13 @@ Quaternion.prototype.conjugate = function() {
 };
 
 /**
+ * Return the norm of this quaternion.
+ */
+Quaternion.prototype.norm = function() {
+  return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
+};
+
+/**
  * Perform a normalization on this quaternion.
  */
 Quaternion.prototype.normalize = function() {
@@ -1392,6 +1451,7 @@ Quaternion.prototype.clone = function() {
 };
 
 module.exports = Quaternion;
+
 },{}],20:[function(require,module,exports){
 /**
  * @author David Gossow - dgossow@willowgarage.com
@@ -1801,11 +1861,13 @@ var UrdfVisual = require('./UrdfVisual');
  */
 function UrdfLink(options) {
   this.name = options.xml.getAttribute('name');
+  this.visuals = [];
   var visuals = options.xml.getElementsByTagName('visual');
-  if (visuals.length > 0) {
-    this.visual = new UrdfVisual({
-      xml : visuals[0]
-    });
+
+  for( var i=0; i<visuals.length; i++ ) {
+    this.visuals.push( new UrdfVisual({
+      xml : visuals[i]
+    }) );
   }
 }
 
@@ -1847,8 +1909,19 @@ function UrdfMaterial(options) {
   }
 }
 
+UrdfMaterial.prototype.isLink = function() {
+  return this.color === null && this.textureFilename === null;
+};
+
+var assign = require('object-assign');
+
+UrdfMaterial.prototype.assign = function(obj) {
+    return assign(this, obj);
+};
+
 module.exports = UrdfMaterial;
-},{"./UrdfColor":27}],32:[function(require,module,exports){
+
+},{"./UrdfColor":27,"object-assign":1}],32:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -1937,7 +2010,11 @@ function UrdfModel(options) {
       });
       // Make sure this is unique
       if (this.materials[material.name] !== void 0) {
-        console.warn('Material ' + material.name + 'is not unique.');
+        if( this.materials[material.name].isLink() ) {
+          this.materials[material.name].assign( material );
+        } else {
+          console.warn('Material ' + material.name + 'is not unique.');
+        }
       } else {
         this.materials[material.name] = material;
       }
@@ -1950,11 +2027,15 @@ function UrdfModel(options) {
         console.warn('Link ' + link.name + ' is not unique.');
       } else {
         // Check for a material
-        if (link.visual && link.visual.material) {
-          if (this.materials[link.visual.material.name] !== void 0) {
-            link.visual.material = this.materials[link.visual.material.name];
-          } else {
-            this.materials[link.visual.material.name] = link.visual.material;
+        for( var j=0; j<link.visuals.length; j++ )
+        {
+          var mat = link.visuals[j].material; 
+          if ( mat !== null ) {
+            if (this.materials[mat.name] !== void 0) {
+              link.visuals[j].material = this.materials[mat.name];
+            } else {
+              this.materials[mat.name] = mat;
+            }
           }
         }
 
