@@ -30,6 +30,13 @@ Quaternion.prototype.conjugate = function() {
 };
 
 /**
+ * Return the norm of this quaternion.
+ */
+Quaternion.prototype.norm = function() {
+  return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
+};
+
+/**
  * Perform a normalization on this quaternion.
  */
 Quaternion.prototype.normalize = function() {

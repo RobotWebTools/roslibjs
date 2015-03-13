@@ -1,3 +1,23 @@
+2014-02-04 - **0.13.0**
+ * URDF joint added [(DLu)](https://github.com/DLu/)
+ * Index components of roslib [(megawac)](https://github.com/megawac/)
+ * Add function that find service and topic as specific type [(dwlee)](https://github.com/dwlee/)
+ * Allow UrdfLink to have multiple visual elements [(jakobs)](https://github.com/jakobs/)
+ * Support queue_length for subscribing [(psoetens)](https://github.com/psoetens/)
+ * Quaternion.js has now a norm() function [(b1willaert)](https://github.com/b1willaert/)
+
+2014-02-04 - **0.12.0**
+ * Reverted to old TF client [(rctoris)](https://github.com/rctoris/)
+
+2014-02-04 - **0.11.0**
+ * Change TFClient to use the service interface rather than the action one [(T045T)](https://github.com/T045T/)
+ * Simplify TFClient and allow unsubscribe by key [(megawac)](https://github.com/megawac/)
+ * Add groovyCompatibility option to Ros [(T045T)](https://github.com/T045T/)
+ * Fix the param tests [(megawac)](https://github.com/megawac/)
+ * Allow unsubbing a particular listner without affecting others [(megawac)](https://github.com/megawac/)
+ * Add tests for set sans callback [(megawac)](https://github.com/megawac/)
+ * Make registering as a subscriber or publisher an option for the streaming API [(megawac)](https://github.com/megawac/)
+
 2014-12-08 - **0.10.0**
  * Refactor Karma testing and build configuration [(megawac)](https://github.com/megawac/)
  * Remove testing invalid XML [(megawac)](https://github.com/megawac/)

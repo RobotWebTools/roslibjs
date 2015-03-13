@@ -38,6 +38,20 @@ var sample_urdf = function (){
     '      </material>'+
     '    </visual>'+
     '  </link>'+
+    '  <link name="link5">'+ // link with referenced material and multiple visuals
+    '    <visual>'+
+    '      <geometry>'+
+    '        <box size="1 1 1" />'+
+    '      </geometry>'+
+    '      <material name="blue" />'+
+    '    </visual>'+
+    '    <visual>'+
+    '      <geometry>'+
+    '        <box size="2 2 2" />'+
+    '      </geometry>'+
+    '      <material name="blue" />'+
+    '    </visual>'+
+    '  </link>'+
     '  <joint name="joint1" type="continuous">'+
     '    <parent link="link1"/>'+
     '    <child link="link2"/>'+
@@ -50,6 +64,9 @@ var sample_urdf = function (){
     '    <parent link="link3"/>'+
     '    <child link="link4"/>'+
     '  </joint>'+
+    '  <material name="blue">'+
+    '    <color rgba="0 0 1 1" />'+
+    '  </material>'+
     '</robot>';
 }
 
@@ -71,18 +88,27 @@ describe('URDF', function() {
       });
 
       // Check all the visual elements
-      expect(urdfModel.links['link1'].visual.geometry.radius).to.equal(1.0);
-      expect(urdfModel.links['link2'].visual.geometry.dimension.x).to.equal(0.5);
-      expect(urdfModel.links['link2'].visual.geometry.dimension.y).to.equal(0.5);
-      expect(urdfModel.links['link2'].visual.geometry.dimension.z).to.equal(0.5);
-      expect(urdfModel.links['link3'].visual.geometry.length).to.equal(2.0);
-      expect(urdfModel.links['link3'].visual.geometry.radius).to.equal(0.2);
+      expect(urdfModel.links['link1'].visuals.length).to.equal(1);
+      expect(urdfModel.links['link1'].visuals[0].geometry.radius).to.equal(1.0);
+      expect(urdfModel.links['link2'].visuals[0].geometry.dimension.x).to.equal(0.5);
+      expect(urdfModel.links['link2'].visuals[0].geometry.dimension.y).to.equal(0.5);
+      expect(urdfModel.links['link2'].visuals[0].geometry.dimension.z).to.equal(0.5);
+      expect(urdfModel.links['link3'].visuals[0].geometry.length).to.equal(2.0);
+      expect(urdfModel.links['link3'].visuals[0].geometry.radius).to.equal(0.2);
 
-      expect(urdfModel.links['link4'].visual.material.name).to.equal('red');
-      expect(urdfModel.links['link4'].visual.material.color.r).to.equal(1.0);
-      expect(urdfModel.links['link4'].visual.material.color.g).to.equal(0);
-      expect(urdfModel.links['link4'].visual.material.color.b).to.equal(0);
-      expect(urdfModel.links['link4'].visual.material.color.a).to.equal(1.0);
+      expect(urdfModel.links['link4'].visuals.length).to.equal(1);
+      expect(urdfModel.links['link4'].visuals[0].material.name).to.equal('red');
+      expect(urdfModel.links['link4'].visuals[0].material.color.r).to.equal(1.0);
+      expect(urdfModel.links['link4'].visuals[0].material.color.g).to.equal(0);
+      expect(urdfModel.links['link4'].visuals[0].material.color.b).to.equal(0);
+      expect(urdfModel.links['link4'].visuals[0].material.color.a).to.equal(1.0);
+
+      expect(urdfModel.links['link5'].visuals.length).to.equal(2);
+      expect(urdfModel.links['link5'].visuals[0].material.name).to.equal('blue');
+      expect(urdfModel.links['link5'].visuals[0].material.color.r).to.equal(0.0);
+      expect(urdfModel.links['link5'].visuals[0].material.color.g).to.equal(0.0);
+      expect(urdfModel.links['link5'].visuals[0].material.color.b).to.equal(1.0);
+      expect(urdfModel.links['link5'].visuals[0].material.color.a).to.equal(1.0);
     });
 
     it('is ignorant to the xml node', function(){
