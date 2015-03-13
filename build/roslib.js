@@ -625,13 +625,13 @@ function Ros(options) {
   this.socket = null;
   this.idCounter = 0;
   this.isConnected = false;
+  this.transportLibrary = options.transportLibrary || 'websocket';
 
   // Sets unlimited event listeners.
   this.setMaxListeners(0);
 
   // begin by checking if a URL was given
   if (options.url) {
-    this.socketio = (options.url.indexOf('http') !== -1);
     this.connect(options.url);
   }
 }
@@ -644,14 +644,13 @@ Ros.prototype.__proto__ = EventEmitter2.prototype;
  * @param url - WebSocket URL for Rosbridge
  */
 Ros.prototype.connect = function(url) {
-  if( typeof(io) !== 'undefined' && this.socketio){
+  if (this.transportLibrary === 'socket.io') {
     this.socket = assign(io(url, {'force new connection': true}), socketAdapter(this));
-
     this.socket.on('connect', this.socket.onopen);
     this.socket.on('data', this.socket.onmessage);
     this.socket.on('close', this.socket.onclose);
     this.socket.on('error', this.socket.onerror);
-  }else{
+  } else {
     this.socket = assign(new WebSocket(url), socketAdapter(this));
   }
 
@@ -701,9 +700,9 @@ Ros.prototype.callOnConnection = function(message) {
   var that = this;
   var messageJson = JSON.stringify(message);
   var emitter = null;
-  if( typeof(io) !== 'undefined' && this.socketio ){
+  if (this.transportLibrary === 'socket.io') {
     emitter = function(msg){that.socket.emit('operation', msg);};
-  }else{
+  } else {
     emitter = function(msg){that.socket.send(msg);};
   }
 
