@@ -4,6 +4,10 @@
 
 var ActionClient = require('../actionlib/ActionClient');
 var Goal = require('../actionlib/Goal');
+
+var Service = require('../core/Service.js');
+var ServiceRequest = require('../core/ServiceRequest.js');
+
 var Transform = require('../math/Transform');
 
 /**
@@ -16,7 +20,9 @@ var Transform = require('../math/Transform');
  *   * angularThres - the angular threshold for the TF republisher
  *   * transThres - the translation threshold for the TF republisher
  *   * rate - the rate for the TF republisher
- *   * goalUpdateDelay - the goal update delay for the TF republisher
+ *   * updateDelay - the time (in ms) to wait after a new subscription
+ *                   to update the TF republisher's list of TFs
+ *   * topicTimeout - the timeout parameter for the TF republisher
  */
 function TFClient(options) {
   options = options || {};
@@ -25,17 +31,30 @@ function TFClient(options) {
   this.angularThres = options.angularThres || 2.0;
   this.transThres = options.transThres || 0.01;
   this.rate = options.rate || 10.0;
-  this.goalUpdateDelay = options.goalUpdateDelay || 50;
+  this.updateDelay = options.updateDelay || 50;
+  var seconds = options.topicTimeout || 2.0;
+  var secs = Math.floor(seconds);
+  var nsecs = Math.floor((seconds - secs) * 1000000000);
+  this.topicTimeout = {
+    secs: secs,
+    nsecs: nsecs
+  };
 
   this.currentGoal = false;
+  this.currentTopic = false;
   this.frameInfos = {};
-  this.goalUpdateRequested = false;
+  this.republisherUpdateRequested = false;
 
-  // Create an ActionClient
-  this.actionClient = new ActionClient({
-    ros : this.ros,
+  // Create an Action client
+  this.actionClient = this.ros.ActionClient({
     serverName : '/tf2_web_republisher',
     actionName : 'tf2_web_republisher/TFSubscriptionAction'
+  });
+
+  // Create a Service client
+  this.serviceClient = this.ros.Service({
+    name: '/republish_tfs',
+    serviceType: 'tf2_web_republisher/RepublishTFs'
   });
 }
 
@@ -45,15 +64,12 @@ function TFClient(options) {
  *
  * @param tf - the TF message from the server
  */
-TFClient.prototype.processFeedback = function(tf) {
+TFClient.prototype.processTFArray = function(tf) {
   var that = this;
   tf.transforms.forEach(function(transform) {
-    var frameID = transform.child_frame_id;
-    if (frameID[0] === '/') {
-      frameID = frameID.substring(1);
-    }
-    var info = that.frameInfos[frameID];
-    if (info !== undefined) {
+    var frameID = transform.child_frame_id.trimLeft('/');
+    var info = this.frameInfos[frameID];
+    if (info) {
       info.transform = new Transform({
         translation : transform.transform.translation,
         rotation : transform.transform.rotation
@@ -62,38 +78,67 @@ TFClient.prototype.processFeedback = function(tf) {
         cb(info.transform);
       });
     }
-  });
+  }, this);
 };
 
 /**
- * Create and send a new goal to the tf2_web_republisher based on the current
- * list of TFs.
+ * Create and send a new goal (or service request) to the tf2_web_republisher
+ * based on the current list of TFs.
  */
 TFClient.prototype.updateGoal = function() {
-  // Anytime the list of frames changes, we will need to send a new goal.
-  if (this.currentGoal) {
-    this.currentGoal.cancel();
-  }
-
   var goalMessage = {
-    source_frames : [],
+    source_frames : Object.keys(this.frameInfos),
     target_frame : this.fixedFrame,
     angular_thres : this.angularThres,
     trans_thres : this.transThres,
     rate : this.rate
   };
 
-  for (var frame in this.frameInfos) {
-    goalMessage.source_frames.push(frame);
+  // if we're running in groovy compatibility mode (the default)
+  // then use the action interface to tf2_web_republisher
+  if(this.ros.groovyCompatibility) {
+    if (this.currentGoal) {
+      this.currentGoal.cancel();
+    }
+    this.currentGoal = new Goal({
+      actionClient : this.actionClient,
+      goalMessage : goalMessage
+    });
+
+    this.currentGoal.on('feedback', this.processTFArray.bind(this));
+    this.currentGoal.send();
+  }
+  else {
+    // otherwise, use the service interface
+    // The service interface has the same parameters as the action,
+    // plus the timeout
+    goalMessage.timeout = this.topicTimeout;
+    var request = new ServiceRequest(goalMessage);
+
+    this.serviceClient.callService(request, this.processResponse.bind(this));
   }
 
-  this.currentGoal = new Goal({
-    actionClient : this.actionClient,
-    goalMessage : goalMessage
+  this.republisherUpdateRequested = false;
+};
+
+/**
+ * Process the service response and subscribe to the tf republisher
+ * topic
+ *
+ * @param response the service response containing the topic name
+ */
+TFClient.prototype.processResponse = function(response) {
+  // if we subscribed to a topic before, unsubscribe so
+  // the republisher stops publishing it
+  if (this.currentTopic) {
+    this.currentTopic.unsubscribe();
+  }
+
+  this.currentTopic = this.ros.Topic({
+    name: response.topic_name,
+    messageType: 'tf2_web_republisher/TFArray'
   });
-  this.currentGoal.on('feedback', this.processFeedback.bind(this));
-  this.currentGoal.send();
-  this.goalUpdateRequested = false;
+  this.currentTopic.subscribe(this.processTFArray.bind(this));
 };
 
 /**
@@ -105,23 +150,20 @@ TFClient.prototype.updateGoal = function() {
  */
 TFClient.prototype.subscribe = function(frameID, callback) {
   // remove leading slash, if it's there
-  if (frameID[0] === '/') {
-    frameID = frameID.substring(1);
-  }
+  frameID = frameID.trimLeft('/');
   // if there is no callback registered for the given frame, create emtpy callback list
-  if (this.frameInfos[frameID] === undefined) {
+  if (!this.frameInfos[frameID]) {
     this.frameInfos[frameID] = {
-      cbs : []
+      cbs: []
     };
-    if (!this.goalUpdateRequested) {
-      setTimeout(this.updateGoal.bind(this), this.goalUpdateDelay);
-      this.goalUpdateRequested = true;
+    if (!this.republisherUpdateRequested) {
+      setTimeout(this.updateGoal.bind(this), this.updateDelay);
+      this.republisherUpdateRequested = true;
     }
-  } else {
-    // if we already have a transform, call back immediately
-    if (this.frameInfos[frameID].transform !== undefined) {
-      callback(this.frameInfos[frameID].transform);
-    }
+  }
+  // if we already have a transform, call back immediately
+  else if (this.frameInfos[frameID].transform) {
+    callback(this.frameInfos[frameID].transform);
   }
   this.frameInfos[frameID].cbs.push(callback);
 };
@@ -134,19 +176,15 @@ TFClient.prototype.subscribe = function(frameID, callback) {
  */
 TFClient.prototype.unsubscribe = function(frameID, callback) {
   // remove leading slash, if it's there
-  if (frameID[0] === '/') {
-    frameID = frameID.substring(1);
-  }
+  frameID = frameID.trimLeft('/');
   var info = this.frameInfos[frameID];
-  if (info !== undefined) {
-    var cbIndex = info.cbs.indexOf(callback);
-    if (cbIndex >= 0) {
-      info.cbs.splice(cbIndex, 1);
-      if (info.cbs.length === 0) {
-        delete this.frameInfos[frameID];
-      }
-      this.needUpdate = true;
+  for (var cbs = info && info.cbs || [], idx = cbs.length; idx--;) {
+    if (cbs[idx] === callback) {
+      cbs.splice(idx, 1);
     }
+  }
+  if (!callback || cbs.length === 0) {
+    delete this.frameInfos[frameID];
   }
 };
 
