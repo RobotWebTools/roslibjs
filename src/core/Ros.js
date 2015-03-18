@@ -31,6 +31,13 @@ function Ros(options) {
   this.idCounter = 0;
   this.isConnected = false;
 
+  if (typeof options.groovyCompatibility === 'undefined') {
+    this.groovyCompatibility = true;
+  }
+  else {
+    this.groovyCompatibility = options.groovyCompatibility;
+  }
+
   // Sets unlimited event listeners.
   this.setMaxListeners(0);
 
