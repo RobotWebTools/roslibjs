@@ -33,6 +33,11 @@ function decompressPng(data, callback) {
     canvas.width = image.width;
     canvas.height = image.height;
 
+    // Prevents anti-aliasing and loosing data
+    context.imageSmoothingEnabled = false;
+    context.webkitImageSmoothingEnabled = false;
+    context.mozImageSmoothingEnabled = false;
+
     // Puts the data into the image.
     context.drawImage(image, 0, 0);
     // Grabs the raw, uncompressed data.
