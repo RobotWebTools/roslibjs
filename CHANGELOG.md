@@ -1,4 +1,8 @@
-2014-02-04 - **0.13.0**
+2015-03-27 - **0.14.0**
+ * Restore tf2_web_republisher service functionality [(T045T)](https://github.com/T045T/)
+ * Prevents smoothing of decompressed PNG images [(rctoris)](https://github.com/rctoris/)
+
+2015-03-09 - **0.13.0**
  * URDF joint added [(DLu)](https://github.com/DLu/)
  * Index components of roslib [(megawac)](https://github.com/megawac/)
  * Add function that find service and topic as specific type [(dwlee)](https://github.com/dwlee/)
@@ -6,10 +10,10 @@
  * Support queue_length for subscribing [(psoetens)](https://github.com/psoetens/)
  * Quaternion.js has now a norm() function [(b1willaert)](https://github.com/b1willaert/)
 
-2014-02-04 - **0.12.0**
+2015-02-04 - **0.12.0**
  * Reverted to old TF client [(rctoris)](https://github.com/rctoris/)
 
-2014-02-04 - **0.11.0**
+2015-02-04 - **0.11.0**
  * Change TFClient to use the service interface rather than the action one [(T045T)](https://github.com/T045T/)
  * Simplify TFClient and allow unsubscribe by key [(megawac)](https://github.com/megawac/)
  * Add groovyCompatibility option to Ros [(T045T)](https://github.com/T045T/)
