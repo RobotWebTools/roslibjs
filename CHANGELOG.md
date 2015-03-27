@@ -1,3 +1,7 @@
+2015-03-27 - **0.14.0**
+ * Restore tf2_web_republisher service functionality [(T045T)](https://github.com/T045T/)
+ * Prevents smoothing of decompressed PNG images [(rctoris)](https://github.com/rctoris/)
+
 2015-03-09 - **0.13.0**
  * URDF joint added [(DLu)](https://github.com/DLu/)
  * Index components of roslib [(megawac)](https://github.com/megawac/)

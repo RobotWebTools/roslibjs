@@ -37,7 +37,7 @@ exports.implementation = document.implementation;
  */
 
 var ROSLIB = this.ROSLIB || {
-  REVISION : '0.14.0-SNAPSHOT'
+  REVISION : '0.14.0'
 };
 
 var assign = require('object-assign');
@@ -1056,6 +1056,11 @@ function decompressPng(data, callback) {
     canvas.width = image.width;
     canvas.height = image.height;
 
+    // Prevents anti-aliasing and loosing data
+    context.imageSmoothingEnabled = false;
+    context.webkitImageSmoothingEnabled = false;
+    context.mozImageSmoothingEnabled = false;
+
     // Puts the data into the image.
     context.drawImage(image, 0, 0);
     // Grabs the raw, uncompressed data.
@@ -1135,6 +1140,7 @@ function SocketAdapter(client) {
 }
 
 module.exports = SocketAdapter;
+
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./../util/shim/WebSocket.js":40,"./../util/shim/canvas.js":41}],16:[function(require,module,exports){
 /**
