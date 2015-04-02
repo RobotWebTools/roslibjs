@@ -39,8 +39,7 @@
     "aliases": {
       "canvas": "./src/util/shim/canvas.js",
       "eventemitter2": "./src/util/shim/EventEmitter2.js",
-      "ws": "./src/util/shim/WebSocket.js",
-      "./src/util/DOMParser.js": "./src/util/shim/DOMParser.js"
+      "ws": "./src/util/shim/WebSocket.js"
     }
   },
   "directories": {

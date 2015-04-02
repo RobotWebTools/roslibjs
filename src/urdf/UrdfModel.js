@@ -6,7 +6,7 @@
 var UrdfMaterial = require('./UrdfMaterial');
 var UrdfLink = require('./UrdfLink');
 var UrdfJoint = require('./UrdfJoint');
-var DOMParser = require('../util/DOMParser');
+var DOMParser = require('xmlshim').DOMParser;
 
 // See https://developer.mozilla.org/docs/XPathResult#Constants
 var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
