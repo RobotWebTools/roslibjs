@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: urdf/UrdfModel.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: urdf/UrdfModel.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @author Benjamin Pitzer - ben.pitzer@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
+ */
+
+var UrdfMaterial = require('./UrdfMaterial');
+var UrdfLink = require('./UrdfLink');
+var UrdfJoint = require('./UrdfJoint');
+var DOMParser = require('xmlshim').DOMParser;
+
+// See https://developer.mozilla.org/docs/XPathResult#Constants
+var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
+
+/**
+ * A URDF Model can be used to parse a given URDF into the appropriate elements.
+ *
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ *  * string - the XML element to parse as a string
+ */
+function UrdfModel(options) {
+  options = options || {};
+  var xmlDoc = options.xml;
+  var string = options.string;
+  this.materials = {};
+  this.links = {};
+  this.joints = {};
+
+  // Check if we are using a string or an XML element
+  if (string) {
+    // Parse the string
+    var parser = new DOMParser();
+    xmlDoc = parser.parseFromString(string, 'text/xml');
+  }
+
+  // Initialize the model with the given XML node.
+  // Get the robot tag
+  var robotXml = xmlDoc.evaluate('//robot', xmlDoc, null, XPATH_FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+
+  // Get the robot name
+  this.name = robotXml.getAttribute('name');
+
+  // Parse all the visual elements we need
+  for (var nodes = robotXml.childNodes, i = 0; i &lt; nodes.length; i++) {
+    var node = nodes[i];
+    if (node.tagName === 'material') {
+      var material = new UrdfMaterial({
+        xml : node
+      });
+      // Make sure this is unique
+      if (this.materials[material.name] !== void 0) {
+        if( this.materials[material.name].isLink() ) {
+          this.materials[material.name].assign( material );
+        } else {
+          console.warn('Material ' + material.name + 'is not unique.');
+        }
+      } else {
+        this.materials[material.name] = material;
+      }
+    } else if (node.tagName === 'link') {
+      var link = new UrdfLink({
+        xml : node
+      });
+      // Make sure this is unique
+      if (this.links[link.name] !== void 0) {
+        console.warn('Link ' + link.name + ' is not unique.');
+      } else {
+        // Check for a material
+        for( var j=0; j&lt;link.visuals.length; j++ )
+        {
+          var mat = link.visuals[j].material; 
+          if ( mat !== null ) {
+            if (this.materials[mat.name] !== void 0) {
+              link.visuals[j].material = this.materials[mat.name];
+            } else {
+              this.materials[mat.name] = mat;
+            }
+          }
+        }
+
+        // Add the link
+        this.links[link.name] = link;
+      }
+    } else if (node.tagName === 'joint') {
+      var joint = new UrdfJoint({
+        xml : node
+      });
+      this.joints[joint.name] = joint;
+    }
+  }
+}
+
+module.exports = UrdfModel;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="global.html#ActionClient">ActionClient</a></li><li><a href="Goal.html">Goal</a></li><li><a href="global.html#Message">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="global.html#Pose">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="global.html#Service">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="global.html#ServiceResponse">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="global.html#Topic">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="global.html#UrdfColor">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="global.html#UrdfMaterial">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="global.html#UrdfVisual">UrdfVisual</a></li><li><a href="global.html#Vector3">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#assign">assign</a></li><li><a href="global.html#decompressPng">decompressPng</a></li><li><a href="global.html#EventEmitter2">EventEmitter2</a></li><li><a href="global.html#onclose">onclose</a></li><li><a href="global.html#onerror">onerror</a></li><li><a href="global.html#onmessage">onmessage</a></li><li><a href="global.html#onopen">onopen</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li><li><a href="global.html#RosTCP">RosTCP</a></li><li><a href="global.html#SocketAdapter">SocketAdapter</a></li><li><a href="global.html#UrdfTypes">UrdfTypes</a></li><li><a href="global.html#WebSocket">WebSocket</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Fri Apr 10 2015 14:10:01 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
