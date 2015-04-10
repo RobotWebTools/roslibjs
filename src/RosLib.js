@@ -3,7 +3,7 @@
  */
 
 var ROSLIB = this.ROSLIB || {
-  REVISION : '0.15.0'
+  REVISION : '0.16.0-SNAPSHOT'
 };
 
 var assign = require('object-assign');
