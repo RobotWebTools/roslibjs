@@ -1,6 +1,6 @@
-2015-03-27 - **0.14.0**
- * Restore tf2_web_republisher service functionality [(T045T)](https://github.com/T045T/)
- * Prevents smoothing of decompressed PNG images [(rctoris)](https://github.com/rctoris/)
+2015-04-10 - **0.15.0**
+ * Remove the (unused) DOMParser shim [(Rayman)](https://github.com/Rayman/)
+ * Check for install of cairo (removes sudo from npm install) [(rctoris)](https://github.com/rctoris/)
 
 2015-03-09 - **0.13.0**
  * URDF joint added [(DLu)](https://github.com/DLu/)
