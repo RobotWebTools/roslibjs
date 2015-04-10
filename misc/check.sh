@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # check for libcairo2
-if [ -f /usr/include/cairo/cairo.h ]; then
+if [ -f /usr/include/cairo/cairo.h ] || [ -f /usr/local/include/cairo/cairo.h ]; then
   echo libcairo2 dev files found.
   exit 0
 else
