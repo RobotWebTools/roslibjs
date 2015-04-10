@@ -37,7 +37,7 @@ exports.implementation = document.implementation;
  */
 
 var ROSLIB = this.ROSLIB || {
-  REVISION : '0.14.0'
+  REVISION : '0.15.0'
 };
 
 var assign = require('object-assign');
@@ -182,7 +182,7 @@ ActionClient.prototype.cancel = function() {
 };
 
 module.exports = ActionClient;
-},{"../core/Message":9,"../core/Topic":16,"./../util/shim/EventEmitter2.js":39}],6:[function(require,module,exports){
+},{"../core/Message":9,"../core/Topic":16,"./../util/shim/EventEmitter2.js":38}],6:[function(require,module,exports){
 /**
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -271,7 +271,7 @@ Goal.prototype.cancel = function() {
 };
 
 module.exports = Goal;
-},{"../core/Message":9,"./../util/shim/EventEmitter2.js":39}],7:[function(require,module,exports){
+},{"../core/Message":9,"./../util/shim/EventEmitter2.js":38}],7:[function(require,module,exports){
 /**
  * @author Laura Lindzey - lindzey@gmail.com
  */
@@ -479,7 +479,7 @@ SimpleActionServer.prototype.setPreempted = function() {
 };
 
 module.exports = SimpleActionServer;
-},{"../core/Message":9,"../core/Topic":16,"./../util/shim/EventEmitter2.js":39}],8:[function(require,module,exports){
+},{"../core/Message":9,"../core/Topic":16,"./../util/shim/EventEmitter2.js":38}],8:[function(require,module,exports){
 var Ros = require('../core/Ros');
 var mixin = require('../mixin');
 
@@ -926,7 +926,7 @@ Ros.prototype.decodeTypeDefs = function(defs) {
 
 module.exports = Ros;
 
-},{"./../util/shim/EventEmitter2.js":39,"./../util/shim/WebSocket.js":40,"./Service":12,"./ServiceRequest":13,"./SocketAdapter.js":15,"object-assign":1}],12:[function(require,module,exports){
+},{"./../util/shim/EventEmitter2.js":38,"./../util/shim/WebSocket.js":39,"./Service":12,"./ServiceRequest":13,"./SocketAdapter.js":15,"object-assign":1}],12:[function(require,module,exports){
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
@@ -1142,7 +1142,7 @@ function SocketAdapter(client) {
 module.exports = SocketAdapter;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./../util/shim/WebSocket.js":40,"./../util/shim/canvas.js":41}],16:[function(require,module,exports){
+},{"./../util/shim/WebSocket.js":39,"./../util/shim/canvas.js":40}],16:[function(require,module,exports){
 /**
  * @author Brandon Alexander - baalexander@gmail.com
  */
@@ -1311,7 +1311,7 @@ Topic.prototype.publish = function(message) {
 
 module.exports = Topic;
 
-},{"./../util/shim/EventEmitter2.js":39,"./Message":9}],17:[function(require,module,exports){
+},{"./../util/shim/EventEmitter2.js":38,"./Message":9}],17:[function(require,module,exports){
 var mixin = require('../mixin');
 
 var core = module.exports = {
@@ -2027,7 +2027,7 @@ module.exports = UrdfMesh;
 var UrdfMaterial = require('./UrdfMaterial');
 var UrdfLink = require('./UrdfLink');
 var UrdfJoint = require('./UrdfJoint');
-var DOMParser = require('../util/DOMParser');
+var DOMParser = require('xmlshim').DOMParser;
 
 // See https://developer.mozilla.org/docs/XPathResult#Constants
 var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
@@ -2114,7 +2114,7 @@ function UrdfModel(options) {
 
 module.exports = UrdfModel;
 
-},{"../util/DOMParser":38,"./UrdfJoint":29,"./UrdfLink":30,"./UrdfMaterial":31}],34:[function(require,module,exports){
+},{"./UrdfJoint":29,"./UrdfLink":30,"./UrdfMaterial":31,"xmlshim":2}],34:[function(require,module,exports){
 /**
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
@@ -2285,18 +2285,16 @@ module.exports = require('object-assign')({
 }, require('./UrdfTypes'));
 
 },{"./UrdfBox":26,"./UrdfColor":27,"./UrdfCylinder":28,"./UrdfLink":30,"./UrdfMaterial":31,"./UrdfMesh":32,"./UrdfModel":33,"./UrdfSphere":34,"./UrdfTypes":35,"./UrdfVisual":36,"object-assign":1}],38:[function(require,module,exports){
-module.exports = require('xmlshim').DOMParser;
-},{"xmlshim":2}],39:[function(require,module,exports){
 (function (global){
 module.exports = {
 	EventEmitter2: global.EventEmitter2
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],40:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 (function (global){
 module.exports = global.WebSocket;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],41:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /* global document */
 module.exports = function Canvas() {
 	return document.createElement('canvas');

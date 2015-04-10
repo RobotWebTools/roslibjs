@@ -2,7 +2,7 @@
   "name": "roslib",
   "homepage": "https://www.robotwebtools.org",
   "description": "The standard ROS Javascript Library",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "license": "BSD",
   "main": "./src/RosLibNode.js",
   "browser": "./src/RosLib.js",
@@ -39,8 +39,7 @@
     "aliases": {
       "canvas": "./src/util/shim/canvas.js",
       "eventemitter2": "./src/util/shim/EventEmitter2.js",
-      "ws": "./src/util/shim/WebSocket.js",
-      "./src/util/DOMParser.js": "./src/util/shim/DOMParser.js"
+      "ws": "./src/util/shim/WebSocket.js"
     }
   },
   "directories": {
@@ -55,7 +54,7 @@
     "test-examples": "grunt mochaTest:examples && karma start test/examples/karma.conf.js",
     "test-tcp": "grunt mochaTest:tcp",
     "publish": "grunt build",
-    "preinstall": "sh misc/install.sh"
+    "preinstall": "sh misc/check.sh"
   },
   "repository": {
     "type": "git",
