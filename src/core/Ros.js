@@ -117,7 +117,7 @@ Ros.prototype.callOnConnection = function(message) {
  * @param callback function with params:
  *   * topics - Array of topic names
  */
-Ros.prototype.getTopics = function(callback) {
+Ros.prototype.getTopics = function(callback, failedCallback) {
   var topicsClient = new Service({
     ros : this,
     name : '/rosapi/topics',
@@ -126,9 +126,14 @@ Ros.prototype.getTopics = function(callback) {
 
   var request = new ServiceRequest();
 
-  topicsClient.callService(request, function(result) {
-    callback(result.topics);
-  });
+  topicsClient.callService(request,
+    function(result) {
+      callback(result.topics);
+    },
+    function(message){
+      failedCallback(message);
+    }
+  );
 };
 
 /**
@@ -138,7 +143,7 @@ Ros.prototype.getTopics = function(callback) {
  * @param callback function with params:
  *   * topics - Array of topic names
  */
-Ros.prototype.getTopicsForType = function(topicType, callback) {
+Ros.prototype.getTopicsForType = function(topicType, callback, failedCallback) {
   var topicsForTypeClient = new Service({
     ros : this,
     name : '/rosapi/topics_for_type',
@@ -149,9 +154,14 @@ Ros.prototype.getTopicsForType = function(topicType, callback) {
     type: topicType
   });
 
-  topicsForTypeClient.callService(request, function(result) {
-    callback(result.topics);
-  });
+  topicsForTypeClient.callService(request,
+    function(result) {
+      callback(result.topics);
+    },
+    function(message){
+      failedCallback(message);
+    }
+  );
 };
 
 /**
@@ -160,7 +170,7 @@ Ros.prototype.getTopicsForType = function(topicType, callback) {
  * @param callback - function with the following params:
  *   * services - array of service names
  */
-Ros.prototype.getServices = function(callback) {
+Ros.prototype.getServices = function(callback, failedCallback) {
   var servicesClient = new Service({
     ros : this,
     name : '/rosapi/services',
@@ -169,9 +179,14 @@ Ros.prototype.getServices = function(callback) {
 
   var request = new ServiceRequest();
 
-  servicesClient.callService(request, function(result) {
-    callback(result.services);
-  });
+  servicesClient.callService(request,
+    function(result) {
+      callback(result.services);
+    },
+    function(message) {
+      failedCallback(message);
+    }
+  );
 };
 
 /**
@@ -181,7 +196,7 @@ Ros.prototype.getServices = function(callback) {
  * @param callback function with params:
  *   * topics - Array of service names
  */
-Ros.prototype.getServicesForType = function(serviceType, callback) {
+Ros.prototype.getServicesForType = function(serviceType, callback, failedCallback) {
   var servicesForTypeClient = new Service({
     ros : this,
     name : '/rosapi/services_for_type',
@@ -192,9 +207,14 @@ Ros.prototype.getServicesForType = function(serviceType, callback) {
     type: serviceType
   });
 
-  servicesForTypeClient.callService(request, function(result) {
-    callback(result.services);
-  });
+  servicesForTypeClient.callService(request,
+    function(result) {
+      callback(result.services);
+    },
+    function(message) {
+      failedCallback(message);
+    }
+  );
 };
 
 /**
@@ -203,7 +223,7 @@ Ros.prototype.getServicesForType = function(serviceType, callback) {
  * @param callback - function with the following params:
  *   * nodes - array of node names
  */
-Ros.prototype.getNodes = function(callback) {
+Ros.prototype.getNodes = function(callback, failedCallback) {
   var nodesClient = new Service({
     ros : this,
     name : '/rosapi/nodes',
@@ -212,9 +232,14 @@ Ros.prototype.getNodes = function(callback) {
 
   var request = new ServiceRequest();
 
-  nodesClient.callService(request, function(result) {
-    callback(result.nodes);
-  });
+  nodesClient.callService(request,
+    function(result) {
+      callback(result.nodes);
+    },
+    function(message) {
+      failedCallback(message);
+    }
+  );
 };
 
 /**
@@ -223,7 +248,7 @@ Ros.prototype.getNodes = function(callback) {
  * @param callback function with params:
  *  * params - array of param names.
  */
-Ros.prototype.getParams = function(callback) {
+Ros.prototype.getParams = function(callback, failedCallback) {
   var paramsClient = new Service({
     ros : this,
     name : '/rosapi/get_param_names',
@@ -231,9 +256,14 @@ Ros.prototype.getParams = function(callback) {
   });
 
   var request = new ServiceRequest();
-  paramsClient.callService(request, function(result) {
-    callback(result.names);
-  });
+  paramsClient.callService(request,
+    function(result) {
+      callback(result.names);
+    },
+    function(message){
+      failedCallback(message);
+    }
+  );
 };
 
 /**
@@ -242,7 +272,7 @@ Ros.prototype.getParams = function(callback) {
  * @param callback - function with params:
  *   * type - String of the topic type
  */
-Ros.prototype.getTopicType = function(topic, callback) {
+Ros.prototype.getTopicType = function(topic, callback, failedCallback) {
   var topicTypeClient = new Service({
     ros : this,
     name : '/rosapi/topic_type',
@@ -251,9 +281,14 @@ Ros.prototype.getTopicType = function(topic, callback) {
   var request = new ServiceRequest({
     topic: topic
   });
-  topicTypeClient.callService(request, function(result) {
-    callback(result.type);
-  });
+  topicTypeClient.callService(request,
+    function(result) {
+      callback(result.type);
+    },
+    function(message){
+      failedCallback(message);
+    }
+  );
 };
 
 /**
@@ -263,7 +298,7 @@ Ros.prototype.getTopicType = function(topic, callback) {
  *   * details - Array of the message detail
  * @param message - String of a topic type
  */
-Ros.prototype.getMessageDetails = function(message, callback) {
+Ros.prototype.getMessageDetails = function(message, callback, failedCallback) {
   var messageDetailClient = new Service({
     ros : this,
     name : '/rosapi/message_details',
@@ -272,9 +307,14 @@ Ros.prototype.getMessageDetails = function(message, callback) {
   var request = new ServiceRequest({
     type: message
   });
-  messageDetailClient.callService(request, function(result) {
-    callback(result.typedefs);
-  });
+  messageDetailClient.callService(request,
+    function(result) {
+      callback(result.typedefs);
+    },
+    function(message){
+      failedCallback(message);
+    }
+  );
 };
 
 /**
