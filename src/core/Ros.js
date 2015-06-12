@@ -125,15 +125,20 @@ Ros.prototype.getTopics = function(callback, failedCallback) {
   });
 
   var request = new ServiceRequest();
-
-  topicsClient.callService(request,
-    function(result) {
+  if (typeof failedCallback === 'function'){
+    topicsClient.callService(request,
+      function(result) {
+        callback(result.topics);
+      },
+      function(message){
+        failedCallback(message);
+      }
+    );
+  }else{
+    topicsClient.callService(request, function(result) {
       callback(result.topics);
-    },
-    function(message){
-      failedCallback(message);
-    }
-  );
+    });
+  }
 };
 
 /**
@@ -153,15 +158,20 @@ Ros.prototype.getTopicsForType = function(topicType, callback, failedCallback) {
   var request = new ServiceRequest({
     type: topicType
   });
-
-  topicsForTypeClient.callService(request,
-    function(result) {
+  if (typeof failedCallback === 'function'){
+    topicsForTypeClient.callService(request,
+      function(result) {
+        callback(result.topics);
+      },
+      function(message){
+        failedCallback(message);
+      }
+    );
+  }else{
+    topicsForTypeClient.callService(request, function(result) {
       callback(result.topics);
-    },
-    function(message){
-      failedCallback(message);
-    }
-  );
+    });
+  }
 };
 
 /**
@@ -178,15 +188,20 @@ Ros.prototype.getServices = function(callback, failedCallback) {
   });
 
   var request = new ServiceRequest();
-
-  servicesClient.callService(request,
-    function(result) {
+  if (typeof failedCallback === 'function'){
+    servicesClient.callService(request,
+      function(result) {
+        callback(result.services);
+      },
+      function(message) {
+        failedCallback(message);
+      }
+    );
+  }else{
+    servicesClient.callService(request, function(result) {
       callback(result.services);
-    },
-    function(message) {
-      failedCallback(message);
-    }
-  );
+    });
+  }
 };
 
 /**
@@ -206,15 +221,20 @@ Ros.prototype.getServicesForType = function(serviceType, callback, failedCallbac
   var request = new ServiceRequest({
     type: serviceType
   });
-
-  servicesForTypeClient.callService(request,
-    function(result) {
+  if (typeof failedCallback === 'function'){
+    servicesForTypeClient.callService(request,
+      function(result) {
+        callback(result.services);
+      },
+      function(message) {
+        failedCallback(message);
+      }
+    );
+  }else{
+    servicesForTypeClient.callService(request, function(result) {
       callback(result.services);
-    },
-    function(message) {
-      failedCallback(message);
-    }
-  );
+    });
+  }
 };
 
 /**
@@ -231,15 +251,20 @@ Ros.prototype.getNodes = function(callback, failedCallback) {
   });
 
   var request = new ServiceRequest();
-
-  nodesClient.callService(request,
-    function(result) {
+  if (typeof failedCallback === 'function'){
+    nodesClient.callService(request,
+      function(result) {
+        callback(result.nodes);
+      },
+      function(message) {
+        failedCallback(message);
+      }
+    );
+  }else{
+    nodesClient.callService(request, function(result) {
       callback(result.nodes);
-    },
-    function(message) {
-      failedCallback(message);
-    }
-  );
+    });
+  }
 };
 
 /**
@@ -254,16 +279,21 @@ Ros.prototype.getParams = function(callback, failedCallback) {
     name : '/rosapi/get_param_names',
     serviceType : 'rosapi/GetParamNames'
   });
-
   var request = new ServiceRequest();
-  paramsClient.callService(request,
-    function(result) {
+  if (typeof failedCallback === 'function'){
+    paramsClient.callService(request,
+      function(result) {
+        callback(result.names);
+      },
+      function(message){
+        failedCallback(message);
+      }
+    );
+  }else{
+    paramsClient.callService(request, function(result) {
       callback(result.names);
-    },
-    function(message){
-      failedCallback(message);
-    }
-  );
+    });
+  }
 };
 
 /**
@@ -281,14 +311,21 @@ Ros.prototype.getTopicType = function(topic, callback, failedCallback) {
   var request = new ServiceRequest({
     topic: topic
   });
-  topicTypeClient.callService(request,
-    function(result) {
+
+  if (typeof failedCallback === 'function'){
+    topicTypeClient.callService(request,
+      function(result) {
+        callback(result.type);
+      },
+      function(message){
+        failedCallback(message);
+      }
+    );
+  }else{
+    topicTypeClient.callService(request, function(result) {
       callback(result.type);
-    },
-    function(message){
-      failedCallback(message);
-    }
-  );
+    });
+  }
 };
 
 /**
@@ -307,14 +344,21 @@ Ros.prototype.getMessageDetails = function(message, callback, failedCallback) {
   var request = new ServiceRequest({
     type: message
   });
-  messageDetailClient.callService(request,
-    function(result) {
+
+  if (typeof failedCallback === 'function'){
+    messageDetailClient.callService(request,
+      function(result) {
+        callback(result.typedefs);
+      },
+      function(message){
+        failedCallback(message);
+      }
+    );
+  }else{
+    messageDetailClient.callService(request, function(result) {
       callback(result.typedefs);
-    },
-    function(message){
-      failedCallback(message);
-    }
-  );
+    });
+  }
 };
 
 /**
