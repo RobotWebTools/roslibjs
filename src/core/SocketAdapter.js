@@ -10,7 +10,8 @@
 var Canvas = require('canvas');
 var Image = Canvas.Image || global.Image;
 var WebSocket = require('ws');
-var BSON = bson().BSON;
+var bson = require('bson');
+var BSON = bson.BSON;
 
 /**
  * If a message was compressed as a PNG image (a compression hack since
@@ -118,7 +119,7 @@ function SocketAdapter(client) {
           } else {
               handleMessage(msg);
           }
-        }
+        };
         reader.readAsArrayBuffer(message.data);
       } else {
         var data = JSON.parse(typeof message === 'string' ? message : message.data);

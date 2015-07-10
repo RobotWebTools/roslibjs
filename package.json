@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "aliasify-patch": "^1.4.1",
+    "bson": "^0.4.7",
     "canvas": "1.1.3",
     "eventemitter2": "~0.4.13",
     "object-assign": "^2.0.0",
