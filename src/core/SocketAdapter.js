@@ -108,7 +108,7 @@ function SocketAdapter(client) {
      * @param message - the raw JSON message from rosbridge.
      */
     onmessage: function onMessage(message) {
-      if(message.data instanceof Blob) {
+      if(typeof Blob !== 'undefined' && message.data instanceof Blob) {
         var reader = new FileReader();
         reader.onload  = function() {
           var uint8Array = new Uint8Array(this.result);
