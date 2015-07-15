@@ -10,8 +10,10 @@
 var Canvas = require('canvas');
 var Image = Canvas.Image || global.Image;
 var WebSocket = require('ws');
-var bson = require('bson');
-var BSON = bson.BSON;
+var BSON = null;
+if(typeof bson !== 'undefined'){
+    BSON = bson().BSON;
+}
 
 /**
  * If a message was compressed as a PNG image (a compression hack since
@@ -109,6 +111,9 @@ function SocketAdapter(client) {
      */
     onmessage: function onMessage(message) {
       if(typeof Blob !== 'undefined' && message.data instanceof Blob) {
+        if(!BSON){
+            throw 'Cannot process BSON encoded message without BSON header.';
+        }
         var reader = new FileReader();
         reader.onload  = function() {
           var uint8Array = new Uint8Array(this.result);
