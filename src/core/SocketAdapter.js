@@ -10,6 +10,10 @@
 var Canvas = require('canvas');
 var Image = Canvas.Image || global.Image;
 var WebSocket = require('ws');
+var BSON = null;
+if(typeof bson !== 'undefined'){
+    BSON = bson().BSON;
+}
 
 /**
  * If a message was compressed as a PNG image (a compression hack since
@@ -106,11 +110,29 @@ function SocketAdapter(client) {
      * @param message - the raw JSON message from rosbridge.
      */
     onmessage: function onMessage(message) {
-      var data = JSON.parse(typeof message === 'string' ? message : message.data);
-      if (data.op === 'png') {
-        decompressPng(data, handleMessage);
+      if(typeof Blob !== 'undefined' && message.data instanceof Blob) {
+        if(!BSON){
+            throw 'Cannot process BSON encoded message without BSON header.';
+        }
+        var reader = new FileReader();
+        reader.onload  = function() {
+          var uint8Array = new Uint8Array(this.result);
+          var msg = BSON.deserialize(uint8Array);
+
+          if (msg.op === 'png') {
+              decompressPng(msg, handleMessage);
+          } else {
+              handleMessage(msg);
+          }
+        };
+        reader.readAsArrayBuffer(message.data);
       } else {
-        handleMessage(data);
+        var data = JSON.parse(typeof message === 'string' ? message : message.data);
+        if (data.op === 'png') {
+          decompressPng(data, handleMessage);
+        } else {
+          handleMessage(data);
+        }
       }
     }
   };

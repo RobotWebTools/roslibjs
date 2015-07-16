@@ -1,6 +1,9 @@
 {
   "globals": {
-    "global": true
+    "global": true,
+    "Blob": true,
+    "FileReader": true,
+    "bson": true
   },
   "curly": true,
   "eqeqeq": true,
