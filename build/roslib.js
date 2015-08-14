@@ -37,7 +37,7 @@ exports.implementation = document.implementation;
  */
 
 var ROSLIB = this.ROSLIB || {
-  REVISION : '0.16.0'
+  REVISION : '0.17.0-SNAPSHOT'
 };
 
 var assign = require('object-assign');
