@@ -1,7 +1,7 @@
 window.require = function require(path) {
 	switch (path) {
 		case 'eventemitter2': return {EventEmitter2: EventEmitter2};
-		case 'xmlshim': return {DOMParser: DOMParser}
+		case 'xmldom': return {DOMParser: DOMParser}
 	}
 	var lastIdx = path.lastIndexOf('/'),
 		path = lastIdx >= 0 ? path.slice(lastIdx + 1) : path;
