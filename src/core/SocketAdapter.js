@@ -32,6 +32,27 @@ function SocketAdapter(client) {
     }
   }
 
+  function handlePng(message, callback) {
+    if (message.op === 'png') {
+      decompressPng(message.data, callback);
+    } else {
+      callback(message);
+    }
+  }
+
+  function decodeBSON(data, callback) {
+    if (!BSON) {
+      throw 'Cannot process BSON encoded message without BSON header.';
+    }
+    var reader = new FileReader();
+    reader.onload  = function() {
+      var uint8Array = new Uint8Array(this.result);
+      var msg = BSON.deserialize(uint8Array);
+      callback(msg);
+    };
+    reader.readAsArrayBuffer(data);
+  }
+
   return {
     /**
      * Emits a 'connection' event on WebSocket connection.
@@ -72,30 +93,14 @@ function SocketAdapter(client) {
      * @param message - the raw JSON message from rosbridge.
      * @memberof SocketAdapter
      */
-    onmessage: function onMessage(message) {
-      if(typeof Blob !== 'undefined' && message.data instanceof Blob) {
-        if(!BSON){
-            throw 'Cannot process BSON encoded message without BSON header.';
-        }
-        var reader = new FileReader();
-        reader.onload  = function() {
-          var uint8Array = new Uint8Array(this.result);
-          var msg = BSON.deserialize(uint8Array);
-
-          if (msg.op === 'png') {
-              decompressPng(msg, handleMessage);
-          } else {
-              handleMessage(msg);
-          }
-        };
-        reader.readAsArrayBuffer(message.data);
+    onmessage: function onMessage(data) {
+      if (typeof Blob !== 'undefined' && data.data instanceof Blob) {
+        decodeBSON(data.data, function (message) {
+          handlePng(message, handleMessage);
+        });
       } else {
-        var data = JSON.parse(typeof message === 'string' ? message : message.data);
-        if (data.op === 'png') {
-          decompressPng(data, handleMessage);
-        } else {
-          handleMessage(data);
-        }
+        var message = JSON.parse(typeof data === 'string' ? data : data.data);
+        handlePng(message, handleMessage);
       }
     }
   };
