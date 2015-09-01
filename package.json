@@ -28,6 +28,7 @@
     "canvas": "~1.2.8",
     "eventemitter2": "~0.4.13",
     "object-assign": "^2.0.0",
+    "pngparse": "^2.0.1",
     "ws": "^0.4.32",
     "xmldom": "^0.1.19"
   },
