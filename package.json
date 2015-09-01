@@ -2,7 +2,7 @@
   "name": "roslib",
   "homepage": "https://www.robotwebtools.org",
   "description": "The standard ROS Javascript Library",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "license": "BSD",
   "main": "./src/RosLibNode.js",
   "browser": "./src/RosLib.js",
@@ -14,7 +14,7 @@
     "grunt-contrib-uglify": "~0.2.0",
     "grunt-contrib-watch": "~0.3.1",
     "grunt-jsdoc": "~0.6.0",
-    "grunt-karma": "^0.9.0",
+    "grunt-karma": "^0.12.0",
     "grunt-mocha-test": "^0.11.0",
     "karma-chai": "^0.1.0",
     "karma-firefox-launcher": "~0.1.3",
@@ -24,11 +24,11 @@
   },
   "dependencies": {
     "aliasify-patch": "^1.4.1",
-    "canvas": "1.1.3",
+    "canvas": "~1.2.8",
     "eventemitter2": "~0.4.13",
     "object-assign": "^2.0.0",
     "ws": "^0.4.32",
-    "xmlshim": "~0.0.9"
+    "xmldom": "^0.1.19"
   },
   "browserify": {
     "transform": [
@@ -39,7 +39,8 @@
     "aliases": {
       "canvas": "./src/util/shim/canvas.js",
       "eventemitter2": "./src/util/shim/EventEmitter2.js",
-      "ws": "./src/util/shim/WebSocket.js"
+      "ws": "./src/util/shim/WebSocket.js",
+      "xmldom": "./src/util/shim/xmldom.js"
     }
   },
   "directories": {
