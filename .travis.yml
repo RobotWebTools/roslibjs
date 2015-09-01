@@ -27,9 +27,6 @@ before_install:
   - npm install -g npm
   - npm install -g grunt-cli karma-cli
 
-  # install the dev packages we need
-  - ./misc/install.sh
-
   # Set up Xfvb for Firefox headless testing
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"

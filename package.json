@@ -56,8 +56,7 @@
     "test": "grunt test",
     "test-examples": "grunt mochaTest:examples && karma start test/examples/karma.conf.js",
     "test-tcp": "grunt mochaTest:tcp",
-    "publish": "grunt build",
-    "preinstall": "sh misc/check.sh"
+    "publish": "grunt build"
   },
   "repository": {
     "type": "git",
