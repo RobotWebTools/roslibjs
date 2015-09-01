@@ -1,3 +1,11 @@
+2015-09-01 - **0.17.0**
+ * Canvas version bump to use for both node version 0.10.34 and 0.12.7 [(jihoonl)](https://github.com/jihoonl/)
+ * Replace xmlshim with xmldom [(Rayman)](https://github.com/Rayman/)
+
+2015-08-14 - **0.16.0**
+ * Adds BSON support [(DLu)](https://github.com/DLu/)
+ * Update failed callback when rosservice is called [(dwlee)](https://github.com/dwlee/)
+
 2015-04-10 - **0.15.0**
  * Remove the (unused) DOMParser shim [(Rayman)](https://github.com/Rayman/)
  * Check for install of cairo (removes sudo from npm install) [(rctoris)](https://github.com/rctoris/)
