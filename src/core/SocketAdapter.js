@@ -4,6 +4,7 @@
  *
  * Note to anyone reviewing this code: these functions are called
  * in the context of their parent object, unless bound
+ * @fileOverview
  */
 'use strict';
 
@@ -20,6 +21,7 @@ if(typeof bson !== 'undefined'){
  * gzipping over WebSockets * is not supported yet), this function places the
  * "image" in a canvas element then decodes the * "image" as a Base64 string.
  *
+ * @private
  * @param data - object containing the PNG data.
  * @param callback - function with params:
  *   * data - the uncompressed data
@@ -63,6 +65,9 @@ function decompressPng(data, callback) {
  * Events listeners for a WebSocket or TCP socket to a JavaScript
  * ROS Client. Sets up Messages for a given topic to trigger an
  * event on the ROS client.
+ * 
+ * @namespace SocketAdapter
+ * @private
  */
 function SocketAdapter(client) {
   function handleMessage(message) {
@@ -78,6 +83,7 @@ function SocketAdapter(client) {
      * Emits a 'connection' event on WebSocket connection.
      *
      * @param event - the argument to emit with the event.
+     * @memberof SocketAdapter
      */
     onopen: function onOpen(event) {
       client.isConnected = true;
@@ -88,6 +94,7 @@ function SocketAdapter(client) {
      * Emits a 'close' event on WebSocket disconnection.
      *
      * @param event - the argument to emit with the event.
+     * @memberof SocketAdapter
      */
     onclose: function onClose(event) {
       client.isConnected = false;
@@ -98,6 +105,7 @@ function SocketAdapter(client) {
      * Emits an 'error' event whenever there was an error.
      *
      * @param event - the argument to emit with the event.
+     * @memberof SocketAdapter
      */
     onerror: function onError(event) {
       client.emit('error', event);
@@ -108,6 +116,7 @@ function SocketAdapter(client) {
      * topic, service, or param.
      *
      * @param message - the raw JSON message from rosbridge.
+     * @memberof SocketAdapter
      */
     onmessage: function onMessage(message) {
       if(typeof Blob !== 'undefined' && message.data instanceof Blob) {

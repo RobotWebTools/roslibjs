@@ -5,6 +5,7 @@ var util = require('util');
 
 /**
  * Same as core Ros except supports TCP connections
+ * @private
  */ 
 function RosTCP(options) {
   options = options || {};
