@@ -1,6 +1,8 @@
 language: node_js
 node_js:
   - "0.10"
+  - "0.12"
+  - "4"
 addons:
   firefox: "31.0" # 3.4->31.0
 os:
@@ -24,7 +26,10 @@ before_install:
   - cd ../
   - rosdep install --from-paths src --ignore-src --rosdistro hydro -y
   - cd /tmp/ws/roslibjs
-  - npm install -g npm
+
+  # Only update npm in the 0.8 and 0.10 versions to not run into this issue:
+  #   https://github.com/nodejs/node/issues/433
+  - case ${TRAVIS_NODE_VERSION} in 0.8*|0.10*) npm update -g npm ;; esac
   - npm install -g grunt-cli karma-cli
 
   # Set up Xfvb for Firefox headless testing
