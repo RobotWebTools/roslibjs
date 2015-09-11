@@ -24,6 +24,7 @@ var Transform = require('../math/Transform');
  *   * updateDelay - the time (in ms) to wait after a new subscription
  *                   to update the TF republisher's list of TFs
  *   * topicTimeout - the timeout parameter for the TF republisher
+ *   * serverName (optional) - the name of the tf2_web_republisher server
  */
 function TFClient(options) {
   options = options || {};
@@ -40,6 +41,7 @@ function TFClient(options) {
     secs: secs,
     nsecs: nsecs
   };
+  this.serverName = options.serverName || '/tf2_web_republisher';
 
   this.currentGoal = false;
   this.currentTopic = false;
@@ -48,7 +50,7 @@ function TFClient(options) {
 
   // Create an Action client
   this.actionClient = this.ros.ActionClient({
-    serverName : '/tf2_web_republisher',
+    serverName : this.serverName,
     actionName : 'tf2_web_republisher/TFSubscriptionAction'
   });
 
