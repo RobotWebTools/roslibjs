@@ -5,7 +5,14 @@
   "version": "0.18.0-SNAPSHOT",
   "license": "BSD",
   "main": "./src/RosLibNode.js",
-  "browser": "./src/RosLib.js",
+  "browser": {
+    "./src/RosLibNode.js": "./src/RosLib.js",
+    "eventemitter2": "./src/util/shim/EventEmitter2.js",
+    "canvas": "./src/util/shim/canvas.js",
+    "ws": "./src/util/shim/WebSocket.js",
+    "xmldom": "./src/util/shim/xmldom.js",
+    "./src/util/decompressPng.js": "./src/util/shim/decompressPng.js"
+  },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-browserify": "^3.0.1",
@@ -16,6 +23,7 @@
     "grunt-jsdoc": "~0.6.0",
     "grunt-karma": "^0.12.0",
     "grunt-mocha-test": "^0.11.0",
+    "karma": "^0.13.9",
     "karma-chai": "^0.1.0",
     "karma-firefox-launcher": "~0.1.3",
     "karma-mocha": "^0.1.9",
@@ -23,25 +31,11 @@
     "time-grunt": "^1.0.0"
   },
   "dependencies": {
-    "aliasify-patch": "^1.4.1",
-    "canvas": "~1.2.8",
     "eventemitter2": "~0.4.13",
     "object-assign": "^2.0.0",
+    "pngparse": "^2.0.1",
     "ws": "^0.4.32",
     "xmldom": "^0.1.19"
-  },
-  "browserify": {
-    "transform": [
-      "aliasify-patch"
-    ]
-  },
-  "aliasify": {
-    "aliases": {
-      "canvas": "./src/util/shim/canvas.js",
-      "eventemitter2": "./src/util/shim/EventEmitter2.js",
-      "ws": "./src/util/shim/WebSocket.js",
-      "xmldom": "./src/util/shim/xmldom.js"
-    }
   },
   "directories": {
     "example": "examples",
@@ -54,8 +48,7 @@
     "test": "grunt test",
     "test-examples": "grunt mochaTest:examples && karma start test/examples/karma.conf.js",
     "test-tcp": "grunt mochaTest:tcp",
-    "publish": "grunt build",
-    "preinstall": "sh misc/check.sh"
+    "publish": "grunt build"
   },
   "repository": {
     "type": "git",
