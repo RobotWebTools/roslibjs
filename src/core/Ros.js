@@ -300,6 +300,7 @@ Ros.prototype.getParams = function(callback, failedCallback) {
 /**
  * Retrieves a type of ROS topic.
  *
+ * @param topic name of the topic:
  * @param callback - function with params:
  *   * type - String of the topic type
  */
