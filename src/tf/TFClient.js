@@ -51,7 +51,9 @@ function TFClient(options) {
   // Create an Action client
   this.actionClient = this.ros.ActionClient({
     serverName : this.serverName,
-    actionName : 'tf2_web_republisher/TFSubscriptionAction'
+    actionName : 'tf2_web_republisher/TFSubscriptionAction',
+    omitStatus : true,
+    omitResult : true
   });
 
   // Create a Service client

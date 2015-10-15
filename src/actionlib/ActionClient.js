@@ -30,6 +30,9 @@ function ActionClient(options) {
   this.serverName = options.serverName;
   this.actionName = options.actionName;
   this.timeout = options.timeout;
+  this.omitFeedback = options.omitFeedback;
+  this.omitStatus = options.omitStatus;
+  this.omitResult = options.omitResult;
   this.goals = {};
 
   // flag to check if a status has been received
@@ -71,34 +74,40 @@ function ActionClient(options) {
   this.cancelTopic.advertise();
 
   // subscribe to the status topic
-  statusListener.subscribe(function(statusMessage) {
-    receivedStatus = true;
-    statusMessage.status_list.forEach(function(status) {
-      var goal = that.goals[status.goal_id.id];
-      if (goal) {
-        goal.emit('status', status);
-      }
+  if (!this.omitStatus) {
+    statusListener.subscribe(function(statusMessage) {
+      receivedStatus = true;
+      statusMessage.status_list.forEach(function(status) {
+        var goal = that.goals[status.goal_id.id];
+        if (goal) {
+          goal.emit('status', status);
+        }
+      });
     });
-  });
+  }
 
   // subscribe the the feedback topic
-  feedbackListener.subscribe(function(feedbackMessage) {
-    var goal = that.goals[feedbackMessage.status.goal_id.id];
-    if (goal) {
-      goal.emit('status', feedbackMessage.status);
-      goal.emit('feedback', feedbackMessage.feedback);
-    }
-  });
+  if (!this.omitFeedback) {
+    feedbackListener.subscribe(function(feedbackMessage) {
+      var goal = that.goals[feedbackMessage.status.goal_id.id];
+      if (goal) {
+        goal.emit('status', feedbackMessage.status);
+        goal.emit('feedback', feedbackMessage.feedback);
+      }
+    });
+  }
 
   // subscribe to the result topic
-  resultListener.subscribe(function(resultMessage) {
-    var goal = that.goals[resultMessage.status.goal_id.id];
+  if (!this.omitResult) {
+    resultListener.subscribe(function(resultMessage) {
+      var goal = that.goals[resultMessage.status.goal_id.id];
 
-    if (goal) {
-      goal.emit('status', resultMessage.status);
-      goal.emit('result', resultMessage.result);
-    }
-  });
+      if (goal) {
+        goal.emit('status', resultMessage.status);
+        goal.emit('result', resultMessage.result);
+      }
+    });
+  }
 
   // If timeout specified, emit a 'timeout' event if the action server does not respond
   if (this.timeout) {
