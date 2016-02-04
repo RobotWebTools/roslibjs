@@ -29,6 +29,8 @@ function SocketAdapter(client) {
       client.emit(message.topic, message.msg);
     } else if (message.op === 'service_response') {
       client.emit(message.id, message);
+    } else if (message.op === 'call_service') {
+      client.emit(message.service, message);
     }
   }
 
