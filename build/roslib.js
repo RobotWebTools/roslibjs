@@ -1,8 +1,11 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/* eslint-disable no-unused-vars */
 'use strict';
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 
-function ToObject(val) {
-	if (val == null) {
+function toObject(val) {
+	if (val === null || val === undefined) {
 		throw new TypeError('Object.assign cannot be called with null or undefined');
 	}
 
@@ -11,15 +14,25 @@ function ToObject(val) {
 
 module.exports = Object.assign || function (target, source) {
 	var from;
-	var keys;
-	var to = ToObject(target);
+	var to = toObject(target);
+	var symbols;
 
 	for (var s = 1; s < arguments.length; s++) {
-		from = arguments[s];
-		keys = Object.keys(Object(from));
+		from = Object(arguments[s]);
 
-		for (var i = 0; i < keys.length; i++) {
-			to[keys[i]] = from[keys[i]];
+		for (var key in from) {
+			if (hasOwnProperty.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (Object.getOwnPropertySymbols) {
+			symbols = Object.getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
 		}
 	}
 
@@ -93,6 +106,9 @@ function ActionClient(options) {
   this.serverName = options.serverName;
   this.actionName = options.actionName;
   this.timeout = options.timeout;
+  this.omitFeedback = options.omitFeedback;
+  this.omitStatus = options.omitStatus;
+  this.omitResult = options.omitResult;
   this.goals = {};
 
   // flag to check if a status has been received
@@ -134,34 +150,40 @@ function ActionClient(options) {
   this.cancelTopic.advertise();
 
   // subscribe to the status topic
-  statusListener.subscribe(function(statusMessage) {
-    receivedStatus = true;
-    statusMessage.status_list.forEach(function(status) {
-      var goal = that.goals[status.goal_id.id];
-      if (goal) {
-        goal.emit('status', status);
-      }
+  if (!this.omitStatus) {
+    statusListener.subscribe(function(statusMessage) {
+      receivedStatus = true;
+      statusMessage.status_list.forEach(function(status) {
+        var goal = that.goals[status.goal_id.id];
+        if (goal) {
+          goal.emit('status', status);
+        }
+      });
     });
-  });
+  }
 
   // subscribe the the feedback topic
-  feedbackListener.subscribe(function(feedbackMessage) {
-    var goal = that.goals[feedbackMessage.status.goal_id.id];
-    if (goal) {
-      goal.emit('status', feedbackMessage.status);
-      goal.emit('feedback', feedbackMessage.feedback);
-    }
-  });
+  if (!this.omitFeedback) {
+    feedbackListener.subscribe(function(feedbackMessage) {
+      var goal = that.goals[feedbackMessage.status.goal_id.id];
+      if (goal) {
+        goal.emit('status', feedbackMessage.status);
+        goal.emit('feedback', feedbackMessage.feedback);
+      }
+    });
+  }
 
   // subscribe to the result topic
-  resultListener.subscribe(function(resultMessage) {
-    var goal = that.goals[resultMessage.status.goal_id.id];
+  if (!this.omitResult) {
+    resultListener.subscribe(function(resultMessage) {
+      var goal = that.goals[resultMessage.status.goal_id.id];
 
-    if (goal) {
-      goal.emit('status', resultMessage.status);
-      goal.emit('result', resultMessage.result);
-    }
-  });
+      if (goal) {
+        goal.emit('status', resultMessage.status);
+        goal.emit('result', resultMessage.result);
+      }
+    });
+  }
 
   // If timeout specified, emit a 'timeout' event if the action server does not respond
   if (this.timeout) {
@@ -184,6 +206,7 @@ ActionClient.prototype.cancel = function() {
 };
 
 module.exports = ActionClient;
+
 },{"../core/Message":8,"../core/Topic":15,"eventemitter2":37}],5:[function(require,module,exports){
 /**
  * @fileOverview
@@ -917,6 +940,7 @@ Ros.prototype.getParams = function(callback, failedCallback) {
 /**
  * Retrieves a type of ROS topic.
  *
+ * @param topic name of the topic:
  * @param callback - function with params:
  *   * type - String of the topic type
  */
@@ -1073,6 +1097,8 @@ module.exports = Ros;
  */
 
 var ServiceResponse = require('./ServiceResponse');
+var ServiceRequest = require('./ServiceRequest');
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 /**
  * A ROS service client.
@@ -1088,8 +1114,11 @@ function Service(options) {
   this.ros = options.ros;
   this.name = options.name;
   this.serviceType = options.serviceType;
-}
+  this.isAdvertised = false;
 
+  this._serviceCallback = null;
+}
+Service.prototype.__proto__ = EventEmitter2.prototype;
 /**
  * Calls the service. Returns the service response in the callback.
  *
@@ -1100,6 +1129,10 @@ function Service(options) {
  *   * error - the error message reported by ROS
  */
 Service.prototype.callService = function(request, callback, failedCallback) {
+  if (this.isAdvertised) {
+    return;
+  }
+
   var serviceCallId = 'call_service:' + this.name + ':' + (++this.ros.idCounter);
 
   if (callback || failedCallback) {
@@ -1123,8 +1156,59 @@ Service.prototype.callService = function(request, callback, failedCallback) {
   this.ros.callOnConnection(call);
 };
 
+/**
+ * Every time a message is published for the given topic, the callback
+ * will be called with the message object.
+ *
+ * @param callback - function with the following params:
+ *   * message - the published message
+ */
+Service.prototype.advertise = function(callback) {
+  if (this.isAdvertised || typeof callback !== 'function') {
+    return;
+  }
+
+  this._serviceCallback = callback;
+  this.ros.on(this.name, this._serviceResponse.bind(this));
+  this.ros.callOnConnection({
+    op: 'advertise_service',
+    type: this.serviceType,
+    service: this.name
+  });
+  this.isAdvertised = true;
+};
+
+Service.prototype.unadvertise = function() {
+  if (!this.isAdvertised) {
+    return;
+  }
+  this.ros.callOnConnection({
+    op: 'unadvertise_service',
+    service: this.name
+  });
+  this.isAdvertised = false;
+};
+
+Service.prototype._serviceResponse = function(rosbridgeRequest) {
+  var response = {};
+  var success = this._serviceCallback(rosbridgeRequest.args, response);
+
+  var call = {
+    op: 'service_response',
+    service: this.name,
+    values: new ServiceResponse(response),
+    result: success
+  };
+
+  if (rosbridgeRequest.id) {
+    call.id = rosbridgeRequest.id;
+  }
+
+  this.ros.callOnConnection(call);
+};
+
 module.exports = Service;
-},{"./ServiceResponse":13}],12:[function(require,module,exports){
+},{"./ServiceRequest":12,"./ServiceResponse":13,"eventemitter2":37}],12:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - balexander@willowgarage.com
@@ -1194,6 +1278,8 @@ function SocketAdapter(client) {
       client.emit(message.topic, message.msg);
     } else if (message.op === 'service_response') {
       client.emit(message.id, message);
+    } else if (message.op === 'call_service') {
+      client.emit(message.service, message);
     }
   }
 
@@ -1757,6 +1843,8 @@ var Transform = require('../math/Transform');
  *                   to update the TF republisher's list of TFs
  *   * topicTimeout - the timeout parameter for the TF republisher
  *   * serverName (optional) - the name of the tf2_web_republisher server
+ *   * repubServiceName (optional) - the name of the republish_tfs service (non groovy compatibility mode only)
+ *   																 default: '/republish_tfs'
  */
 function TFClient(options) {
   options = options || {};
@@ -1774,6 +1862,7 @@ function TFClient(options) {
     nsecs: nsecs
   };
   this.serverName = options.serverName || '/tf2_web_republisher';
+  this.repubServiceName = options.repubServiceName || '/republish_tfs';
 
   this.currentGoal = false;
   this.currentTopic = false;
@@ -1783,12 +1872,14 @@ function TFClient(options) {
   // Create an Action client
   this.actionClient = this.ros.ActionClient({
     serverName : this.serverName,
-    actionName : 'tf2_web_republisher/TFSubscriptionAction'
+    actionName : 'tf2_web_republisher/TFSubscriptionAction',
+    omitStatus : true,
+    omitResult : true
   });
 
   // Create a Service client
   this.serviceClient = this.ros.Service({
-    name: '/republish_tfs',
+    name: this.repubServiceName,
     serviceType: 'tf2_web_republisher/RepublishTFs'
   });
 }
