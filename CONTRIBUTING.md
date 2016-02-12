@@ -17,8 +17,6 @@ roslibjs Build Setup
 	$ cd /path/to/roslibjs/
    	$ [sudo] npm install
 	```
- 3.5. If that doesn't work, install the [Cairo](http://cairographics.org/) graphics library manually for your os and retry
-   - [System specific instructions](https://github.com/Automattic/node-canvas/wiki/_pages)
 
 ### Build with Grunt
 

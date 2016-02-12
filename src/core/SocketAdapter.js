@@ -4,56 +4,24 @@
  *
  * Note to anyone reviewing this code: these functions are called
  * in the context of their parent object, unless bound
+ * @fileOverview
  */
 'use strict';
 
-var Canvas = require('canvas');
-var Image = Canvas.Image || global.Image;
+var decompressPng = require('../util/decompressPng');
 var WebSocket = require('ws');
-
-/**
- * If a message was compressed as a PNG image (a compression hack since
- * gzipping over WebSockets * is not supported yet), this function places the
- * "image" in a canvas element then decodes the * "image" as a Base64 string.
- *
- * @param data - object containing the PNG data.
- * @param callback - function with params:
- *   * data - the uncompressed data
- */
-function decompressPng(data, callback) {
-  // Uncompresses the data before sending it through (use image/canvas to do so).
-  var image = new Image();
-  // When the image loads, extracts the raw data (JSON message).
-  image.onload = function() {
-    // Creates a local canvas to draw on.
-    var canvas = new Canvas();
-    var context = canvas.getContext('2d');
-
-    // Sets width and height.
-    canvas.width = image.width;
-    canvas.height = image.height;
-
-    // Puts the data into the image.
-    context.drawImage(image, 0, 0);
-    // Grabs the raw, uncompressed data.
-    var imageData = context.getImageData(0, 0, image.width, image.height).data;
-
-    // Constructs the JSON.
-    var jsonData = '';
-    for (var i = 0; i < imageData.length; i += 4) {
-      // RGB
-      jsonData += String.fromCharCode(imageData[i], imageData[i + 1], imageData[i + 2]);
-    }
-    callback(JSON.parse(jsonData));
-  };
-  // Sends the image data to load.
-  image.src = 'data:image/png;base64,' + data.data;
+var BSON = null;
+if(typeof bson !== 'undefined'){
+    BSON = bson().BSON;
 }
 
 /**
  * Events listeners for a WebSocket or TCP socket to a JavaScript
  * ROS Client. Sets up Messages for a given topic to trigger an
  * event on the ROS client.
+ * 
+ * @namespace SocketAdapter
+ * @private
  */
 function SocketAdapter(client) {
   function handleMessage(message) {
@@ -61,7 +29,30 @@ function SocketAdapter(client) {
       client.emit(message.topic, message.msg);
     } else if (message.op === 'service_response') {
       client.emit(message.id, message);
+    } else if (message.op === 'call_service') {
+      client.emit(message.service, message);
     }
+  }
+
+  function handlePng(message, callback) {
+    if (message.op === 'png') {
+      decompressPng(message.data, callback);
+    } else {
+      callback(message);
+    }
+  }
+
+  function decodeBSON(data, callback) {
+    if (!BSON) {
+      throw 'Cannot process BSON encoded message without BSON header.';
+    }
+    var reader = new FileReader();
+    reader.onload  = function() {
+      var uint8Array = new Uint8Array(this.result);
+      var msg = BSON.deserialize(uint8Array);
+      callback(msg);
+    };
+    reader.readAsArrayBuffer(data);
   }
 
   return {
@@ -69,6 +60,7 @@ function SocketAdapter(client) {
      * Emits a 'connection' event on WebSocket connection.
      *
      * @param event - the argument to emit with the event.
+     * @memberof SocketAdapter
      */
     onopen: function onOpen(event) {
       client.isConnected = true;
@@ -79,6 +71,7 @@ function SocketAdapter(client) {
      * Emits a 'close' event on WebSocket disconnection.
      *
      * @param event - the argument to emit with the event.
+     * @memberof SocketAdapter
      */
     onclose: function onClose(event) {
       client.isConnected = false;
@@ -89,6 +82,7 @@ function SocketAdapter(client) {
      * Emits an 'error' event whenever there was an error.
      *
      * @param event - the argument to emit with the event.
+     * @memberof SocketAdapter
      */
     onerror: function onError(event) {
       client.emit('error', event);
@@ -99,13 +93,16 @@ function SocketAdapter(client) {
      * topic, service, or param.
      *
      * @param message - the raw JSON message from rosbridge.
+     * @memberof SocketAdapter
      */
-    onmessage: function onMessage(message) {
-      var data = JSON.parse(typeof message === 'string' ? message : message.data);
-      if (data.op === 'png') {
-        decompressPng(data, handleMessage);
+    onmessage: function onMessage(data) {
+      if (typeof Blob !== 'undefined' && data.data instanceof Blob) {
+        decodeBSON(data.data, function (message) {
+          handlePng(message, handleMessage);
+        });
       } else {
-        handleMessage(data);
+        var message = JSON.parse(typeof data === 'string' ? data : data.data);
+        handlePng(message, handleMessage);
       }
     }
   };

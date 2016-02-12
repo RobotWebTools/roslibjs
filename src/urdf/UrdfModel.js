@@ -1,4 +1,5 @@
 /**
+ * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -6,7 +7,7 @@
 var UrdfMaterial = require('./UrdfMaterial');
 var UrdfLink = require('./UrdfLink');
 var UrdfJoint = require('./UrdfJoint');
-var DOMParser = require('../util/DOMParser');
+var DOMParser = require('xmldom').DOMParser;
 
 // See https://developer.mozilla.org/docs/XPathResult#Constants
 var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
@@ -36,7 +37,7 @@ function UrdfModel(options) {
 
   // Initialize the model with the given XML node.
   // Get the robot tag
-  var robotXml = xmlDoc.evaluate('//robot', xmlDoc, null, XPATH_FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+  var robotXml = xmlDoc.documentElement;
 
   // Get the robot name
   this.name = robotXml.getAttribute('name');
