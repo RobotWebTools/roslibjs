@@ -1,8 +1,11 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/* eslint-disable no-unused-vars */
 'use strict';
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 
-function ToObject(val) {
-	if (val == null) {
+function toObject(val) {
+	if (val === null || val === undefined) {
 		throw new TypeError('Object.assign cannot be called with null or undefined');
 	}
 
@@ -11,15 +14,25 @@ function ToObject(val) {
 
 module.exports = Object.assign || function (target, source) {
 	var from;
-	var keys;
-	var to = ToObject(target);
+	var to = toObject(target);
+	var symbols;
 
 	for (var s = 1; s < arguments.length; s++) {
-		from = arguments[s];
-		keys = Object.keys(Object(from));
+		from = Object(arguments[s]);
 
-		for (var i = 0; i < keys.length; i++) {
-			to[keys[i]] = from[keys[i]];
+		for (var key in from) {
+			if (hasOwnProperty.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (Object.getOwnPropertySymbols) {
+			symbols = Object.getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
 		}
 	}
 
@@ -28,11 +41,17 @@ module.exports = Object.assign || function (target, source) {
 
 },{}],2:[function(require,module,exports){
 /**
+ * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
  */
 
+/**
+ * If you use roslib in a browser, all the classes will be exported to a global variable called ROSLIB.
+ *
+ * If you use nodejs, this is the variable you get when you require('roslib')
+ */
 var ROSLIB = this.ROSLIB || {
-  REVISION : '0.17.0'
+  REVISION : '0.18.0'
 };
 
 var assign = require('object-assign');
@@ -56,12 +75,13 @@ global.ROSLIB = require('./RosLib');
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./RosLib":2}],4:[function(require,module,exports){
 /**
+ * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
  */
 
 var Topic = require('../core/Topic');
 var Message = require('../core/Message');
-var EventEmitter2 = require('./../util/shim/EventEmitter2.js').EventEmitter2;
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 /**
  * An actionlib action client.
@@ -86,6 +106,9 @@ function ActionClient(options) {
   this.serverName = options.serverName;
   this.actionName = options.actionName;
   this.timeout = options.timeout;
+  this.omitFeedback = options.omitFeedback;
+  this.omitStatus = options.omitStatus;
+  this.omitResult = options.omitResult;
   this.goals = {};
 
   // flag to check if a status has been received
@@ -127,34 +150,40 @@ function ActionClient(options) {
   this.cancelTopic.advertise();
 
   // subscribe to the status topic
-  statusListener.subscribe(function(statusMessage) {
-    receivedStatus = true;
-    statusMessage.status_list.forEach(function(status) {
-      var goal = that.goals[status.goal_id.id];
-      if (goal) {
-        goal.emit('status', status);
-      }
+  if (!this.omitStatus) {
+    statusListener.subscribe(function(statusMessage) {
+      receivedStatus = true;
+      statusMessage.status_list.forEach(function(status) {
+        var goal = that.goals[status.goal_id.id];
+        if (goal) {
+          goal.emit('status', status);
+        }
+      });
     });
-  });
+  }
 
   // subscribe the the feedback topic
-  feedbackListener.subscribe(function(feedbackMessage) {
-    var goal = that.goals[feedbackMessage.status.goal_id.id];
-    if (goal) {
-      goal.emit('status', feedbackMessage.status);
-      goal.emit('feedback', feedbackMessage.feedback);
-    }
-  });
+  if (!this.omitFeedback) {
+    feedbackListener.subscribe(function(feedbackMessage) {
+      var goal = that.goals[feedbackMessage.status.goal_id.id];
+      if (goal) {
+        goal.emit('status', feedbackMessage.status);
+        goal.emit('feedback', feedbackMessage.feedback);
+      }
+    });
+  }
 
   // subscribe to the result topic
-  resultListener.subscribe(function(resultMessage) {
-    var goal = that.goals[resultMessage.status.goal_id.id];
+  if (!this.omitResult) {
+    resultListener.subscribe(function(resultMessage) {
+      var goal = that.goals[resultMessage.status.goal_id.id];
 
-    if (goal) {
-      goal.emit('status', resultMessage.status);
-      goal.emit('result', resultMessage.result);
-    }
-  });
+      if (goal) {
+        goal.emit('status', resultMessage.status);
+        goal.emit('result', resultMessage.result);
+      }
+    });
+  }
 
   // If timeout specified, emit a 'timeout' event if the action server does not respond
   if (this.timeout) {
@@ -177,13 +206,15 @@ ActionClient.prototype.cancel = function() {
 };
 
 module.exports = ActionClient;
-},{"../core/Message":8,"../core/Topic":15,"./../util/shim/EventEmitter2.js":37}],5:[function(require,module,exports){
+
+},{"../core/Message":8,"../core/Topic":15,"eventemitter2":37}],5:[function(require,module,exports){
 /**
+ * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
  */
 
 var Message = require('../core/Message');
-var EventEmitter2 = require('./../util/shim/EventEmitter2.js').EventEmitter2;
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 /**
  * An actionlib goal goal is associated with an action server.
@@ -266,14 +297,15 @@ Goal.prototype.cancel = function() {
 };
 
 module.exports = Goal;
-},{"../core/Message":8,"./../util/shim/EventEmitter2.js":37}],6:[function(require,module,exports){
+},{"../core/Message":8,"eventemitter2":37}],6:[function(require,module,exports){
 /**
+ * @fileOverview
  * @author Laura Lindzey - lindzey@gmail.com
  */
 
 var Topic = require('../core/Topic');
 var Message = require('../core/Message');
-var EventEmitter2 = require('./../util/shim/EventEmitter2.js').EventEmitter2;
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 /**
  * An actionlib action server client.
@@ -474,7 +506,7 @@ SimpleActionServer.prototype.setPreempted = function() {
 };
 
 module.exports = SimpleActionServer;
-},{"../core/Message":8,"../core/Topic":15,"./../util/shim/EventEmitter2.js":37}],7:[function(require,module,exports){
+},{"../core/Message":8,"../core/Topic":15,"eventemitter2":37}],7:[function(require,module,exports){
 var Ros = require('../core/Ros');
 var mixin = require('../mixin');
 
@@ -487,6 +519,7 @@ var action = module.exports = {
 mixin(Ros, ['ActionClient', 'SimpleActionServer'], action);
 },{"../core/Ros":10,"../mixin":22,"./ActionClient":4,"./Goal":5,"./SimpleActionServer":6}],8:[function(require,module,exports){
 /**
+ * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
@@ -505,6 +538,7 @@ function Message(values) {
 module.exports = Message;
 },{"object-assign":1}],9:[function(require,module,exports){
 /**
+ * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
@@ -588,17 +622,18 @@ Param.prototype.delete = function(callback) {
 module.exports = Param;
 },{"./Service":11,"./ServiceRequest":12}],10:[function(require,module,exports){
 /**
+ * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-var WebSocket = require('./../util/shim/WebSocket.js');
+var WebSocket = require('ws');
 var socketAdapter = require('./SocketAdapter.js');
 
 var Service = require('./Service');
 var ServiceRequest = require('./ServiceRequest');
 
 var assign = require('object-assign');
-var EventEmitter2 = require('./../util/shim/EventEmitter2.js').EventEmitter2;
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 /**
  * Manages connection to the server and all interactions with ROS.
@@ -888,6 +923,7 @@ Ros.prototype.getParams = function(callback, failedCallback) {
 /**
  * Retrieves a type of ROS topic.
  *
+ * @param topic name of the topic:
  * @param callback - function with params:
  *   * type - String of the topic type
  */
@@ -912,6 +948,39 @@ Ros.prototype.getTopicType = function(topic, callback, failedCallback) {
     );
   }else{
     topicTypeClient.callService(request, function(result) {
+      callback(result.type);
+    });
+  }
+};
+
+/**
+ * Retrieves a type of ROS service.
+ *
+ * @param service name of service:
+ * @param callback - function with params:
+ *   * type - String of the service type
+ */
+Ros.prototype.getServiceType = function(service, callback, failedCallback) {
+  var serviceTypeClient = new Service({
+    ros : this,
+    name : '/rosapi/service_type',
+    serviceType : 'rosapi/ServiceType'
+  });
+  var request = new ServiceRequest({
+    service: service
+  });
+
+  if (typeof failedCallback === 'function'){
+    serviceTypeClient.callService(request,
+      function(result) {
+        callback(result.type);
+      },
+      function(message){
+        failedCallback(message);
+      }
+    );
+  }else{
+    serviceTypeClient.callService(request, function(result) {
       callback(result.type);
     });
   }
@@ -1005,12 +1074,15 @@ Ros.prototype.decodeTypeDefs = function(defs) {
 
 module.exports = Ros;
 
-},{"./../util/shim/EventEmitter2.js":37,"./../util/shim/WebSocket.js":38,"./Service":11,"./ServiceRequest":12,"./SocketAdapter.js":14,"object-assign":1}],11:[function(require,module,exports){
+},{"./Service":11,"./ServiceRequest":12,"./SocketAdapter.js":14,"eventemitter2":37,"object-assign":1,"ws":38}],11:[function(require,module,exports){
 /**
+ * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
 var ServiceResponse = require('./ServiceResponse');
+var ServiceRequest = require('./ServiceRequest');
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 /**
  * A ROS service client.
@@ -1026,8 +1098,11 @@ function Service(options) {
   this.ros = options.ros;
   this.name = options.name;
   this.serviceType = options.serviceType;
-}
+  this.isAdvertised = false;
 
+  this._serviceCallback = null;
+}
+Service.prototype.__proto__ = EventEmitter2.prototype;
 /**
  * Calls the service. Returns the service response in the callback.
  *
@@ -1038,6 +1113,10 @@ function Service(options) {
  *   * error - the error message reported by ROS
  */
 Service.prototype.callService = function(request, callback, failedCallback) {
+  if (this.isAdvertised) {
+    return;
+  }
+
   var serviceCallId = 'call_service:' + this.name + ':' + (++this.ros.idCounter);
 
   if (callback || failedCallback) {
@@ -1061,9 +1140,61 @@ Service.prototype.callService = function(request, callback, failedCallback) {
   this.ros.callOnConnection(call);
 };
 
-module.exports = Service;
-},{"./ServiceResponse":13}],12:[function(require,module,exports){
 /**
+ * Every time a message is published for the given topic, the callback
+ * will be called with the message object.
+ *
+ * @param callback - function with the following params:
+ *   * message - the published message
+ */
+Service.prototype.advertise = function(callback) {
+  if (this.isAdvertised || typeof callback !== 'function') {
+    return;
+  }
+
+  this._serviceCallback = callback;
+  this.ros.on(this.name, this._serviceResponse.bind(this));
+  this.ros.callOnConnection({
+    op: 'advertise_service',
+    type: this.serviceType,
+    service: this.name
+  });
+  this.isAdvertised = true;
+};
+
+Service.prototype.unadvertise = function() {
+  if (!this.isAdvertised) {
+    return;
+  }
+  this.ros.callOnConnection({
+    op: 'unadvertise_service',
+    service: this.name
+  });
+  this.isAdvertised = false;
+};
+
+Service.prototype._serviceResponse = function(rosbridgeRequest) {
+  var response = {};
+  var success = this._serviceCallback(rosbridgeRequest.args, response);
+
+  var call = {
+    op: 'service_response',
+    service: this.name,
+    values: new ServiceResponse(response),
+    result: success
+  };
+
+  if (rosbridgeRequest.id) {
+    call.id = rosbridgeRequest.id;
+  }
+
+  this.ros.callOnConnection(call);
+};
+
+module.exports = Service;
+},{"./ServiceRequest":12,"./ServiceResponse":13,"eventemitter2":37}],12:[function(require,module,exports){
+/**
+ * @fileoverview
  * @author Brandon Alexander - balexander@willowgarage.com
  */
 
@@ -1082,6 +1213,7 @@ function ServiceRequest(values) {
 module.exports = ServiceRequest;
 },{"object-assign":1}],13:[function(require,module,exports){
 /**
+ * @fileoverview
  * @author Brandon Alexander - balexander@willowgarage.com
  */
 
@@ -1099,72 +1231,30 @@ function ServiceResponse(values) {
 
 module.exports = ServiceResponse;
 },{"object-assign":1}],14:[function(require,module,exports){
-(function (global){
 /**
  * Socket event handling utilities for handling events on either
  * WebSocket and TCP sockets
  *
  * Note to anyone reviewing this code: these functions are called
  * in the context of their parent object, unless bound
+ * @fileOverview
  */
 'use strict';
 
-var Canvas = require('./../util/shim/canvas.js');
-var Image = Canvas.Image || global.Image;
-var WebSocket = require('./../util/shim/WebSocket.js');
+var decompressPng = require('../util/decompressPng');
+var WebSocket = require('ws');
 var BSON = null;
 if(typeof bson !== 'undefined'){
     BSON = bson().BSON;
 }
 
 /**
- * If a message was compressed as a PNG image (a compression hack since
- * gzipping over WebSockets * is not supported yet), this function places the
- * "image" in a canvas element then decodes the * "image" as a Base64 string.
- *
- * @param data - object containing the PNG data.
- * @param callback - function with params:
- *   * data - the uncompressed data
- */
-function decompressPng(data, callback) {
-  // Uncompresses the data before sending it through (use image/canvas to do so).
-  var image = new Image();
-  // When the image loads, extracts the raw data (JSON message).
-  image.onload = function() {
-    // Creates a local canvas to draw on.
-    var canvas = new Canvas();
-    var context = canvas.getContext('2d');
-
-    // Sets width and height.
-    canvas.width = image.width;
-    canvas.height = image.height;
-
-    // Prevents anti-aliasing and loosing data
-    context.imageSmoothingEnabled = false;
-    context.webkitImageSmoothingEnabled = false;
-    context.mozImageSmoothingEnabled = false;
-
-    // Puts the data into the image.
-    context.drawImage(image, 0, 0);
-    // Grabs the raw, uncompressed data.
-    var imageData = context.getImageData(0, 0, image.width, image.height).data;
-
-    // Constructs the JSON.
-    var jsonData = '';
-    for (var i = 0; i < imageData.length; i += 4) {
-      // RGB
-      jsonData += String.fromCharCode(imageData[i], imageData[i + 1], imageData[i + 2]);
-    }
-    callback(JSON.parse(jsonData));
-  };
-  // Sends the image data to load.
-  image.src = 'data:image/png;base64,' + data.data;
-}
-
-/**
  * Events listeners for a WebSocket or TCP socket to a JavaScript
  * ROS Client. Sets up Messages for a given topic to trigger an
  * event on the ROS client.
+ * 
+ * @namespace SocketAdapter
+ * @private
  */
 function SocketAdapter(client) {
   function handleMessage(message) {
@@ -1172,7 +1262,30 @@ function SocketAdapter(client) {
       client.emit(message.topic, message.msg);
     } else if (message.op === 'service_response') {
       client.emit(message.id, message);
+    } else if (message.op === 'call_service') {
+      client.emit(message.service, message);
     }
+  }
+
+  function handlePng(message, callback) {
+    if (message.op === 'png') {
+      decompressPng(message.data, callback);
+    } else {
+      callback(message);
+    }
+  }
+
+  function decodeBSON(data, callback) {
+    if (!BSON) {
+      throw 'Cannot process BSON encoded message without BSON header.';
+    }
+    var reader = new FileReader();
+    reader.onload  = function() {
+      var uint8Array = new Uint8Array(this.result);
+      var msg = BSON.deserialize(uint8Array);
+      callback(msg);
+    };
+    reader.readAsArrayBuffer(data);
   }
 
   return {
@@ -1180,6 +1293,7 @@ function SocketAdapter(client) {
      * Emits a 'connection' event on WebSocket connection.
      *
      * @param event - the argument to emit with the event.
+     * @memberof SocketAdapter
      */
     onopen: function onOpen(event) {
       client.isConnected = true;
@@ -1190,6 +1304,7 @@ function SocketAdapter(client) {
      * Emits a 'close' event on WebSocket disconnection.
      *
      * @param event - the argument to emit with the event.
+     * @memberof SocketAdapter
      */
     onclose: function onClose(event) {
       client.isConnected = false;
@@ -1200,6 +1315,7 @@ function SocketAdapter(client) {
      * Emits an 'error' event whenever there was an error.
      *
      * @param event - the argument to emit with the event.
+     * @memberof SocketAdapter
      */
     onerror: function onError(event) {
       client.emit('error', event);
@@ -1210,31 +1326,16 @@ function SocketAdapter(client) {
      * topic, service, or param.
      *
      * @param message - the raw JSON message from rosbridge.
+     * @memberof SocketAdapter
      */
-    onmessage: function onMessage(message) {
-      if(typeof Blob !== 'undefined' && message.data instanceof Blob) {
-        if(!BSON){
-            throw 'Cannot process BSON encoded message without BSON header.';
-        }
-        var reader = new FileReader();
-        reader.onload  = function() {
-          var uint8Array = new Uint8Array(this.result);
-          var msg = BSON.deserialize(uint8Array);
-
-          if (msg.op === 'png') {
-              decompressPng(msg, handleMessage);
-          } else {
-              handleMessage(msg);
-          }
-        };
-        reader.readAsArrayBuffer(message.data);
+    onmessage: function onMessage(data) {
+      if (typeof Blob !== 'undefined' && data.data instanceof Blob) {
+        decodeBSON(data.data, function (message) {
+          handlePng(message, handleMessage);
+        });
       } else {
-        var data = JSON.parse(typeof message === 'string' ? message : message.data);
-        if (data.op === 'png') {
-          decompressPng(data, handleMessage);
-        } else {
-          handleMessage(data);
-        }
+        var message = JSON.parse(typeof data === 'string' ? data : data.data);
+        handlePng(message, handleMessage);
       }
     }
   };
@@ -1242,13 +1343,13 @@ function SocketAdapter(client) {
 
 module.exports = SocketAdapter;
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./../util/shim/WebSocket.js":38,"./../util/shim/canvas.js":39}],15:[function(require,module,exports){
+},{"../util/decompressPng":40,"ws":38}],15:[function(require,module,exports){
 /**
+ * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-var EventEmitter2 = require('./../util/shim/EventEmitter2.js').EventEmitter2;
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
 var Message = require('./Message');
 
 /**
@@ -1412,7 +1513,7 @@ Topic.prototype.publish = function(message) {
 
 module.exports = Topic;
 
-},{"./../util/shim/EventEmitter2.js":37,"./Message":8}],16:[function(require,module,exports){
+},{"./Message":8,"eventemitter2":37}],16:[function(require,module,exports){
 var mixin = require('../mixin');
 
 var core = module.exports = {
@@ -1429,6 +1530,7 @@ mixin(core.Ros, ['Param', 'Service', 'Topic'], core);
 
 },{"../mixin":22,"./Message":8,"./Param":9,"./Ros":10,"./Service":11,"./ServiceRequest":12,"./ServiceResponse":13,"./Topic":15}],17:[function(require,module,exports){
 /**
+ * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
  */
 
@@ -1475,6 +1577,7 @@ Pose.prototype.clone = function() {
 module.exports = Pose;
 },{"./Quaternion":18,"./Vector3":20}],18:[function(require,module,exports){
 /**
+ * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
  */
 
@@ -1568,6 +1671,7 @@ module.exports = Quaternion;
 
 },{}],19:[function(require,module,exports){
 /**
+ * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
  */
 
@@ -1601,6 +1705,7 @@ Transform.prototype.clone = function() {
 module.exports = Transform;
 },{"./Quaternion":18,"./Vector3":20}],20:[function(require,module,exports){
 /**
+ * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
  */
 
@@ -1696,6 +1801,7 @@ module.exports = function(Ros, classes, features) {
 
 },{}],23:[function(require,module,exports){
 /**
+ * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
  */
 
@@ -1720,6 +1826,9 @@ var Transform = require('../math/Transform');
  *   * updateDelay - the time (in ms) to wait after a new subscription
  *                   to update the TF republisher's list of TFs
  *   * topicTimeout - the timeout parameter for the TF republisher
+ *   * serverName (optional) - the name of the tf2_web_republisher server
+ *   * repubServiceName (optional) - the name of the republish_tfs service (non groovy compatibility mode only)
+ *   																 default: '/republish_tfs'
  */
 function TFClient(options) {
   options = options || {};
@@ -1736,6 +1845,8 @@ function TFClient(options) {
     secs: secs,
     nsecs: nsecs
   };
+  this.serverName = options.serverName || '/tf2_web_republisher';
+  this.repubServiceName = options.repubServiceName || '/republish_tfs';
 
   this.currentGoal = false;
   this.currentTopic = false;
@@ -1744,13 +1855,15 @@ function TFClient(options) {
 
   // Create an Action client
   this.actionClient = this.ros.ActionClient({
-    serverName : '/tf2_web_republisher',
-    actionName : 'tf2_web_republisher/TFSubscriptionAction'
+    serverName : this.serverName,
+    actionName : 'tf2_web_republisher/TFSubscriptionAction',
+    omitStatus : true,
+    omitResult : true
   });
 
   // Create a Service client
   this.serviceClient = this.ros.Service({
-    name: '/republish_tfs',
+    name: this.repubServiceName,
     serviceType: 'tf2_web_republisher/RepublishTFs'
   });
 }
@@ -1908,6 +2021,7 @@ var tf = module.exports = {
 mixin(Ros, ['TFClient'], tf);
 },{"../core/Ros":10,"../mixin":22,"./TFClient":23}],25:[function(require,module,exports){
 /**
+ * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -1938,6 +2052,7 @@ function UrdfBox(options) {
 module.exports = UrdfBox;
 },{"../math/Vector3":20,"./UrdfTypes":34}],26:[function(require,module,exports){
 /**
+ * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -1961,6 +2076,7 @@ function UrdfColor(options) {
 module.exports = UrdfColor;
 },{}],27:[function(require,module,exports){
 /**
+ * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -1983,6 +2099,7 @@ function UrdfCylinder(options) {
 module.exports = UrdfCylinder;
 },{"./UrdfTypes":34}],28:[function(require,module,exports){
 /**
+ * @fileOverview 
  * @author David V. Lu!!  davidvlu@gmail.com
  */
 
@@ -2008,6 +2125,7 @@ module.exports = UrdfJoint;
 
 },{}],29:[function(require,module,exports){
 /**
+ * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -2036,6 +2154,7 @@ function UrdfLink(options) {
 module.exports = UrdfLink;
 },{"./UrdfVisual":35}],30:[function(require,module,exports){
 /**
+ * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -2085,6 +2204,7 @@ module.exports = UrdfMaterial;
 
 },{"./UrdfColor":26,"object-assign":1}],31:[function(require,module,exports){
 /**
+ * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -2121,6 +2241,7 @@ function UrdfMesh(options) {
 module.exports = UrdfMesh;
 },{"../math/Vector3":20,"./UrdfTypes":34}],32:[function(require,module,exports){
 /**
+ * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -2128,7 +2249,7 @@ module.exports = UrdfMesh;
 var UrdfMaterial = require('./UrdfMaterial');
 var UrdfLink = require('./UrdfLink');
 var UrdfJoint = require('./UrdfJoint');
-var DOMParser = require('./../util/shim/xmldom.js').DOMParser;
+var DOMParser = require('xmldom').DOMParser;
 
 // See https://developer.mozilla.org/docs/XPathResult#Constants
 var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
@@ -2215,8 +2336,9 @@ function UrdfModel(options) {
 
 module.exports = UrdfModel;
 
-},{"./../util/shim/xmldom.js":40,"./UrdfJoint":28,"./UrdfLink":29,"./UrdfMaterial":30}],33:[function(require,module,exports){
+},{"./UrdfJoint":28,"./UrdfLink":29,"./UrdfMaterial":30,"xmldom":41}],33:[function(require,module,exports){
 /**
+ * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -2246,6 +2368,7 @@ module.exports = {
 
 },{}],35:[function(require,module,exports){
 /**
+ * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -2401,6 +2524,65 @@ module.exports = function Canvas() {
 	return document.createElement('canvas');
 };
 },{}],40:[function(require,module,exports){
+(function (global){
+/**
+ * @fileOverview
+ * @author Graeme Yeates - github.com/megawac
+ */
+
+'use strict';
+
+var Canvas = require('canvas');
+var Image = Canvas.Image || global.Image;
+
+/**
+ * If a message was compressed as a PNG image (a compression hack since
+ * gzipping over WebSockets * is not supported yet), this function places the
+ * "image" in a canvas element then decodes the * "image" as a Base64 string.
+ *
+ * @private
+ * @param data - object containing the PNG data.
+ * @param callback - function with params:
+ *   * data - the uncompressed data
+ */
+function decompressPng(data, callback) {
+  // Uncompresses the data before sending it through (use image/canvas to do so).
+  var image = new Image();
+  // When the image loads, extracts the raw data (JSON message).
+  image.onload = function() {
+    // Creates a local canvas to draw on.
+    var canvas = new Canvas();
+    var context = canvas.getContext('2d');
+
+    // Sets width and height.
+    canvas.width = image.width;
+    canvas.height = image.height;
+
+    // Prevents anti-aliasing and loosing data
+    context.imageSmoothingEnabled = false;
+    context.webkitImageSmoothingEnabled = false;
+    context.mozImageSmoothingEnabled = false;
+
+    // Puts the data into the image.
+    context.drawImage(image, 0, 0);
+    // Grabs the raw, uncompressed data.
+    var imageData = context.getImageData(0, 0, image.width, image.height).data;
+
+    // Constructs the JSON.
+    var jsonData = '';
+    for (var i = 0; i < imageData.length; i += 4) {
+      // RGB
+      jsonData += String.fromCharCode(imageData[i], imageData[i + 1], imageData[i + 2]);
+    }
+    callback(JSON.parse(jsonData));
+  };
+  // Sends the image data to load.
+  image.src = 'data:image/png;base64,' + data;
+}
+
+module.exports = decompressPng;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"canvas":39}],41:[function(require,module,exports){
 (function (global){
 exports.DOMImplementation = global.DOMImplementation;
 exports.XMLSerializer = global.XMLSerializer;

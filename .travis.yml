@@ -1,45 +1,28 @@
 language: node_js
 node_js:
   - "0.10"
-addons:
-  firefox: "31.0" # 3.4->31.0
-os:
-  - linux
+  - "0.12"
+  - "4"
+env:
+  - ROS_DISTRO=hydro
+
 before_install:
   # ROS deps for examples
   - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu precise main" > /etc/apt/sources.list.d/ros-latest.list'
   - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
   - sudo apt-get update -qq
-  - sudo apt-get install ros-hydro-ros-base
-  # temp local install of tf2_web_republisher
-  # - sudo apt-get install ros-hydro-rosbridge-server ros-hydro-tf2-web-republisher ros-hydro-common-tutorials ros-hydro-rospy-tutorials ros-hydro-actionlib-tutorials
-  - sudo apt-get install ros-hydro-rosbridge-server ros-hydro-common-tutorials ros-hydro-rospy-tutorials ros-hydro-actionlib-tutorials
-  - sudo apt-get install python-catkin-pkg python-rosdep ros-hydro-catkin -qq
-  - sudo rosdep init
-  - rosdep update
-  - mkdir -p /tmp/ws/src
-  - ln -s `pwd` /tmp/ws/roslibjs
-  - cd /tmp/ws/src
-  - git clone https://github.com/RobotWebTools/tf2_web_republisher.git
-  - cd ../
-  - rosdep install --from-paths src --ignore-src --rosdistro hydro -y
-  - cd /tmp/ws/roslibjs
-  - npm install -g npm
-  - npm install -g grunt-cli karma-cli
+  - sudo apt-get install -qq ros-$ROS_DISTRO-ros ros-$ROS_DISTRO-catkin python-catkin-pkg python-rosdep
+  - sudo apt-get install -qq ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
 
-  # install the dev packages we need
-  - ./misc/install.sh
+  # Only update npm in the 0.8 and 0.10 versions to not run into this issue:
+  #   https://github.com/nodejs/node/issues/433
+  - case ${TRAVIS_NODE_VERSION} in 0.8*|0.10*) npm update -g npm ;; esac
 
   # Set up Xfvb for Firefox headless testing
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
 before_script:
-  - source /opt/ros/hydro/setup.bash
-  - cd /tmp/ws
-  - catkin_make
-  - catkin_make install
-  - source install/setup.bash
-  - cd /tmp/ws/roslibjs
+  - source /opt/ros/$ROS_DISTRO/setup.bash
   - sh test/examples/setup_examples.sh
 script:
   - rostopic list

@@ -1,7 +1,7 @@
 {
   "name": "roslib",
   "description": "roslibjs is the core JavaScript library for interacting with ROS from the browser. It uses WebSockets to connect with rosbridge and provides publishing, subscribing, service calls, actionlib, TF, URDF parsing, and other essential ROS functionality. roslibjs is developed as part of the Robot Web Tools effort.",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "homepage": "https://github.com/RobotWebTools/roslibjs",
   "authors": [
     "Russell Toris<rctoris@wpi.edu>",

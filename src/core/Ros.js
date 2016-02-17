@@ -1,4 +1,5 @@
 /**
+ * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
@@ -299,6 +300,7 @@ Ros.prototype.getParams = function(callback, failedCallback) {
 /**
  * Retrieves a type of ROS topic.
  *
+ * @param topic name of the topic:
  * @param callback - function with params:
  *   * type - String of the topic type
  */
@@ -323,6 +325,39 @@ Ros.prototype.getTopicType = function(topic, callback, failedCallback) {
     );
   }else{
     topicTypeClient.callService(request, function(result) {
+      callback(result.type);
+    });
+  }
+};
+
+/**
+ * Retrieves a type of ROS service.
+ *
+ * @param service name of service:
+ * @param callback - function with params:
+ *   * type - String of the service type
+ */
+Ros.prototype.getServiceType = function(service, callback, failedCallback) {
+  var serviceTypeClient = new Service({
+    ros : this,
+    name : '/rosapi/service_type',
+    serviceType : 'rosapi/ServiceType'
+  });
+  var request = new ServiceRequest({
+    service: service
+  });
+
+  if (typeof failedCallback === 'function'){
+    serviceTypeClient.callService(request,
+      function(result) {
+        callback(result.type);
+      },
+      function(message){
+        failedCallback(message);
+      }
+    );
+  }else{
+    serviceTypeClient.callService(request, function(result) {
       callback(result.type);
     });
   }

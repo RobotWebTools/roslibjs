@@ -1,4 +1,5 @@
 /**
+ * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
  */
 
@@ -23,6 +24,9 @@ var Transform = require('../math/Transform');
  *   * updateDelay - the time (in ms) to wait after a new subscription
  *                   to update the TF republisher's list of TFs
  *   * topicTimeout - the timeout parameter for the TF republisher
+ *   * serverName (optional) - the name of the tf2_web_republisher server
+ *   * repubServiceName (optional) - the name of the republish_tfs service (non groovy compatibility mode only)
+ *   																 default: '/republish_tfs'
  */
 function TFClient(options) {
   options = options || {};
@@ -39,6 +43,8 @@ function TFClient(options) {
     secs: secs,
     nsecs: nsecs
   };
+  this.serverName = options.serverName || '/tf2_web_republisher';
+  this.repubServiceName = options.repubServiceName || '/republish_tfs';
 
   this.currentGoal = false;
   this.currentTopic = false;
@@ -47,13 +53,15 @@ function TFClient(options) {
 
   // Create an Action client
   this.actionClient = this.ros.ActionClient({
-    serverName : '/tf2_web_republisher',
-    actionName : 'tf2_web_republisher/TFSubscriptionAction'
+    serverName : this.serverName,
+    actionName : 'tf2_web_republisher/TFSubscriptionAction',
+    omitStatus : true,
+    omitResult : true
   });
 
   // Create a Service client
   this.serviceClient = this.ros.Service({
-    name: '/republish_tfs',
+    name: this.repubServiceName,
     serviceType: 'tf2_web_republisher/RepublishTFs'
   });
 }

@@ -1,5 +1,5 @@
 /**
- * ROSLIB Node exclusive extensions 
+ * @fileOverview ROSLIB Node exclusive extensions 
  */
 var assign = require('object-assign');
 
