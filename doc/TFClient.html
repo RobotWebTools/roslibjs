@@ -28,9 +28,7 @@
 
 <header>
     
-        <h2>
-        TFClient
-        </h2>
+        <h2>TFClient</h2>
         
     
 </header>
@@ -104,7 +102,10 @@
   * rate - the rate for the TF republisher
   * updateDelay - the time (in ms) to wait after a new subscription
                   to update the TF republisher's list of TFs
-  * topicTimeout - the timeout parameter for the TF republisher</td>
+  * topicTimeout - the timeout parameter for the TF republisher
+  * serverName (optional) - the name of the tf2_web_republisher server
+  * repubServiceName (optional) - the name of the republish_tfs service (non groovy compatibility mode only)
+  																 default: '/republish_tfs'</td>
         </tr>
 
     
@@ -145,7 +146,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line27">line 27</a>
+        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line31">line 31</a>
     </li></ul></dd>
     
 
@@ -290,7 +291,7 @@ topic
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line134">line 134</a>
+        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line142">line 142</a>
     </li></ul></dd>
     
 
@@ -417,7 +418,7 @@ functions.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line67">line 67</a>
+        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line75">line 75</a>
     </li></ul></dd>
     
 
@@ -562,7 +563,7 @@ functions.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line155">line 155</a>
+        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line163">line 163</a>
     </li></ul></dd>
     
 
@@ -706,7 +707,7 @@ functions.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line184">line 184</a>
+        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line192">line 192</a>
     </li></ul></dd>
     
 
@@ -789,7 +790,7 @@ based on the current list of TFs.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line92">line 92</a>
+        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line100">line 100</a>
     </li></ul></dd>
     
 
@@ -831,13 +832,13 @@ based on the current list of TFs.
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="global.html#ActionClient">ActionClient</a></li><li><a href="Goal.html">Goal</a></li><li><a href="global.html#Message">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="global.html#Pose">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="global.html#Service">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="global.html#ServiceResponse">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="global.html#Topic">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="global.html#UrdfColor">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="global.html#UrdfMaterial">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="global.html#UrdfVisual">UrdfVisual</a></li><li><a href="global.html#Vector3">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#assign">assign</a></li><li><a href="global.html#decompressPng">decompressPng</a></li><li><a href="global.html#EventEmitter2">EventEmitter2</a></li><li><a href="global.html#onclose">onclose</a></li><li><a href="global.html#onerror">onerror</a></li><li><a href="global.html#onmessage">onmessage</a></li><li><a href="global.html#onopen">onopen</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li><li><a href="global.html#RosTCP">RosTCP</a></li><li><a href="global.html#SocketAdapter">SocketAdapter</a></li><li><a href="global.html#UrdfTypes">UrdfTypes</a></li><li><a href="global.html#WebSocket">WebSocket</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActionClient.html">ActionClient</a></li><li><a href="Goal.html">Goal</a></li><li><a href="Message.html">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="Pose.html">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="Service.html">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="ServiceResponse.html">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="Topic.html">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="UrdfColor.html">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="UrdfMaterial.html">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="UrdfVisual.html">UrdfVisual</a></li><li><a href="Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Tue Sep 01 2015 09:24:03 GMT-0400 (EDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 17 2016 13:33:23 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>

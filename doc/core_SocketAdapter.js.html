@@ -32,11 +32,11 @@
  *
  * Note to anyone reviewing this code: these functions are called
  * in the context of their parent object, unless bound
+ * @fileOverview
  */
 'use strict';
 
-var Canvas = require('canvas');
-var Image = Canvas.Image || global.Image;
+var decompressPng = require('../util/decompressPng');
 var WebSocket = require('ws');
 var BSON = null;
 if(typeof bson !== 'undefined'){
@@ -44,53 +44,12 @@ if(typeof bson !== 'undefined'){
 }
 
 /**
- * If a message was compressed as a PNG image (a compression hack since
- * gzipping over WebSockets * is not supported yet), this function places the
- * "image" in a canvas element then decodes the * "image" as a Base64 string.
- *
- * @param data - object containing the PNG data.
- * @param callback - function with params:
- *   * data - the uncompressed data
- */
-function decompressPng(data, callback) {
-  // Uncompresses the data before sending it through (use image/canvas to do so).
-  var image = new Image();
-  // When the image loads, extracts the raw data (JSON message).
-  image.onload = function() {
-    // Creates a local canvas to draw on.
-    var canvas = new Canvas();
-    var context = canvas.getContext('2d');
-
-    // Sets width and height.
-    canvas.width = image.width;
-    canvas.height = image.height;
-
-    // Prevents anti-aliasing and loosing data
-    context.imageSmoothingEnabled = false;
-    context.webkitImageSmoothingEnabled = false;
-    context.mozImageSmoothingEnabled = false;
-
-    // Puts the data into the image.
-    context.drawImage(image, 0, 0);
-    // Grabs the raw, uncompressed data.
-    var imageData = context.getImageData(0, 0, image.width, image.height).data;
-
-    // Constructs the JSON.
-    var jsonData = '';
-    for (var i = 0; i &lt; imageData.length; i += 4) {
-      // RGB
-      jsonData += String.fromCharCode(imageData[i], imageData[i + 1], imageData[i + 2]);
-    }
-    callback(JSON.parse(jsonData));
-  };
-  // Sends the image data to load.
-  image.src = 'data:image/png;base64,' + data.data;
-}
-
-/**
  * Events listeners for a WebSocket or TCP socket to a JavaScript
  * ROS Client. Sets up Messages for a given topic to trigger an
  * event on the ROS client.
+ * 
+ * @namespace SocketAdapter
+ * @private
  */
 function SocketAdapter(client) {
   function handleMessage(message) {
@@ -98,7 +57,30 @@ function SocketAdapter(client) {
       client.emit(message.topic, message.msg);
     } else if (message.op === 'service_response') {
       client.emit(message.id, message);
+    } else if (message.op === 'call_service') {
+      client.emit(message.service, message);
     }
+  }
+
+  function handlePng(message, callback) {
+    if (message.op === 'png') {
+      decompressPng(message.data, callback);
+    } else {
+      callback(message);
+    }
+  }
+
+  function decodeBSON(data, callback) {
+    if (!BSON) {
+      throw 'Cannot process BSON encoded message without BSON header.';
+    }
+    var reader = new FileReader();
+    reader.onload  = function() {
+      var uint8Array = new Uint8Array(this.result);
+      var msg = BSON.deserialize(uint8Array);
+      callback(msg);
+    };
+    reader.readAsArrayBuffer(data);
   }
 
   return {
@@ -106,6 +88,7 @@ function SocketAdapter(client) {
      * Emits a 'connection' event on WebSocket connection.
      *
      * @param event - the argument to emit with the event.
+     * @memberof SocketAdapter
      */
     onopen: function onOpen(event) {
       client.isConnected = true;
@@ -116,6 +99,7 @@ function SocketAdapter(client) {
      * Emits a 'close' event on WebSocket disconnection.
      *
      * @param event - the argument to emit with the event.
+     * @memberof SocketAdapter
      */
     onclose: function onClose(event) {
       client.isConnected = false;
@@ -126,6 +110,7 @@ function SocketAdapter(client) {
      * Emits an 'error' event whenever there was an error.
      *
      * @param event - the argument to emit with the event.
+     * @memberof SocketAdapter
      */
     onerror: function onError(event) {
       client.emit('error', event);
@@ -136,31 +121,16 @@ function SocketAdapter(client) {
      * topic, service, or param.
      *
      * @param message - the raw JSON message from rosbridge.
+     * @memberof SocketAdapter
      */
-    onmessage: function onMessage(message) {
-      if(typeof Blob !== 'undefined' &amp;&amp; message.data instanceof Blob) {
-        if(!BSON){
-            throw 'Cannot process BSON encoded message without BSON header.';
-        }
-        var reader = new FileReader();
-        reader.onload  = function() {
-          var uint8Array = new Uint8Array(this.result);
-          var msg = BSON.deserialize(uint8Array);
-
-          if (msg.op === 'png') {
-              decompressPng(msg, handleMessage);
-          } else {
-              handleMessage(msg);
-          }
-        };
-        reader.readAsArrayBuffer(message.data);
+    onmessage: function onMessage(data) {
+      if (typeof Blob !== 'undefined' &amp;&amp; data.data instanceof Blob) {
+        decodeBSON(data.data, function (message) {
+          handlePng(message, handleMessage);
+        });
       } else {
-        var data = JSON.parse(typeof message === 'string' ? message : message.data);
-        if (data.op === 'png') {
-          decompressPng(data, handleMessage);
-        } else {
-          handleMessage(data);
-        }
+        var message = JSON.parse(typeof data === 'string' ? data : data.data);
+        handlePng(message, handleMessage);
       }
     }
   };
@@ -177,13 +147,13 @@ module.exports = SocketAdapter;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="global.html#ActionClient">ActionClient</a></li><li><a href="Goal.html">Goal</a></li><li><a href="global.html#Message">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="global.html#Pose">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="global.html#Service">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="global.html#ServiceResponse">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="global.html#Topic">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="global.html#UrdfColor">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="global.html#UrdfMaterial">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="global.html#UrdfVisual">UrdfVisual</a></li><li><a href="global.html#Vector3">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#assign">assign</a></li><li><a href="global.html#decompressPng">decompressPng</a></li><li><a href="global.html#EventEmitter2">EventEmitter2</a></li><li><a href="global.html#onclose">onclose</a></li><li><a href="global.html#onerror">onerror</a></li><li><a href="global.html#onmessage">onmessage</a></li><li><a href="global.html#onopen">onopen</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li><li><a href="global.html#RosTCP">RosTCP</a></li><li><a href="global.html#SocketAdapter">SocketAdapter</a></li><li><a href="global.html#UrdfTypes">UrdfTypes</a></li><li><a href="global.html#WebSocket">WebSocket</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActionClient.html">ActionClient</a></li><li><a href="Goal.html">Goal</a></li><li><a href="Message.html">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="Pose.html">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="Service.html">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="ServiceResponse.html">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="Topic.html">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="UrdfColor.html">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="UrdfMaterial.html">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="UrdfVisual.html">UrdfVisual</a></li><li><a href="Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Tue Sep 01 2015 09:24:03 GMT-0400 (EDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 17 2016 13:33:23 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>

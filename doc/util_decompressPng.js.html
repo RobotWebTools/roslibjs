@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: core/Message.js</title>
+    <title>JSDoc: Source: util/decompressPng.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: core/Message.js</h1>
+    <h1 class="page-title">Source: util/decompressPng.js</h1>
 
     
 
@@ -27,23 +27,38 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview
- * @author Brandon Alexander - baalexander@gmail.com
+ * @fileOverview
+ * @author Ramon Wijnands - rayman747@hotmail.com
  */
 
-var assign = require('object-assign');
+'use strict';
+
+var pngparse = require('pngparse');
 
 /**
- * Message objects are used for publishing and subscribing to and from topics.
+ * If a message was compressed as a PNG image (a compression hack since
+ * gzipping over WebSockets * is not supported yet), this function decodes
+ * the "image" as a Base64 string.
  *
- * @constructor
- * @param values - object matching the fields defined in the .msg definition file
+ * @private
+ * @param data - object containing the PNG data.
+ * @param callback - function with params:
+ *   * data - the uncompressed data
  */
-function Message(values) {
-  assign(this, values);
+function decompressPng(data, callback) {
+  var buffer = new Buffer(data, 'base64');
+
+  pngparse.parse(buffer, function(err, data) {
+    if(err) {
+      console.warn('Cannot process PNG encoded message ');
+    } else {
+      var jsonData = data.data.toString();
+      callback(JSON.parse(jsonData));
+    }
+  });
 }
 
-module.exports = Message;</code></pre>
+module.exports = decompressPng;</code></pre>
         </article>
     </section>
 

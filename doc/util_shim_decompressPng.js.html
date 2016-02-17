@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: core/Message.js</title>
+    <title>JSDoc: Source: util/shim/decompressPng.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: core/Message.js</h1>
+    <h1 class="page-title">Source: util/shim/decompressPng.js</h1>
 
     
 
@@ -27,23 +27,61 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview
- * @author Brandon Alexander - baalexander@gmail.com
+ * @fileOverview
+ * @author Graeme Yeates - github.com/megawac
  */
 
-var assign = require('object-assign');
+'use strict';
+
+var Canvas = require('canvas');
+var Image = Canvas.Image || global.Image;
 
 /**
- * Message objects are used for publishing and subscribing to and from topics.
+ * If a message was compressed as a PNG image (a compression hack since
+ * gzipping over WebSockets * is not supported yet), this function places the
+ * "image" in a canvas element then decodes the * "image" as a Base64 string.
  *
- * @constructor
- * @param values - object matching the fields defined in the .msg definition file
+ * @private
+ * @param data - object containing the PNG data.
+ * @param callback - function with params:
+ *   * data - the uncompressed data
  */
-function Message(values) {
-  assign(this, values);
+function decompressPng(data, callback) {
+  // Uncompresses the data before sending it through (use image/canvas to do so).
+  var image = new Image();
+  // When the image loads, extracts the raw data (JSON message).
+  image.onload = function() {
+    // Creates a local canvas to draw on.
+    var canvas = new Canvas();
+    var context = canvas.getContext('2d');
+
+    // Sets width and height.
+    canvas.width = image.width;
+    canvas.height = image.height;
+
+    // Prevents anti-aliasing and loosing data
+    context.imageSmoothingEnabled = false;
+    context.webkitImageSmoothingEnabled = false;
+    context.mozImageSmoothingEnabled = false;
+
+    // Puts the data into the image.
+    context.drawImage(image, 0, 0);
+    // Grabs the raw, uncompressed data.
+    var imageData = context.getImageData(0, 0, image.width, image.height).data;
+
+    // Constructs the JSON.
+    var jsonData = '';
+    for (var i = 0; i &lt; imageData.length; i += 4) {
+      // RGB
+      jsonData += String.fromCharCode(imageData[i], imageData[i + 1], imageData[i + 2]);
+    }
+    callback(JSON.parse(jsonData));
+  };
+  // Sends the image data to load.
+  image.src = 'data:image/png;base64,' + data;
 }
 
-module.exports = Message;</code></pre>
+module.exports = decompressPng;</code></pre>
         </article>
     </section>
 
