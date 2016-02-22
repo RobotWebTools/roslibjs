@@ -51,7 +51,7 @@ module.exports = Object.assign || function (target, source) {
  * If you use nodejs, this is the variable you get when you require('roslib')
  */
 var ROSLIB = this.ROSLIB || {
-  REVISION : '0.18.0-SNAPSHOT'
+  REVISION : '0.19.0-SNAPSHOT'
 };
 
 var assign = require('object-assign');

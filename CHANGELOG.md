@@ -1,3 +1,7 @@
+2016-02-17 - **0.18.0**
+ * Update roslibjs to advertise Services [(chris-smith)](https://github.com/chris-smith/)
+ * Added repubServiceName parameter to TFClient. [(BennyRe)](https://github.com/BennyRe/)
+
 2015-09-01 - **0.17.0**
  * Canvas version bump to use for both node version 0.10.34 and 0.12.7 [(jihoonl)](https://github.com/jihoonl/)
  * Replace xmlshim with xmldom [(Rayman)](https://github.com/Rayman/)
