@@ -67,7 +67,7 @@ Ros.prototype.connect = function(url) {
     this.socket.on('data', this.socket.onmessage);
     this.socket.on('close', this.socket.onclose);
     this.socket.on('error', this.socket.onerror);
-  } else if ('constructor' in this.transportLibrary && this.transportLibrary.constructor.name === 'RTCPeerConnection') {
+  } else if (this.transportLibrary.constructor.name === 'RTCPeerConnection') {
     this.socket = assign(this.transportLibrary.createDataChannel(url, this.transportOptions), socketAdapter(this));
   }else {
     this.socket = assign(new WebSocket(url), socketAdapter(this));
