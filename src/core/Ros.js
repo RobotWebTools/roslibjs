@@ -26,6 +26,8 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  * @param options - possible keys include: <br>
  *   * url (optional) - (can be specified later with `connect`) the WebSocket URL for rosbridge or the node server url to connect using socket.io (if socket.io exists in the page) <br>
  *   * groovyCompatibility - don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools (defaults to true)
+ *   * transportLibrary (optional) - one of 'websocket' (default), 'socket.io' or RTCPeerConnection instance controlling how the connection is created in `connect`.
+ *   * transportOptions (optional) - the options to use use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.
  */
 function Ros(options) {
   options = options || {};
@@ -33,6 +35,7 @@ function Ros(options) {
   this.idCounter = 0;
   this.isConnected = false;
   this.transportLibrary = options.transportLibrary || 'websocket';
+  this.transportOptions = options.transportOptions || {};
 
   if (typeof options.groovyCompatibility === 'undefined') {
     this.groovyCompatibility = true;
@@ -55,7 +58,7 @@ Ros.prototype.__proto__ = EventEmitter2.prototype;
 /**
  * Connect to the specified WebSocket.
  *
- * @param url - WebSocket URL for Rosbridge
+ * @param url - WebSocket URL or RTCDataChannel label for Rosbridge
  */
 Ros.prototype.connect = function(url) {
   if (this.transportLibrary === 'socket.io') {
@@ -64,7 +67,9 @@ Ros.prototype.connect = function(url) {
     this.socket.on('data', this.socket.onmessage);
     this.socket.on('close', this.socket.onclose);
     this.socket.on('error', this.socket.onerror);
-  } else {
+  } else if ('constructor' in this.transportLibrary && this.transportLibrary.constructor.name === 'RTCPeerConnection') {
+    this.socket = assign(this.transportLibrary.createDataChannel(url, this.transportOptions), socketAdapter(this));
+  }else {
     this.socket = assign(new WebSocket(url), socketAdapter(this));
   }
 
