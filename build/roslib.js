@@ -1,6 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/* eslint-disable no-unused-vars */
 'use strict';
+/* eslint-disable no-unused-vars */
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 
@@ -12,7 +12,51 @@ function toObject(val) {
 	return Object(val);
 }
 
-module.exports = Object.assign || function (target, source) {
+function shouldUseNative() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
+
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (e) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	var from;
 	var to = toObject(target);
 	var symbols;
@@ -975,6 +1019,72 @@ Ros.prototype.getServicesForType = function(serviceType, callback, failedCallbac
 };
 
 /**
+ * Retrieves a detail of ROS service request.
+ *
+ * @param service name of service:
+ * @param callback - function with params:
+ *   * type - String of the service type
+ */
+Ros.prototype.getServiceRequestDetails = function(type, callback, failedCallback) {
+  var serviceTypeClient = new Service({
+    ros : this,
+    name : '/rosapi/service_request_details',
+    serviceType : 'rosapi/ServiceRequestDetails'
+  });
+  var request = new ServiceRequest({
+    type: type
+  });
+
+  if (typeof failedCallback === 'function'){
+    serviceTypeClient.callService(request,
+      function(result) {
+        callback(result);
+      },
+      function(message){
+        failedCallback(message);
+      }
+    );
+  }else{
+    serviceTypeClient.callService(request, function(result) {
+      callback(result);
+    });
+  }
+};
+
+/**
+ * Retrieves a detail of ROS service request.
+ *
+ * @param service name of service:
+ * @param callback - function with params:
+ *   * type - String of the service type
+ */
+Ros.prototype.getServiceResponseDetails = function(type, callback, failedCallback) {
+  var serviceTypeClient = new Service({
+    ros : this,
+    name : '/rosapi/service_response_details',
+    serviceType : 'rosapi/ServiceResponseDetails'
+  });
+  var request = new ServiceRequest({
+    type: type
+  });
+
+  if (typeof failedCallback === 'function'){
+    serviceTypeClient.callService(request,
+      function(result) {
+        callback(result);
+      },
+      function(message){
+        failedCallback(message);
+      }
+    );
+  }else{
+    serviceTypeClient.callService(request, function(result) {
+      callback(result);
+    });
+  }
+};
+
+/**
  * Retrieves list of active node names in ROS.
  *
  * @param callback - function with the following params:
@@ -1000,6 +1110,41 @@ Ros.prototype.getNodes = function(callback, failedCallback) {
   }else{
     nodesClient.callService(request, function(result) {
       callback(result.nodes);
+    });
+  }
+};
+
+/**
+  * Retrieves list subscribed topics, publishing topics and services of a specific node 
+  *
+  * @param node name of the node:
+  * @param callback - function with params:
+  *   * publications - array of published topic names
+  *   * subscriptions - array of subscribed topic names
+  *   * services - array of service names hosted
+  */
+Ros.prototype.getNodeDetails = function(node, callback, failedCallback) {
+  var nodesClient = new Service({
+    ros : this,
+    name : '/rosapi/node_details',
+    serviceType : 'rosapi/NodeDetails'
+  });
+
+  var request = new ServiceRequest({
+    node: node
+  });
+  if (typeof failedCallback === 'function'){
+    nodesClient.callService(request,
+      function(result) {
+        callback(result.subscribing, result.publishing, result.services);
+      },
+      function(message) {
+        failedCallback(message);
+      }
+    );
+  } else {
+    nodesClient.callService(request, function(result) {
+      callback(result);
     });
   }
 };
