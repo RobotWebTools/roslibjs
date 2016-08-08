@@ -931,8 +931,8 @@ Ros.prototype.getTopics = function(callback, failedCallback) {
 Ros.prototype.getTopicsDetails = function (callback, failedCallback) {
   var topicsClient = new Service({
     ros: this,
-    name: '/rosapi/get_topics_types',
-    serviceType: 'rosapi/TopicsTypes'
+    name: '/rosapi/get_topics_details',
+    serviceType: 'rosapi/TopicsDetails'
   });
 
   var request = new ServiceRequest();
