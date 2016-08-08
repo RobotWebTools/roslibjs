@@ -923,6 +923,36 @@ Ros.prototype.getTopics = function(callback, failedCallback) {
 };
 
 /**
+ * Retrieves list of topics and respective types in ROS as array of generic objects
+ *
+ * @param callback function with params:
+ *   * topics - Array of generic object with topic names and types
+ */
+Ros.prototype.getTopicsTypes = function (callback, failedCallback) {
+  var topicsClient = new Service({
+    ros: this,
+    name: '/rosapi/get_topics_types',
+    serviceType: 'rosapi/TopicsTypes'
+  });
+
+  var request = new ServiceRequest();
+  if (typeof failedCallback === 'function') {
+    topicsClient.callService(request,
+      function (result) {
+        callback(result);
+      },
+      function (message) {
+        failedCallback(message);
+      }
+    );
+  } else {
+    topicsClient.callService(request, function (result) {
+      callback(result.topics);
+    });
+  }
+};
+
+/**
  * Retrieves Topics in ROS as an array as specific type
  *
  * @param topicType topic type to find:
