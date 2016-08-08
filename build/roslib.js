@@ -926,9 +926,9 @@ Ros.prototype.getTopics = function(callback, failedCallback) {
  * Retrieves list of topics and respective types in ROS as array of generic objects
  *
  * @param callback function with params:
- *   * topics - Array of generic object with topic names and types
+ *   * topics - Array of generic object with topic names, types and typedefs
  */
-Ros.prototype.getTopicsTypes = function (callback, failedCallback) {
+Ros.prototype.getTopicsDetails = function (callback, failedCallback) {
   var topicsClient = new Service({
     ros: this,
     name: '/rosapi/get_topics_types',
