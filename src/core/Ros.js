@@ -151,7 +151,7 @@ Ros.prototype.getTopics = function(callback, failedCallback) {
   if (typeof failedCallback === 'function'){
     topicsClient.callService(request,
       function(result) {
-        callback(result.topics);
+        callback(result);
       },
       function(message){
         failedCallback(message);
@@ -159,36 +159,6 @@ Ros.prototype.getTopics = function(callback, failedCallback) {
     );
   }else{
     topicsClient.callService(request, function(result) {
-      callback(result.topics);
-    });
-  }
-};
-
-/**
- * Retrieves list of topics and respective types in ROS as array of generic objects
- *
- * @param callback function with params:
- *   * topics - Array of generic object with topic names, types and typedefs
- */
-Ros.prototype.getTopicsDetails = function (callback, failedCallback) {
-  var topicsClient = new Service({
-    ros: this,
-    name: '/rosapi/get_topics_details',
-    serviceType: 'rosapi/TopicsDetails'
-  });
-
-  var request = new ServiceRequest();
-  if (typeof failedCallback === 'function') {
-    topicsClient.callService(request,
-      function (result) {
-        callback(result);
-      },
-      function (message) {
-        failedCallback(message);
-      }
-    );
-  } else {
-    topicsClient.callService(request, function (result) {
       callback(result.topics);
     });
   }
