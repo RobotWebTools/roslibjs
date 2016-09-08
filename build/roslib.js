@@ -799,7 +799,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
@@ -829,11 +829,11 @@ assign(ROSLIB, require('./urdf'));
 
 module.exports = ROSLIB;
 
-},{"./actionlib":8,"./core":17,"./math":22,"./tf":25,"./urdf":37,"object-assign":1}],3:[function(require,module,exports){
+},{"./actionlib":9,"./core":18,"./math":23,"./tf":26,"./urdf":38,"object-assign":2}],4:[function(require,module,exports){
 (function (global){
 global.ROSLIB = require('./RosLib');
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./RosLib":2}],4:[function(require,module,exports){
+},{"./RosLib":3}],5:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
@@ -967,7 +967,7 @@ ActionClient.prototype.cancel = function() {
 
 module.exports = ActionClient;
 
-},{"../core/Message":9,"../core/Topic":16,"eventemitter2":38}],5:[function(require,module,exports){
+},{"../core/Message":10,"../core/Topic":17,"eventemitter2":1}],6:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Justin Young - justin@oodar.com.au
@@ -1056,7 +1056,7 @@ ActionListener.prototype.__proto__ = EventEmitter2.prototype;
 
 module.exports = ActionListener;
 
-},{"../core/Message":9,"../core/Topic":16,"eventemitter2":38}],6:[function(require,module,exports){
+},{"../core/Message":10,"../core/Topic":17,"eventemitter2":1}],7:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
@@ -1146,7 +1146,7 @@ Goal.prototype.cancel = function() {
 };
 
 module.exports = Goal;
-},{"../core/Message":9,"eventemitter2":38}],7:[function(require,module,exports){
+},{"../core/Message":10,"eventemitter2":1}],8:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Laura Lindzey - lindzey@gmail.com
@@ -1355,7 +1355,7 @@ SimpleActionServer.prototype.setPreempted = function() {
 };
 
 module.exports = SimpleActionServer;
-},{"../core/Message":9,"../core/Topic":16,"eventemitter2":38}],8:[function(require,module,exports){
+},{"../core/Message":10,"../core/Topic":17,"eventemitter2":1}],9:[function(require,module,exports){
 var Ros = require('../core/Ros');
 var mixin = require('../mixin');
 
@@ -1368,7 +1368,7 @@ var action = module.exports = {
 
 mixin(Ros, ['ActionClient', 'SimpleActionServer'], action);
 
-},{"../core/Ros":11,"../mixin":23,"./ActionClient":4,"./ActionListener":5,"./Goal":6,"./SimpleActionServer":7}],9:[function(require,module,exports){
+},{"../core/Ros":12,"../mixin":24,"./ActionClient":5,"./ActionListener":6,"./Goal":7,"./SimpleActionServer":8}],10:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -1387,7 +1387,7 @@ function Message(values) {
 }
 
 module.exports = Message;
-},{"object-assign":1}],10:[function(require,module,exports){
+},{"object-assign":2}],11:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -1471,7 +1471,7 @@ Param.prototype.delete = function(callback) {
 };
 
 module.exports = Param;
-},{"./Service":12,"./ServiceRequest":13}],11:[function(require,module,exports){
+},{"./Service":13,"./ServiceRequest":14}],12:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -2047,7 +2047,7 @@ Ros.prototype.decodeTypeDefs = function(defs) {
 
 module.exports = Ros;
 
-},{"./Service":12,"./ServiceRequest":13,"./SocketAdapter.js":15,"eventemitter2":38,"object-assign":1,"ws":39}],12:[function(require,module,exports){
+},{"./Service":13,"./ServiceRequest":14,"./SocketAdapter.js":16,"eventemitter2":1,"object-assign":2,"ws":39}],13:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -2165,7 +2165,7 @@ Service.prototype._serviceResponse = function(rosbridgeRequest) {
 };
 
 module.exports = Service;
-},{"./ServiceRequest":13,"./ServiceResponse":14,"eventemitter2":38}],13:[function(require,module,exports){
+},{"./ServiceRequest":14,"./ServiceResponse":15,"eventemitter2":1}],14:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - balexander@willowgarage.com
@@ -2184,7 +2184,7 @@ function ServiceRequest(values) {
 }
 
 module.exports = ServiceRequest;
-},{"object-assign":1}],14:[function(require,module,exports){
+},{"object-assign":2}],15:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - balexander@willowgarage.com
@@ -2203,7 +2203,7 @@ function ServiceResponse(values) {
 }
 
 module.exports = ServiceResponse;
-},{"object-assign":1}],15:[function(require,module,exports){
+},{"object-assign":2}],16:[function(require,module,exports){
 /**
  * Socket event handling utilities for handling events on either
  * WebSocket and TCP sockets
@@ -2316,7 +2316,7 @@ function SocketAdapter(client) {
 
 module.exports = SocketAdapter;
 
-},{"../util/decompressPng":41,"ws":39}],16:[function(require,module,exports){
+},{"../util/decompressPng":41,"ws":39}],17:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -2486,7 +2486,7 @@ Topic.prototype.publish = function(message) {
 
 module.exports = Topic;
 
-},{"./Message":9,"eventemitter2":38}],17:[function(require,module,exports){
+},{"./Message":10,"eventemitter2":1}],18:[function(require,module,exports){
 var mixin = require('../mixin');
 
 var core = module.exports = {
@@ -2501,7 +2501,7 @@ var core = module.exports = {
 
 mixin(core.Ros, ['Param', 'Service', 'Topic'], core);
 
-},{"../mixin":23,"./Message":9,"./Param":10,"./Ros":11,"./Service":12,"./ServiceRequest":13,"./ServiceResponse":14,"./Topic":16}],18:[function(require,module,exports){
+},{"../mixin":24,"./Message":10,"./Param":11,"./Ros":12,"./Service":13,"./ServiceRequest":14,"./ServiceResponse":15,"./Topic":17}],19:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -2548,7 +2548,7 @@ Pose.prototype.clone = function() {
 };
 
 module.exports = Pose;
-},{"./Quaternion":19,"./Vector3":21}],19:[function(require,module,exports){
+},{"./Quaternion":20,"./Vector3":22}],20:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -2642,7 +2642,7 @@ Quaternion.prototype.clone = function() {
 
 module.exports = Quaternion;
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -2676,7 +2676,7 @@ Transform.prototype.clone = function() {
 };
 
 module.exports = Transform;
-},{"./Quaternion":19,"./Vector3":21}],21:[function(require,module,exports){
+},{"./Quaternion":20,"./Vector3":22}],22:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -2745,7 +2745,7 @@ Vector3.prototype.clone = function() {
 };
 
 module.exports = Vector3;
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 module.exports = {
     Pose: require('./Pose'),
     Quaternion: require('./Quaternion'),
@@ -2753,7 +2753,7 @@ module.exports = {
     Vector3: require('./Vector3')
 };
 
-},{"./Pose":18,"./Quaternion":19,"./Transform":20,"./Vector3":21}],23:[function(require,module,exports){
+},{"./Pose":19,"./Quaternion":20,"./Transform":21,"./Vector3":22}],24:[function(require,module,exports){
 /**
  * Mixin a feature to the core/Ros prototype.
  * For example, mixin(Ros, ['Topic'], {Topic: <Topic>})
@@ -2772,7 +2772,7 @@ module.exports = function(Ros, classes, features) {
     });
 };
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -2983,7 +2983,7 @@ TFClient.prototype.unsubscribe = function(frameID, callback) {
 
 module.exports = TFClient;
 
-},{"../actionlib/ActionClient":4,"../actionlib/Goal":6,"../core/Service.js":12,"../core/ServiceRequest.js":13,"../math/Transform":20}],25:[function(require,module,exports){
+},{"../actionlib/ActionClient":5,"../actionlib/Goal":7,"../core/Service.js":13,"../core/ServiceRequest.js":14,"../math/Transform":21}],26:[function(require,module,exports){
 var Ros = require('../core/Ros');
 var mixin = require('../mixin');
 
@@ -2992,7 +2992,7 @@ var tf = module.exports = {
 };
 
 mixin(Ros, ['TFClient'], tf);
-},{"../core/Ros":11,"../mixin":23,"./TFClient":24}],26:[function(require,module,exports){
+},{"../core/Ros":12,"../mixin":24,"./TFClient":25}],27:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -3023,7 +3023,7 @@ function UrdfBox(options) {
 }
 
 module.exports = UrdfBox;
-},{"../math/Vector3":21,"./UrdfTypes":35}],27:[function(require,module,exports){
+},{"../math/Vector3":22,"./UrdfTypes":36}],28:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -3047,7 +3047,7 @@ function UrdfColor(options) {
 }
 
 module.exports = UrdfColor;
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -3070,7 +3070,7 @@ function UrdfCylinder(options) {
 }
 
 module.exports = UrdfCylinder;
-},{"./UrdfTypes":35}],29:[function(require,module,exports){
+},{"./UrdfTypes":36}],30:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author David V. Lu!!  davidvlu@gmail.com
@@ -3096,7 +3096,7 @@ function UrdfJoint(options) {
 
 module.exports = UrdfJoint;
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -3125,7 +3125,7 @@ function UrdfLink(options) {
 }
 
 module.exports = UrdfLink;
-},{"./UrdfVisual":36}],31:[function(require,module,exports){
+},{"./UrdfVisual":37}],32:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -3175,7 +3175,7 @@ UrdfMaterial.prototype.assign = function(obj) {
 
 module.exports = UrdfMaterial;
 
-},{"./UrdfColor":27,"object-assign":1}],32:[function(require,module,exports){
+},{"./UrdfColor":28,"object-assign":2}],33:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -3212,7 +3212,7 @@ function UrdfMesh(options) {
 }
 
 module.exports = UrdfMesh;
-},{"../math/Vector3":21,"./UrdfTypes":35}],33:[function(require,module,exports){
+},{"../math/Vector3":22,"./UrdfTypes":36}],34:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -3309,7 +3309,7 @@ function UrdfModel(options) {
 
 module.exports = UrdfModel;
 
-},{"./UrdfJoint":29,"./UrdfLink":30,"./UrdfMaterial":31,"xmldom":42}],34:[function(require,module,exports){
+},{"./UrdfJoint":30,"./UrdfLink":31,"./UrdfMaterial":32,"xmldom":42}],35:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -3331,7 +3331,7 @@ function UrdfSphere(options) {
 }
 
 module.exports = UrdfSphere;
-},{"./UrdfTypes":35}],35:[function(require,module,exports){
+},{"./UrdfTypes":36}],36:[function(require,module,exports){
 module.exports = {
 	URDF_SPHERE : 0,
 	URDF_BOX : 1,
@@ -3339,7 +3339,7 @@ module.exports = {
 	URDF_MESH : 3
 };
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -3468,7 +3468,7 @@ function UrdfVisual(options) {
 }
 
 module.exports = UrdfVisual;
-},{"../math/Pose":18,"../math/Quaternion":19,"../math/Vector3":21,"./UrdfBox":26,"./UrdfCylinder":28,"./UrdfMaterial":31,"./UrdfMesh":32,"./UrdfSphere":34}],37:[function(require,module,exports){
+},{"../math/Pose":19,"../math/Quaternion":20,"../math/Vector3":22,"./UrdfBox":27,"./UrdfCylinder":29,"./UrdfMaterial":32,"./UrdfMesh":33,"./UrdfSphere":35}],38:[function(require,module,exports){
 module.exports = require('object-assign')({
     UrdfBox: require('./UrdfBox'),
     UrdfColor: require('./UrdfColor'),
@@ -3481,13 +3481,7 @@ module.exports = require('object-assign')({
     UrdfVisual: require('./UrdfVisual')
 }, require('./UrdfTypes'));
 
-},{"./UrdfBox":26,"./UrdfColor":27,"./UrdfCylinder":28,"./UrdfLink":30,"./UrdfMaterial":31,"./UrdfMesh":32,"./UrdfModel":33,"./UrdfSphere":34,"./UrdfTypes":35,"./UrdfVisual":36,"object-assign":1}],38:[function(require,module,exports){
-(function (global){
-module.exports = {
-	EventEmitter2: global.EventEmitter2
-};
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],39:[function(require,module,exports){
+},{"./UrdfBox":27,"./UrdfColor":28,"./UrdfCylinder":29,"./UrdfLink":31,"./UrdfMaterial":32,"./UrdfMesh":33,"./UrdfModel":34,"./UrdfSphere":35,"./UrdfTypes":36,"./UrdfVisual":37,"object-assign":2}],39:[function(require,module,exports){
 (function (global){
 module.exports = global.WebSocket;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
@@ -3561,4 +3555,4 @@ exports.DOMImplementation = global.DOMImplementation;
 exports.XMLSerializer = global.XMLSerializer;
 exports.DOMParser = global.DOMParser;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}]},{},[3]);
+},{}]},{},[4]);
