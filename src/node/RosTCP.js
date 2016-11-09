@@ -39,7 +39,7 @@ util.inherits(RosTCP, Ros);
  *     format {host: String, port: Int} or (port:Int), or "host:port"
  */
 RosTCP.prototype.connect = function(url) {
-  if (typeof url === 'string' && url.slice(0, 5) === 'ws://') {
+  if (typeof url === 'string' && (url.slice(0, 5) === 'ws://' || url.slice(0, 6) === 'wss://')) {
     Ros.prototype.connect.call(this, url);
   } else {
     var events = socketAdapter(this);

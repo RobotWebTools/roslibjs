@@ -151,7 +151,7 @@ Ros.prototype.getTopics = function(callback, failedCallback) {
   if (typeof failedCallback === 'function'){
     topicsClient.callService(request,
       function(result) {
-        callback(result.topics);
+        callback(result);
       },
       function(message){
         failedCallback(message);
@@ -261,6 +261,72 @@ Ros.prototype.getServicesForType = function(serviceType, callback, failedCallbac
 };
 
 /**
+ * Retrieves a detail of ROS service request.
+ *
+ * @param service name of service:
+ * @param callback - function with params:
+ *   * type - String of the service type
+ */
+Ros.prototype.getServiceRequestDetails = function(type, callback, failedCallback) {
+  var serviceTypeClient = new Service({
+    ros : this,
+    name : '/rosapi/service_request_details',
+    serviceType : 'rosapi/ServiceRequestDetails'
+  });
+  var request = new ServiceRequest({
+    type: type
+  });
+
+  if (typeof failedCallback === 'function'){
+    serviceTypeClient.callService(request,
+      function(result) {
+        callback(result);
+      },
+      function(message){
+        failedCallback(message);
+      }
+    );
+  }else{
+    serviceTypeClient.callService(request, function(result) {
+      callback(result);
+    });
+  }
+};
+
+/**
+ * Retrieves a detail of ROS service request.
+ *
+ * @param service name of service:
+ * @param callback - function with params:
+ *   * type - String of the service type
+ */
+Ros.prototype.getServiceResponseDetails = function(type, callback, failedCallback) {
+  var serviceTypeClient = new Service({
+    ros : this,
+    name : '/rosapi/service_response_details',
+    serviceType : 'rosapi/ServiceResponseDetails'
+  });
+  var request = new ServiceRequest({
+    type: type
+  });
+
+  if (typeof failedCallback === 'function'){
+    serviceTypeClient.callService(request,
+      function(result) {
+        callback(result);
+      },
+      function(message){
+        failedCallback(message);
+      }
+    );
+  }else{
+    serviceTypeClient.callService(request, function(result) {
+      callback(result);
+    });
+  }
+};
+
+/**
  * Retrieves list of active node names in ROS.
  *
  * @param callback - function with the following params:
@@ -286,6 +352,41 @@ Ros.prototype.getNodes = function(callback, failedCallback) {
   }else{
     nodesClient.callService(request, function(result) {
       callback(result.nodes);
+    });
+  }
+};
+
+/**
+  * Retrieves list subscribed topics, publishing topics and services of a specific node 
+  *
+  * @param node name of the node:
+  * @param callback - function with params:
+  *   * publications - array of published topic names
+  *   * subscriptions - array of subscribed topic names
+  *   * services - array of service names hosted
+  */
+Ros.prototype.getNodeDetails = function(node, callback, failedCallback) {
+  var nodesClient = new Service({
+    ros : this,
+    name : '/rosapi/node_details',
+    serviceType : 'rosapi/NodeDetails'
+  });
+
+  var request = new ServiceRequest({
+    node: node
+  });
+  if (typeof failedCallback === 'function'){
+    nodesClient.callService(request,
+      function(result) {
+        callback(result.subscribing, result.publishing, result.services);
+      },
+      function(message) {
+        failedCallback(message);
+      }
+    );
+  } else {
+    nodesClient.callService(request, function(result) {
+      callback(result);
     });
   }
 };
