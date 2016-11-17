@@ -28,9 +28,12 @@ Alternatively, you can use the current release via the Robot Web Tools CDN: ([fu
     netstat -a | grep 9090
 
 ### Dependencies
-roslibjs depends on:
 
-[EventEmitter2](https://github.com/hij1nx/EventEmitter2). The current supported version is 0.4.14. The current supported version can be found on the Robot Web Tools CDN: ([full](http://cdn.robotwebtools.org/EventEmitter2/0.4.14/eventemitter2.js)) | ([min](http://cdn.robotwebtools.org/EventEmitter2/0.4.14/eventemitter2.min.js))
+roslibjs has a number of dependencies. You will need to run:
+
+`npm install` or `bower install`
+
+Depending on your build environment.
 
 ### Build
 Checkout [CONTRIBUTING.md](CONTRIBUTING.md) for details on building.
