@@ -15,9 +15,9 @@ describe('Example topics are live', function(done) {
     });
     
     it('getTopics', function(done) {
-        ros.getTopics(function(topics) {
+        ros.getTopics(function(result) {
             expectedTopics.forEach(function(topic) {
-                expect(topics).to.contain(topic, 'Couldn\'t find topic: ' + topic);
+                expect(result.topics).to.contain(topic, 'Couldn\'t find topic: ' + topic);
             });
             done();
         });
@@ -29,24 +29,24 @@ describe('Example topics are live', function(done) {
     });
 
     it('doesn\'t automatically advertise the topic', function(done) {
-        ros.getTopics(function(topics) {
-            expect(topics).not.to.contain('/some_test_topic');
+        ros.getTopics(function(result) {
+            expect(result.topics).not.to.contain('/some_test_topic');
             example.advertise();
             done();
         });
     });
 
     it('advertise broadcasts the topic', function(done) {
-        ros.getTopics(function(topics) {
-            expect(topics).to.contain('/some_test_topic');
+        ros.getTopics(function(result) {
+            expect(result.topics).to.contain('/some_test_topic');
             example.unadvertise();
             done();
         });
     });
 
     it('unadvertise will end the topic (if it\s the last around)', function(done) {
-        ros.getTopics(function(topics) {
-            expect(topics).not.to.contain('/some_test_topic');
+        ros.getTopics(function(result) {
+            expect(result.topics).not.to.contain('/some_test_topic');
             done();
         });
     });

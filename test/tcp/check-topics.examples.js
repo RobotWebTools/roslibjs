@@ -14,9 +14,9 @@ describe('Example topics are live', function(done) {
         var ros = new ROSLIB.Ros({
             port: 9090
         });
-        ros.getTopics(function(topics) {
+        ros.getTopics(function(result) {
             expectedTopics.forEach(function(topic) {
-                expect(topics).to.contain(topic, 'Couldn\'t find topic: ' + topic);
+                expect(result.topics).to.contain(topic, 'Couldn\'t find topic: ' + topic);
             });
             done();
         });
