@@ -159,7 +159,7 @@ Ros.prototype.getTopics = function(callback, failedCallback) {
     );
   }else{
     topicsClient.callService(request, function(result) {
-      callback(result.topics);
+      callback(result);
     });
   }
 };
