@@ -723,8 +723,15 @@
 }();
 
 },{}],2:[function(require,module,exports){
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
 'use strict';
 /* eslint-disable no-unused-vars */
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 
@@ -745,7 +752,7 @@ function shouldUseNative() {
 		// Detect buggy property enumeration order in older V8 versions.
 
 		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-		var test1 = new String('abc');  // eslint-disable-line
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
 		test1[5] = 'de';
 		if (Object.getOwnPropertyNames(test1)[0] === '5') {
 			return false;
@@ -774,7 +781,7 @@ function shouldUseNative() {
 		}
 
 		return true;
-	} catch (e) {
+	} catch (err) {
 		// We don't expect any of the above to throw, but better to be safe.
 		return false;
 	}
@@ -794,8 +801,8 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 			}
 		}
 
-		if (Object.getOwnPropertySymbols) {
-			symbols = Object.getOwnPropertySymbols(from);
+		if (getOwnPropertySymbols) {
+			symbols = getOwnPropertySymbols(from);
 			for (var i = 0; i < symbols.length; i++) {
 				if (propIsEnumerable.call(from, symbols[i])) {
 					to[symbols[i]] = from[symbols[i]];
@@ -1641,7 +1648,7 @@ Ros.prototype.getTopics = function(callback, failedCallback) {
     );
   }else{
     topicsClient.callService(request, function(result) {
-      callback(result.topics);
+      callback(result);
     });
   }
 };
@@ -1997,6 +2004,35 @@ Ros.prototype.getMessageDetails = function(message, callback, failedCallback) {
   }else{
     messageDetailClient.callService(request, function(result) {
       callback(result.typedefs);
+    });
+  }
+};
+
+/**
+ * Retrieves Action Servers in ROS as an array of string
+ *
+ *   * actionservers - Array of action server names
+ */
+Ros.prototype.getActionServers = function(callback, failedCallback) {
+  var getActionServers = new Service({
+    ros : this,
+    name : '/rosapi/action_servers',
+    serviceType : 'rosapi/GetActionServers'
+  });
+
+  var request = new ServiceRequest({});
+  if (typeof failedCallback === 'function'){
+    getActionServers.callService(request,
+      function(result) {
+        callback(result.action_servers);
+      },
+      function(message){
+        failedCallback(message);
+      }
+    );
+  }else{
+    getActionServers.callService(request, function(result) {
+      callback(result.action_servers);
     });
   }
 };
