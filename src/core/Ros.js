@@ -135,6 +135,35 @@ Ros.prototype.callOnConnection = function(message) {
 };
 
 /**
+ * Retrieves Action Servers in ROS as an array of string
+ *
+ *   * actionservers - Array of action server names
+ */
+Ros.prototype.getActionServers = function(callback, failedCallback) {
+  var getActionServers = new Service({
+    ros : this,
+    name : '/rosapi/action_servers',
+    serviceType : 'rosapi/GetActionServers'
+  });
+
+  var request = new ServiceRequest({});
+  if (typeof failedCallback === 'function'){
+    getActionServers.callService(request,
+      function(result) {
+        callback(result.action_servers);
+      },
+      function(message){
+        failedCallback(message);
+      }
+    );
+  }else{
+    getActionServers.callService(request, function(result) {
+      callback(result.action_servers);
+    });
+  }
+};
+
+/**
  * Retrieves list of topics in ROS as an array.
  *
  * @param callback function with params:
