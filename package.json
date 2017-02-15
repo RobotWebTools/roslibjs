@@ -3,7 +3,7 @@
   "homepage": "https://www.robotwebtools.org",
   "description": "The standard ROS Javascript Library",
   "version": "0.19.0-SNAPSHOT",
-  "license": "BSD",
+  "license": "BSD-2-Clause",
   "main": "./src/RosLibNode.js",
   "browser": {
     "./src/RosLibNode.js": "./src/RosLib.js",
