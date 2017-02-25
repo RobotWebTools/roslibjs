@@ -32,7 +32,11 @@ function SocketAdapter(client) {
     } else if (message.op === 'call_service') {
       client.emit(message.service, message);
     } else if(message.op === 'status'){
-      client.emit('status', message);
+      if(message.id){
+        client.emit('status:'+message.id, message);
+      } else {
+        client.emit('status', message);
+      }
     }
   }
 
