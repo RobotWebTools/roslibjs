@@ -135,6 +135,22 @@ Ros.prototype.callOnConnection = function(message) {
 };
 
 /**
+ * Sends a set_level request to the server
+ *
+ * @param level - Status level (none, error, warning, info)
+ * @param id - Optional: Operation ID to change status level on
+ */
+Ros.prototype.setStatusLevel = function(level, id){
+  var levelMsg = {
+    op: 'set_level',
+    level: level,
+    id: id
+  };
+
+  this.callOnConnection(levelMsg);
+};
+
+/**
  * Retrieves Action Servers in ROS as an array of string
  *
  *   * actionservers - Array of action server names
@@ -386,7 +402,7 @@ Ros.prototype.getNodes = function(callback, failedCallback) {
 };
 
 /**
-  * Retrieves list subscribed topics, publishing topics and services of a specific node 
+  * Retrieves list subscribed topics, publishing topics and services of a specific node
   *
   * @param node name of the node:
   * @param callback - function with params:
