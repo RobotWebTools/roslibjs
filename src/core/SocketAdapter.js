@@ -19,7 +19,7 @@ if(typeof bson !== 'undefined'){
  * Events listeners for a WebSocket or TCP socket to a JavaScript
  * ROS Client. Sets up Messages for a given topic to trigger an
  * event on the ROS client.
- * 
+ *
  * @namespace SocketAdapter
  * @private
  */
@@ -31,6 +31,12 @@ function SocketAdapter(client) {
       client.emit(message.id, message);
     } else if (message.op === 'call_service') {
       client.emit(message.service, message);
+    } else if(message.op === 'status'){
+      if(message.id){
+        client.emit('status:'+message.id, message);
+      } else {
+        client.emit('status', message);
+      }
     }
   }
 
