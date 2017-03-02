@@ -565,6 +565,35 @@ Ros.prototype.getMessageDetails = function(message, callback, failedCallback) {
 };
 
 /**
+ * Retrieves Action Servers in ROS as an array of string
+ *
+ *   * actionservers - Array of action server names
+ */
+Ros.prototype.getActionServers = function(callback, failedCallback) {
+  var getActionServers = new Service({
+    ros : this,
+    name : '/rosapi/action_servers',
+    serviceType : 'rosapi/GetActionServers'
+  });
+
+  var request = new ServiceRequest({});
+  if (typeof failedCallback === 'function'){
+    getActionServers.callService(request,
+      function(result) {
+        callback(result.action_servers);
+      },
+      function(message){
+        failedCallback(message);
+      }
+    );
+  }else{
+    getActionServers.callService(request, function(result) {
+      callback(result.action_servers);
+    });
+  }
+};
+
+/**
  * Decode a typedefs into a dictionary like `rosmsg show foo/bar`
  *
  * @param defs - array of type_def dictionary
