@@ -98,8 +98,25 @@ Service.prototype.unadvertise = function() {
 
 Service.prototype._serviceResponse = function(rosbridgeRequest) {
   var response = {};
-  var success = this._serviceCallback(rosbridgeRequest.args, response);
+  var result = this._serviceCallback(rosbridgeRequest.args, response);
 
+  if (typeof(result) === 'boolean') {
+    // If the callback returned a boolean result, immediately
+    // send a response.
+    this._sendServiceResponse(rosbridgeRequest, response, result);
+  } else if (result.then) {
+    // If a promise was returned, respond once it's resolved
+    var self = this;
+    result.then(function(success) {
+      self._sendServiceResponse(rosbridgeRequest, response, success);
+    });
+  } else {
+    // Error! Must return either a promise or a boole
+    this._sendServiceResponse(rosbridgeRequest, response, false);
+  }
+};
+
+Service.prototype._sendServiceResponse = function(rosbridgeRequest, response, success) {
   var call = {
     op: 'service_response',
     service: this.name,
