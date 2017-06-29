@@ -46,6 +46,9 @@ describe('Param setting', function() {
         });
     });
 
+  // TODO: Disable delete param test due to the bug in rosapi. Please put it back after
+  // merging #284 in rosbridge_suite
+  /*
     it('Param.delete', function(done) {
         param.delete(function() {
             ros.getParams(function(params) {
@@ -54,4 +57,5 @@ describe('Param setting', function() {
             });
         });
     });
+    */
 });
