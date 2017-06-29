@@ -3,7 +3,6 @@ FROM ros:kinetic-ros-core
 ENV ROS_DISTRO=kinetic
 # Dependencies for rosbridge
 RUN apt update && apt-get install -y ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
-RUN apt install nodejs npm
 
 # Install nvm, Node.js and node-gyp
 ENV NODE_VERSION v4.2.6
