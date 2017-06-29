@@ -1,14 +1,22 @@
+dist: xenial
 language: node_js
 node_js:
   - "0.10"
   - "0.12"
   - "4"
 env:
-  - ROS_DISTRO=hydro
+  - ROS_DISTRO=kinetic
+
+notifications:
+  email:
+    on_success: always
+    on_failure: always
+    recipients:
+      - jihoonlee.in@gmail.com
 
 before_install:
   # ROS deps for examples
-  - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu precise main" > /etc/apt/sources.list.d/ros-latest.list'
+  - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu xenial main" > /etc/apt/sources.list.d/ros-latest.list'
   - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
   - sudo apt-get update -qq
   - sudo apt-get install -qq ros-$ROS_DISTRO-ros ros-$ROS_DISTRO-catkin python-catkin-pkg python-rosdep
