@@ -1,5 +1,6 @@
 dist: xenial
-language: node_js
+services:
+  - docker
 
 sudo: required
 
