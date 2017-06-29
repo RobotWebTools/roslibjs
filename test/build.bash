@@ -19,11 +19,12 @@ set -e
 pushd $(dirname $0) > /dev/null
 
 # Set up Xfvb for Firefox headless testing
-export DISPLAY=:99.0
-sh -e /etc/init.d/xvfb start
+#export DISPLAY=:99.0
+#sh -e /etc/init.d/xvfb start
+#Xvfb :99 -ac &
 
-source /opt/ros/$ROS_DISTRO/setup.bash
-sh test/examples/setup_examples.sh
+source /opt/ros/kinetic/setup.bash
+sh examples/setup_examples.sh
 
 rostopic list
 npm install

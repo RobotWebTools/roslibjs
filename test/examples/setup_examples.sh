@@ -4,7 +4,7 @@ if command -v rosrun 2>/dev/null; then
     sleep 1
 
     echo "Starting roscore and various examples in background processes"
-    roslaunch test/examples/setup_examples.launch > roslaunch.log &
+    roslaunch examples/setup_examples.launch > roslaunch.log &
 
     LAUNCHED=false
     for i in 1 2 3 4 5 6 7 8 9 10
@@ -22,6 +22,6 @@ if command -v rosrun 2>/dev/null; then
     fi
 else
     echo "Couldn't find ROS on path (try to source it)"
-    echo "source /opt/ros/indigo/setup.bash"
+    echo "source /opt/ros/kinetic/setup.bash"
     exit 1
 fi
