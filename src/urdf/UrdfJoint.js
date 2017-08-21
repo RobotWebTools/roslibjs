@@ -13,7 +13,8 @@
 function UrdfJoint(options) {
   this.name = options.xml.getAttribute('name');
   this.type = options.xml.getAttribute('type');
-  
+  this.parent = options.xml.getElementsByTagName('parent')[0].getAttribute('link');
+  this.child = options.xml.getElementsByTagName('child')[0].getAttribute('link');
   var limits = options.xml.getElementsByTagName('limit');
   if (limits.length > 0) {
     this.minval = parseFloat( limits[0].getAttribute('lower') );
