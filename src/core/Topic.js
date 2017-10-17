@@ -53,6 +53,17 @@ function Topic(options) {
   this._messageCallback = function(data) {
     that.emit('message', new Message(data));
   };
+  this._resubscribe = function() {
+    that.ros.callOnceConnection({
+    op: 'subscribe',
+    id: that.subscribeId,
+    type: that.messageType,
+    topic: that.name,
+    compression: that.compression,
+    throttle_rate: that.throttle_rate,
+    queue_length: that.queue_length
+  });
+  };
 }
 Topic.prototype.__proto__ = EventEmitter2.prototype;
 
@@ -80,6 +91,7 @@ Topic.prototype.subscribe = function(callback) {
     throttle_rate: this.throttle_rate,
     queue_length: this.queue_length
   });
+  this.ros.on('close', this._resubscribe);
 };
 
 /**
@@ -100,6 +112,7 @@ Topic.prototype.unsubscribe = function(callback) {
   if (!this.subscribeId) { return; }
   // Note: Don't call this.removeAllListeners, allow client to handle that themselves
   this.ros.off(this.name, this._messageCallback);
+  this.ros.off('close', this._resubscribe);
   this.emit('unsubscribe');
   this.ros.callOnConnection({
     op: 'unsubscribe',
