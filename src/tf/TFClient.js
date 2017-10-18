@@ -206,4 +206,14 @@ TFClient.prototype.unsubscribe = function(frameID, callback) {
   }
 };
 
+/**
+ * Unsubscribe and unadvertise all topics associated with this TFClient.
+ */
+TFClient.prototype.dispose = function() {
+  this.actionClient.dispose();
+  if (this.currentTopic) {
+    this.currentTopic.unsubscribe();
+  }
+};
+
 module.exports = TFClient;

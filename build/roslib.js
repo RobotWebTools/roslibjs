@@ -3111,6 +3111,16 @@ TFClient.prototype.unsubscribe = function(frameID, callback) {
   }
 };
 
+/**
+ * Unsubscribe and unadvertise all topics associated with this TFClient.
+ */
+TFClient.prototype.dispose = function() {
+  this.actionClient.dispose();
+  if (this.currentTopic) {
+    this.currentTopic.unsubscribe();
+  }
+};
+
 module.exports = TFClient;
 
 },{"../actionlib/ActionClient":5,"../actionlib/Goal":7,"../core/Service.js":13,"../core/ServiceRequest.js":14,"../math/Transform":21}],26:[function(require,module,exports){
