@@ -986,9 +986,9 @@ ActionClient.prototype.cancel = function() {
 ActionClient.prototype.dispose = function() {
   this.goalTopic.unadvertise();
   this.cancelTopic.unadvertise();
-  this.statusListener.unsubscribe();
-  this.feedbackListener.unsubscribe();
-  this.resultListener.unsubscribe();
+  if (!this.omitStatus) {this.statusListener.unsubscribe();}
+  if (!this.omitFeedback) {this.feedbackListener.unsubscribe();}
+  if (!this.omitResult) {this.resultListener.unsubscribe();}
 };
 
 module.exports = ActionClient;
