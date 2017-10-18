@@ -64,6 +64,16 @@ function Topic(options) {
     queue_length: that.queue_length
   });
   };
+  this._readvertise = function() {
+    that.ros.callOnceConnection({
+    op: 'advertise',
+    id: that.advertiseId,
+    type: that.messageType,
+    topic: that.name,
+    latch: that.latch,
+    queue_size: that.queue_size
+  });
+  };
 }
 Topic.prototype.__proto__ = EventEmitter2.prototype;
 
@@ -138,6 +148,7 @@ Topic.prototype.advertise = function() {
     latch: this.latch,
     queue_size: this.queue_size
   });
+  this.ros.on('close', this._readvertise);
   this.isAdvertised = true;
 };
 
@@ -148,6 +159,7 @@ Topic.prototype.unadvertise = function() {
   if (!this.isAdvertised) {
     return;
   }
+  this.ros.off('close', this._readvertise);
   this.emit('unadvertise');
   this.ros.callOnConnection({
     op: 'unadvertise',
