@@ -890,19 +890,19 @@ function ActionClient(options) {
   var receivedStatus = false;
 
   // create the topics associated with actionlib
-  var feedbackListener = new Topic({
+  this.feedbackListener = new Topic({
     ros : this.ros,
     name : this.serverName + '/feedback',
     messageType : this.actionName + 'Feedback'
   });
 
-  var statusListener = new Topic({
+  this.statusListener = new Topic({
     ros : this.ros,
     name : this.serverName + '/status',
     messageType : 'actionlib_msgs/GoalStatusArray'
   });
 
-  var resultListener = new Topic({
+  this.resultListener = new Topic({
     ros : this.ros,
     name : this.serverName + '/result',
     messageType : this.actionName + 'Result'
@@ -926,7 +926,7 @@ function ActionClient(options) {
 
   // subscribe to the status topic
   if (!this.omitStatus) {
-    statusListener.subscribe(function(statusMessage) {
+    this.statusListener.subscribe(function(statusMessage) {
       receivedStatus = true;
       statusMessage.status_list.forEach(function(status) {
         var goal = that.goals[status.goal_id.id];
@@ -939,7 +939,7 @@ function ActionClient(options) {
 
   // subscribe the the feedback topic
   if (!this.omitFeedback) {
-    feedbackListener.subscribe(function(feedbackMessage) {
+    this.feedbackListener.subscribe(function(feedbackMessage) {
       var goal = that.goals[feedbackMessage.status.goal_id.id];
       if (goal) {
         goal.emit('status', feedbackMessage.status);
@@ -950,7 +950,7 @@ function ActionClient(options) {
 
   // subscribe to the result topic
   if (!this.omitResult) {
-    resultListener.subscribe(function(resultMessage) {
+    this.resultListener.subscribe(function(resultMessage) {
       var goal = that.goals[resultMessage.status.goal_id.id];
 
       if (goal) {
@@ -978,6 +978,17 @@ ActionClient.prototype.__proto__ = EventEmitter2.prototype;
 ActionClient.prototype.cancel = function() {
   var cancelMessage = new Message();
   this.cancelTopic.publish(cancelMessage);
+};
+
+/**
+ * Unsubscribe and unadvertise all topics associated with this ActionClient.
+ */
+ActionClient.prototype.dispose = function() {
+  this.goalTopic.unadvertise();
+  this.cancelTopic.unadvertise();
+  this.statusListener.unsubscribe();
+  this.feedbackListener.unsubscribe();
+  this.resultListener.unsubscribe();
 };
 
 module.exports = ActionClient;
