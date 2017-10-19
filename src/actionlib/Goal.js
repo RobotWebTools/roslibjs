@@ -27,7 +27,7 @@ function Goal(options) {
   var date = new Date();
 
   // Create a random ID
-  this.goalID = 'goal_' + Math.random() + '_' + date.getTime();
+  this.goalID = options.goalID || 'goal_' + Math.random() + '_' + date.getTime();
   // Fill in the goal message
   this.goalMessage = new Message({
     goal_id : {
