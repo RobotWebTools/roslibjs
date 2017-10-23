@@ -158,7 +158,7 @@ Topic.prototype.advertise = function() {
     var that = this;
     this.ros.on('close', function() {
       that.isAdvertised = false;
-    };
+    });
   }
 };
 
