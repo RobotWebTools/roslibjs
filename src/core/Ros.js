@@ -36,7 +36,6 @@ function Ros(options) {
   this.isConnected = false;
   this.transportLibrary = options.transportLibrary || 'websocket';
   this.transportOptions = options.transportOptions || {};
-  this._reconnectionQueue = [];
 
   if (typeof options.groovyCompatibility === 'undefined') {
     this.groovyCompatibility = true;
@@ -130,33 +129,6 @@ Ros.prototype.callOnConnection = function(message) {
     that.once('connection', function() {
       emitter(messageJson);
     });
-  } else {
-    emitter(messageJson);
-  }
-};
-
-/**
- * Sends the message over the WebSocket, but queues the message up if not yet
- * connected. Only queues a particular message once.
- */
-Ros.prototype.callOnceConnection = function(message) {
-  var that = this;
-  var messageJson = JSON.stringify(message);
-  var emitter = null;
-  if (this.transportLibrary === 'socket.io') {
-    emitter = function(msg){that.socket.emit('operation', msg);};
-  } else {
-    emitter = function(msg){that.socket.send(msg);};
-  }
-
-  if (!this.isConnected) {
-    if (!this._reconnectionQueue.includes(message.id)) {
-      this._reconnectionQueue.push(message.id);
-      that.once('connection', function() {
-        emitter(messageJson);
-        this._reconnectionQueue.splice(this._reconnectionQueue.indexOf(message.id));
-      });
-    }
   } else {
     emitter(messageJson);
   }
