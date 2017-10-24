@@ -890,19 +890,19 @@ function ActionClient(options) {
   var receivedStatus = false;
 
   // create the topics associated with actionlib
-  var feedbackListener = new Topic({
+  this.feedbackListener = new Topic({
     ros : this.ros,
     name : this.serverName + '/feedback',
     messageType : this.actionName + 'Feedback'
   });
 
-  var statusListener = new Topic({
+  this.statusListener = new Topic({
     ros : this.ros,
     name : this.serverName + '/status',
     messageType : 'actionlib_msgs/GoalStatusArray'
   });
 
-  var resultListener = new Topic({
+  this.resultListener = new Topic({
     ros : this.ros,
     name : this.serverName + '/result',
     messageType : this.actionName + 'Result'
@@ -926,7 +926,7 @@ function ActionClient(options) {
 
   // subscribe to the status topic
   if (!this.omitStatus) {
-    statusListener.subscribe(function(statusMessage) {
+    this.statusListener.subscribe(function(statusMessage) {
       receivedStatus = true;
       statusMessage.status_list.forEach(function(status) {
         var goal = that.goals[status.goal_id.id];
@@ -939,7 +939,7 @@ function ActionClient(options) {
 
   // subscribe the the feedback topic
   if (!this.omitFeedback) {
-    feedbackListener.subscribe(function(feedbackMessage) {
+    this.feedbackListener.subscribe(function(feedbackMessage) {
       var goal = that.goals[feedbackMessage.status.goal_id.id];
       if (goal) {
         goal.emit('status', feedbackMessage.status);
@@ -950,7 +950,7 @@ function ActionClient(options) {
 
   // subscribe to the result topic
   if (!this.omitResult) {
-    resultListener.subscribe(function(resultMessage) {
+    this.resultListener.subscribe(function(resultMessage) {
       var goal = that.goals[resultMessage.status.goal_id.id];
 
       if (goal) {
@@ -978,6 +978,17 @@ ActionClient.prototype.__proto__ = EventEmitter2.prototype;
 ActionClient.prototype.cancel = function() {
   var cancelMessage = new Message();
   this.cancelTopic.publish(cancelMessage);
+};
+
+/**
+ * Unsubscribe and unadvertise all topics associated with this ActionClient.
+ */
+ActionClient.prototype.dispose = function() {
+  this.goalTopic.unadvertise();
+  this.cancelTopic.unadvertise();
+  if (!this.omitStatus) {this.statusListener.unsubscribe();}
+  if (!this.omitFeedback) {this.feedbackListener.unsubscribe();}
+  if (!this.omitResult) {this.resultListener.unsubscribe();}
 };
 
 module.exports = ActionClient;
@@ -2420,10 +2431,11 @@ function Topic(options) {
   this.latch = options.latch || false;
   this.queue_size = options.queue_size || 100;
   this.queue_length = options.queue_length || 0;
+  this.reconnect_on_close = options.reconnect_on_close || true;
 
   // Check for valid compression types
   if (this.compression && this.compression !== 'png' &&
-        this.compression !== 'none') {
+    this.compression !== 'none') {
     this.emit('warning', this.compression +
       ' compression is not supported. No compression will be used.');
   }
@@ -2435,6 +2447,27 @@ function Topic(options) {
   }
 
   var that = this;
+  if (this.reconnect_on_close) {
+    this.callForSubscribeAndAdvertise = function(message) {
+      that.ros.callOnConnection(message);
+
+      that.waitForReconnect = false;
+      that.reconnectFunc = function() {
+        if(!that.waitForReconnect) {
+          that.waitForReconnect = true;
+          that.ros.callOnConnection(message);
+          that.ros.once('connection', function() {
+            that.waitForReconnect = false;
+          });
+        }
+      };
+      that.ros.on('close', that.reconnectFunc);
+    };
+  }
+  else {
+    this.callForSubscribeAndAdvertise = this.ros.callOnConnection;
+  }
+
   this._messageCallback = function(data) {
     that.emit('message', new Message(data));
   };
@@ -2456,7 +2489,8 @@ Topic.prototype.subscribe = function(callback) {
   if (this.subscribeId) { return; }
   this.ros.on(this.name, this._messageCallback);
   this.subscribeId = 'subscribe:' + this.name + ':' + (++this.ros.idCounter);
-  this.ros.callOnConnection({
+
+  this.callForSubscribeAndAdvertise({
     op: 'subscribe',
     id: this.subscribeId,
     type: this.messageType,
@@ -2485,6 +2519,9 @@ Topic.prototype.unsubscribe = function(callback) {
   if (!this.subscribeId) { return; }
   // Note: Don't call this.removeAllListeners, allow client to handle that themselves
   this.ros.off(this.name, this._messageCallback);
+  if(this.reconnect_on_close) {
+    this.ros.off('close', this.reconnectFunc);
+  }
   this.emit('unsubscribe');
   this.ros.callOnConnection({
     op: 'unsubscribe',
@@ -2494,6 +2531,7 @@ Topic.prototype.unsubscribe = function(callback) {
   this.subscribeId = null;
 };
 
+
 /**
  * Registers as a publisher for the topic.
  */
@@ -2502,7 +2540,7 @@ Topic.prototype.advertise = function() {
     return;
   }
   this.advertiseId = 'advertise:' + this.name + ':' + (++this.ros.idCounter);
-  this.ros.callOnConnection({
+  this.callForSubscribeAndAdvertise({
     op: 'advertise',
     id: this.advertiseId,
     type: this.messageType,
@@ -2511,6 +2549,13 @@ Topic.prototype.advertise = function() {
     queue_size: this.queue_size
   });
   this.isAdvertised = true;
+
+  if(!this.reconnect_on_close) {
+    var that = this;
+    this.ros.on('close', function() {
+      that.isAdvertised = false;
+    });
+  }
 };
 
 /**
@@ -2519,6 +2564,9 @@ Topic.prototype.advertise = function() {
 Topic.prototype.unadvertise = function() {
   if (!this.isAdvertised) {
     return;
+  }
+  if(this.reconnect_on_close) {
+    this.ros.off('close', this.reconnectFunc);
   }
   this.emit('unadvertise');
   this.ros.callOnConnection({
@@ -3044,6 +3092,16 @@ TFClient.prototype.unsubscribe = function(frameID, callback) {
   }
   if (!callback || cbs.length === 0) {
     delete this.frameInfos[frameID];
+  }
+};
+
+/**
+ * Unsubscribe and unadvertise all topics associated with this TFClient.
+ */
+TFClient.prototype.dispose = function() {
+  this.actionClient.dispose();
+  if (this.currentTopic) {
+    this.currentTopic.unsubscribe();
   }
 };
 
