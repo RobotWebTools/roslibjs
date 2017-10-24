@@ -23,6 +23,7 @@ var Message = require('./Message');
  *   * queue_size - the queue created at bridge side for re-publishing webtopics (defaults to 100)
  *   * latch - latch the topic when publishing
  *   * queue_length - the queue length at bridge side used when subscribing (defaults to 0, no queueing).
+ *   * reconnect_on_close - the flag to enable resubscription and readvertisement on close event(defaults to true).
  */
 function Topic(options) {
   options = options || {};
