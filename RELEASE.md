@@ -26,10 +26,6 @@ github-changes -o RobotWebTools -r roslibjs --only-pulls --use-commit-body -a -b
 
 Keep all modules under @robot-web-tools scope? or in global scope? What are pros and cons?
 
-**Bowers**
-
-Can it be automated too?
-
 **CDN**
 
 TODO(@jihoonl) Fill it after release
