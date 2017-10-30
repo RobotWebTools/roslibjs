@@ -31,7 +31,7 @@ Alternatively, you can use the current release via the Robot Web Tools CDN: ([fu
 
 roslibjs has a number of dependencies. You will need to run:
 
-`npm install` or `bower install`
+`npm install`
 
 Depending on your build environment.
 
