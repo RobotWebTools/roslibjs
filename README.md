@@ -2,7 +2,7 @@ roslibjs [![Build Status](https://api.travis-ci.org/RobotWebTools/roslibjs.png)]
 ========
 
 #### The Standard ROS JavaScript Library
-For full documentation, see [the ROS wiki](http://ros.org/wiki/roslibjs) or check out some [working demos](http://robotwebtools.org/demos.html).
+For full documentation, see [the ROS wiki](http://wiki.ros.org/roslibjs) or check out some [working demos](http://robotwebtools.org/demos.html).
 
 [JSDoc](http://robotwebtools.org/jsdoc/roslibjs/current/) can be found on the Robot Web Tools website.
 
