@@ -11,7 +11,7 @@ This project is released as part of the [Robot Web Tools](http://robotwebtools.o
 ### Usage
 Pre-built files can be found in either [roslib.js](build/roslib.js) or [roslib.min.js](build/roslib.min.js).
 
-Alternatively, you can use the current release via the Robot Web Tools CDN: ([full](http://cdn.robotwebtools.org/roslibjs/current/roslib.js)) | ([min](http://cdn.robotwebtools.org/roslibjs/current/roslib.min.js))
+Alternatively, you can use the current release via the Robot Web Tools CDN: ([full](http://static.robotwebtools.org/roslibjs/current/roslib.js)) | ([min](http://static.robotwebtools.org/roslibjs/current/roslib.min.js))
 
 ### Troubleshooting
 
