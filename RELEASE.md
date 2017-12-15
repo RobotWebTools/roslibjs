@@ -6,8 +6,6 @@ Robot Web Tool javascript modules([roslibjs](https://github.com/RobotWebTools/ro
 
 ### 0. Make sure that the releasing module is compatible with other RWT modules.
 
-use travis to check the compatibility?
-
 ### 1. Generate CHANGELOG using [github-changes](https://github.com/lalitkapoor/github-changes). 
 
 ```
@@ -28,7 +26,7 @@ Keep all modules under @robot-web-tools scope? or in global scope? What are pros
 
 **CDN**
 
-TODO(@jihoonl) Fill it after release
+Talk to @rctoris
 
 ### 4. Update jsdocs in Robot Web Tools website
 
