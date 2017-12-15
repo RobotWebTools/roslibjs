@@ -16,7 +16,7 @@ github-changes -o RobotWebTools -r roslibjs --only-pulls --use-commit-body -a -b
 
 ### 2. Bump a new version
 
-* Remove a SNAPSHOT postfix from package.json and bowers.json
+* Version bump in package.json, bower.json, and in the mail file. e.g) [RosLib.js](src/RosLib.js)
 * Mark *upcoming* in CHAGELOG.md as the new release version
 * Tag the version
 
