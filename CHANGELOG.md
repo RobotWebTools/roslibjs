@@ -1,6 +1,15 @@
 ## Change Log
 
-### 0.19.0 (2017/10/02 22:28 +00:00)
+### 0.20.0 (2017/12/21 14:58 +00:00)
+- [#277](https://github.com/RobotWebTools/roslibjs/pull/277) Use https instead of http in examples and links (#277) (@jihoonl)
+- [#276](https://github.com/RobotWebTools/roslibjs/pull/276) change CDN link to the static.robotwebtools url (#276) (@minshallj)
+- [#275](https://github.com/RobotWebTools/roslibjs/pull/275) Start 0.20.0-SNAPSHOT (#275) (@jihoonl)
+- [#273](https://github.com/RobotWebTools/roslibjs/pull/273) Fix link to wiki in README (#273) (@okalachev)
+- [#271](https://github.com/RobotWebTools/roslibjs/pull/271) Add deprecation warning in bower.json description (#271) (@jihoonl)
+
+### 0.19.0 (2017/10/30 05:24 +00:00)
+- [#264](https://github.com/RobotWebTools/roslibjs/pull/264) mark version 0.19.0, create pull request based changelog (#264) (@jihoonl)
+- [#267](https://github.com/RobotWebTools/roslibjs/pull/267) Added an option to resubscribe/readvertise topic on close event, And add dispose() in ActionClient, TFClient (#267) (@Faibk)
 - [#262](https://github.com/RobotWebTools/roslibjs/pull/262) add parent and child in urdf joint (#262) (@jihoonl)
 - [#259](https://github.com/RobotWebTools/roslibjs/pull/259) Update travis configuration (#259) (@jihoonl)
 - [#251](https://github.com/RobotWebTools/roslibjs/pull/251) Fix authors.md link in readme (@BogdanAlexandru)
