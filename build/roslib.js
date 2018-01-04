@@ -826,7 +826,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
  * If you use nodejs, this is the variable you get when you require('roslib')
  */
 var ROSLIB = this.ROSLIB || {
-  REVISION : '0.19.0-SNAPSHOT'
+  REVISION : '0.20.0'
 };
 
 var assign = require('object-assign');
@@ -2419,6 +2419,7 @@ var Message = require('./Message');
  *   * queue_size - the queue created at bridge side for re-publishing webtopics (defaults to 100)
  *   * latch - latch the topic when publishing
  *   * queue_length - the queue length at bridge side used when subscribing (defaults to 0, no queueing).
+ *   * reconnect_on_close - the flag to enable resubscription and readvertisement on close event(defaults to true).
  */
 function Topic(options) {
   options = options || {};
