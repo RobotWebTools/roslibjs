@@ -108,6 +108,24 @@
     console.log('Result for service call on ' + addTwoIntsClient.name + ': ' + result.sum);
   });
 
+  // Advertising a Service
+  // ---------------------
+
+  // The Service object does double duty for both calling and advertising services
+  var setBoolServer = new ROSLIB.Service({
+    ros : ros,
+    name : '/set_bool',
+    serviceType : 'std_srvs/SetBool'
+  });
+
+  // Use the advertise() method to indicate that we want to provide this service
+  setBoolServer.advertise(function(request, response) {
+    console.log('Received service request on ' + setBoolServer.name + ': ' + request.data);
+    response['success'] = true;
+    response['message'] = 'Set successfully';
+    return true;
+  });
+
   // Setting a param value
   // ---------------------
 
