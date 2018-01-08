@@ -1,0 +1,28 @@
+#!/bin/sh
+
+setup_git() {
+  git config --global user.email "jihoonlee.in@gmail.com"
+  git config --global user.name "Jihoon Lee"
+}
+
+commit_and_push() {
+  echo "Add Remote"
+  git remote remove origin
+  git remote add origin https://jihoonl:${GITHUB_API_KEY}@github.com/${TRAVIS_PULL_REQUEST_SLUG}.git > /dev/null 2>&1
+  git fetch origin ${TRAVIS_PULL_REQUEST_BRANCH}
+  git checkout -b ${TRAVIS_PULL_REQUEST_BRANCH} origin/${TRAVIS_PULL_REQUEST_BRANCH}
+  echo "Add built module and commit"
+  git add build/roslib.js
+  git add build/roslib.min.js
+  git commit build/roslib.js build/roslib.min.js -m "Update built module"
+  echo "Push"
+  git push --quiet --set-upstream origin ${TRAVIS_PULL_REQUEST_BRANCH}
+}
+
+if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
+  echo "Run push"
+  setup_git
+  commit_and_push
+fi
+
+echo "Done"

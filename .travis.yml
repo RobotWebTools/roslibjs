@@ -1,8 +1,8 @@
-dist: xenial
+dist: trusty
+sudo: required
 services:
   - docker
 
-sudo: required
 
 notifications:
   email:
@@ -15,3 +15,6 @@ before_install:
   - sudo docker build -t roslibjsdocker .
 script:
   - sudo docker run -v $(pwd):/root/roslibjs --rm roslibjsdocker bash -i -c 'bash /root/roslibjs/test/build.bash'
+
+after_success:
+  - sh test/build_push.sh
