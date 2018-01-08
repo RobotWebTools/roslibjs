@@ -2,7 +2,7 @@
 
 setup_git() {
   git config --global user.email "jihoonlee.in@gmail.com"
-  git config --global user.name "Travis CI"
+  git config --global user.name "Jihoon Lee"
 }
 
 commit_and_push() {
