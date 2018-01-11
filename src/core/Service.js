@@ -27,7 +27,8 @@ function Service(options) {
 }
 Service.prototype.__proto__ = EventEmitter2.prototype;
 /**
- * Calls the service. Returns the service response in the callback.
+ * Calls the service. Returns the service response in the
+ * callback. Does nothing if this service is currently advertised.
  *
  * @param request - the ROSLIB.ServiceRequest to send
  * @param callback - function with params:
@@ -64,11 +65,15 @@ Service.prototype.callService = function(request, callback, failedCallback) {
 };
 
 /**
- * Every time a message is published for the given topic, the callback
- * will be called with the message object.
+ * Advertise the service. This turns the Service object from a client
+ * into a server. The callback will be called with every request
+ * that's made on this service.
  *
- * @param callback - function with the following params:
- *   * message - the published message
+ * @param callback - This works similarly to the callback for a C++ service and should take the following params:
+ *   * request - the service request
+ *   * response - an empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
+ *   It should return true if the service has finished successfully,
+ *   i.e. without any fatal errors.
  */
 Service.prototype.advertise = function(callback) {
   if (this.isAdvertised || typeof callback !== 'function') {
