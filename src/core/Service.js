@@ -59,6 +59,7 @@ Service.prototype.callService = function(request, callback, failedCallback) {
     op : 'call_service',
     id : serviceCallId,
     service : this.name,
+    type: this.serviceType,
     args : request
   };
   this.ros.callOnConnection(call);
