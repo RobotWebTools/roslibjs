@@ -1,3 +1,3 @@
-exports.DOMImplementation = global.DOMImplementation;
-exports.XMLSerializer = global.XMLSerializer;
-exports.DOMParser = global.DOMParser;
+exports.DOMImplementation = window.DOMImplementation;
+exports.XMLSerializer = window.XMLSerializer;
+exports.DOMParser = window.DOMParser;
