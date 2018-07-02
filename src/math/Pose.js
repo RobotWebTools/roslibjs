@@ -43,4 +43,16 @@ Pose.prototype.clone = function() {
   return new Pose(this);
 };
 
+/**
+ * Multiplies this pose with another pose without altering this pose.
+ *
+ * @returns Result of multiplication.
+ */
+Pose.prototype.multiply = function(pose) {
+  var p = pose.clone();
+  p.applyTransform({ rotation: this.orientation, translation: this.position });
+  return p;
+};
+
+
 module.exports = Pose;
