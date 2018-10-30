@@ -70,7 +70,9 @@ Ros.prototype.connect = function(url) {
   } else if (this.transportLibrary.constructor.name === 'RTCPeerConnection') {
     this.socket = assign(this.transportLibrary.createDataChannel(url, this.transportOptions), socketAdapter(this));
   }else {
-    this.socket = assign(new WebSocket(url), socketAdapter(this));
+    var sock = new WebSocket(url);
+    sock.binaryType = 'arraybuffer';
+    this.socket = assign(sock, socketAdapter(this));
   }
 
 };

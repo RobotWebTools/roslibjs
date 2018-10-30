@@ -12,6 +12,8 @@ module.exports = function(config) {
     // List of files / patterns to load in the browser
     files: [
       '../node_modules/eventemitter2/lib/eventemitter2.js',
+      '../node_modules/cbor-js/cbor.js',
+      '../src/util/cborTypedArrayTags.js',
       '../build/roslib.js',
       './require-shim.js',
       '*.test.js'
