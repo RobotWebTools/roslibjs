@@ -97,9 +97,9 @@ describe('CBOR Typed Array Tagger', function() {
 
     expect(msg).to.be.a('Float32Array');
     expect(msg).to.have.lengthOf(3);
-    expect(msg[0]).to.closeTo(1.1, 1e-5);
-    expect(msg[1]).to.closeTo(-2.2, 1e-5);
-    expect(msg[2]).to.closeTo(3.3, 1e-5);
+    expect(msg[0]).to.be.closeTo(1.1, 1e-5);
+    expect(msg[1]).to.be.closeTo(-2.2, 1e-5);
+    expect(msg[2]).to.be.closeTo(3.3, 1e-5);
   });
 
   it('should convert tagged Float64Array', function() {
@@ -108,8 +108,8 @@ describe('CBOR Typed Array Tagger', function() {
 
     expect(msg).to.be.a('Float64Array');
     expect(msg).to.have.lengthOf(3);
-    expect(msg[0]).to.closeTo(1.1, 1e-5);
-    expect(msg[1]).to.closeTo(-2.2, 1e-5);
-    expect(msg[2]).to.closeTo(3.3, 1e-5);
+    expect(msg[0]).to.be.closeTo(1.1, 1e-5);
+    expect(msg[1]).to.be.closeTo(-2.2, 1e-5);
+    expect(msg[2]).to.be.closeTo(3.3, 1e-5);
   });
 });
