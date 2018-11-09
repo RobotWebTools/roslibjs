@@ -1,3 +1,5 @@
+'use strict';
+
 var UPPER32 = Math.pow(2, 32);
 
 var warnedPrecision = false;
