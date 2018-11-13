@@ -1,1 +1,1 @@
-module.exports = global.WebSocket;
+module.exports = window.WebSocket;
