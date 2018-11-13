@@ -43,4 +43,30 @@ Pose.prototype.clone = function() {
   return new Pose(this);
 };
 
+/**
+ * Multiplies this pose with another pose without altering this pose.
+ *
+ * @returns Result of multiplication.
+ */
+Pose.prototype.multiply = function(pose) {
+  var p = pose.clone();
+  p.applyTransform({ rotation: this.orientation, translation: this.position });
+  return p;
+};
+
+/**
+ * Computes the inverse of this pose.
+ *
+ * @returns Inverse of pose.
+ */
+Pose.prototype.getInverse = function() {
+  var inverse = this.clone();
+  inverse.orientation.invert();
+  inverse.position.multiplyQuaternion(inverse.orientation);
+  inverse.position.x *= -1;
+  inverse.position.y *= -1;
+  inverse.position.z *= -1;
+  return inverse;
+};
+
 module.exports = Pose;
