@@ -6,7 +6,7 @@
 'use strict';
 
 var Canvas = require('canvas');
-var Image = Canvas.Image || global.Image;
+var Image = Canvas.Image || window.Image;
 
 /**
  * If a message was compressed as a PNG image (a compression hack since

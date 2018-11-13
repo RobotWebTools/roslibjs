@@ -1,0 +1,24 @@
+{
+  "globals": {
+    "Blob": true,
+    "FileReader": true
+  },
+  "browser": true,
+  "curly": true,
+  "eqeqeq": true,
+  "immed": true,
+  "latedef": false,
+  "newcap": true,
+  "noarg": true,
+  "sub": true,
+  "undef": true,
+  "boss": false,
+  "eqnull": false,
+  "node": true,
+  "devel": true,
+  "strict": false,
+  "trailing": true,
+  "quotmark": "single",
+  "proto": true,
+  "laxbreak": true
+}
