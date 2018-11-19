@@ -69,10 +69,12 @@ Ros.prototype.connect = function(url) {
     this.socket.on('error', this.socket.onerror);
   } else if (this.transportLibrary.constructor.name === 'RTCPeerConnection') {
     this.socket = assign(this.transportLibrary.createDataChannel(url, this.transportOptions), socketAdapter(this));
-  }else {
-    var sock = new WebSocket(url);
-    sock.binaryType = 'arraybuffer';
-    this.socket = assign(sock, socketAdapter(this));
+  } else {
+    if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
+      var sock = new WebSocket(url);
+      sock.binaryType = 'arraybuffer';
+      this.socket = assign(sock, socketAdapter(this));
+    }
   }
 
 };
