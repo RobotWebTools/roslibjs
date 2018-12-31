@@ -43,6 +43,7 @@ function Topic(options) {
     this.compression !== 'cbor' && this.compression !== 'none') {
     this.emit('warning', this.compression +
       ' compression is not supported. No compression will be used.');
+    this.compression = 'none';
   }
 
   // Check if throttle rate is negative
