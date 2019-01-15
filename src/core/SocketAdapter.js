@@ -9,6 +9,8 @@
 'use strict';
 
 var decompressPng = require('../util/decompressPng');
+var CBOR = require('cbor-js');
+var typedArrayTagger = require('../util/cborTypedArrayTags');
 var WebSocket = require('ws');
 var BSON = null;
 if(typeof bson !== 'undefined'){
@@ -106,6 +108,9 @@ function SocketAdapter(client) {
         decodeBSON(data.data, function (message) {
           handlePng(message, handleMessage);
         });
+      } else if (data.data instanceof ArrayBuffer) {
+        var decoded = CBOR.decode(data.data, typedArrayTagger);
+        handleMessage(decoded);
       } else {
         var message = JSON.parse(typeof data === 'string' ? data : data.data);
         handlePng(message, handleMessage);
