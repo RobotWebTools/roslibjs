@@ -33,7 +33,7 @@
     "time-grunt": "^1.0.0"
   },
   "dependencies": {
-    "eventemitter2": "~2.2.0",
+    "eventemitter2": "^4.1.0",
     "object-assign": "^4.0.1",
     "pngparse": "^2.0.1",
     "ws": "^3.3.1",
