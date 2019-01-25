@@ -9,7 +9,7 @@
  * If you use nodejs, this is the variable you get when you require('roslib')
  */
 var ROSLIB = this.ROSLIB || {
-  REVISION : '0.20.0'
+  REVISION : '1.0.0'
 };
 
 var assign = require('object-assign');
