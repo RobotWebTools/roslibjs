@@ -1,5 +1,16 @@
 ## Change Log
 
+### 1.0.0 (2019/01/16 12:54 +00:00)
+- [#310](https://github.com/RobotWebTools/roslibjs/pull/310) Update and normalize EventEmitter2 dependency (#310) (@mvollrath)
+- [#306](https://github.com/RobotWebTools/roslibjs/pull/306) Don't allow unsupported compression types (#306) (@mvollrath)
+- [#304](https://github.com/RobotWebTools/roslibjs/pull/304) Prevent multiple web socket connections being opened. (#304) (@achim-k)
+- [#303](https://github.com/RobotWebTools/roslibjs/pull/303) Add support for CBOR encoding (#303) (@mvollrath)
+- [#294](https://github.com/RobotWebTools/roslibjs/pull/294) Feature/pose math methods (#294) (@achim-k)
+- [#293](https://github.com/RobotWebTools/roslibjs/pull/293) Add origin in urdf joint. (#293) (@achim-k)
+- [#286](https://github.com/RobotWebTools/roslibjs/pull/286) update shim files to use window instead of global (#286) (@jorgenfb)
+- [#282](https://github.com/RobotWebTools/roslibjs/pull/282) Add the type of service when executing 'call\_service' (#282) (@minggangw)
+- [#281](https://github.com/RobotWebTools/roslibjs/pull/281) add example for advertise\_service and fix documentation (#281) (@T045T)
+
 ### 0.20.0 (2017/12/21 14:58 +00:00)
 - [#277](https://github.com/RobotWebTools/roslibjs/pull/277) Use https instead of http in examples and links (#277) (@jihoonl)
 - [#276](https://github.com/RobotWebTools/roslibjs/pull/276) change CDN link to the static.robotwebtools url (#276) (@minshallj)
