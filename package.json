@@ -36,10 +36,10 @@
     "eventemitter2": "^4.1.0",
     "object-assign": "^4.0.1",
     "pngparse": "^2.0.1",
-    "ws": "^1.1.1",
+    "ws": "^3.3.1",
     "xmldom": "^0.1.19",
     "cbor-js": "^0.1.0",
-    "socket.io": "1.4.8"
+    "socket.io": "2.2.0"
   },
   "directories": {
     "example": "examples",
