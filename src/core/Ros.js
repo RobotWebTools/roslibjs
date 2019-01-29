@@ -35,7 +35,7 @@ function Ros(options) {
   this.socket = null;
   this.idCounter = 0;
   this.isConnected = false;
-  this.transportLibrary = options.transportLibrary || 'workersocket';
+  this.transportLibrary = options.transportLibrary || 'websocket';
   this.transportOptions = options.transportOptions || {};
 
   if (typeof options.groovyCompatibility === 'undefined') {
