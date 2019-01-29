@@ -35,4 +35,10 @@ WorkerSocket.prototype.send = function(data) {
   this.socket_.postMessage(data);
 };
 
+WorkerSocket.prototype.close = function() {
+  this.socket_.postMessage({
+    close: true
+  });
+};
+
 module.exports = WorkerSocket;

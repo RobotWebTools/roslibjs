@@ -26,16 +26,23 @@ module.exports = function(self) {
       // JSON message from ROSLIB
       socket.send(data);
     } else {
-      // args from WorkerSocket constructor
-      var uri = data.uri;
+      // control message
+      if (data.hasOwnProperty('close')) {
+        socket.close();
+        socket = null;
+      } else if (data.hasOwnProperty('uri')) {
+        var uri = data.uri;
 
-      socket = new WebSocket(uri);
-      socket.binaryType = 'arraybuffer';
+        socket = new WebSocket(uri);
+        socket.binaryType = 'arraybuffer';
 
-      socket.onmessage = handleSocketMessage;
-      socket.onclose = handleSocketControl;
-      socket.onopen = handleSocketControl;
-      socket.onerror = handleSocketControl;
+        socket.onmessage = handleSocketMessage;
+        socket.onclose = handleSocketControl;
+        socket.onopen = handleSocketControl;
+        socket.onerror = handleSocketControl;
+      } else {
+        throw 'Unknown message to WorkerSocket';
+      }
     }
   });
 };
