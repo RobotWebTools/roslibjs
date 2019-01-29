@@ -29,3 +29,4 @@ sh examples/setup_examples.sh
 rostopic list
 npm install
 npm run test-examples
+npm run test-workersocket
