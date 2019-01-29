@@ -43,7 +43,7 @@ module.exports = function(config) {
 
 
     // level of logging
-    // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
+    // possible values: ALL, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, MARK, OFF
     logLevel: 'INFO',
 
 
