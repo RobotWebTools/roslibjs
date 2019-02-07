@@ -112,4 +112,18 @@ describe('CBOR Typed Array Tagger', function() {
     expect(msg[1]).to.be.closeTo(-2.2, 1e-5);
     expect(msg[2]).to.be.closeTo(3.3, 1e-5);
   });
+
+  it('should be able to unpack two typed arrays', function() {
+    var data = hexToBuffer('82d8484308fe05d84d460100feff0300');
+    var msg = CBOR.decode(data, cborTypedArrayTagger);
+
+    expect(msg).to.be.a('Array');
+    expect(msg).to.have.lengthOf(2);
+    expect(msg[0][0]).to.equal(8);
+    expect(msg[0][1]).to.equal(-2);
+    expect(msg[0][2]).to.equal(5);
+    expect(msg[1][0]).to.equal(1);
+    expect(msg[1][1]).to.equal(-2);
+    expect(msg[1][2]).to.equal(3);
+  });
 });
