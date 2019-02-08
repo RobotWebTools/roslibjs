@@ -18,9 +18,10 @@ function decodeUint64LE(bytes) {
   warnPrecision();
 
   var byteLen = bytes.byteLength;
+  var offset = bytes.byteOffset;
   var arrLen = byteLen / 8;
 
-  var buffer = bytes.buffer.slice(-byteLen);
+  var buffer = bytes.buffer.slice(offset, offset + byteLen);
   var uint32View = new Uint32Array(buffer);
 
   var arr = new Array(arrLen);
@@ -42,9 +43,10 @@ function decodeInt64LE(bytes) {
   warnPrecision();
 
   var byteLen = bytes.byteLength;
+  var offset = bytes.byteOffset;
   var arrLen = byteLen / 8;
 
-  var buffer = bytes.buffer.slice(-byteLen);
+  var buffer = bytes.buffer.slice(offset, offset + byteLen);
   var uint32View = new Uint32Array(buffer);
   var int32View = new Int32Array(buffer);
 
@@ -66,7 +68,8 @@ function decodeInt64LE(bytes) {
 */
 function decodeNativeArray(bytes, ArrayType) {
   var byteLen = bytes.byteLength;
-  var buffer = bytes.buffer.slice(-byteLen);
+  var offset = bytes.byteOffset;
+  var buffer = bytes.buffer.slice(offset, offset + byteLen);
   return new ArrayType(buffer);
 }
 
