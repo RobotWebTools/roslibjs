@@ -1,5 +1,8 @@
 ## Change Log
 
+### 1.0.1 (2019/02/08 03:58 +00:00)
+- [#318](https://github.com/RobotWebTools/roslibjs/pull/318) Fix CBOR native array decoding offset (#318) (@mvollrath)
+
 ### 1.0.0 (2019/01/16 12:54 +00:00)
 - [#310](https://github.com/RobotWebTools/roslibjs/pull/310) Update and normalize EventEmitter2 dependency (#310) (@mvollrath)
 - [#306](https://github.com/RobotWebTools/roslibjs/pull/306) Don't allow unsupported compression types (#306) (@mvollrath)
