@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// Connecting to ROS 
+// Connecting to ROS
 var ROSLIB = require('roslib');
 
 var ros = new ROSLIB.Ros({
