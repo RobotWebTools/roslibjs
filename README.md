@@ -9,9 +9,9 @@ For full documentation, see [the ROS wiki](http://wiki.ros.org/roslibjs) or chec
 This project is released as part of the [Robot Web Tools](http://robotwebtools.org/) effort.
 
 ### Usage
-Pre-built files can be found in either [roslib.js](build/roslib.js) or [roslib.min.js](build/roslib.min.js).
+The current release are downloadable via the Robot Web Tools CDN: ([full](https://static.robotwebtools.org/roslibjs/current/roslib.js)) | ([min](https://static.robotwebtools.org/roslibjs/current/roslib.min.js))
 
-Alternatively, you can use the current release via the Robot Web Tools CDN: ([full](https://static.robotwebtools.org/roslibjs/current/roslib.js)) | ([min](https://static.robotwebtools.org/roslibjs/current/roslib.min.js))
+Alternatively, you can download by `npm install roslib`
 
 ### Troubleshooting
 
