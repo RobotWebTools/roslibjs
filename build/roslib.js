@@ -3098,7 +3098,7 @@ function Topic(options) {
   this.latch = options.latch || false;
   this.queue_size = options.queue_size || 100;
   this.queue_length = options.queue_length || 0;
-  this.reconnect_on_close = options.reconnect_on_close || true;
+  this.reconnect_on_close = options.reconnect_on_close !== undefined ? options.reconnect_on_close : true;
 
   // Check for valid compression types
   if (this.compression && this.compression !== 'png' &&
