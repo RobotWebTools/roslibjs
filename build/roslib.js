@@ -3187,7 +3187,7 @@ Topic.prototype.unsubscribe = function(callback) {
   if (!this.subscribeId) { return; }
   // Note: Don't call this.removeAllListeners, allow client to handle that themselves
   this.ros.off(this.name, this._messageCallback);
-  if(this.reconnect_on_close) {
+  if (this.reconnectFunc) {
     this.ros.off('close', this.reconnectFunc);
   }
   this.emit('unsubscribe');
@@ -3233,7 +3233,7 @@ Topic.prototype.unadvertise = function() {
   if (!this.isAdvertised) {
     return;
   }
-  if(this.reconnect_on_close) {
+  if (this.reconnectFunc) {
     this.ros.off('close', this.reconnectFunc);
   }
   this.emit('unadvertise');
