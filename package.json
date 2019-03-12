@@ -23,7 +23,7 @@
     "grunt-jsdoc": "^2.1.0",
     "grunt-karma": "^2.0.0",
     "grunt-mocha-test": "^0.12.7",
-    "karma": "^1.1.1",
+    "karma": "^3.1.4",
     "karma-chai": "^0.1.0",
     "chai": "*",
     "karma-firefox-launcher": "^1.0.0",
@@ -39,6 +39,7 @@
     "ws": "^3.3.1",
     "xmldom": "^0.1.19",
     "cbor-js": "^0.1.0",
+    "webworkify": "^1.5.0",
     "socket.io": "2.2.0"
   },
   "directories": {
@@ -51,6 +52,7 @@
   "scripts": {
     "test": "grunt test",
     "test-examples": "grunt mochaTest:examples && xvfb-run -a karma start test/examples/karma.conf.js",
+    "test-workersocket": "grunt uglify && xvfb-run -a karma start test/workersocket/karma.conf.js",
     "test-tcp": "grunt mochaTest:tcp",
     "publish": "grunt build"
   },

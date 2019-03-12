@@ -4,6 +4,7 @@
  */
 
 var WebSocket = require('ws');
+var WorkerSocket = require('../util/workerSocket');
 var socketAdapter = require('./SocketAdapter.js');
 
 var Service = require('./Service');
@@ -26,7 +27,7 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  * @param options - possible keys include: <br>
  *   * url (optional) - (can be specified later with `connect`) the WebSocket URL for rosbridge or the node server url to connect using socket.io (if socket.io exists in the page) <br>
  *   * groovyCompatibility - don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools (defaults to true)
- *   * transportLibrary (optional) - one of 'websocket' (default), 'socket.io' or RTCPeerConnection instance controlling how the connection is created in `connect`.
+ *   * transportLibrary (optional) - one of 'websocket', 'workersocket' (default), 'socket.io' or RTCPeerConnection instance controlling how the connection is created in `connect`.
  *   * transportOptions (optional) - the options to use use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.
  */
 function Ros(options) {
@@ -69,12 +70,16 @@ Ros.prototype.connect = function(url) {
     this.socket.on('error', this.socket.onerror);
   } else if (this.transportLibrary.constructor.name === 'RTCPeerConnection') {
     this.socket = assign(this.transportLibrary.createDataChannel(url, this.transportOptions), socketAdapter(this));
-  } else {
+  } else if (this.transportLibrary === 'websocket') {
     if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
       var sock = new WebSocket(url);
       sock.binaryType = 'arraybuffer';
       this.socket = assign(sock, socketAdapter(this));
     }
+  } else if (this.transportLibrary === 'workersocket') {
+    this.socket = assign(new WorkerSocket(url), socketAdapter(this));
+  } else {
+    throw 'Unknown transportLibrary: ' + this.transportLibrary.toString();
   }
 
 };

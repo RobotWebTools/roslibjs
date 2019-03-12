@@ -11,7 +11,6 @@
 var decompressPng = require('../util/decompressPng');
 var CBOR = require('cbor-js');
 var typedArrayTagger = require('../util/cborTypedArrayTags');
-var WebSocket = require('ws');
 var BSON = null;
 if(typeof bson !== 'undefined'){
     BSON = bson().BSON;
