@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
@@ -34,8 +34,8 @@ module.exports = function(grunt) {
     },
     mochaTest: {
       options: {
-          reporter: 'spec',
-          timeout: 5000
+        reporter: 'spec',
+        timeout: 5000
       },
       test: {
         src: ['./test/*.test.js']
@@ -45,6 +45,9 @@ module.exports = function(grunt) {
       },
       tcp: {
         src: ['./test/tcp/*.js']
+      },
+      workersocket: {
+        src: ['./test/workersocket/*.js']
       }
     },
     uglify: {
