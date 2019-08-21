@@ -8,6 +8,7 @@ var Goal = require('../actionlib/Goal');
 
 var Service = require('../core/Service.js');
 var ServiceRequest = require('../core/ServiceRequest.js');
+var Topic = require('../core/Topic.js');
 
 var Transform = require('../math/Transform');
 
@@ -52,7 +53,8 @@ function TFClient(options) {
   this.republisherUpdateRequested = false;
 
   // Create an Action client
-  this.actionClient = this.ros.ActionClient({
+  this.actionClient = new ActionClient({
+    ros : options.ros,
     serverName : this.serverName,
     actionName : 'tf2_web_republisher/TFSubscriptionAction',
     omitStatus : true,
@@ -60,7 +62,8 @@ function TFClient(options) {
   });
 
   // Create a Service client
-  this.serviceClient = this.ros.Service({
+  this.serviceClient = new Service({
+    ros: options.ros,
     name: this.repubServiceName,
     serviceType: 'tf2_web_republisher/RepublishTFs'
   });
@@ -146,7 +149,8 @@ TFClient.prototype.processResponse = function(response) {
     this.currentTopic.unsubscribe();
   }
 
-  this.currentTopic = this.ros.Topic({
+  this.currentTopic = new Topic({
+    ros: this.ros,
     name: response.topic_name,
     messageType: 'tf2_web_republisher/TFArray'
   });
