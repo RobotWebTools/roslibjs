@@ -7,6 +7,7 @@
   "main": "./src/RosLibNode.js",
   "browser": {
     "./src/RosLibNode.js": "./src/RosLib.js",
+    "eventemitter2": "./src/util/shim/EventEmitter2.js",
     "canvas": "./src/util/shim/canvas.js",
     "ws": "./src/util/shim/WebSocket.js",
     "@xmldom/xmldom": "./src/util/shim/@xmldom/xmldom.js",
