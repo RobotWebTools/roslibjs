@@ -193,6 +193,7 @@ Ros.prototype.getActionServers = function(callback, failedCallback) {
  *
  * @param callback function with params:
  *   * topics - Array of topic names
+ *   * types - Array of message type names
  */
 Ros.prototype.getTopics = function(callback, failedCallback) {
   var topicsClient = new Service({
@@ -622,6 +623,38 @@ Ros.prototype.decodeTypeDefs = function(defs) {
   };
 
   return decodeTypeDefsRec(defs[0], defs);
+};
+
+/**
+ * Retrieves list of topics and their associated type definitions.
+ *
+ * @param callback function with params:
+ *   * topics - Array of topic names
+ *   * types - Array of message type names
+ *   * typedefs_full_text - Array of full definitions of message types, similar to `gendeps --cat`
+ */
+Ros.prototype.getTopicsAndRawTypes = function(callback, failedCallback) {
+  var topicsAndRawTypesClient = new Service({
+    ros : this,
+    name : '/rosapi/topics_and_raw_types',
+    serviceType : 'rosapi/TopicsAndRawTypes'
+  });
+
+  var request = new ServiceRequest();
+  if (typeof failedCallback === 'function'){
+    topicsAndRawTypesClient.callService(request,
+      function(result) {
+        callback(result);
+      },
+      function(message){
+        failedCallback(message);
+      }
+    );
+  }else{
+    topicsAndRawTypesClient.callService(request, function(result) {
+      callback(result);
+    });
+  }
 };
 
 
