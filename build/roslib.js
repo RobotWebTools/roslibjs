@@ -2425,6 +2425,7 @@ Ros.prototype.getActionServers = function(callback, failedCallback) {
  *
  * @param callback function with params:
  *   * topics - Array of topic names
+ *   * types - Array of message type names
  */
 Ros.prototype.getTopics = function(callback, failedCallback) {
   var topicsClient = new Service({
@@ -2856,6 +2857,38 @@ Ros.prototype.decodeTypeDefs = function(defs) {
   return decodeTypeDefsRec(defs[0], defs);
 };
 
+/**
+ * Retrieves list of topics and their associated type definitions.
+ *
+ * @param callback function with params:
+ *   * topics - Array of topic names
+ *   * types - Array of message type names
+ *   * typedefs_full_text - Array of full definitions of message types, similar to `gendeps --cat`
+ */
+Ros.prototype.getTopicsAndRawTypes = function(callback, failedCallback) {
+  var topicsAndRawTypesClient = new Service({
+    ros : this,
+    name : '/rosapi/topics_and_raw_types',
+    serviceType : 'rosapi/TopicsAndRawTypes'
+  });
+
+  var request = new ServiceRequest();
+  if (typeof failedCallback === 'function'){
+    topicsAndRawTypesClient.callService(request,
+      function(result) {
+        callback(result);
+      },
+      function(message){
+        failedCallback(message);
+      }
+    );
+  }else{
+    topicsAndRawTypesClient.callService(request, function(result) {
+      callback(result);
+    });
+  }
+};
+
 
 module.exports = Ros;
 
@@ -3166,7 +3199,7 @@ var Message = require('./Message');
  *   * ros - the ROSLIB.Ros connection handle
  *   * name - the topic name, like /cmd_vel
  *   * messageType - the message type, like 'std_msgs/String'
- *   * compression - the type of compression to use, like 'png' or 'cbor'
+ *   * compression - the type of compression to use, like 'png', 'cbor', or 'cbor-raw'
  *   * throttle_rate - the rate (in ms in between messages) at which to throttle the topics
  *   * queue_size - the queue created at bridge side for re-publishing webtopics (defaults to 100)
  *   * latch - latch the topic when publishing
@@ -3188,7 +3221,8 @@ function Topic(options) {
 
   // Check for valid compression types
   if (this.compression && this.compression !== 'png' &&
-    this.compression !== 'cbor' && this.compression !== 'none') {
+    this.compression !== 'cbor' && this.compression !== 'cbor-raw' &&
+    this.compression !== 'none') {
     this.emit('warning', this.compression +
       ' compression is not supported. No compression will be used.');
     this.compression = 'none';
@@ -3677,6 +3711,7 @@ var Goal = require('../actionlib/Goal');
 
 var Service = require('../core/Service.js');
 var ServiceRequest = require('../core/ServiceRequest.js');
+var Topic = require('../core/Topic.js');
 
 var Transform = require('../math/Transform');
 
@@ -3721,7 +3756,8 @@ function TFClient(options) {
   this.republisherUpdateRequested = false;
 
   // Create an Action client
-  this.actionClient = this.ros.ActionClient({
+  this.actionClient = new ActionClient({
+    ros : options.ros,
     serverName : this.serverName,
     actionName : 'tf2_web_republisher/TFSubscriptionAction',
     omitStatus : true,
@@ -3729,7 +3765,8 @@ function TFClient(options) {
   });
 
   // Create a Service client
-  this.serviceClient = this.ros.Service({
+  this.serviceClient = new Service({
+    ros: options.ros,
     name: this.repubServiceName,
     serviceType: 'tf2_web_republisher/RepublishTFs'
   });
@@ -3815,7 +3852,8 @@ TFClient.prototype.processResponse = function(response) {
     this.currentTopic.unsubscribe();
   }
 
-  this.currentTopic = this.ros.Topic({
+  this.currentTopic = new Topic({
+    ros: this.ros,
     name: response.topic_name,
     messageType: 'tf2_web_republisher/TFArray'
   });
@@ -3887,7 +3925,7 @@ TFClient.prototype.dispose = function() {
 
 module.exports = TFClient;
 
-},{"../actionlib/ActionClient":8,"../actionlib/Goal":10,"../core/Service.js":16,"../core/ServiceRequest.js":17,"../math/Transform":24}],29:[function(require,module,exports){
+},{"../actionlib/ActionClient":8,"../actionlib/Goal":10,"../core/Service.js":16,"../core/ServiceRequest.js":17,"../core/Topic.js":20,"../math/Transform":24}],29:[function(require,module,exports){
 var Ros = require('../core/Ros');
 var mixin = require('../mixin');
 
