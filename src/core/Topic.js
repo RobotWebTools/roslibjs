@@ -18,7 +18,7 @@ var Message = require('./Message');
  *   * ros - the ROSLIB.Ros connection handle
  *   * name - the topic name, like /cmd_vel
  *   * messageType - the message type, like 'std_msgs/String'
- *   * compression - the type of compression to use, like 'png' or 'cbor'
+ *   * compression - the type of compression to use, like 'png', 'cbor', or 'cbor-raw'
  *   * throttle_rate - the rate (in ms in between messages) at which to throttle the topics
  *   * queue_size - the queue created at bridge side for re-publishing webtopics (defaults to 100)
  *   * latch - latch the topic when publishing
@@ -36,11 +36,12 @@ function Topic(options) {
   this.latch = options.latch || false;
   this.queue_size = options.queue_size || 100;
   this.queue_length = options.queue_length || 0;
-  this.reconnect_on_close = options.reconnect_on_close || true;
+  this.reconnect_on_close = options.reconnect_on_close !== undefined ? options.reconnect_on_close : true;
 
   // Check for valid compression types
   if (this.compression && this.compression !== 'png' &&
-    this.compression !== 'cbor' && this.compression !== 'none') {
+    this.compression !== 'cbor' && this.compression !== 'cbor-raw' &&
+    this.compression !== 'none') {
     this.emit('warning', this.compression +
       ' compression is not supported. No compression will be used.');
     this.compression = 'none';
