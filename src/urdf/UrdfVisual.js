@@ -27,6 +27,8 @@ function UrdfVisual(options) {
   this.geometry = null;
   this.material = null;
 
+  this.name = options.xml.getAttribute('name');
+
   // Origin
   var origins = xml.getElementsByTagName('origin');
   if (origins.length === 0) {
