@@ -72,10 +72,14 @@ function UrdfModel(options) {
         {
           var mat = link.visuals[j].material; 
           if ( mat !== null ) {
-            if (this.materials[mat.name] !== void 0) {
-              link.visuals[j].material = this.materials[mat.name];
-            } else {
-              this.materials[mat.name] = mat;
+            // Check if color is already present. If not check on the materials list.
+            if( mat.color === null )
+            {
+              if (this.materials[mat.name] !== void 0) {
+                link.visuals[j].material = this.materials[mat.name];
+              } else {
+                this.materials[mat.name] = mat;
+              }
             }
           }
         }
