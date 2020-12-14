@@ -2,7 +2,7 @@ FROM ros:kinetic-ros-core
 
 ENV ROS_DISTRO=kinetic
 # Dependencies for rosbridge
-RUN apt update && apt-get install -y xvfb firefox git wget ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
+RUN apt update && apt-get install -y xvfb firefox git wget ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials python-future # python-future should be removed once rosbridge-library 0.11.13 is available.
 
 # Install nvm, Node.js and node-gyp
 ENV NODE_VERSION v10.15.0
