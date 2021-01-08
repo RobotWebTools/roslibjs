@@ -11,6 +11,7 @@ jobs:
       matrix:
         ros_distro: [kinetic, melodic]
     steps:
+      - uses: actions/checkout@v2
       - name: Docker pull
         run: docker pull ros:${{ matrix.ros_distro }}-ros-core
       - name: Docker build
