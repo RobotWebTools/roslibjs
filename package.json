@@ -29,7 +29,7 @@
     "karma-firefox-launcher": "^1.0.0",
     "karma-mocha": "^1.1.1",
     "load-grunt-tasks": "^3.3.0",
-    "mocha": "^2.3.3",
+    "mocha": "^8.3.0",
     "time-grunt": "^1.0.0"
   },
   "dependencies": {
