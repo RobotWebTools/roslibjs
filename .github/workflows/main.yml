@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ros_distro: [kinetic, melodic]
+        ros_distro: [kinetic, melodic, noetic]
     steps:
       - uses: actions/checkout@v2
       - name: Docker pull
