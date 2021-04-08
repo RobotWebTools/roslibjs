@@ -71,7 +71,7 @@ function UrdfModel(options) {
         for( var j=0; j<link.visuals.length; j++ )
         {
           var mat = link.visuals[j].material; 
-          if ( mat !== null ) {
+          if ( mat !== null && mat.name ) {
             if (this.materials[mat.name] !== void 0) {
               link.visuals[j].material = this.materials[mat.name];
             } else {

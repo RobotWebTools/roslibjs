@@ -2,6 +2,6 @@ test
 examples
 Gruntfile.js
 .gitignore
-.travis.yml
+.github
 bower.json
 *.md

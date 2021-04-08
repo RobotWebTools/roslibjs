@@ -1,5 +1,13 @@
 ## Change Log
 
+### 1.1.0 (2020/02/26 22:07 +00:00)
+- [#354](https://github.com/RobotWebTools/roslibjs/pull/354) Provide optional name to visual component. (#354) (@J-Rojas)
+- [#351](https://github.com/RobotWebTools/roslibjs/pull/351) Add cbor-raw compression (#351) (@janpaul123)
+- [#348](https://github.com/RobotWebTools/roslibjs/pull/348) WS 3.3.1 > 7.2.1 (#348) (@MatthijsBurgh)
+- [#340](https://github.com/RobotWebTools/roslibjs/pull/340) Fix TypeError: this.ros.ActionClient is not a function (#340) (@Rayman)
+- [#323](https://github.com/RobotWebTools/roslibjs/pull/323) fixed reconnect_on_close value in Topic (#323) (@biw)
+- [#317](https://github.com/RobotWebTools/roslibjs/pull/317) Add WebSocket in WebWorker transport (#317) (@mvollrath)
+
 ### 1.0.1 (2019/02/08 03:58 +00:00)
 - [#318](https://github.com/RobotWebTools/roslibjs/pull/318) Fix CBOR native array decoding offset (#318) (@mvollrath)
 
