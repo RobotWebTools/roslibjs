@@ -21,7 +21,7 @@
     "grunt-contrib-uglify": "^1.0.1",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-jsdoc": "^2.1.0",
-    "grunt-karma": "^2.0.0",
+    "grunt-karma": "^4.0.0",
     "grunt-mocha-test": "^0.12.7",
     "karma": "^3.1.4",
     "karma-chai": "^0.1.0",
