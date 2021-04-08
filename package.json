@@ -28,7 +28,7 @@
     "chai": "*",
     "karma-firefox-launcher": "^2.1.0",
     "karma-mocha": "^2.0.1",
-    "load-grunt-tasks": "^3.3.0",
+    "load-grunt-tasks": "^5.1.0",
     "mocha": "^8.3.2",
     "time-grunt": "^2.0.0"
   },
