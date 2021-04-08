@@ -5,7 +5,7 @@ FROM ros:$ROS_DISTRO-ros-core
 RUN apt update && apt-get install -y xvfb firefox git wget ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
 
 # Install nvm, Node.js and node-gyp
-ARG NODE_VERSION=v10.15.0
+ARG NODE_VERSION=14
 RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash \
     && . $HOME/.nvm/nvm.sh \
     && nvm install $NODE_VERSION && nvm alias default $NODE_VERSION \
