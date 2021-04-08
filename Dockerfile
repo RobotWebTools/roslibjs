@@ -12,4 +12,4 @@ RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | 
     && npm install -g node-gyp
 
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> $HOME/.bashrc
-ENV PATH /bin/versions/node/$NODE_VERSION/bin:$PATH
+ENV PATH=/bin/versions/node/$NODE_VERSION/bin:$PATH
