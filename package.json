@@ -30,7 +30,7 @@
     "karma-mocha": "^2.0.1",
     "load-grunt-tasks": "^3.3.0",
     "mocha": "^2.3.3",
-    "time-grunt": "^1.0.0"
+    "time-grunt": "^2.0.0"
   },
   "dependencies": {
     "eventemitter2": "^6.4.0",
