@@ -6,7 +6,7 @@ RUN apt update && apt-get install -y xvfb firefox git wget ros-$ROS_DISTRO-rosbr
 
 # Install nvm, Node.js and node-gyp
 ENV NODE_VERSION=v10.15.0
-RUN wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash \
+RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash \
     && . $HOME/.nvm/nvm.sh \
     && nvm install $NODE_VERSION && nvm alias default $NODE_VERSION \
     && npm install -g node-gyp
