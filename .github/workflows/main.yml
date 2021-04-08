@@ -9,12 +9,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ros_distro: [kinetic, melodic, noetic]
+        ros_distro: [kinetic, melodic] # Temp remove noetic waitng for release of tf2_web_republisher
     steps:
       - uses: actions/checkout@v2
       - name: Docker pull
         run: docker pull ros:${{ matrix.ros_distro }}-ros-core
       - name: Docker build
-        run: docker build -t roslibjsdocker .
+        run: docker build --build-arg ROS_DISTRO="${{ matrix.ros_distro }}" -t roslibjsdocker .
       - name: Tests
         run: docker run -v $(pwd):/root/roslibjs --rm roslibjsdocker bash -i -c 'bash /root/roslibjs/test/build.bash'
