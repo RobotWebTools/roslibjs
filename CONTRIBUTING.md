@@ -1,24 +1,23 @@
-roslibjs Build Setup
-====================
+# roslibjs Build Setup
 
 [Grunt](http://gruntjs.com/) is used for building, including concatenating, minimizing, documenting, linting, and testing.
 
-### Install Grunt and its Dependencies
+## Install Grunt and its Dependencies
 
  1. Install [Node.js](http://nodejs.org/) for your environment
  2. Install the build task runner, [Grunt](http://gruntjs.com/)
 
- 	```sh
-	$ [sudo] npm install -g grunt
- 	```
+```bash
+$ [sudo] npm install -g grunt
+```
  3. Install the dependencies and build dependencies
 
-	```sh
-	$ cd /path/to/roslibjs/
-   	$ [sudo] npm install
-	```
+```bash
+$ cd /path/to/roslibjs/
+$ [sudo] npm install
+```
 
-### Build with Grunt
+## Build with Grunt
 
 Before proceeding, please confirm you have installed the dependencies above.
 
