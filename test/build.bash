@@ -23,7 +23,6 @@ pushd $(dirname $0) > /dev/null
 #sh -e /etc/init.d/xvfb start
 #Xvfb :99 -ac &
 
-source /opt/ros/kinetic/setup.bash
 sh examples/setup_examples.sh
 
 rostopic list
