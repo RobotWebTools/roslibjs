@@ -14,9 +14,9 @@
   },
   "devDependencies": {
     "grunt": "^1.0.1",
-    "grunt-browserify": "^5.0.0",
+    "grunt-browserify": "^6.0.0",
     "grunt-cli": "^1.2.0",
-    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-clean": "^2.0.0",
     "grunt-contrib-jshint": "^3.0.0",
     "grunt-contrib-uglify": "^5.0.1",
     "grunt-contrib-watch": "^1.0.0",
@@ -26,10 +26,10 @@
     "karma": "^6.3.2",
     "karma-chai": "^0.1.0",
     "chai": "*",
-    "karma-firefox-launcher": "^1.0.0",
+    "karma-firefox-launcher": "^2.1.0",
     "karma-mocha": "^2.0.1",
-    "load-grunt-tasks": "^3.3.0",
-    "mocha": "^2.3.3",
+    "load-grunt-tasks": "^5.1.0",
+    "mocha": "^8.3.2",
     "time-grunt": "^2.0.0"
   },
   "dependencies": {
