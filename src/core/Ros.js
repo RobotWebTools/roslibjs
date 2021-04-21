@@ -11,6 +11,7 @@ var Service = require('./Service');
 var ServiceRequest = require('./ServiceRequest');
 
 var assign = require('object-assign');
+var io = require('socket.io');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 /**
