@@ -13,6 +13,7 @@
     "./src/util/decompressPng.js": "./src/util/shim/decompressPng.js"
   },
   "devDependencies": {
+    "chai": "*",
     "grunt": "^1.0.1",
     "grunt-browserify": "^6.0.0",
     "grunt-cli": "^1.2.0",
@@ -25,7 +26,6 @@
     "grunt-mocha-test": "^0.13.3",
     "karma": "^6.3.2",
     "karma-chai": "^0.1.0",
-    "chai": "*",
     "karma-firefox-launcher": "^2.1.0",
     "karma-mocha": "^2.0.1",
     "load-grunt-tasks": "^5.1.0",
@@ -33,14 +33,14 @@
     "time-grunt": "^2.0.0"
   },
   "dependencies": {
+    "cbor-js": "^0.1.0",
     "eventemitter2": "^6.4.0",
     "object-assign": "^4.0.1",
     "pngparse": "^2.0.1",
-    "ws": "^7.2.1",
-    "xmldom": "^0.6.0",
-    "cbor-js": "^0.1.0",
+    "socket.io": "4.0.1",
     "webworkify": "^1.5.0",
-    "socket.io": "4.0.1"
+    "ws": "^7.2.1",
+    "xmldom": "^0.6.0"
   },
   "directories": {
     "example": "examples",
