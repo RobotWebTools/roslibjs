@@ -25,6 +25,12 @@ if(typeof bson !== 'undefined'){
  * @private
  */
 function SocketAdapter(client) {
+
+  var decoder = null
+  if (client.transportOptions.decoder) {
+    decoder = client.transportOptions.decoder
+  }
+  
   function handleMessage(message) {
     if (message.op === 'publish') {
       client.emit(message.topic, message.msg);
@@ -103,7 +109,11 @@ function SocketAdapter(client) {
      * @memberof SocketAdapter
      */
     onmessage: function onMessage(data) {
-      if (typeof Blob !== 'undefined' && data.data instanceof Blob) {
+      if (decoder) {
+        decoder(data.data, function (message) {
+          handleMessage(message);
+        });
+      } else if (typeof Blob !== 'undefined' && data.data instanceof Blob) {
         decodeBSON(data.data, function (message) {
           handlePng(message, handleMessage);
         });
