@@ -124,7 +124,7 @@ function SocketAdapter(client) {
         var message = JSON.parse(typeof data === 'string' ? data : data.data);
         handlePng(message, handleMessage);
       }
-    } 
+    }
   };
 }
 
