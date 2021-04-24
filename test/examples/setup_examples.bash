@@ -10,7 +10,7 @@ then
     roslaunch examples/setup_examples.launch > roslaunch.log &
 
     LAUNCHED=false
-    for i in 1 2 3 4 5 6 7 8 9 10
+    for i in {1..10}
     do
         echo "Waiting for /hello_world_publisher...$i"
         sleep 1
