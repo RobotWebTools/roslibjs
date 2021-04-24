@@ -29,9 +29,21 @@ echo "rostopic list"
 rostopic list
 echo "npm install"
 npm install
+echo "npm run build"
+npm run build
 echo "npm test"
 npm test
 echo "npm run test-examples"
 npm run test-examples
 echo "npm run test-workersocket"
 npm run test-workersocket
+
+echo "Checking build folder is up-to-date with library"
+changed_build_files=$(git diff --name-only HEAD -- build)
+if [ -n "$changed_build_files" ]
+then
+    echo -e "\e[1m\e[31mBuild folder is out-of-sync with library. Build library, npm run build, and (ammend) commit\e[0m"
+    exit 1
+else
+    echo -e "\e[1m\e[32mBuild folder is up-to-date with library\e[0m"
+fi
