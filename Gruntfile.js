@@ -28,7 +28,7 @@ module.exports = function(grunt) {
     karma: {
       options: {
         singleRun: true,
-        browsers: ['Firefox']
+        browsers: process.env.CI ? ['FirefoxHeadless'] : ['Firefox']
       },
       test: {
         configFile: './test/karma.conf.js',
