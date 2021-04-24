@@ -20,20 +20,20 @@ pushd "$(dirname "$0")" > /dev/null
 
 bash examples/setup_examples.bash
 
-echo "rostopic list"
+echo -e "\e[1m\e[35mrostopic list\e[0m"
 rostopic list
-echo "npm install"
+echo -e "\e[1m\e[35mnpm install\e[0m"
 npm install
-echo "npm run build"
+echo -e "\e[1m\e[35mnpm run build\e[0m"
 npm run build
-echo "npm test"
+echo -e "\e[1m\e[35mnpm test\e[0m"
 npm test
-echo "npm run test-examples"
+echo -e "\e[1m\e[35mnpm run test-examples\e[0m"
 npm run test-examples
-echo "npm run test-workersocket"
+echo -e "\e[1m\e[35mnpm run test-workersocket\e[0m"
 npm run test-workersocket
 
-echo "Checking build folder is up-to-date with library"
+echo -e "\e[1m\e[35mChecking build folder is up-to-date with library\e[0m"
 changed_build_files=$(git -C "$(git rev-parse --show-toplevel)" diff --name-only HEAD -- build)
 if [ -n "$changed_build_files" ]
 then
