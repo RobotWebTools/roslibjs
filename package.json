@@ -52,9 +52,9 @@
   "scripts": {
     "build": "grunt build",
     "test": "grunt test",
-    "test-examples": "grunt mochaTest:examples && karma start test/examples/karma.conf.js",
-    "test-workersocket": "grunt uglify && karma start test/workersocket/karma.conf.js",
-    "test-tcp": "grunt mochaTest:tcp",
+    "test-examples": "grunt test-examples",
+    "test-workersocket": "grunt test-workersocket",
+    "test-tcp": "grunt test-tcp",
     "publish": "npm run build && npm run test"
   },
   "repository": {
