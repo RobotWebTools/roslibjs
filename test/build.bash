@@ -42,7 +42,7 @@ echo "npm run test-workersocket"
 npm run test-workersocket
 
 echo "Checking build folder is up-to-date with library"
-changed_build_files=$(git diff --name-only HEAD -- build)
+changed_build_files=$(git -C "$(git rev-parse --show-toplevel)" diff --name-only HEAD -- build)
 if [ -n "$changed_build_files" ]
 then
     echo -e "\e[1m\e[31mBuild folder is out-of-sync with library. Build library, npm run build, and (ammend) commit\e[0m"
