@@ -19,9 +19,12 @@ set -e
 pushd $(dirname $0) > /dev/null
 
 # Set up Xfvb for Firefox headless testing
-#export DISPLAY=:99.0
-#sh -e /etc/init.d/xvfb start
-#Xvfb :99 -ac &
+if ! timeout 1s xset q &>/dev/null
+then
+    echo "Starting Xvfb"
+    export DISPLAY=:99.0
+    Xvfb :99 -ac &
+fi
 
 bash examples/setup_examples.bash
 
