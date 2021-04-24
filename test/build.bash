@@ -16,7 +16,7 @@
 
 set -e
 
-pushd $(dirname $0) > /dev/null
+pushd "$(dirname "$0")" > /dev/null
 
 # Set up Xfvb for Firefox headless testing
 if ! timeout 1s xset q &>/dev/null
