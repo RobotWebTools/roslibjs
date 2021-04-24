@@ -29,6 +29,8 @@ echo "rostopic list"
 rostopic list
 echo "npm install"
 npm install
+echo "npm test"
+npm test
 echo "npm run test-examples"
 npm run test-examples
 echo "npm run test-workersocket"
