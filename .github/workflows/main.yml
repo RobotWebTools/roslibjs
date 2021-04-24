@@ -8,7 +8,7 @@ on:
 
 jobs:
   ci:
-    name: ${{ matrix.ros_distro }}
+    name: ${{ matrix.ros_distro }} - ${{ matrix.node_version }}
     if: ${{ github.actor != 'RWT-bot' }}
     runs-on: ubuntu-latest
     strategy:
@@ -27,7 +27,7 @@ jobs:
       - name: Tests
         run: docker run -v $(pwd):/root/roslibjs --rm roslibjsdocker bash -i -c 'bash /root/roslibjs/test/build.bash'
       - uses: stefanzweifel/git-auto-commit-action@v4
-        if: ${{ github.event_name == 'push' && github.ref == 'develop' && matrix.ros_distro == 'noetic' }}
+        if: ${{ github.event_name == 'push' && github.ref == 'develop' && matrix.ros_distro == 'noetic' && matrix.node_version == 16 }}
         with:
           commit_message: Update Build
           file_pattern: 'build/*.js'
