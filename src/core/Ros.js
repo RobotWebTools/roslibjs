@@ -38,7 +38,7 @@ function Ros(options) {
   this.isConnected = false;
   this.transportLibrary = options.transportLibrary || 'websocket';
   this.transportOptions = options.transportOptions || {};
-  this._sendFunc = function(msg) { that.sendEncodedMessage(msg) }
+  this._sendFunc = function(msg) { that.sendEncodedMessage(msg); };
 
   if (typeof options.groovyCompatibility === 'undefined') {
     this.groovyCompatibility = true;
@@ -138,13 +138,13 @@ Ros.prototype.sendEncodedMessage= function(messageEncoded) {
   } else {
     emitter(messageEncoded);
   }
-}
+};
 
 /**
  * Sends the message over the WebSocket, but queues the message up if not yet
  * connected.
  */
-Ros.prototype.callOnConnection = function(message) {    
+Ros.prototype.callOnConnection = function(message) {
   if (this.transportOptions.encoder) {
     this.transportOptions.encoder(message, this._sendFunc);
   } else {

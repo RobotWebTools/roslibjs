@@ -26,11 +26,19 @@ module.exports = function(grunt) {
       ]
     },
     karma: {
-      build: {
-        configFile: './test/karma.conf.js',
+      options: {
         singleRun: true,
-        browsers: ['Firefox']
-      }
+        browsers: process.env.CI ? ['FirefoxHeadless'] : ['Firefox']
+      },
+      test: {
+        configFile: './test/karma.conf.js',
+      },
+      examples: {
+        configFile: './test/examples/karma.conf.js',
+      },
+      workersocket: {
+        configFile: './test/workersocket/karma.conf.js',
+      },
     },
     mochaTest: {
       options: {
@@ -98,8 +106,11 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('dev', ['browserify', 'watch']);
-  grunt.registerTask('test', ['jshint', 'mochaTest:test', 'browserify', 'karma']);
-  grunt.registerTask('build', ['test', 'uglify']);
+  grunt.registerTask('test', ['jshint', 'mochaTest:test', 'karma:test']);
+  grunt.registerTask('test-examples', ['mochaTest:examples', 'karma:examples']);
+  grunt.registerTask('test-tcp', ['mochaTest:tcp']);
+  grunt.registerTask('test-workersocket', ['karma:workersocket']);
+  grunt.registerTask('build', ['browserify', 'uglify']);
   grunt.registerTask('build_and_watch', ['watch']);
   grunt.registerTask('doc', ['clean', 'jsdoc']);
 };
