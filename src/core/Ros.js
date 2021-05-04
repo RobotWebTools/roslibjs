@@ -32,11 +32,13 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  */
 function Ros(options) {
   options = options || {};
+  var that = this;
   this.socket = null;
   this.idCounter = 0;
   this.isConnected = false;
   this.transportLibrary = options.transportLibrary || 'websocket';
   this.transportOptions = options.transportOptions || {};
+  this._sendFunc = function(msg) { that.sendEncodedMessage(msg) }
 
   if (typeof options.groovyCompatibility === 'undefined') {
     this.groovyCompatibility = true;
@@ -120,14 +122,9 @@ Ros.prototype.authenticate = function(mac, client, dest, rand, t, level, end) {
   this.callOnConnection(auth);
 };
 
-/**
- * Sends the message over the WebSocket, but queues the message up if not yet
- * connected.
- */
-Ros.prototype.callOnConnection = function(message) {
-  var that = this;
-  var messageJson = JSON.stringify(message);
+Ros.prototype.sendEncodedMessage= function(messageEncoded) {
   var emitter = null;
+  var that = this;
   if (this.transportLibrary === 'socket.io') {
     emitter = function(msg){that.socket.emit('operation', msg);};
   } else {
@@ -136,10 +133,22 @@ Ros.prototype.callOnConnection = function(message) {
 
   if (!this.isConnected) {
     that.once('connection', function() {
-      emitter(messageJson);
+      emitter(messageEncoded);
     });
   } else {
-    emitter(messageJson);
+    emitter(messageEncoded);
+  }
+}
+
+/**
+ * Sends the message over the WebSocket, but queues the message up if not yet
+ * connected.
+ */
+Ros.prototype.callOnConnection = function(message) {    
+  if (this.transportOptions.encoder) {
+    this.transportOptions.encoder(message, this._sendFunc);
+  } else {
+    this._sendFunc(JSON.stringify(message));
   }
 };
 
