@@ -26,11 +26,11 @@ if(typeof bson !== 'undefined'){
  */
 function SocketAdapter(client) {
 
-  var decoder = null
+  var decoder = null;
   if (client.transportOptions.decoder) {
-    decoder = client.transportOptions.decoder
+    decoder = client.transportOptions.decoder;
   }
-  
+
   function handleMessage(message) {
     if (message.op === 'publish') {
       client.emit(message.topic, message.msg);

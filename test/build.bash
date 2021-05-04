@@ -1,13 +1,13 @@
-#!/bin/bash
-#
-# Copyright (c) 2017 Intel Corporation. All rights reserved.
+#! /usr/bin/env bash
 
+# Copyright (c) 2017 Intel Corporation. All rights reserved.
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,16 +16,29 @@
 
 set -e
 
-pushd $(dirname $0) > /dev/null
+pushd "$(dirname "$0")" > /dev/null
 
-# Set up Xfvb for Firefox headless testing
-#export DISPLAY=:99.0
-#sh -e /etc/init.d/xvfb start
-#Xvfb :99 -ac &
+bash examples/setup_examples.bash
 
-sh examples/setup_examples.sh
-
+echo -e "\e[1m\e[35mrostopic list\e[0m"
 rostopic list
+echo -e "\e[1m\e[35mnpm install\e[0m"
 npm install
+echo -e "\e[1m\e[35mnpm run build\e[0m"
+npm run build
+echo -e "\e[1m\e[35mnpm test\e[0m"
+npm test
+echo -e "\e[1m\e[35mnpm run test-examples\e[0m"
 npm run test-examples
+echo -e "\e[1m\e[35mnpm run test-workersocket\e[0m"
 npm run test-workersocket
+
+echo -e "\e[1m\e[35mChecking build folder is up-to-date with library\e[0m"
+changed_build_files=$(git -C "$(git rev-parse --show-toplevel)" diff --name-only HEAD -- build)
+if [ -n "$changed_build_files" ]
+then
+    echo -e "\e[1m\e[31mBuild folder is out-of-sync with library. Build library, npm run build, and (ammend) commit\e[0m"
+    exit 1
+else
+    echo -e "\e[1m\e[32mBuild folder is up-to-date with library\e[0m"
+fi
