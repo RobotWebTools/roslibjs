@@ -37,7 +37,7 @@
     "eventemitter2": "^6.4.0",
     "object-assign": "^4.0.0",
     "pngparse": "^2.0.0",
-    "socket.io": "4.0.0",
+    "socket.io": "^4.0.0",
     "webworkify": "^1.5.0",
     "ws": "^7.2.0",
     "xmldom": "^0.6.0"
