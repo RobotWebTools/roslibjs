@@ -23,3 +23,8 @@ jobs:
         run: docker build --build-arg ROS_DISTRO="${{ matrix.ros_distro }}" --build-arg NODE_VERSION="${{ matrix.node_version }}" -t roslibjsdocker .
       - name: Tests
         run: docker run -v $(pwd):/root/roslibjs --rm roslibjsdocker bash -i -c 'bash /root/roslibjs/test/build.bash'
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        if: ${{ (github.event_name == 'push' && github.ref == 'develop' }}
+        with:
+          commit_message: Update Build
+          file_pattern: 'build/*.js'
