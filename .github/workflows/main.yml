@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ros_distro: [kinetic, melodic] # Temp remove noetic waitng for release of tf2_web_republisher
+        ros_distro: [melodic, noetic]
         node_version: [14]
     steps:
       - uses: actions/checkout@v2
