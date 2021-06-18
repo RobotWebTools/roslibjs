@@ -9,6 +9,7 @@ on:
 jobs:
   ci:
     name: ${{ matrix.ros_distro }}
+    if: ${{ github.actor != 'RWT-bot' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
