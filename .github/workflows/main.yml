@@ -9,6 +9,7 @@ on:
 jobs:
   ci:
     name: ${{ matrix.ros_distro }}
+    if: ${{ github.actor != 'RWT-bot' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -17,9 +18,16 @@ jobs:
         node_version: [14]
     steps:
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.RWT_BOT_PAT }}
       - name: Docker pull
         run: docker pull ros:${{ matrix.ros_distro }}-ros-core
       - name: Docker build
         run: docker build --build-arg ROS_DISTRO="${{ matrix.ros_distro }}" --build-arg NODE_VERSION="${{ matrix.node_version }}" -t roslibjsdocker .
       - name: Tests
         run: docker run -v $(pwd):/root/roslibjs --rm roslibjsdocker bash -i -c 'bash /root/roslibjs/test/build.bash'
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        if: ${{ github.event_name == 'push' && github.ref == 'develop' && matrix.ros_distro == 'noetic' }}
+        with:
+          commit_message: Update Build
+          file_pattern: 'build/*.js'
