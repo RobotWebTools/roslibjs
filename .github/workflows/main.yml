@@ -18,8 +18,10 @@ jobs:
         node_version: [14, 16]
     steps:
       - uses: actions/checkout@v2
+        env:
+          TOKEN: "${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' && secrets.RWT_BOT_PAT || github.token }}"
         with:
-          token: ${{ secrets.RWT_BOT_PAT }}
+          token: ${{ env.TOKEN }}
       - name: Docker pull
         run: docker pull ros:${{ matrix.ros_distro }}-ros-core
       - name: Docker build
