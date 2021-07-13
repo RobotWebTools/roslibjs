@@ -31,12 +31,20 @@ Service.prototype.__proto__ = EventEmitter2.prototype;
  * callback. Does nothing if this service is currently advertised.
  *
  * @param request - the ROSLIB.ServiceRequest to send
+ * @param options - object with the following keys:
+ *   * compression - the type of compression to use, like 'png' or 'cbor'
+ *   * fragment_size - the maximum size that the response message can take before it is fragmented
  * @param callback - function with params:
  *   * response - the response from the service request
  * @param failedCallback - the callback function when the service call failed (optional). Params:
  *   * error - the error message reported by ROS
  */
-Service.prototype.callService = function(request, callback, failedCallback) {
+Service.prototype.callService = function(request, callback, failedCallback, options) {
+  options = options || {};
+  compression = options.compression || 'none';
+  fragment_size = options.fragment_size || undefined;
+
+
   if (this.isAdvertised) {
     return;
   }
@@ -55,12 +63,21 @@ Service.prototype.callService = function(request, callback, failedCallback) {
     });
   }
 
+  if (compression && compression !== 'png' &&
+    compression !== 'cbor' && compression !== 'none') {
+    this.emit('warning', compression +
+      ' compression is not supported. No compression will be used.');
+  }
+
+
   var call = {
     op : 'call_service',
     id : serviceCallId,
     service : this.name,
     type: this.serviceType,
-    args : request
+    args : request,
+    compression: compression,
+    fragment_size: fragment_size
   };
   this.ros.callOnConnection(call);
 };
