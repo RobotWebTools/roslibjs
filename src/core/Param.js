@@ -25,8 +25,10 @@ function Param(options) {
  *
  * @param callback - function with the following params:
  *  * value - the value of the param from ROS.
+ * @param failedCallback - the callback function when the service call failed (optional). Params:
+ *   * error - the error message reported by ROS
  */
-Param.prototype.get = function(callback) {
+Param.prototype.get = function(callback, failedCallback) {
   var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/get_param',
@@ -40,15 +42,18 @@ Param.prototype.get = function(callback) {
   paramClient.callService(request, function(result) {
     var value = JSON.parse(result.value);
     callback(value);
-  });
+  }, failedCallback);
 };
 
 /**
  * Sets the value of the param in ROS.
  *
  * @param value - value to set param to.
+ * @param callback - the callback function when the service call succeeded (optional)
+ * @param failedCallback - the callback function when the service call failed (optional). Params:
+ *   * error - the error message reported by ROS
  */
-Param.prototype.set = function(value, callback) {
+Param.prototype.set = function(value, callback, failedCallback) {
   var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/set_param',
@@ -60,13 +65,16 @@ Param.prototype.set = function(value, callback) {
     value : JSON.stringify(value)
   });
 
-  paramClient.callService(request, callback);
+  paramClient.callService(request, callback, failedCallback);
 };
 
 /**
  * Delete this parameter on the ROS server.
+ * @param callback - the callback function when the service call succeeded (optional)
+ * @param failedCallback - the callback function when the service call failed (optional). Params:
+ *   * error - the error message reported by ROS
  */
-Param.prototype.delete = function(callback) {
+Param.prototype.delete = function(callback, failedCallback) {
   var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/delete_param',
@@ -77,7 +85,7 @@ Param.prototype.delete = function(callback) {
     name : this.name
   });
 
-  paramClient.callService(request, callback);
+  paramClient.callService(request, callback, failedCallback);
 };
 
 module.exports = Param;
