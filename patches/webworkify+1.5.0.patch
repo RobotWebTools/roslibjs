@@ -1,0 +1,19 @@
+diff --git a/node_modules/webworkify/index.js b/node_modules/webworkify/index.js
+index a22c21c..9287fdb 100644
+--- a/node_modules/webworkify/index.js
++++ b/node_modules/webworkify/index.js
+@@ -1,10 +1,10 @@
+-var bundleFn = arguments[3];
+-var sources = arguments[4];
+-var cache = arguments[5];
+-
+ var stringify = JSON.stringify;
+ 
+ module.exports = function (fn, options) {
++    var bundleFn = arguments[3];
++    var sources = arguments[4];
++    var cache = arguments[5];
++
+     var wkey;
+     var cacheKeys = Object.keys(cache);
+ 
