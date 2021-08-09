@@ -4205,7 +4205,7 @@ var QOS_DURABILITY_OPTIONS = ["volatile", "transient_local"]
  *   * latch - latch the topic when publishing
  *   * queue_length - the queue length at bridge side used when subscribing (defaults to 0, no queueing).
  *   * reconnect_on_close - the flag to enable resubscription and readvertisement on close event(defaults to true).
- *   * qos_durability - the qos message durability when subscribing, 'volatile' or 'transient_local' (defaults to 'volatile'),
+ *   * qos_durability - the qos message durability when subscribing, 'volatile' or 'transient_local' (defaults to 'volatile')
  */
 function Topic(options) {
   options = options || {};
