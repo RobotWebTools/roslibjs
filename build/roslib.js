@@ -4185,6 +4185,8 @@ module.exports = SocketAdapter;
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
 var Message = require('./Message');
 
+var QOS_DURABILITY_OPTIONS = ["volatile", "transient_local"]
+
 /**
  * Publish and/or subscribe to a topic in ROS.
  *
@@ -4203,6 +4205,7 @@ var Message = require('./Message');
  *   * latch - latch the topic when publishing
  *   * queue_length - the queue length at bridge side used when subscribing (defaults to 0, no queueing).
  *   * reconnect_on_close - the flag to enable resubscription and readvertisement on close event(defaults to true).
+ *   * qos_durability - the qos message durability when subscribing, 'volatile' or 'transient_local' (defaults to 'volatile'),
  */
 function Topic(options) {
   options = options || {};
@@ -4216,6 +4219,7 @@ function Topic(options) {
   this.queue_size = options.queue_size || 100;
   this.queue_length = options.queue_length || 0;
   this.reconnect_on_close = options.reconnect_on_close !== undefined ? options.reconnect_on_close : true;
+  this.qos_durability = options.qos_durability || 'volatile';
 
   // Check for valid compression types
   if (this.compression && this.compression !== 'png' &&
@@ -4224,6 +4228,12 @@ function Topic(options) {
     this.emit('warning', this.compression +
       ' compression is not supported. No compression will be used.');
     this.compression = 'none';
+  }
+
+  // Check qos_durability types
+  if (!QOS_DURABILITY_OPTIONS.includes(this.qos_durability)) {
+    this.emit('warning', this.qos_durability +' qos_durability is not supported.');
+    this.qos_durability = "volatile";
   }
 
   // Check if throttle rate is negative
@@ -4283,7 +4293,8 @@ Topic.prototype.subscribe = function(callback) {
     topic: this.name,
     compression: this.compression,
     throttle_rate: this.throttle_rate,
-    queue_length: this.queue_length
+    queue_length: this.queue_length,
+    qos_durability: this.qos_durability,
   });
 };
 
