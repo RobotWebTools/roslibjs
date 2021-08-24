@@ -52,6 +52,25 @@ var sample_urdf = function (){
     '      <material name="blue" />'+
     '    </visual>'+
     '  </link>'+
+    '  <link name="link6">'+ // test origins work as expected
+    '    <visual>'+
+    '      <geometry>'+
+    '        <sphere radius="1" />'+
+    '      </geometry>'+
+    '      <origin xyz="0 1 0" rpy="0 3.1415926 0"/>'+
+    '    </visual>'+
+    '    <visual>'+
+    '      <geometry>'+
+    '        <sphere radius="1" />'+
+    '      </geometry>'+
+    '      <origin xyz="0'+ // Some poeple like to lay URDF out like this
+    '                   0'+
+    '                   0"'+
+    '              rpy="0'+
+    '                   0'+
+    '                   0"/>'+
+    '    </visual>'+
+    '  </link>'+
     '  <joint name="joint1" type="continuous">'+
     '    <parent link="link1"/>'+
     '    <child link="link2"/>'+
@@ -63,6 +82,16 @@ var sample_urdf = function (){
     '  <joint name="joint3" type="continuous">'+
     '    <parent link="link3"/>'+
     '    <child link="link4"/>'+
+    '  </joint>'+
+    '  <joint name="joint4" type="continuous">'+
+    '    <parent link="link1"/>'+
+    '    <child link="link6"/>'+
+    '    <origin xyz="1.0'+
+    '                 0.0'+
+    '                -1.0"'+
+    '            rpy="0'+
+    '                 0'+
+    '                 0"/>'+
     '  </joint>'+
     '  <material name="blue">'+
     '    <color rgba="0 0 1 1" />'+
@@ -109,6 +138,20 @@ describe('URDF', function() {
       expect(urdfModel.links['link5'].visuals[0].material.color.g).to.equal(0.0);
       expect(urdfModel.links['link5'].visuals[0].material.color.b).to.equal(1.0);
       expect(urdfModel.links['link5'].visuals[0].material.color.a).to.equal(1.0);
+      expect(urdfModel.links['link6'].visuals[0].origin.position.x).to.equal(0.0);
+      expect(urdfModel.links['link6'].visuals[0].origin.position.y).to.equal(1.0);
+      expect(urdfModel.links['link6'].visuals[0].origin.position.z).to.equal(0.0);
+      expect(urdfModel.links['link6'].visuals[0].origin.orientation.x).to.be.closeTo(0.0, 0.01);
+      expect(urdfModel.links['link6'].visuals[0].origin.orientation.y).to.be.closeTo(1.0, 0.01);
+      expect(urdfModel.links['link6'].visuals[0].origin.orientation.z).to.be.closeTo(0.0, 0.01);
+      expect(urdfModel.links['link6'].visuals[0].origin.orientation.w).to.be.closeTo(0.0, 0.01);
+      expect(urdfModel.links['link6'].visuals[1].origin.position.x).to.equal(0.0);
+      expect(urdfModel.links['link6'].visuals[1].origin.position.y).to.equal(0.0);
+      expect(urdfModel.links['link6'].visuals[1].origin.position.z).to.equal(0.0);
+      expect(urdfModel.links['link6'].visuals[1].origin.orientation.x).to.be.closeTo(0.0, 0.01);
+      expect(urdfModel.links['link6'].visuals[1].origin.orientation.y).to.be.closeTo(0.0, 0.01);
+      expect(urdfModel.links['link6'].visuals[1].origin.orientation.z).to.be.closeTo(0.0, 0.01);
+      expect(urdfModel.links['link6'].visuals[1].origin.orientation.w).to.be.closeTo(1.0, 0.01);
     });
 
     it('is ignorant to the xml node', function(){
@@ -116,6 +159,20 @@ describe('URDF', function() {
       var xml = parser.parseFromString(sample_urdf(), 'text/xml');
       var robotXml = xml.documentElement;
       expect(robotXml.getAttribute('name')).to.equal('test_robot');
+    });
+
+    it('should correctly construct joints', function(){
+      var urdfModel = new ROSLIB.UrdfModel({
+        string: sample_urdf()
+      });
+
+      expect(urdfModel.joints['joint4'].origin.position.x).to.equal(1.0);
+      expect(urdfModel.joints['joint4'].origin.position.y).to.equal(0.0);
+      expect(urdfModel.joints['joint4'].origin.position.z).to.equal(-1.0);
+      expect(urdfModel.joints['joint4'].origin.orientation.x).to.equal(0.0);
+      expect(urdfModel.joints['joint4'].origin.orientation.y).to.equal(0.0);
+      expect(urdfModel.joints['joint4'].origin.orientation.z).to.equal(0.0);
+      expect(urdfModel.joints['joint4'].origin.orientation.w).to.equal(1.0);
     });
   });
 
