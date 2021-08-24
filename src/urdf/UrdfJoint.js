@@ -44,7 +44,7 @@ function UrdfJoint(options) {
     var xyz = origins[0].getAttribute('xyz');
     var position = new Vector3();
     if (xyz) {
-      xyz = xyz.split(' ');
+      xyz = xyz.split(/\s+/);
       position = new Vector3({
         x : parseFloat(xyz[0]),
         y : parseFloat(xyz[1]),
@@ -56,7 +56,7 @@ function UrdfJoint(options) {
     var rpy = origins[0].getAttribute('rpy');
     var orientation = new Quaternion();
     if (rpy) {
-      rpy = rpy.split(' ');
+      rpy = rpy.split(/\s+/);
       // Convert from RPY
       var roll = parseFloat(rpy[0]);
       var pitch = parseFloat(rpy[1]);
