@@ -3,7 +3,7 @@
  * @author Brandon Alexander - balexander@willowgarage.com
  */
 
-var assign = require('object-assign');
+import assign from 'object-assign';
 
 /**
  * A ServiceResponse is returned from the service call.
@@ -11,8 +11,6 @@ var assign = require('object-assign');
  * @constructor
  * @param values - object matching the fields defined in the .srv definition file
  */
-function ServiceResponse(values) {
+export function ServiceResponse(values) {
   assign(this, values);
 }
-
-module.exports = ServiceResponse;

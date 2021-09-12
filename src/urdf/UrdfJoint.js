@@ -3,9 +3,9 @@
  * @author David V. Lu!!  davidvlu@gmail.com
  */
 
-var Pose = require('../math/Pose');
-var Vector3 = require('../math/Vector3');
-var Quaternion = require('../math/Quaternion');
+import {Pose} from '../math/Pose.js';
+import {Vector3} from '../math/Vector3.js';
+import {Quaternion} from '../math/Quaternion.js';
 
 /**
  * A Joint element in a URDF.
@@ -14,7 +14,7 @@ var Quaternion = require('../math/Quaternion');
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-function UrdfJoint(options) {
+export function UrdfJoint(options) {
   this.name = options.xml.getAttribute('name');
   this.type = options.xml.getAttribute('type');
 
@@ -87,5 +87,3 @@ function UrdfJoint(options) {
     });
   }
 }
-
-module.exports = UrdfJoint;

@@ -3,8 +3,8 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
-var Vector3 = require('./Vector3');
-var Quaternion = require('./Quaternion');
+import {Vector3} from './Vector3.js';
+import {Quaternion} from './Quaternion.js';
 
 /**
  * A Transform in 3-space. Values are copied into this object.
@@ -14,7 +14,7 @@ var Quaternion = require('./Quaternion');
  *   * translation - the Vector3 describing the translation
  *   * rotation - the ROSLIB.Quaternion describing the rotation
  */
-function Transform(options) {
+export function Transform(options) {
   options = options || {};
   // Copy the values into this object if they exist
   this.translation = new Vector3(options.translation);
@@ -29,5 +29,3 @@ function Transform(options) {
 Transform.prototype.clone = function() {
   return new Transform(this);
 };
-
-module.exports = Transform;

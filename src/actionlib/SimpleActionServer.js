@@ -3,9 +3,11 @@
  * @author Laura Lindzey - lindzey@gmail.com
  */
 
-var Topic = require('../core/Topic');
-var Message = require('../core/Message');
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
+import {Topic} from '../core/Topic.js';
+import {Message} from '../core/Message.js';
+import eventemitter from 'eventemitter2';
+
+const {EventEmitter2} = eventemitter;
 
 /**
  * An actionlib action server client.

@@ -4,9 +4,10 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var Topic = require('../core/Topic');
-var Message = require('../core/Message');
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
+import {Topic} from '../core/Topic.js';
+import eventemitter from 'eventemitter2';
+
+const {EventEmitter2} = eventemitter;
 
 /**
  * An actionlib action listener

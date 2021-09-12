@@ -4,8 +4,8 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var Vector3 = require('../math/Vector3');
-var UrdfTypes = require('./UrdfTypes');
+import {Vector3} from '../math/Vector3.js';
+import * as UrdfTypes from './UrdfTypes.js';
 
 /**
  * A Mesh element in a URDF.
@@ -14,7 +14,7 @@ var UrdfTypes = require('./UrdfTypes');
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-function UrdfMesh(options) {
+export function UrdfMesh(options) {
   this.scale = null;
 
   this.type = UrdfTypes.URDF_MESH;
@@ -32,5 +32,3 @@ function UrdfMesh(options) {
     });
   }
 }
-
-module.exports = UrdfMesh;

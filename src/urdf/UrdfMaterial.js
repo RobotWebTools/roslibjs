@@ -4,7 +4,7 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var UrdfColor = require('./UrdfColor');
+import {UrdfColor} from './UrdfColor.js';
 
 /**
  * A Material element in a URDF.
@@ -13,7 +13,7 @@ var UrdfColor = require('./UrdfColor');
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-function UrdfMaterial(options) {
+export function UrdfMaterial(options) {
   this.textureFilename = null;
   this.color = null;
 
@@ -44,5 +44,3 @@ var assign = require('object-assign');
 UrdfMaterial.prototype.assign = function(obj) {
     return assign(this, obj);
 };
-
-module.exports = UrdfMaterial;

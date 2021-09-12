@@ -3,8 +3,8 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-var Service = require('./Service');
-var ServiceRequest = require('./ServiceRequest');
+import {Service} from './Service.js';
+import {ServiceRequest} from './ServiceRequest.js';
 
 /**
  * A ROS parameter.
@@ -14,7 +14,7 @@ var ServiceRequest = require('./ServiceRequest');
  *   * ros - the ROSLIB.Ros connection handle
  *   * name - the param name, like max_vel_x
  */
-function Param(options) {
+export function Param(options) {
   options = options || {};
   this.ros = options.ros;
   this.name = options.name;
@@ -79,5 +79,3 @@ Param.prototype.delete = function(callback) {
 
   paramClient.callService(request, callback);
 };
-
-module.exports = Param;

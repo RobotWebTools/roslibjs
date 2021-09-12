@@ -1,4 +1,4 @@
-var io = require('socket.io');
+import {Socket as io} from 'socket.io'; // imported correctly?????
 
 function SocketIO(options, Ros){
     this.socketio = null;

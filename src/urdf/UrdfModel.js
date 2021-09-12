@@ -4,10 +4,12 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var UrdfMaterial = require('./UrdfMaterial');
-var UrdfLink = require('./UrdfLink');
-var UrdfJoint = require('./UrdfJoint');
-var DOMParser = require('xmldom').DOMParser;
+import {UrdfMaterial} from './UrdfMaterial.js';
+import {UrdfLink} from './UrdfLink.js';
+import {UrdfJoint} from './UrdfJoint.js';
+import xmldom from 'xmldom/lib/dom.js';
+
+const {DOMParser} = xmldom;
 
 // See https://developer.mozilla.org/docs/XPathResult#Constants
 var XPATH_FIRST_ORDERED_NODE_TYPE = 9;

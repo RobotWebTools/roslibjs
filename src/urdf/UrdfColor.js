@@ -11,7 +11,7 @@
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-function UrdfColor(options) {
+export function UrdfColor(options) {
   // Parse the xml string
   var rgba = options.xml.getAttribute('rgba').split(' ');
   this.r = parseFloat(rgba[0]);
@@ -19,5 +19,3 @@ function UrdfColor(options) {
   this.b = parseFloat(rgba[2]);
   this.a = parseFloat(rgba[3]);
 }
-
-module.exports = UrdfColor;

@@ -3,15 +3,17 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-var WebSocket = require('ws');
-var WorkerSocket = require('../util/workerSocket');
-var socketAdapter = require('./SocketAdapter.js');
+import WebSocket from 'ws';
+import WorkerSocket from '../util/workerSocket.js';
+import socketAdapter from './SocketAdapter.js';
 
-var Service = require('./Service');
-var ServiceRequest = require('./ServiceRequest');
+import Service from './Service.js';
+import ServiceRequest from './ServiceRequest.js';
 
-var assign = require('object-assign');
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
+import assign from 'object-assign';
+import eventemitter from 'eventemitter2';
+
+const {EventEmitter2} = eventemitter;
 
 /**
  * Manages connection to the server and all interactions with ROS.
@@ -30,7 +32,7 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  *   * transportLibrary (optional) - one of 'websocket', 'workersocket' (default), 'socket.io' or RTCPeerConnection instance controlling how the connection is created in `connect`.
  *   * transportOptions (optional) - the options to use use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.
  */
-function Ros(options) {
+export function Ros(options) {
   options = options || {};
   var that = this;
   this.socket = null;
@@ -695,6 +697,3 @@ Ros.prototype.getTopicsAndRawTypes = function(callback, failedCallback) {
     });
   }
 };
-
-
-module.exports = Ros;

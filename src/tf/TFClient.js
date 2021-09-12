@@ -3,14 +3,14 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
-var ActionClient = require('../actionlib/ActionClient');
-var Goal = require('../actionlib/Goal');
+import {ActionClient} from '../actionlib/ActionClient.js';
+import {Goal} from '../actionlib/Goal.js';
 
-var Service = require('../core/Service.js');
-var ServiceRequest = require('../core/ServiceRequest.js');
-var Topic = require('../core/Topic.js');
+import {Service} from '../core/Service.js';
+import {ServiceRequest} from '../core/ServiceRequest.js';
+import {Topic} from '../core/Topic.js';
 
-var Transform = require('../math/Transform');
+import {Transform} from '../math/Transform.js';
 
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
@@ -29,7 +29,7 @@ var Transform = require('../math/Transform');
  *   * repubServiceName (optional) - the name of the republish_tfs service (non groovy compatibility mode only)
  *   																 default: '/republish_tfs'
  */
-function TFClient(options) {
+export function TFClient(options) {
   options = options || {};
   this.ros = options.ros;
   this.fixedFrame = options.fixedFrame || '/base_link';
@@ -221,5 +221,3 @@ TFClient.prototype.dispose = function() {
     this.currentTopic.unsubscribe(this._subscribeCB);
   }
 };
-
-module.exports = TFClient;

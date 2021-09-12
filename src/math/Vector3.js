@@ -12,7 +12,7 @@
  *   * y - the y value
  *   * z - the z value
  */
-function Vector3(options) {
+export function Vector3(options) {
   options = options || {};
   this.x = options.x || 0;
   this.y = options.y || 0;
@@ -64,5 +64,3 @@ Vector3.prototype.multiplyQuaternion = function(q) {
 Vector3.prototype.clone = function() {
   return new Vector3(this);
 };
-
-module.exports = Vector3;

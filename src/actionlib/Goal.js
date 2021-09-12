@@ -3,8 +3,10 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var Message = require('../core/Message');
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
+import {Message} from '../core/Message.js';
+import eventemitter from 'eventemitter2';
+
+const {EventEmitter2} = eventemitter;
 
 /**
  * An actionlib goal goal is associated with an action server.
@@ -17,7 +19,7 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  *   * actionClient - the ROSLIB.ActionClient to use with this goal
  *   * goalMessage - The JSON object containing the goal for the action server
  */
-function Goal(options) {
+export function Goal(options) {
   var that = this;
   this.actionClient = options.actionClient;
   this.goalMessage = options.goalMessage;
@@ -85,5 +87,3 @@ Goal.prototype.cancel = function() {
   });
   this.actionClient.cancelTopic.publish(cancelMessage);
 };
-
-module.exports = Goal;

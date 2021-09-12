@@ -3,9 +3,10 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-var ServiceResponse = require('./ServiceResponse');
-var ServiceRequest = require('./ServiceRequest');
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
+import {ServiceResponse} from './ServiceResponse.js';
+import eventemitter from 'eventemitter2';
+
+const {EventEmitter2} = eventemitter
 
 /**
  * A ROS service client.
@@ -16,7 +17,7 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  *   * name - the service name, like /add_two_ints
  *   * serviceType - the service type, like 'rospy_tutorials/AddTwoInts'
  */
-function Service(options) {
+export function Service(options) {
   options = options || {};
   this.ros = options.ros;
   this.name = options.name;
@@ -119,5 +120,3 @@ Service.prototype._serviceResponse = function(rosbridgeRequest) {
 
   this.ros.callOnConnection(call);
 };
-
-module.exports = Service;

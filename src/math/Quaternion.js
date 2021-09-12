@@ -13,7 +13,7 @@
  *   * z - the z value
  *   * w - the w value
  */
-function Quaternion(options) {
+export function Quaternion(options) {
   options = options || {};
   this.x = options.x || 0;
   this.y = options.y || 0;
@@ -88,5 +88,3 @@ Quaternion.prototype.multiply = function(q) {
 Quaternion.prototype.clone = function() {
   return new Quaternion(this);
 };
-
-module.exports = Quaternion;

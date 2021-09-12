@@ -4,7 +4,7 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var UrdfTypes = require('./UrdfTypes');
+import * as UrdfTypes from './UrdfTypes.js';
 
 /**
  * A Sphere element in a URDF.
@@ -13,9 +13,7 @@ var UrdfTypes = require('./UrdfTypes');
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-function UrdfSphere(options) {
+export function UrdfSphere(options) {
   this.type = UrdfTypes.URDF_SPHERE;
   this.radius = parseFloat(options.xml.getAttribute('radius'));
 }
-
-module.exports = UrdfSphere;

@@ -4,8 +4,8 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var Vector3 = require('../math/Vector3');
-var UrdfTypes = require('./UrdfTypes');
+import {Vector3} from '../math/Vector3.js';
+import * as UrdfTypes from './UrdfTypes.js';
 
 /**
  * A Box element in a URDF.
@@ -14,7 +14,7 @@ var UrdfTypes = require('./UrdfTypes');
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-function UrdfBox(options) {
+export function UrdfBox(options) {
   this.dimension = null;
   this.type = UrdfTypes.URDF_BOX;
 
@@ -26,5 +26,3 @@ function UrdfBox(options) {
     z : parseFloat(xyz[2])
   });
 }
-
-module.exports = UrdfBox;

@@ -3,8 +3,8 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
-var Vector3 = require('./Vector3');
-var Quaternion = require('./Quaternion');
+import {Vector3} from './Vector3.js';
+import {Quaternion} from './Quaternion.js';
 
 /**
  * A Pose in 3D space. Values are copied into this object.
@@ -14,7 +14,7 @@ var Quaternion = require('./Quaternion');
  *   * position - the Vector3 describing the position
  *   * orientation - the ROSLIB.Quaternion describing the orientation
  */
-function Pose(options) {
+export function Pose(options) {
   options = options || {};
   // copy the values into this object if they exist
   this.position = new Vector3(options.position);
@@ -68,5 +68,3 @@ Pose.prototype.getInverse = function() {
   inverse.position.z *= -1;
   return inverse;
 };
-
-module.exports = Pose;

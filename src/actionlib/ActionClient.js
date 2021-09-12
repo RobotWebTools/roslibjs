@@ -3,9 +3,11 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var Topic = require('../core/Topic');
-var Message = require('../core/Message');
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
+import {Topic} from '../core/Topic.js';
+import {Message} from '../core/Message.js';
+import eventemitter from 'eventemitter2';
+
+const {EventEmitter2} = eventemitter;
 
 /**
  * An actionlib action client.
@@ -23,7 +25,7 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
  *   * timeout - the timeout length when connecting to the action server
  */
-function ActionClient(options) {
+export function ActionClient(options) {
   var that = this;
   options = options || {};
   this.ros = options.ros;
@@ -139,5 +141,3 @@ ActionClient.prototype.dispose = function() {
   if (!this.omitFeedback) {this.feedbackListener.unsubscribe();}
   if (!this.omitResult) {this.resultListener.unsubscribe();}
 };
-
-module.exports = ActionClient;

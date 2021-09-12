@@ -1,5 +1,7 @@
-var Topic = require('../core/Topic');
-var DuplexStream = require('stream').Duplex;
+import {Topic} from '../core/Topic.js';
+import stream from 'stream';
+
+const {Duplex: DuplexStream} = stream;
 
 /**
  * Publish a connected ROS topic to a duplex

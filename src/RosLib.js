@@ -3,26 +3,10 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-/**
- * If you use roslib in a browser, all the classes will be exported to a global variable called ROSLIB.
- *
- * If you use nodejs, this is the variable you get when you require('roslib')
- */
-var ROSLIB = this.ROSLIB || {
-  REVISION : '1.1.0'
-};
+export const REVISION = '1.1.0';
 
-var assign = require('object-assign');
-
-// Add core components
-assign(ROSLIB, require('./core'));
-
-assign(ROSLIB, require('./actionlib'));
-
-assign(ROSLIB, require('./math'));
-
-assign(ROSLIB, require('./tf'));
-
-assign(ROSLIB, require('./urdf'));
-
-module.exports = ROSLIB;
+export * from './core/index.js';
+export * from './actionlib/index.js';
+export * from './math/index.js';
+export * from './tf/index.js';
+export * from './urdf/index.js';

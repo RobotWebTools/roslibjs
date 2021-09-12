@@ -3,7 +3,7 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-var assign = require('object-assign');
+import assign from 'object-assign';
 
 /**
  * Message objects are used for publishing and subscribing to and from topics.
@@ -11,8 +11,6 @@ var assign = require('object-assign');
  * @constructor
  * @param values - object matching the fields defined in the .msg definition file
  */
-function Message(values) {
+export function Message(values) {
   assign(this, values);
 }
-
-module.exports = Message;

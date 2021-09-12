@@ -4,7 +4,7 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var UrdfVisual = require('./UrdfVisual');
+import {UrdfVisual} from './UrdfVisual.js';
 
 /**
  * A Link element in a URDF.
@@ -13,7 +13,7 @@ var UrdfVisual = require('./UrdfVisual');
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-function UrdfLink(options) {
+export function UrdfLink(options) {
   this.name = options.xml.getAttribute('name');
   this.visuals = [];
   var visuals = options.xml.getElementsByTagName('visual');
@@ -24,5 +24,3 @@ function UrdfLink(options) {
     }) );
   }
 }
-
-module.exports = UrdfLink;

@@ -4,15 +4,15 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var Pose = require('../math/Pose');
-var Vector3 = require('../math/Vector3');
-var Quaternion = require('../math/Quaternion');
+import {Pose} from '../math/Pose.js';
+import {Vector3} from '../math/Vector3.js';
+import {Quaternion} from '../math/Quaternion.js';
 
-var UrdfCylinder = require('./UrdfCylinder');
-var UrdfBox = require('./UrdfBox');
-var UrdfMaterial = require('./UrdfMaterial');
-var UrdfMesh = require('./UrdfMesh');
-var UrdfSphere = require('./UrdfSphere');
+import {UrdfCylinder} from './UrdfCylinder.js';
+import {UrdfBox} from './UrdfBox.js';
+import {UrdfMaterial} from './UrdfMaterial.js';
+import {UrdfMesh} from './UrdfMesh.js';
+import {UrdfSphere} from './UrdfSphere.js';
 
 /**
  * A Visual element in a URDF.
@@ -21,7 +21,7 @@ var UrdfSphere = require('./UrdfSphere');
  * @param options - object with following keys:
  *  * xml - the XML element to parse
  */
-function UrdfVisual(options) {
+export function UrdfVisual(options) {
   var xml = options.xml;
   this.origin = null;
   this.geometry = null;
@@ -126,5 +126,3 @@ function UrdfVisual(options) {
     });
   }
 }
-
-module.exports = UrdfVisual;
