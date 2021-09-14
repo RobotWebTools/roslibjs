@@ -22,7 +22,7 @@ var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
  *  * xml - the XML element to parse
  *  * string - the XML element to parse as a string
  */
-function UrdfModel(options) {
+export function UrdfModel(options) {
   options = options || {};
   var xmlDoc = options.xml;
   var string = options.string;
@@ -93,5 +93,3 @@ function UrdfModel(options) {
     }
   }
 }
-
-module.exports = UrdfModel;

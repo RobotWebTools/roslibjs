@@ -1,6 +1,10 @@
+// import WebSocket from 'ws' // TODO
 var WebSocket = WebSocket || require('ws');
 
-module.exports = function(self) {
+// TODO this was exported and webworkify handled the special export format.
+// Now, we need to fetch the source string instead and put it in a worker the
+// normal way.
+function(self) {
   var socket = null;
 
   function handleSocketMessage(ev) {

@@ -5,7 +5,7 @@
 
 'use strict';
 
-var pngparse = require('pngparse');
+import pngparse from 'pngparse';
 
 /**
  * If a message was compressed as a PNG image (a compression hack since
@@ -17,7 +17,7 @@ var pngparse = require('pngparse');
  * @param callback - function with params:
  *   * data - the uncompressed data
  */
-function decompressPng(data, callback) {
+export function decompressPng(data, callback) {
   var buffer = new Buffer(data, 'base64');
 
   pngparse.parse(buffer, function(err, data) {
@@ -29,5 +29,3 @@ function decompressPng(data, callback) {
     }
   });
 }
-
-module.exports = decompressPng;

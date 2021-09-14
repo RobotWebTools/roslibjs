@@ -23,7 +23,7 @@ const {EventEmitter2} = eventemitter;
  *   * serverName - the action server name, like /fibonacci
  *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
  */
-function ActionListener(options) {
+export function ActionListener(options) {
   var that = this;
   options = options || {};
   this.ros = options.ros;
@@ -84,5 +84,3 @@ function ActionListener(options) {
 }
 
 ActionListener.prototype.__proto__ = EventEmitter2.prototype;
-
-module.exports = ActionListener;

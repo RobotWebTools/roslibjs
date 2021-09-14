@@ -4,11 +4,11 @@
  */
 
 import WebSocket from 'ws';
-import WorkerSocket from '../util/workerSocket.js';
-import socketAdapter from './SocketAdapter.js';
+// import {WorkerSocket} from '../util/workerSocket.js'; // TODO
+import {SocketAdapter} from './SocketAdapter.js';
 
-import Service from './Service.js';
-import ServiceRequest from './ServiceRequest.js';
+import {Service} from './Service.js';
+import {ServiceRequest} from './ServiceRequest.js';
 
 import assign from 'object-assign';
 import eventemitter from 'eventemitter2';
@@ -67,21 +67,22 @@ Ros.prototype.__proto__ = EventEmitter2.prototype;
  */
 Ros.prototype.connect = function(url) {
   if (this.transportLibrary === 'socket.io') {
-    this.socket = assign(io(url, {'force new connection': true}), socketAdapter(this));
+    this.socket = assign(io(url, {'force new connection': true}), SocketAdapter(this));
     this.socket.on('connect', this.socket.onopen);
     this.socket.on('data', this.socket.onmessage);
     this.socket.on('close', this.socket.onclose);
     this.socket.on('error', this.socket.onerror);
   } else if (this.transportLibrary.constructor.name === 'RTCPeerConnection') {
-    this.socket = assign(this.transportLibrary.createDataChannel(url, this.transportOptions), socketAdapter(this));
+    this.socket = assign(this.transportLibrary.createDataChannel(url, this.transportOptions), SocketAdapter(this));
   } else if (this.transportLibrary === 'websocket') {
     if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
       var sock = new WebSocket(url);
       sock.binaryType = 'arraybuffer';
-      this.socket = assign(sock, socketAdapter(this));
+      this.socket = assign(sock, SocketAdapter(this));
     }
   } else if (this.transportLibrary === 'workersocket') {
-    this.socket = assign(new WorkerSocket(url), socketAdapter(this));
+    // this.socket = assign(new WorkerSocket(url), socketAdapter(this));
+    throw new Error('WorkerSocket is TODO')
   } else {
     throw 'Unknown transportLibrary: ' + this.transportLibrary.toString();
   }

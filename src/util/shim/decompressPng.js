@@ -5,7 +5,10 @@
 
 'use strict';
 
-var Canvas = require('canvas');
+// TODO Node support:
+// import {Canvas} from 'canvas';
+import {Canvas} from './canvas.js';
+
 var Image = Canvas.Image || window.Image;
 
 /**
@@ -18,7 +21,7 @@ var Image = Canvas.Image || window.Image;
  * @param callback - function with params:
  *   * data - the uncompressed data
  */
-function decompressPng(data, callback) {
+export function decompressPng(data, callback) {
   // Uncompresses the data before sending it through (use image/canvas to do so).
   var image = new Image();
   // When the image loads, extracts the raw data (JSON message).
@@ -52,5 +55,3 @@ function decompressPng(data, callback) {
   // Sends the image data to load.
   image.src = 'data:image/png;base64,' + data;
 }
-
-module.exports = decompressPng;

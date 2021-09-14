@@ -58,4 +58,4 @@ RosTCP.prototype.connect = function(url) {
   }
 };
 
-module.exports = RosTCP;
+export {RosTCP as Ros};

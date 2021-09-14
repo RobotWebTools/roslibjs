@@ -10,10 +10,15 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    browserify: {
-      dist: {
-        src: ['./src/RosLibBrowser.js'],
-        dest: './build/roslib.js'
+    // browserify: {
+    //   dist: {
+    //     src: ['./src/RosLibBrowser.js'],
+    //     dest: './build/roslib.js'
+    //   }
+    // },
+    shell: {
+      build: {
+        command: 'rollup -c'
       }
     },
     jshint: {
@@ -110,7 +115,8 @@ module.exports = function(grunt) {
   grunt.registerTask('test-examples', ['mochaTest:examples', 'karma:examples']);
   grunt.registerTask('test-tcp', ['mochaTest:tcp']);
   grunt.registerTask('test-workersocket', ['karma:workersocket']);
-  grunt.registerTask('build', ['browserify', 'uglify']);
+//   grunt.registerTask('build', ['browserify', 'uglify']);
+  grunt.registerTask('build', ['shell']);
   grunt.registerTask('build_and_watch', ['watch']);
   grunt.registerTask('doc', ['clean', 'jsdoc']);
 };

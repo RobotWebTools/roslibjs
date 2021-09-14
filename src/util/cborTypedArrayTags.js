@@ -102,7 +102,7 @@ var conversionArrayTypes = {
  * @param {Uint8Array} data
  * @param {Number} tag
  */
-function cborTypedArrayTagger(data, tag) {
+export function typedArrayTagger(data, tag) {
   if (tag in nativeArrayTypes) {
     var arrayType = nativeArrayTypes[tag];
     return decodeNativeArray(data, arrayType);
@@ -111,8 +111,4 @@ function cborTypedArrayTagger(data, tag) {
     return conversionArrayTypes[tag](data);
   }
   return data;
-}
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = cborTypedArrayTagger;
 }

@@ -1,6 +1,6 @@
 import {Socket as io} from 'socket.io'; // imported correctly?????
 
-function SocketIO(options, Ros){
+export function SocketIO(options, Ros){
     this.socketio = null;
     this.socket = Ros.socket;
     if (options.http) {
@@ -34,5 +34,3 @@ SocketIO.prototype.sendToFront = function(name, event){
 SocketIO.prototype.sendToRosbridge = function(msg){
     this.socket.send(msg);
 };
-
-module.exports = SocketIO;

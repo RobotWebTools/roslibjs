@@ -23,7 +23,7 @@ const {EventEmitter2} = eventemitter;
  *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
  */
 
-function SimpleActionServer(options) {
+export function SimpleActionServer(options) {
     var that = this;
     options = options || {};
     this.ros = options.ros;
@@ -227,5 +227,3 @@ SimpleActionServer.prototype.setPreempted = function() {
         this.currentGoal = null;
     }
 };
-
-module.exports = SimpleActionServer;

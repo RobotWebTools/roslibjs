@@ -1,8 +1,11 @@
-var work = require('webworkify');
-var workerSocketImpl = require('./workerSocketImpl');
+import work from 'webworkify';
 
-function WorkerSocket(uri) {
-  this.socket_ = work(workerSocketImpl);
+// TODO `import` syntax is not designed for this purpose. Instead, we should
+// fetch the source code, and stick the string into a worker.
+// import workerSocketImpl from './workerSocketImpl';
+
+export function WorkerSocket(uri) {
+  this.socket_ = work(workerSocketImpl/*TODO*/);
 
   this.socket_.addEventListener('message', this.handleWorkerMessage_.bind(this));
 
@@ -40,5 +43,3 @@ WorkerSocket.prototype.close = function() {
     close: true
   });
 };
-
-module.exports = WorkerSocket;
