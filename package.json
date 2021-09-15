@@ -59,11 +59,11 @@
   "scripts": {
     "build": "npm run grunt build",
     "grunt": "grunt --gruntfile Gruntfile.cjs",
-    "doc": "grunt doc",
-    "test": "grunt test",
-    "test-examples": "grunt test-examples",
-    "test-workersocket": "grunt test-workersocket",
-    "test-tcp": "grunt test-tcp",
+    "doc": "npm run grunt doc",
+    "test": "npm run grunt test",
+    "test-examples": "npm run grunt test-examples",
+    "test-workersocket": "npm run grunt test-workersocket",
+    "test-tcp": "npm run grunt test-tcp",
     "publish": "npm run build && npm run test"
   },
   "repository": {
