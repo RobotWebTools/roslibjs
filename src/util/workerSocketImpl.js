@@ -1,10 +1,10 @@
 // import WebSocket from 'ws' // TODO
-var WebSocket = WebSocket || require('ws');
+var WebSocket = WebSocket || require('ws'); // eslint-disable-line
 
 // TODO this was exported and webworkify handled the special export format.
 // Now, we need to fetch the source string instead and put it in a worker the
 // normal way.
-function(self) {
+export function workerSocketImpl(self) {
   var socket = null;
 
   function handleSocketMessage(ev) {

@@ -18,7 +18,8 @@ import pngparse from 'pngparse';
  *   * data - the uncompressed data
  */
 export function decompressPng(data, callback) {
-  var buffer = new Buffer(data, 'base64');
+  // TODO This must not be called in a browser if it uses Buffer?
+  var buffer = new Buffer(data, 'base64'); // eslint-disable-line no-undef
 
   pngparse.parse(buffer, function(err, data) {
     if(err) {

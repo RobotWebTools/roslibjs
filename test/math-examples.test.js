@@ -5,7 +5,7 @@ function clone(x) {
     var y = {};
     for (var prop in x) {
         if (x.hasOwnProperty(prop)) {
-            y[prop] = typeof x[prop] === "object" ? clone(x[prop]) : x[prop];
+            y[prop] = typeof x[prop] === 'object' ? clone(x[prop]) : x[prop];
         }
     }
     return y;

@@ -2,7 +2,7 @@ import work from 'webworkify';
 
 // TODO `import` syntax is not designed for this purpose. Instead, we should
 // fetch the source code, and stick the string into a worker.
-// import workerSocketImpl from './workerSocketImpl';
+import {workerSocketImpl} from './workerSocketImpl';
 
 export function WorkerSocket(uri) {
   this.socket_ = work(workerSocketImpl/*TODO*/);

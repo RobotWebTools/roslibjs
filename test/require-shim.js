@@ -8,6 +8,6 @@ window.require = function require(path) {
 	var lastIdx = path.lastIndexOf('/'),
 		path = lastIdx >= 0 ? path.slice(lastIdx + 1) : path;
 
-	return typeof ROSLIB[path] != 'undefined' ? ROSLIB[path] :
-			typeof window[path] != 'undefined' ? window[path] : ROSLIB;
-}
+	return typeof ROSLIB[path] !== 'undefined' ? ROSLIB[path] :
+			typeof window[path] !== 'undefined' ? window[path] : ROSLIB;
+};

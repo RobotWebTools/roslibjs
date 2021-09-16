@@ -1,3 +1,3 @@
-exports.DOMImplementation = window.DOMImplementation;
-exports.XMLSerializer = window.XMLSerializer;
-exports.DOMParser = window.DOMParser;
+export const DOMImplementation = window.DOMImplementation;
+export const XMLSerializer = window.XMLSerializer;
+export const DOMParser = window.DOMParser;

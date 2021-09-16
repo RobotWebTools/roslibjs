@@ -1,3 +1,5 @@
+/* global module, require, process */
+
 'use strict';
 
 module.exports = function(grunt) {
@@ -13,16 +15,13 @@ module.exports = function(grunt) {
     shell: {
       build: {
         command: 'rollup -c'
-      }
-    },
-    jshint: {
-      options: {
-        jshintrc: true
       },
-      files: [
-        './Gruntfile.js',
-        './src/**/*.js'
-      ]
+      lint: {
+        command: 'eslint Gruntfile.cjs ./src/*.js ./src/**/*.js ./test/*.js'
+      },
+      'lint-fix': {
+        command: 'eslint --fix Gruntfile.cjs ./src/*.js ./src/**/*.js ./test/*.js'
+      }
     },
     karma: {
       options: {
@@ -71,14 +70,14 @@ module.exports = function(grunt) {
         files: [
           './src/**/*.js'
         ],
-        tasks: ['browserify']
+        tasks: ['shell:build']
       },
       build_and_watch: {
         options: {
           interrupt: true
         },
         files: [
-          'Gruntfile.js',
+          'Gruntfile.cjs',
           '.jshintrc',
           './src/**/*.js'
         ],
@@ -104,13 +103,17 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('dev', ['browserify', 'watch']);
-  grunt.registerTask('test', ['jshint', 'mochaTest:test', 'karma:test']);
+  // The above load-grunt-tasks does not automatically detect gruntify-eslint, so load it manually here.
+  // grunt.loadNpmTasks('gruntify-eslint');
+
+  grunt.registerTask('dev', ['shell:build', 'watch']);
+  grunt.registerTask('test', ['lint', 'mochaTest:test', 'karma:test']);
   grunt.registerTask('test-examples', ['mochaTest:examples', 'karma:examples']);
   grunt.registerTask('test-tcp', ['mochaTest:tcp']);
   grunt.registerTask('test-workersocket', ['karma:workersocket']);
-//   grunt.registerTask('build', ['browserify', 'uglify']);
-  grunt.registerTask('build', ['shell']);
+  grunt.registerTask('build', ['lint', 'shell:build']);
   grunt.registerTask('build_and_watch', ['watch']);
   grunt.registerTask('doc', ['clean', 'jsdoc']);
+  grunt.registerTask('lint', ['shell:lint']);
+  grunt.registerTask('lint-fix', ['shell:lint-fix',]);
 };

@@ -51,4 +51,4 @@ Topic.prototype.toStream = function(options) {
     return stream;
 };
 
-export {Topic}
+export {Topic};

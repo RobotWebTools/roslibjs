@@ -1,3 +1,5 @@
+/* global bson */
+
 /**
  * Socket event handling utilities for handling events on either
  * WebSocket and TCP sockets

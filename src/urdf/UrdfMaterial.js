@@ -4,6 +4,7 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
+import assign from 'object-assign';
 import {UrdfColor} from './UrdfColor.js';
 
 /**
@@ -38,8 +39,6 @@ export function UrdfMaterial(options) {
 UrdfMaterial.prototype.isLink = function() {
   return this.color === null && this.textureFilename === null;
 };
-
-var assign = require('object-assign');
 
 UrdfMaterial.prototype.assign = function(obj) {
     return assign(this, obj);

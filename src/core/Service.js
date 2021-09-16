@@ -6,7 +6,7 @@
 import {ServiceResponse} from './ServiceResponse.js';
 import eventemitter from 'eventemitter2';
 
-const {EventEmitter2} = eventemitter
+const {EventEmitter2} = eventemitter;
 
 /**
  * A ROS service client.

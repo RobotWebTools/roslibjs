@@ -1,0 +1,41 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "mocha": true
+  },
+  "globals": {
+    // TODO: These globals are namely for test files. We don't want to have these listed as globals for source files like currently.
+    "require": true,
+    "process": true,
+    "module": true,
+    "ROSLIB": true,
+    "cborTypedArrayTagger": true,
+    "CBOR": true,
+    "EventEmitter2": true
+  },
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "sourceType": "module",
+    "requireConfigFile": false
+  },
+  "rules": {
+    "semi": ["warn", "always"],
+    "curly": "error",
+    "eqeqeq": "error",
+    "wrap-iife": ["error", "any"],
+    "no-use-before-define": "off",
+    "new-cap": "error",
+    "no-caller": "error",
+    "dot-notation": "off",
+    "no-undef": "error",
+    "no-cond-assign": "off",
+    "no-eq-null": "off",
+    "no-proto": "off",
+    "no-console": "off",
+    "no-unused-vars": "off",
+    "strict": "off",
+    "quotes": ["error", "single"],
+    "linebreak-style": "error"
+  }
+}

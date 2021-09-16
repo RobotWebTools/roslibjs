@@ -7,7 +7,7 @@
 import eventemitter from 'eventemitter2';
 import {Message} from './Message.js';
 
-const {EventEmitter2} = eventemitter
+const {EventEmitter2} = eventemitter;
 
 /**
  * Publish and/or subscribe to a topic in ROS.

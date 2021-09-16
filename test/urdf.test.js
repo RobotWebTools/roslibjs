@@ -68,7 +68,7 @@ var sample_urdf = function (){
     '    <color rgba="0 0 1 1" />'+
     '  </material>'+
     '</robot>';
-}
+};
 
 describe('URDF', function() {
 

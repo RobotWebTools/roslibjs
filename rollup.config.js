@@ -6,6 +6,8 @@ const filesize = require('rollup-plugin-filesize');
 const {nodeResolve} = require('@rollup/plugin-node-resolve');
 // plugin that minifies and obfuscates code
 const {terser} = require('rollup-plugin-terser');
+// plugin for importing JSON files (needed for socket.io source code that imports package.json)
+const json = require('@rollup/plugin-json');
 
 const input = 'src/RosLib.js';
 const name = 'ROSLIB';
@@ -26,7 +28,7 @@ export default [
       file: outputFiles.commonjsModule,
       format: 'cjs',
     },
-    plugins: [nodeResolve({browser: true}), commonjs(), filesize()],
+    plugins: [nodeResolve({browser: true}), json(), commonjs(), filesize()],
   },
   // build module as ES5 in ES module format for modern tooling
   {
@@ -36,7 +38,7 @@ export default [
       file: outputFiles.esModule,
       format: 'es',
     },
-    plugins: [nodeResolve({browser: true}), commonjs(), filesize()],
+    plugins: [nodeResolve({browser: true}), json(), commonjs(), filesize()],
   },
   // build browser as IIFE module for script tag inclusion, unminified
   // Usage:
@@ -48,7 +50,7 @@ export default [
       file: outputFiles.browserGlobal,
       format: 'umd',
     },
-    plugins: [nodeResolve({browser: true}), commonjs(), filesize()],
+    plugins: [nodeResolve({browser: true}), json(), commonjs(), filesize()],
   },
   // build browser as IIFE module for script tag inclusion, minified
   // Usage:
@@ -60,6 +62,6 @@ export default [
       file: outputFiles.browserGlobalMinified,
       format: 'umd',
     },
-    plugins: [nodeResolve({browser: true}), commonjs(), filesize(), terser()],
+    plugins: [nodeResolve({browser: true}), json(), commonjs(), filesize(), terser()],
   },
 ];

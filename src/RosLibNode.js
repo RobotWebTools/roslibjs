@@ -1,7 +1,6 @@
 /**
  * @fileOverview ROSLIB Node exclusive extensions
  */
-var assign = require('object-assign');
 
 export * from './RosLib.js';
 
