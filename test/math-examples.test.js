@@ -1,5 +1,7 @@
-var expect = require('chai').expect;
-var ROSLIB = require('..');
+import chai from 'chai';
+import * as ROSLIB from '../src/RosLibNode.js';
+
+const {expect} = chai;
 
 function clone(x) {
     var y = {};

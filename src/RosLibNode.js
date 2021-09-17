@@ -5,5 +5,5 @@
 export * from './RosLib.js';
 
 // Override Ros and Topic exports from RosLib.js
-export * from './node/RosTCP.js';
-export * from './node/TopicStream.js';
+export {Ros} from './node/RosTCP.js';
+export {Topic} from './node/TopicStream.js';

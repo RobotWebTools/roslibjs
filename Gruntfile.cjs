@@ -21,21 +21,30 @@ module.exports = function(grunt) {
       },
       'lint-fix': {
         command: 'eslint --fix Gruntfile.cjs ./src/*.js ./src/**/*.js ./test/*.js'
-      }
+      },
+      mochaTest: {
+        command: 'mocha ./test/*.test.js'
+      },
+      mochaExamples: {
+        command: 'mocha ./test/examples/*.js'
+      },
+      mochaTcp: {
+        command: 'mocha ./test/tcp/*.js'
+      },
     },
     karma: {
       options: {
-        singleRun: true,
+        singleRun: false,
         browsers: process.env.CI ? ['FirefoxHeadless'] : ['Firefox']
       },
       test: {
-        configFile: './test/karma.conf.js',
+        configFile: './test/karma.conf.cjs',
       },
       examples: {
-        configFile: './test/examples/karma.conf.js',
+        configFile: './test/examples/karma.conf.cjs',
       },
       workersocket: {
-        configFile: './test/workersocket/karma.conf.js',
+        configFile: './test/workersocket/karma.conf.cjs',
       },
     },
     mochaTest: {
@@ -103,13 +112,15 @@ module.exports = function(grunt) {
     }
   });
 
-  // The above load-grunt-tasks does not automatically detect gruntify-eslint, so load it manually here.
-  // grunt.loadNpmTasks('gruntify-eslint');
-
   grunt.registerTask('dev', ['shell:build', 'watch']);
-  grunt.registerTask('test', ['lint', 'mochaTest:test', 'karma:test']);
-  grunt.registerTask('test-examples', ['mochaTest:examples', 'karma:examples']);
-  grunt.registerTask('test-tcp', ['mochaTest:tcp']);
+
+  // grunt.registerTask('test', ['lint', 'mochaTest:test', 'karma:test']);
+  // grunt.registerTask('test-examples', ['mochaTest:examples', 'karma:examples']);
+  // grunt.registerTask('test-tcp', ['mochaTest:tcp']);
+  grunt.registerTask('test', ['lint', 'shell:mochaTest', 'karma:test']);
+  grunt.registerTask('test-examples', ['shell:mochaExamples', 'karma:examples']);
+  grunt.registerTask('test-tcp', ['shell:mochaTcp']);
+
   grunt.registerTask('test-workersocket', ['karma:workersocket']);
   grunt.registerTask('build', ['lint', 'shell:build']);
   grunt.registerTask('build_and_watch', ['watch']);

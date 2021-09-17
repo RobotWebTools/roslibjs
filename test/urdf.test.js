@@ -1,7 +1,10 @@
-var expect = require('chai').expect;
-var ROSLIB = require('..');
+import chai from 'chai';
+import * as ROSLIB from '../src/RosLibNode.js';
+import xmldom from 'xmldom';
 
-var DOMParser = require('xmldom').DOMParser;
+const {expect} = chai;
+const {DOMParser} = xmldom;
+
 // See https://developer.mozilla.org/docs/XPathResult#Constants
 var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
 

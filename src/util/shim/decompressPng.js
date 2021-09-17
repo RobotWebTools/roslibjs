@@ -3,8 +3,6 @@
  * @author Graeme Yeates - github.com/megawac
  */
 
-'use strict';
-
 // TODO Node support:
 // import {Canvas} from 'canvas';
 import {Canvas} from './canvas.js';

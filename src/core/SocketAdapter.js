@@ -8,11 +8,10 @@
  * in the context of their parent object, unless bound
  * @fileOverview
  */
-'use strict';
 
-import {decompressPng} from '../util/decompressPng';
+import {decompressPng} from '../util/decompressPng.js';
 import CBOR from 'cbor-js';
-import {typedArrayTagger} from '../util/cborTypedArrayTags';
+import {typedArrayTagger} from '../util/cborTypedArrayTags.js';
 
 var BSON = null;
 if(typeof bson !== 'undefined'){

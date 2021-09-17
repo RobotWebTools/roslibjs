@@ -1,6 +1,9 @@
-var expect = require('chai').expect;
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
-var ROSLIB = require('..');
+import chai from 'chai';
+import eventemitter2 from 'eventemitter2';
+import {Ros} from '../src/RosLibNode.js';
+
+const {expect} = chai;
+const {EventEmitter2} = eventemitter2;
 
 describe('ROS', function() {
 
@@ -20,7 +23,7 @@ describe('ROS', function() {
 
       // The next part of this test shows that the 'warn' property is not set
       // for Ros, even with the same number of listeners as above.
-      var ros = new ROSLIB.Ros();
+      var ros = new Ros();
       for (var i = 0; i < callCount; i++) {
         ros.callOnConnection({});
       }

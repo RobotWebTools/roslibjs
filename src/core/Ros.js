@@ -3,7 +3,7 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-import {Socket as io} from 'socket.io'; // imported correctly?????
+import io from 'socket.io';
 import WebSocket from 'ws';
 // import {WorkerSocket} from '../util/workerSocket.js'; // TODO
 import {SocketAdapter} from './SocketAdapter.js';

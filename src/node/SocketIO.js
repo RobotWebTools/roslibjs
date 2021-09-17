@@ -1,4 +1,4 @@
-import {Socket as io} from 'socket.io'; // imported correctly?????
+import io from 'socket.io';
 
 export function SocketIO(options, Ros){
     this.socketio = null;

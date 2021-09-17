@@ -2,7 +2,7 @@ import net from 'net';
 import util from 'util';
 import {Ros} from '../core/Ros.js';
 import {SocketIO} from './SocketIO.js';
-import {socketAdapter} from '../core/SocketAdapter.js';
+import {SocketAdapter} from '../core/SocketAdapter.js';
 
 /**
  * Same as core Ros except supports TCP connections
@@ -42,7 +42,7 @@ RosTCP.prototype.connect = function(url) {
   if (typeof url === 'string' && (url.slice(0, 5) === 'ws://' || url.slice(0, 6) === 'wss://')) {
     Ros.prototype.connect.call(this, url);
   } else {
-    var events = socketAdapter(this);
+    var events = new SocketAdapter(this);
     this.socket = net.connect(url)
       .on('data', events.onmessage)
       .on('close', events.onclose)

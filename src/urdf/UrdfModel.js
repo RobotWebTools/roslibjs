@@ -7,7 +7,7 @@
 import {UrdfMaterial} from './UrdfMaterial.js';
 import {UrdfLink} from './UrdfLink.js';
 import {UrdfJoint} from './UrdfJoint.js';
-import xmldom from 'xmldom/lib/dom.js';
+import xmldom from 'xmldom';
 
 const {DOMParser} = xmldom;
 

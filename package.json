@@ -6,9 +6,10 @@
   "license": "BSD-2-Clause",
   "type": "module",
   "main": "./src/RosLibNode.js",
-  "TODO": "browserify used these for shimming",
+  "// browser comment": "rollup uses this for shimming so that the browser bundle uses the global builtins",
   "browser": {
     "./src/RosLibNode.js": "./src/RosLib.js",
+    "socket.io": "./src/util/shim/socket.io.js",
     "canvas": "./src/util/shim/canvas.js",
     "ws": "./src/util/shim/WebSocket.js",
     "xmldom": "./src/util/shim/xmldom.js",
@@ -46,7 +47,7 @@
     "eventemitter2": "^6.4.0",
     "object-assign": "^4.0.0",
     "pngparse": "^2.0.0",
-    "socket.io": "^4.0.0",
+    "socket.io": "trusktr/socket.io#bf4bd150cff3c043c1f60ddf347e1b3ef0f1339a",
     "webworkify": "^1.5.0",
     "ws": "^8.0.0",
     "xmldom": "^0.6.0"
