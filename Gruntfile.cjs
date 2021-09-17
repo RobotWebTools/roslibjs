@@ -113,14 +113,9 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('dev', ['shell:build', 'watch']);
-
-  // grunt.registerTask('test', ['lint', 'mochaTest:test', 'karma:test']);
-  // grunt.registerTask('test-examples', ['mochaTest:examples', 'karma:examples']);
-  // grunt.registerTask('test-tcp', ['mochaTest:tcp']);
   grunt.registerTask('test', ['lint', 'shell:mochaTest', 'karma:test']);
   grunt.registerTask('test-examples', ['shell:mochaExamples', 'karma:examples']);
   grunt.registerTask('test-tcp', ['shell:mochaTcp']);
-
   grunt.registerTask('test-workersocket', ['karma:workersocket']);
   grunt.registerTask('build', ['lint', 'shell:build']);
   grunt.registerTask('build_and_watch', ['watch']);
