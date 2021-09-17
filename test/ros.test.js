@@ -1,9 +1,7 @@
 import chai from 'chai';
-import eventemitter2 from 'eventemitter2';
-import {Ros} from '../src/RosLibNode.js';
+import {Ros, EventEmitter2} from '../src/RosLibNode.js';
 
 const {expect} = chai;
-const {EventEmitter2} = eventemitter2;
 
 describe('ROS', function() {
 

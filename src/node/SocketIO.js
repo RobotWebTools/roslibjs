@@ -1,4 +1,4 @@
-import io from 'socket.io';
+import io from '../util/socket.io.js';
 
 export function SocketIO(options, Ros){
     this.socketio = null;

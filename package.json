@@ -33,6 +33,7 @@
     "grunt-shell": "^3.0.1",
     "karma": "^6.3.0",
     "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^3.1.0",
     "karma-firefox-launcher": "^2.1.0",
     "karma-mocha": "^2.0.0",
     "load-grunt-tasks": "^5.1.0",
@@ -47,7 +48,7 @@
     "eventemitter2": "^6.4.0",
     "object-assign": "^4.0.0",
     "pngparse": "^2.0.0",
-    "socket.io": "trusktr/socket.io#bf4bd150cff3c043c1f60ddf347e1b3ef0f1339a",
+    "socket.io": "^4.0.0",
     "webworkify": "^1.5.0",
     "ws": "^8.0.0",
     "xmldom": "^0.6.0"

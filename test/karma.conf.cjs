@@ -12,31 +12,19 @@ module.exports = function(config) {
     // List of files / patterns to load in the browser
     files: [
       // Make some file available to be fetched/imported, but not included in the HTML.
-      {pattern: 'test/chai.js', serve: true, included: false},
       {pattern: 'build/roslib.esm.js', serve: true, included: false},
+      {pattern: 'test/util/shim/chai.js', serve: true, included: false},
+      {pattern: 'src/util/shim/xmldom.js', serve: true, included: false},
+      {pattern: 'src/util/shim/cbor.js', serve: true, included: false},
+      {pattern: 'src/util/cborTypedArrayTags.js', serve: true, included: false},
+
+      // This file maps some import specifiers to our module shims.
+      'test/util/write-importmap.js',
+
+      // Installs cbor-js in a global CBOR variable so that our shim/cbor.js shim picks it up.
+      'node_modules/cbor-js/cbor.js',
       
-      // Load Chai as a global, then the ./test/chai.js shim module exports the global for test code in the browser.
-      // 'node_modules/chai/chai.js',
-
-      // Polyfill for <script type="importmap"> in Firefox and Safari, which is
-      // useful for shimming ES modules. Chrome and Edge natively support
-      // importmap already.
-      'test/es-module-shim-config.js',
-      'https://ga.jspm.io/npm:es-module-shims@0.14.0/dist/es-module-shims.js',
-
-      // This file maps import specifiers to module shims.
-      'test/importmap.js',
-
-      // 'node_modules/eventemitter2/lib/eventemitter2.js',
-      // 'node_modules/cbor-js/cbor.js',
-      // 'src/util/cborTypedArrayTags.js',
-
-      // 'build/roslib.js',
-
-      // 'test/require-shim.js',
-      
-      // {pattern: 'test/*.test.js', type: 'module'},
-      {pattern: 'test/quaternion.test.js', type: 'module'},
+      {pattern: 'test/*.test.js', type: 'module'},
     ],
 
     client: {

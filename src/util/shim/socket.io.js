@@ -1,8 +1,9 @@
-export default thro
-export const Server = thro
-export const Namespace = thro
-export const Socket = thro
+// This file is a shim for the browser build, otherwise ../socket.io.js
+// provides the import when in Node.js.
 
-function thro() {
-    throw new Error('transportLibrary "socket.io" is not supported in browsers. Set the `transportLibrary` option to "socket.io" only if you are use roslib in an environment like Node.js or Electron.')
-}
+let io = globalThis.io;
+
+export default io;
+export const Server = io?.Server;
+export const Namespace = io?.Namespace;
+export const Socket = io?.Socket;
