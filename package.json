@@ -51,6 +51,7 @@
   },
   "scripts": {
     "build": "grunt build",
+    "doc": "grunt doc",
     "test": "grunt test",
     "test-examples": "grunt test-examples",
     "test-workersocket": "grunt test-workersocket",
