@@ -18,6 +18,9 @@ set -e
 
 pushd "$(dirname "$0")" > /dev/null
 
+echo -e "\e[1m\e[35mnpm install\e[0m"
+npm install
+
 echo -e "\e[1m\e[35mnpm test\e[0m"
 npm test
 
@@ -25,8 +28,6 @@ bash examples/setup_examples.bash
 
 echo -e "\e[1m\e[35mrostopic list\e[0m"
 rostopic list
-echo -e "\e[1m\e[35mnpm install\e[0m"
-npm install
 echo -e "\e[1m\e[35mnpm run build\e[0m"
 npm run build
 echo -e "\e[1m\e[35mnpm run test-examples\e[0m"
