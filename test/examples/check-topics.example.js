@@ -1,5 +1,7 @@
-var expect = require('chai').expect;
-var ROSLIB = require('../..');
+import chai from 'chai';
+import * as ROSLIB from '../../src/RosLibNode.js';
+
+const {expect} = chai;
 
 var expectedTopics = [
     // '/turtle1/cmd_vel', '/turtle1/color_sensor', '/turtle1/pose',

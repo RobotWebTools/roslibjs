@@ -1,5 +1,7 @@
-var expect = require('chai').expect;
-var ROSLIB = require('../..');
+import chai from 'chai';
+import * as ROSLIB from '../../src/RosLibNode.js';
+
+const {expect} = chai;
 
 describe('TF2 Republisher Service Example', function() {
     it('tf republisher', function(done) {

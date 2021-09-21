@@ -2,17 +2,22 @@ module.exports = function(config) {
 	config.set({
 
 		// Base path, that will be used to resolve files and exclude
-		basePath: '',
+		basePath: '../../',
 
 		// Testing frameworks
 		frameworks: ['mocha', 'chai'],
 
 		// List of files / patterns to load in the browser
 		files: [
-			"../../node_modules/eventemitter2/lib/eventemitter2.js",
-			"../../build/roslib.js",
-			"../require-shim.js",
-			"*.js"
+			// Make some file available to be fetched/imported, but not included in the HTML.
+			{pattern: 'build/roslib.esm.js', serve: true, included: false},
+    		{pattern: 'test/util/shim/chai.js', serve: true, included: false},
+    		{pattern: 'test/util/shim/stream.js', serve: true, included: false},
+
+			// This file maps some import specifiers to our module shims.
+			'test/util/write-importmap.js',
+
+			{pattern: 'test/examples/*.example.js', type: 'module'},
 		],
 
 		// test results reporter to use

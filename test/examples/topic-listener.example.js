@@ -1,5 +1,9 @@
-var expect = require('chai').expect;
-var ROSLIB = require('../..');
+import chai from 'chai';
+import Stream from 'stream';
+import * as ROSLIB from '../../src/RosLibNode.js';
+
+const TransformStream = Stream.Transform;
+const {expect} = chai;
 
 var ros = new ROSLIB.Ros({
     url: 'ws://localhost:9090'
@@ -55,8 +59,8 @@ describe('Topics Example', function() {
     });
 });
 
+// Only in Node.js, not browsers (f.e. during Mocha tests, but not during Karma tests)
 if (ROSLIB.Topic.prototype.toStream) {
-    var TransformStream = require('stream').Transform;
     describe('Topic Streams are readable and writable', function() {
         this.timeout(1000);
 
@@ -90,7 +94,7 @@ if (ROSLIB.Topic.prototype.toStream) {
             var stream = createAndStreamTopic('/echo/test-stream').toStream();
             var expected = messages.slice();
 
-            expect(stream).to.be.instanceof(require('stream'));
+            expect(stream).to.be.instanceof(Stream);
             stream.on('data', function(message) {
                 expect(message).to.be.eql(expected.shift());
             });
