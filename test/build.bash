@@ -18,13 +18,10 @@ set -e
 
 pushd "$(dirname "$0")" > /dev/null
 
-echo -e "\e[1m\e[35mUPDATE NPM ------------------------------\e[0m"
-echo old version:
+echo -e "\e[1m\e[35mnode version:\e[0m"
+node -v
+echo -e "\e[1m\e[35mnpm version:\e[0m"
 npm -v
-npm i -g npm
-echo new version:
-npm -v
-echo -e "\e[1m\e[35m-----------------------------------------\e[0m"
 
 echo -e "\e[1m\e[35mnpm install\e[0m"
 # TODO remove this --legacy-peer-deps flag @babel/eslint-parser is updated to officially support eslint >=8
