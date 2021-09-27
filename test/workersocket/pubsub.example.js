@@ -1,5 +1,7 @@
-var expect = require('chai').expect;
-var ROSLIB = require('../..');
+import chai from 'chai';
+import * as ROSLIB from '../../src/RosLibNode.js';
+
+const {expect} = chai;
 
 describe('Topics Example', function() {
     this.timeout(1000);

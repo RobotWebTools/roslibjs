@@ -2,7 +2,7 @@ module.exports = function(config) {
 	config.set({
 
 		// Base path, that will be used to resolve files and exclude
-		basePath: '',
+		basePath: '../../',
 
 		// Testing frameworks
 		frameworks: ['mocha', 'chai'],
@@ -12,7 +12,8 @@ module.exports = function(config) {
 			"../../node_modules/eventemitter2/lib/eventemitter2.js",
 			"../../build/roslib.js",
 			"../require-shim.js",
-			"*.js"
+
+			{pattern: 'test/workersocket/*.example.js', type: 'module'},
 		],
 
 		// test results reporter to use
