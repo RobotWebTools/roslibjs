@@ -27,7 +27,8 @@ npm -v
 echo -e "\e[1m\e[35m-----------------------------------------\e[0m"
 
 echo -e "\e[1m\e[35mnpm install\e[0m"
-npm install
+# TODO remove this --legacy-peer-deps flag @babel/eslint-parser is updated to officially support eslint >=8
+npm install --legacy-peer-deps
 
 echo -e "\e[1m\e[35mnpm test\e[0m"
 npm test
