@@ -16,6 +16,7 @@
     "./src/util/decompressPng.js": "./src/util/shim/decompressPng.js"
   },
   "devDependencies": {
+    "@babel/core": "^7.15.5",
     "@babel/eslint-parser": "^7.15.4",
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-json": "^4.1.0",
