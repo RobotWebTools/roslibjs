@@ -17,4 +17,5 @@ RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | 
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> $HOME/.bashrc
 ENV PATH=/bin/versions/node/$NODE_VERSION/bin:$PATH
 
+# Needed for Karma testing
 ENV CHROME_BIN=chromium-browser
