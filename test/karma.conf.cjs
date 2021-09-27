@@ -23,7 +23,7 @@ module.exports = function(config) {
 
       // Installs cbor-js in a global CBOR variable so that our shim/cbor.js shim picks it up.
       'node_modules/cbor-js/cbor.js',
-      
+
       {pattern: 'test/*.test.js', type: 'module'},
     ],
 
@@ -59,15 +59,17 @@ module.exports = function(config) {
     autoWatch: true,
 
 
-    // Start these browsers, currently available:
-    // - Chrome
-    // - ChromeCanary
-    // - Firefox
-    // - Opera
-    // - Safari (only Mac)
-    // - PhantomJS
-    // - IE (only Windows)
+    // Start these browsers (this gets overridden in Gruntfile).
     browsers: ['Firefox'],
+
+
+    // Add the ChromeHeadlessNoSandbox browser for use on CI
+    customLaunchers: {
+      ChromeHeadlessNoSandbox: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox']
+      }
+    },
 
 
     // If browser does not capture in given timeout [ms], kill it
