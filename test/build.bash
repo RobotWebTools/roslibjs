@@ -18,6 +18,14 @@ set -e
 
 pushd "$(dirname "$0")" > /dev/null
 
+echo -e "\e[1m\e[35mUPDATE NPM ------------------------------\e[0m"
+echo old version:
+npm -v
+npm i -g npm
+echo new version:
+npm -v
+echo -e "\e[1m\e[35m-----------------------------------------\e[0m"
+
 echo -e "\e[1m\e[35mnpm install\e[0m"
 npm install
 
