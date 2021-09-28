@@ -71,7 +71,8 @@
     "test-tcp": "npm run grunt -- test-tcp",
     "lint": "npm run grunt -- lint",
     "lint-fix": "npm run grunt -- lint-fix",
-    "publish": "npm run build && npm run test"
+    "prepare": "npm run build",
+    "publish": "npm run test"
   },
   "repository": {
     "type": "git",
