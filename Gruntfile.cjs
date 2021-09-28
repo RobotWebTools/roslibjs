@@ -16,19 +16,22 @@ module.exports = function(grunt) {
       build: {
         command: 'rollup -c'
       },
+      'test-esm': {
+        command: 'webpack --config esm-test.webpack.config.js'
+      },
       lint: {
         command: 'eslint Gruntfile.cjs ./src/*.js ./src/**/*.js ./test/*.js'
       },
       'lint-fix': {
         command: 'eslint --fix Gruntfile.cjs ./src/*.js ./src/**/*.js ./test/*.js'
       },
-      mochaTest: {
+      'mocha-test': {
         command: 'mocha ./test/*.test.js'
       },
-      mochaExamples: {
+      'mocha-examples': {
         command: 'mocha ./test/examples/*.js'
       },
-      mochaTcp: {
+      'mocha-tcp': {
         command: 'mocha ./test/tcp/*.js'
       },
     },
@@ -47,21 +50,21 @@ module.exports = function(grunt) {
         configFile: './test/workersocket/karma.conf.cjs',
       },
     },
-    mochaTest: {
-      options: {
-          reporter: 'spec',
-          timeout: 5000
-      },
-      test: {
-        src: ['./test/*.test.js']
-      },
-      examples: {
-        src: ['./test/examples/*.js']
-      },
-      tcp: {
-        src: ['./test/tcp/*.js']
-      }
-    },
+    // mochaTest: {
+    //   options: {
+    //       reporter: 'spec',
+    //       timeout: 5000
+    //   },
+    //   test: {
+    //     src: ['./test/*.test.js']
+    //   },
+    //   examples: {
+    //     src: ['./test/examples/*.js']
+    //   },
+    //   tcp: {
+    //     src: ['./test/tcp/*.js']
+    //   }
+    // },
     uglify: {
       options: {
         report: 'min'
@@ -113,9 +116,9 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('dev', ['shell:build', 'watch']);
-  grunt.registerTask('test', ['lint', 'shell:mochaTest', 'karma:test']);
-  grunt.registerTask('test-examples', ['shell:mochaExamples', 'karma:examples']);
-  grunt.registerTask('test-tcp', ['shell:mochaTcp']);
+  grunt.registerTask('test', ['lint', 'shell:test-esm', 'shell:mocha-test', 'karma:test']);
+  grunt.registerTask('test-examples', ['shell:mocha-examples', 'karma:examples']);
+  grunt.registerTask('test-tcp', ['shell:mocha-tcp']);
   grunt.registerTask('test-workersocket', ['karma:workersocket']);
   grunt.registerTask('build', ['lint', 'shell:build']);
   grunt.registerTask('build_and_watch', ['watch']);
