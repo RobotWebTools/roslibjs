@@ -5,5 +5,10 @@ node_modules
 *.out
 *.log
 *.tar.gz
+
+# libs don't need lock files, only apps do
 *lock.json
 *.lock
+
+# ignore build output
+build/
