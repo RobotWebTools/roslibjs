@@ -1,7 +1,6 @@
-test
-examples
-Gruntfile.js
-.gitignore
-.github
-bower.json
-*.md
+# Ignore everything,
+/**/*
+
+# but include these folders
+!/build/**/*
+!/src/**/*
