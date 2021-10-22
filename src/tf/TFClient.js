@@ -90,7 +90,10 @@ TFClient.prototype.processTFArray = function(tf) {
         translation : transform.transform.translation,
         rotation : transform.transform.rotation
       });
-      info.cbs.forEach(function(cb) {
+
+      // Make a copy, in case listeners are removed while iterating.
+      var cbs = info.cbs.splice(0);
+      cbs.forEach(function(cb) {
         cb(info.transform);
       });
     }
@@ -202,6 +205,7 @@ TFClient.prototype.unsubscribe = function(frameID, callback) {
     frameID = frameID.substring(1);
   }
   var info = this.frameInfos[frameID];
+
   for (var cbs = info && info.cbs || [], idx = cbs.length; idx--;) {
     if (cbs[idx] === callback) {
       cbs.splice(idx, 1);
