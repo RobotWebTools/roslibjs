@@ -1,7 +1,7 @@
 window.require = function require(path) {
 	switch (path) {
 		case 'eventemitter2': return EventEmitter2;
-		case 'xmldom': return {DOMParser: DOMParser};
+		case '@xmldom/xmldom': return {DOMParser: DOMParser};
 		case 'cbor-js': return CBOR;
 		case '../src/util/cborTypedArrayTags.js': return cborTypedArrayTagger;
 	}
