@@ -9,7 +9,7 @@
     "./src/RosLibNode.js": "./src/RosLib.js",
     "canvas": "./src/util/shim/canvas.js",
     "ws": "./src/util/shim/WebSocket.js",
-    "xmldom": "./src/util/shim/xmldom.js",
+    "@xmldom/xmldom": "./src/util/shim/@xmldom/xmldom.js",
     "./src/util/decompressPng.js": "./src/util/shim/decompressPng.js"
   },
   "devDependencies": {
@@ -33,14 +33,14 @@
     "time-grunt": "^2.0.0"
   },
   "dependencies": {
+    "@xmldom/xmldom": "^0.7.5",
     "cbor-js": "^0.1.0",
     "eventemitter2": "^6.4.0",
     "object-assign": "^4.0.0",
     "pngparse": "^2.0.0",
     "socket.io": "^4.0.0",
     "webworkify": "^1.5.0",
-    "ws": "^8.0.0",
-    "xmldom": "^0.6.0"
+    "ws": "^8.0.0"
   },
   "directories": {
     "example": "examples",
