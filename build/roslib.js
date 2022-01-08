@@ -883,83 +883,87 @@ else if (!global.CBOR)
     var listeners= null, branch, xTree, xxTree, isolatedBranch, endReached, currentType = type[i],
         nextType = type[i + 1], branches, _listeners;
 
-    if (i === typeLength && tree._listeners) {
+    if (i === typeLength) {
       //
       // If at the end of the event(s) list and the tree has listeners
       // invoke those listeners.
       //
-      if (typeof tree._listeners === 'function') {
-        handlers && handlers.push(tree._listeners);
-        return [tree];
-      } else {
-        handlers && handlers.push.apply(handlers, tree._listeners);
-        return [tree];
-      }
-    }
 
-    if (currentType === '*') {
-      //
-      // If the event emitted is '*' at this part
-      // or there is a concrete match at this patch
-      //
-      branches= ownKeys(tree);
-      n= branches.length;
-      while(n-->0){
-        branch= branches[n];
-        if (branch !== '_listeners') {
-          _listeners = searchListenerTree(handlers, type, tree[branch], i + 1, typeLength);
-          if(_listeners){
-            if(listeners){
-              listeners.push.apply(listeners, _listeners);
-            }else{
-              listeners = _listeners;
-            }
-          }
+      if(tree._listeners) {
+        if (typeof tree._listeners === 'function') {
+          handlers && handlers.push(tree._listeners);
+          listeners = [tree];
+        } else {
+          handlers && handlers.push.apply(handlers, tree._listeners);
+          listeners = [tree];
         }
       }
-      return listeners;
-    } else if (currentType === '**') {
-      endReached = (i + 1 === typeLength || (i + 2 === typeLength && nextType === '*'));
-      if (endReached && tree._listeners) {
-        // The next element has a _listeners, add it to the handlers.
-        listeners = searchListenerTree(handlers, type, tree, typeLength, typeLength);
-      }
+    } else {
 
-      branches= ownKeys(tree);
-      n= branches.length;
-      while(n-->0){
-        branch= branches[n];
-        if (branch !== '_listeners') {
-          if (branch === '*' || branch === '**') {
-            if (tree[branch]._listeners && !endReached) {
-              _listeners = searchListenerTree(handlers, type, tree[branch], typeLength, typeLength);
-              if(_listeners){
-                if(listeners){
-                  listeners.push.apply(listeners, _listeners);
-                }else{
-                  listeners = _listeners;
-                }
+      if (currentType === '*') {
+        //
+        // If the event emitted is '*' at this part
+        // or there is a concrete match at this patch
+        //
+        branches = ownKeys(tree);
+        n = branches.length;
+        while (n-- > 0) {
+          branch = branches[n];
+          if (branch !== '_listeners') {
+            _listeners = searchListenerTree(handlers, type, tree[branch], i + 1, typeLength);
+            if (_listeners) {
+              if (listeners) {
+                listeners.push.apply(listeners, _listeners);
+              } else {
+                listeners = _listeners;
               }
             }
-            _listeners = searchListenerTree(handlers, type, tree[branch], i, typeLength);
-          } else if (branch === nextType) {
-            _listeners = searchListenerTree(handlers, type, tree[branch], i + 2, typeLength);
-          } else {
-            // No match on this one, shift into the tree but not in the type array.
-            _listeners = searchListenerTree(handlers, type, tree[branch], i, typeLength);
           }
-          if(_listeners){
-            if(listeners){
-              listeners.push.apply(listeners, _listeners);
-            }else{
-              listeners = _listeners;
+        }
+        return listeners;
+      } else if (currentType === '**') {
+        endReached = (i + 1 === typeLength || (i + 2 === typeLength && nextType === '*'));
+        if (endReached && tree._listeners) {
+          // The next element has a _listeners, add it to the handlers.
+          listeners = searchListenerTree(handlers, type, tree, typeLength, typeLength);
+        }
+
+        branches = ownKeys(tree);
+        n = branches.length;
+        while (n-- > 0) {
+          branch = branches[n];
+          if (branch !== '_listeners') {
+            if (branch === '*' || branch === '**') {
+              if (tree[branch]._listeners && !endReached) {
+                _listeners = searchListenerTree(handlers, type, tree[branch], typeLength, typeLength);
+                if (_listeners) {
+                  if (listeners) {
+                    listeners.push.apply(listeners, _listeners);
+                  } else {
+                    listeners = _listeners;
+                  }
+                }
+              }
+              _listeners = searchListenerTree(handlers, type, tree[branch], i, typeLength);
+            } else if (branch === nextType) {
+              _listeners = searchListenerTree(handlers, type, tree[branch], i + 2, typeLength);
+            } else {
+              // No match on this one, shift into the tree but not in the type array.
+              _listeners = searchListenerTree(handlers, type, tree[branch], i, typeLength);
+            }
+            if (_listeners) {
+              if (listeners) {
+                listeners.push.apply(listeners, _listeners);
+              } else {
+                listeners = _listeners;
+              }
             }
           }
         }
+        return listeners;
+      } else if (tree[currentType]) {
+        listeners = searchListenerTree(handlers, type, tree[currentType], i + 1, typeLength);
       }
-      return listeners;
-    }else if (tree[currentType]) {
-      listeners= searchListenerTree(handlers, type, tree[currentType], i + 1, typeLength);
     }
 
       xTree = tree['*'];
@@ -2486,7 +2490,7 @@ module.exports = function (fn, options) {
  * If you use nodejs, this is the variable you get when you require('roslib')
  */
 var ROSLIB = this.ROSLIB || {
-  REVISION : '1.1.0'
+  REVISION : '1.2.0'
 };
 
 var assign = require('object-assign');
@@ -3880,7 +3884,7 @@ Ros.prototype.getTopicsAndRawTypes = function(callback, failedCallback) {
 
 module.exports = Ros;
 
-},{"../util/workerSocket":48,"./Service":17,"./ServiceRequest":18,"./SocketAdapter.js":20,"eventemitter2":2,"object-assign":3,"ws":44}],17:[function(require,module,exports){
+},{"../util/workerSocket":48,"./Service":17,"./ServiceRequest":18,"./SocketAdapter.js":20,"eventemitter2":2,"object-assign":3,"ws":45}],17:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -4176,7 +4180,7 @@ function SocketAdapter(client) {
 
 module.exports = SocketAdapter;
 
-},{"../util/cborTypedArrayTags":43,"../util/decompressPng":46,"cbor-js":1}],21:[function(require,module,exports){
+},{"../util/cborTypedArrayTags":43,"../util/decompressPng":47,"cbor-js":1}],21:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -4753,6 +4757,7 @@ function TFClient(options) {
   this.frameInfos = {};
   this.republisherUpdateRequested = false;
   this._subscribeCB = null;
+  this._isDisposed = false;
 
   // Create an Action client
   this.actionClient = new ActionClient({
@@ -4845,6 +4850,12 @@ TFClient.prototype.updateGoal = function() {
  * @param response the service response containing the topic name
  */
 TFClient.prototype.processResponse = function(response) {
+  // Do not setup a topic subscription if already disposed. Prevents a race condition where
+  // The dispose() function is called before the service call receives a response.
+  if (this._isDisposed) {
+    return;
+  }
+
   // if we subscribed to a topic before, unsubscribe so
   // the republisher stops publishing it
   if (this.currentTopic) {
@@ -4917,6 +4928,7 @@ TFClient.prototype.unsubscribe = function(frameID, callback) {
  * Unsubscribe and unadvertise all topics associated with this TFClient.
  */
 TFClient.prototype.dispose = function() {
+  this._isDisposed = true;
   this.actionClient.dispose();
   if (this.currentTopic) {
     this.currentTopic.unsubscribe(this._subscribeCB);
@@ -5223,7 +5235,7 @@ function UrdfMesh(options) {
 module.exports = UrdfMesh;
 },{"../math/Vector3":26,"./UrdfTypes":40}],38:[function(require,module,exports){
 /**
- * @fileOverview 
+ * @fileOverview
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -5231,7 +5243,7 @@ module.exports = UrdfMesh;
 var UrdfMaterial = require('./UrdfMaterial');
 var UrdfLink = require('./UrdfLink');
 var UrdfJoint = require('./UrdfJoint');
-var DOMParser = require('xmldom').DOMParser;
+var DOMParser = require('@xmldom/xmldom').DOMParser;
 
 // See https://developer.mozilla.org/docs/XPathResult#Constants
 var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
@@ -5294,7 +5306,7 @@ function UrdfModel(options) {
         // Check for a material
         for( var j=0; j<link.visuals.length; j++ )
         {
-          var mat = link.visuals[j].material; 
+          var mat = link.visuals[j].material;
           if ( mat !== null && mat.name ) {
             if (this.materials[mat.name] !== void 0) {
               link.visuals[j].material = this.materials[mat.name];
@@ -5318,7 +5330,7 @@ function UrdfModel(options) {
 
 module.exports = UrdfModel;
 
-},{"./UrdfJoint":34,"./UrdfLink":35,"./UrdfMaterial":36,"xmldom":47}],39:[function(require,module,exports){
+},{"./UrdfJoint":34,"./UrdfLink":35,"./UrdfMaterial":36,"@xmldom/xmldom":44}],39:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5613,14 +5625,19 @@ if (typeof module !== 'undefined' && module.exports) {
 }
 
 },{}],44:[function(require,module,exports){
-module.exports = typeof window !== 'undefined' ? window.WebSocket : WebSocket;
+exports.DOMImplementation = window.DOMImplementation;
+exports.XMLSerializer = window.XMLSerializer;
+exports.DOMParser = window.DOMParser;
 
 },{}],45:[function(require,module,exports){
+module.exports = typeof window !== 'undefined' ? window.WebSocket : WebSocket;
+
+},{}],46:[function(require,module,exports){
 /* global document */
 module.exports = function Canvas() {
 	return document.createElement('canvas');
 };
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Graeme Yeates - github.com/megawac
@@ -5678,12 +5695,7 @@ function decompressPng(data, callback) {
 
 module.exports = decompressPng;
 
-},{"canvas":45}],47:[function(require,module,exports){
-exports.DOMImplementation = window.DOMImplementation;
-exports.XMLSerializer = window.XMLSerializer;
-exports.DOMParser = window.DOMParser;
-
-},{}],48:[function(require,module,exports){
+},{"canvas":46}],48:[function(require,module,exports){
 var work = require('webworkify');
 var workerSocketImpl = require('./workerSocketImpl');
 
@@ -5779,4 +5791,4 @@ module.exports = function(self) {
   });
 };
 
-},{"ws":44}]},{},[8]);
+},{"ws":45}]},{},[8]);
