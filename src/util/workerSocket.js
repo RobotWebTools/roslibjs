@@ -1,9 +1,4 @@
-try {
-    var work = require('webworkify');
-} catch(ReferenceError) {
-    // webworkify raises ReferenceError when required inside webpack
-    var work = require('webworkify-webpack');
-}
+var work = require('webworkify-webpack');
 var workerSocketImpl = require('./workerSocketImpl');
 
 function WorkerSocket(uri) {
