@@ -18,6 +18,7 @@
     "grunt-browserify": "^6.0.0",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "^2.0.0",
+    "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-jshint": "^3.0.0",
     "grunt-contrib-uglify": "^5.0.0",
     "grunt-contrib-watch": "^1.0.0",

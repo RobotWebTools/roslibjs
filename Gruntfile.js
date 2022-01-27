@@ -13,7 +13,12 @@ module.exports = function(grunt) {
     browserify: {
       dist: {
         src: ['./src/RosLibBrowser.js'],
-        dest: './build/roslib.js'
+        dest: './build/roslib.js',
+      },      
+    },
+    copy: {
+      shared_worker: {
+        files: [{src: ['./src/util/sharedWorkerSocketImpl.js'], dest: './build/sharedWorkerSocketImpl.js'}],
       }
     },
     jshint: {
@@ -105,12 +110,12 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('dev', ['browserify', 'watch']);
+  grunt.registerTask('dev', ['browserify', 'copy:shared_worker', 'watch']);
   grunt.registerTask('test', ['jshint', 'mochaTest:test', 'karma:test']);
   grunt.registerTask('test-examples', ['mochaTest:examples', 'karma:examples']);
   grunt.registerTask('test-tcp', ['mochaTest:tcp']);
   grunt.registerTask('test-workersocket', ['karma:workersocket']);
-  grunt.registerTask('build', ['browserify', 'uglify']);
+  grunt.registerTask('build', ['browserify', 'copy:shared_worker', 'uglify']);
   grunt.registerTask('build_and_watch', ['watch']);
   grunt.registerTask('doc', ['clean', 'jsdoc']);
 };
