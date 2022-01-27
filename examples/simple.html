@@ -8,7 +8,7 @@
 <script>
   // Connecting to ROS
   // -----------------
-  var ros = new ROSLIB.Ros({transportLibrary: 'sharedworker'});
+  var ros = new ROSLIB.Ros({transportLibrary: 'sharedworker', transportOptions: {sharedWorkerURL: '../build/sharedWorkerSocketImpl.js'}});
 
   // If there is an error on the backend, an 'error' emit will be emitted.
   ros.on('error', function(error) {

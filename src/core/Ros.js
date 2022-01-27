@@ -82,7 +82,7 @@ Ros.prototype.connect = function(url) {
   } else if (this.transportLibrary === 'workersocket') {
     this.socket = assign(new WorkerSocket(url), socketAdapter(this));
   } else if (this.transportLibrary === 'sharedworker') {
-    this.socket = assign(new SharedWorkerConnection(url), socketAdapter(this));
+    this.socket = assign(new SharedWorkerConnection(url, this.transportOptions.sharedWorkerURL), socketAdapter(this));
   } else {
     throw 'Unknown transportLibrary: ' + this.transportLibrary.toString();
   }

@@ -1,13 +1,11 @@
 // Goto chrome://inspect/#workers to inspect webworkers (and see console.logs !)
-//const webworkify = require("webworkify");
 
-/*const sharedWorkerSocketImpl = require("./sharedWorkerSocketImpl");*/
 /**
  * @param {string} url to connect to, e.g. "ws://localhost:9090".
  */
-function SharedWorkerConnection(url) {
+function SharedWorkerConnection(url, sharedWorkerURL) {
    console.log('Creating shared worker');
-   this.worker_ = new SharedWorker('../build/sharedWorkerSocketImpl.js');
+   this.worker_ = new SharedWorker(sharedWorkerURL);
    this.worker_.port.start();
    this.worker_.port.postMessage({ type: 'CONNECT', uri: url });
    this.worker_.port.onmessage = (ev) => {
