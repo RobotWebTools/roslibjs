@@ -6,6 +6,7 @@
 var WebSocket = require('ws');
 var WorkerSocket = require('../util/workerSocket');
 var socketAdapter = require('./SocketAdapter.js');
+var SharedWorkerConnection = require('../util/sharedWorkerSocket');
 
 var Service = require('./Service');
 var ServiceRequest = require('./ServiceRequest');
@@ -80,6 +81,8 @@ Ros.prototype.connect = function(url) {
     }
   } else if (this.transportLibrary === 'workersocket') {
     this.socket = assign(new WorkerSocket(url), socketAdapter(this));
+  } else if (this.transportLibrary === 'sharedworker') {
+    this.socket = assign(new SharedWorkerConnection(url), socketAdapter(this));
   } else {
     throw 'Unknown transportLibrary: ' + this.transportLibrary.toString();
   }

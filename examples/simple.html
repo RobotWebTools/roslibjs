@@ -8,7 +8,7 @@
 <script>
   // Connecting to ROS
   // -----------------
-  var ros = new ROSLIB.Ros();
+  var ros = new ROSLIB.Ros({transportLibrary: 'sharedworker'});
 
   // If there is an error on the backend, an 'error' emit will be emitted.
   ros.on('error', function(error) {
