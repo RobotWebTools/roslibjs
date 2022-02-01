@@ -13,4 +13,9 @@ function SharedWorkerConnection(url, sharedWorkerURL) {
    };
 }
 
+SharedWorkerConnection.prototype.close = function() {
+    this.worker_.port.postMessage({ type: 'CLOSE' });
+    console.log('Closing One shared Worker');
+}
+
 module.exports = SharedWorkerConnection;

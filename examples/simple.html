@@ -157,6 +157,10 @@
   favoriteColor.get(function(value) {
     console.log('My robot\'s favorite color is ' + value);
   });
+
+  window.addEventListener("beforeunload", function (e) {
+    ros.close();
+  });
 </script>
 </head>
 

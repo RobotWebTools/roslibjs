@@ -1,7 +1,6 @@
 console.log('Attaching Shared Worker : ');
 //const broadcastChannel = new BroadcastChannel('roslib.SharedWebSocketChannel');
 var websocket = undefined;
-var clientCount = 0;
 var allPorts = [];
 /**
  * @param {MessageEvent} messageEvent
@@ -22,6 +21,13 @@ function onMessageFromMainThread(messageEvent) {
                 websocket.send(messageEvent.data.dataToWrite);
             }
             break;
+        case 'CLOSE':
+            const portToRemove = messageEvent.data.port;
+            const index = allPorts.indexOf(portToRemove);
+            if(index > -1) {
+                allPorts.splice(index, 1);
+            }
+            break;
     }
 }
 /**
@@ -29,15 +35,14 @@ function onMessageFromMainThread(messageEvent) {
  */
 onconnect = function(messageEvent) {
     console.log('Some one is connected to worker ' + messageEvent);
-    var port = messageEvent.ports[0];
-    clientCount = clientCount + 1;
+    var port = messageEvent.ports[0];    
     allPorts.push(port);
     port.onmessage = onMessageFromMainThread;
+    
 }
 
 setInterval(() => {
-    //broadcastChannel.postMessage('toto ' + clientCount);
     allPorts.forEach((port) => {
-        port.postMessage('toto ' + clientCount);
+        port.postMessage('toto ' + allPorts.length);
     });
 }, 1000);
