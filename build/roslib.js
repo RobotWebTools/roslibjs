@@ -2397,6 +2397,210 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
 };
 }).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
 },{"process/browser.js":4,"timers":5}],6:[function(require,module,exports){
+function webpackBootstrapFunc (modules) {
+/******/  // The module cache
+/******/  var installedModules = {};
+
+/******/  // The require function
+/******/  function __webpack_require__(moduleId) {
+
+/******/    // Check if module is in cache
+/******/    if(installedModules[moduleId])
+/******/      return installedModules[moduleId].exports;
+
+/******/    // Create a new module (and put it into the cache)
+/******/    var module = installedModules[moduleId] = {
+/******/      i: moduleId,
+/******/      l: false,
+/******/      exports: {}
+/******/    };
+
+/******/    // Execute the module function
+/******/    modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+/******/    // Flag the module as loaded
+/******/    module.l = true;
+
+/******/    // Return the exports of the module
+/******/    return module.exports;
+/******/  }
+
+/******/  // expose the modules object (__webpack_modules__)
+/******/  __webpack_require__.m = modules;
+
+/******/  // expose the module cache
+/******/  __webpack_require__.c = installedModules;
+
+/******/  // identity function for calling harmony imports with the correct context
+/******/  __webpack_require__.i = function(value) { return value; };
+
+/******/  // define getter function for harmony exports
+/******/  __webpack_require__.d = function(exports, name, getter) {
+/******/    if(!__webpack_require__.o(exports, name)) {
+/******/      Object.defineProperty(exports, name, {
+/******/        configurable: false,
+/******/        enumerable: true,
+/******/        get: getter
+/******/      });
+/******/    }
+/******/  };
+
+/******/  // define __esModule on exports
+/******/  __webpack_require__.r = function(exports) {
+/******/    Object.defineProperty(exports, '__esModule', { value: true });
+/******/  };
+
+/******/  // getDefaultExport function for compatibility with non-harmony modules
+/******/  __webpack_require__.n = function(module) {
+/******/    var getter = module && module.__esModule ?
+/******/      function getDefault() { return module['default']; } :
+/******/      function getModuleExports() { return module; };
+/******/    __webpack_require__.d(getter, 'a', getter);
+/******/    return getter;
+/******/  };
+
+/******/  // Object.prototype.hasOwnProperty.call
+/******/  __webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+
+/******/  // __webpack_public_path__
+/******/  __webpack_require__.p = "/";
+
+/******/  // on error function for async loading
+/******/  __webpack_require__.oe = function(err) { console.error(err); throw err; };
+
+  var f = __webpack_require__(__webpack_require__.s = ENTRY_MODULE)
+  return f.default || f // try to call default if defined to also support babel esmodule exports
+}
+
+var moduleNameReqExp = '[\\.|\\-|\\+|\\w|\/|@]+'
+var dependencyRegExp = '\\(\\s*(\/\\*.*?\\*\/)?\\s*.*?(' + moduleNameReqExp + ').*?\\)' // additional chars when output.pathinfo is true
+
+// http://stackoverflow.com/a/2593661/130442
+function quoteRegExp (str) {
+  return (str + '').replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&')
+}
+
+function isNumeric(n) {
+  return !isNaN(1 * n); // 1 * n converts integers, integers as string ("123"), 1e3 and "1e3" to integers and strings to NaN
+}
+
+function getModuleDependencies (sources, module, queueName) {
+  var retval = {}
+  retval[queueName] = []
+
+  var fnString = module.toString()
+  var wrapperSignature = fnString.match(/^function\s?\w*\(\w+,\s*\w+,\s*(\w+)\)/)
+  if (!wrapperSignature) return retval
+  var webpackRequireName = wrapperSignature[1]
+
+  // main bundle deps
+  var re = new RegExp('(\\\\n|\\W)' + quoteRegExp(webpackRequireName) + dependencyRegExp, 'g')
+  var match
+  while ((match = re.exec(fnString))) {
+    if (match[3] === 'dll-reference') continue
+    retval[queueName].push(match[3])
+  }
+
+  // dll deps
+  re = new RegExp('\\(' + quoteRegExp(webpackRequireName) + '\\("(dll-reference\\s(' + moduleNameReqExp + '))"\\)\\)' + dependencyRegExp, 'g')
+  while ((match = re.exec(fnString))) {
+    if (!sources[match[2]]) {
+      retval[queueName].push(match[1])
+      sources[match[2]] = __webpack_require__(match[1]).m
+    }
+    retval[match[2]] = retval[match[2]] || []
+    retval[match[2]].push(match[4])
+  }
+
+  // convert 1e3 back to 1000 - this can be important after uglify-js converted 1000 to 1e3
+  var keys = Object.keys(retval);
+  for (var i = 0; i < keys.length; i++) {
+    for (var j = 0; j < retval[keys[i]].length; j++) {
+      if (isNumeric(retval[keys[i]][j])) {
+        retval[keys[i]][j] = 1 * retval[keys[i]][j];
+      }
+    }
+  }
+
+  return retval
+}
+
+function hasValuesInQueues (queues) {
+  var keys = Object.keys(queues)
+  return keys.reduce(function (hasValues, key) {
+    return hasValues || queues[key].length > 0
+  }, false)
+}
+
+function getRequiredModules (sources, moduleId) {
+  var modulesQueue = {
+    main: [moduleId]
+  }
+  var requiredModules = {
+    main: []
+  }
+  var seenModules = {
+    main: {}
+  }
+
+  while (hasValuesInQueues(modulesQueue)) {
+    var queues = Object.keys(modulesQueue)
+    for (var i = 0; i < queues.length; i++) {
+      var queueName = queues[i]
+      var queue = modulesQueue[queueName]
+      var moduleToCheck = queue.pop()
+      seenModules[queueName] = seenModules[queueName] || {}
+      if (seenModules[queueName][moduleToCheck] || !sources[queueName][moduleToCheck]) continue
+      seenModules[queueName][moduleToCheck] = true
+      requiredModules[queueName] = requiredModules[queueName] || []
+      requiredModules[queueName].push(moduleToCheck)
+      var newModules = getModuleDependencies(sources, sources[queueName][moduleToCheck], queueName)
+      var newModulesKeys = Object.keys(newModules)
+      for (var j = 0; j < newModulesKeys.length; j++) {
+        modulesQueue[newModulesKeys[j]] = modulesQueue[newModulesKeys[j]] || []
+        modulesQueue[newModulesKeys[j]] = modulesQueue[newModulesKeys[j]].concat(newModules[newModulesKeys[j]])
+      }
+    }
+  }
+
+  return requiredModules
+}
+
+module.exports = function (moduleId, options) {
+  options = options || {}
+  var sources = {
+    main: __webpack_modules__
+  }
+
+  var requiredModules = options.all ? { main: Object.keys(sources.main) } : getRequiredModules(sources, moduleId)
+
+  var src = ''
+
+  Object.keys(requiredModules).filter(function (m) { return m !== 'main' }).forEach(function (module) {
+    var entryModule = 0
+    while (requiredModules[module][entryModule]) {
+      entryModule++
+    }
+    requiredModules[module].push(entryModule)
+    sources[module][entryModule] = '(function(module, exports, __webpack_require__) { module.exports = __webpack_require__; })'
+    src = src + 'var ' + module + ' = (' + webpackBootstrapFunc.toString().replace('ENTRY_MODULE', JSON.stringify(entryModule)) + ')({' + requiredModules[module].map(function (id) { return '' + JSON.stringify(id) + ': ' + sources[module][id].toString() }).join(',') + '});\n'
+  })
+
+  src = src + 'new ((' + webpackBootstrapFunc.toString().replace('ENTRY_MODULE', JSON.stringify(moduleId)) + ')({' + requiredModules.main.map(function (id) { return '' + JSON.stringify(id) + ': ' + sources.main[id].toString() }).join(',') + '}))(self);'
+
+  var blob = new window.Blob([src], { type: 'text/javascript' })
+  if (options.bare) { return blob }
+
+  var URL = window.URL || window.webkitURL || window.mozURL || window.msURL
+
+  var workerUrl = URL.createObjectURL(blob)
+  var worker = new window.Worker(workerUrl)
+  worker.objectURL = workerUrl
+
+  return worker
+}
+
+},{}],7:[function(require,module,exports){
 var bundleFn = arguments[3];
 var sources = arguments[4];
 var cache = arguments[5];
@@ -2478,7 +2682,7 @@ module.exports = function (fn, options) {
     return worker;
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
@@ -2508,11 +2712,11 @@ assign(ROSLIB, require('./urdf'));
 
 module.exports = ROSLIB;
 
-},{"./actionlib":13,"./core":22,"./math":27,"./tf":30,"./urdf":42,"object-assign":3}],8:[function(require,module,exports){
+},{"./actionlib":14,"./core":23,"./math":28,"./tf":31,"./urdf":43,"object-assign":3}],9:[function(require,module,exports){
 (function (global){(function (){
 global.ROSLIB = require('./RosLib');
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./RosLib":7}],9:[function(require,module,exports){
+},{"./RosLib":8}],10:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
@@ -2657,7 +2861,7 @@ ActionClient.prototype.dispose = function() {
 
 module.exports = ActionClient;
 
-},{"../core/Message":14,"../core/Topic":21,"eventemitter2":2}],10:[function(require,module,exports){
+},{"../core/Message":15,"../core/Topic":22,"eventemitter2":2}],11:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Justin Young - justin@oodar.com.au
@@ -2746,7 +2950,7 @@ ActionListener.prototype.__proto__ = EventEmitter2.prototype;
 
 module.exports = ActionListener;
 
-},{"../core/Message":14,"../core/Topic":21,"eventemitter2":2}],11:[function(require,module,exports){
+},{"../core/Message":15,"../core/Topic":22,"eventemitter2":2}],12:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
@@ -2836,7 +3040,7 @@ Goal.prototype.cancel = function() {
 };
 
 module.exports = Goal;
-},{"../core/Message":14,"eventemitter2":2}],12:[function(require,module,exports){
+},{"../core/Message":15,"eventemitter2":2}],13:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Laura Lindzey - lindzey@gmail.com
@@ -3066,7 +3270,7 @@ SimpleActionServer.prototype.setPreempted = function() {
 };
 
 module.exports = SimpleActionServer;
-},{"../core/Message":14,"../core/Topic":21,"eventemitter2":2}],13:[function(require,module,exports){
+},{"../core/Message":15,"../core/Topic":22,"eventemitter2":2}],14:[function(require,module,exports){
 var Ros = require('../core/Ros');
 var mixin = require('../mixin');
 
@@ -3079,7 +3283,7 @@ var action = module.exports = {
 
 mixin(Ros, ['ActionClient', 'SimpleActionServer'], action);
 
-},{"../core/Ros":16,"../mixin":28,"./ActionClient":9,"./ActionListener":10,"./Goal":11,"./SimpleActionServer":12}],14:[function(require,module,exports){
+},{"../core/Ros":17,"../mixin":29,"./ActionClient":10,"./ActionListener":11,"./Goal":12,"./SimpleActionServer":13}],15:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -3098,7 +3302,7 @@ function Message(values) {
 }
 
 module.exports = Message;
-},{"object-assign":3}],15:[function(require,module,exports){
+},{"object-assign":3}],16:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -3182,7 +3386,7 @@ Param.prototype.delete = function(callback) {
 };
 
 module.exports = Param;
-},{"./Service":17,"./ServiceRequest":18}],16:[function(require,module,exports){
+},{"./Service":18,"./ServiceRequest":19}],17:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -3884,7 +4088,7 @@ Ros.prototype.getTopicsAndRawTypes = function(callback, failedCallback) {
 
 module.exports = Ros;
 
-},{"../util/workerSocket":48,"./Service":17,"./ServiceRequest":18,"./SocketAdapter.js":20,"eventemitter2":2,"object-assign":3,"ws":45}],17:[function(require,module,exports){
+},{"../util/workerSocket":49,"./Service":18,"./ServiceRequest":19,"./SocketAdapter.js":21,"eventemitter2":2,"object-assign":3,"ws":46}],18:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -4009,7 +4213,7 @@ Service.prototype._serviceResponse = function(rosbridgeRequest) {
 
 module.exports = Service;
 
-},{"./ServiceRequest":18,"./ServiceResponse":19,"eventemitter2":2}],18:[function(require,module,exports){
+},{"./ServiceRequest":19,"./ServiceResponse":20,"eventemitter2":2}],19:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - balexander@willowgarage.com
@@ -4028,7 +4232,7 @@ function ServiceRequest(values) {
 }
 
 module.exports = ServiceRequest;
-},{"object-assign":3}],19:[function(require,module,exports){
+},{"object-assign":3}],20:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - balexander@willowgarage.com
@@ -4047,7 +4251,7 @@ function ServiceResponse(values) {
 }
 
 module.exports = ServiceResponse;
-},{"object-assign":3}],20:[function(require,module,exports){
+},{"object-assign":3}],21:[function(require,module,exports){
 /**
  * Socket event handling utilities for handling events on either
  * WebSocket and TCP sockets
@@ -4180,7 +4384,7 @@ function SocketAdapter(client) {
 
 module.exports = SocketAdapter;
 
-},{"../util/cborTypedArrayTags":43,"../util/decompressPng":47,"cbor-js":1}],21:[function(require,module,exports){
+},{"../util/cborTypedArrayTags":44,"../util/decompressPng":48,"cbor-js":1}],22:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -4390,7 +4594,7 @@ Topic.prototype.publish = function(message) {
 
 module.exports = Topic;
 
-},{"./Message":14,"eventemitter2":2}],22:[function(require,module,exports){
+},{"./Message":15,"eventemitter2":2}],23:[function(require,module,exports){
 var mixin = require('../mixin');
 
 var core = module.exports = {
@@ -4405,7 +4609,7 @@ var core = module.exports = {
 
 mixin(core.Ros, ['Param', 'Service', 'Topic'], core);
 
-},{"../mixin":28,"./Message":14,"./Param":15,"./Ros":16,"./Service":17,"./ServiceRequest":18,"./ServiceResponse":19,"./Topic":21}],23:[function(require,module,exports){
+},{"../mixin":29,"./Message":15,"./Param":16,"./Ros":17,"./Service":18,"./ServiceRequest":19,"./ServiceResponse":20,"./Topic":22}],24:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -4478,7 +4682,7 @@ Pose.prototype.getInverse = function() {
 };
 
 module.exports = Pose;
-},{"./Quaternion":24,"./Vector3":26}],24:[function(require,module,exports){
+},{"./Quaternion":25,"./Vector3":27}],25:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -4572,7 +4776,7 @@ Quaternion.prototype.clone = function() {
 
 module.exports = Quaternion;
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -4606,7 +4810,7 @@ Transform.prototype.clone = function() {
 };
 
 module.exports = Transform;
-},{"./Quaternion":24,"./Vector3":26}],26:[function(require,module,exports){
+},{"./Quaternion":25,"./Vector3":27}],27:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -4675,7 +4879,7 @@ Vector3.prototype.clone = function() {
 };
 
 module.exports = Vector3;
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 module.exports = {
     Pose: require('./Pose'),
     Quaternion: require('./Quaternion'),
@@ -4683,7 +4887,7 @@ module.exports = {
     Vector3: require('./Vector3')
 };
 
-},{"./Pose":23,"./Quaternion":24,"./Transform":25,"./Vector3":26}],28:[function(require,module,exports){
+},{"./Pose":24,"./Quaternion":25,"./Transform":26,"./Vector3":27}],29:[function(require,module,exports){
 /**
  * Mixin a feature to the core/Ros prototype.
  * For example, mixin(Ros, ['Topic'], {Topic: <Topic>})
@@ -4702,7 +4906,7 @@ module.exports = function(Ros, classes, features) {
     });
 };
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -4937,7 +5141,7 @@ TFClient.prototype.dispose = function() {
 
 module.exports = TFClient;
 
-},{"../actionlib/ActionClient":9,"../actionlib/Goal":11,"../core/Service.js":17,"../core/ServiceRequest.js":18,"../core/Topic.js":21,"../math/Transform":25}],30:[function(require,module,exports){
+},{"../actionlib/ActionClient":10,"../actionlib/Goal":12,"../core/Service.js":18,"../core/ServiceRequest.js":19,"../core/Topic.js":22,"../math/Transform":26}],31:[function(require,module,exports){
 var Ros = require('../core/Ros');
 var mixin = require('../mixin');
 
@@ -4946,7 +5150,7 @@ var tf = module.exports = {
 };
 
 mixin(Ros, ['TFClient'], tf);
-},{"../core/Ros":16,"../mixin":28,"./TFClient":29}],31:[function(require,module,exports){
+},{"../core/Ros":17,"../mixin":29,"./TFClient":30}],32:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -4977,7 +5181,7 @@ function UrdfBox(options) {
 }
 
 module.exports = UrdfBox;
-},{"../math/Vector3":26,"./UrdfTypes":40}],32:[function(require,module,exports){
+},{"../math/Vector3":27,"./UrdfTypes":41}],33:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5001,7 +5205,7 @@ function UrdfColor(options) {
 }
 
 module.exports = UrdfColor;
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5024,7 +5228,7 @@ function UrdfCylinder(options) {
 }
 
 module.exports = UrdfCylinder;
-},{"./UrdfTypes":40}],34:[function(require,module,exports){
+},{"./UrdfTypes":41}],35:[function(require,module,exports){
 /**
  * @fileOverview
  * @author David V. Lu!!  davidvlu@gmail.com
@@ -5117,7 +5321,7 @@ function UrdfJoint(options) {
 
 module.exports = UrdfJoint;
 
-},{"../math/Pose":23,"../math/Quaternion":24,"../math/Vector3":26}],35:[function(require,module,exports){
+},{"../math/Pose":24,"../math/Quaternion":25,"../math/Vector3":27}],36:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5146,7 +5350,7 @@ function UrdfLink(options) {
 }
 
 module.exports = UrdfLink;
-},{"./UrdfVisual":41}],36:[function(require,module,exports){
+},{"./UrdfVisual":42}],37:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5196,7 +5400,7 @@ UrdfMaterial.prototype.assign = function(obj) {
 
 module.exports = UrdfMaterial;
 
-},{"./UrdfColor":32,"object-assign":3}],37:[function(require,module,exports){
+},{"./UrdfColor":33,"object-assign":3}],38:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5233,7 +5437,7 @@ function UrdfMesh(options) {
 }
 
 module.exports = UrdfMesh;
-},{"../math/Vector3":26,"./UrdfTypes":40}],38:[function(require,module,exports){
+},{"../math/Vector3":27,"./UrdfTypes":41}],39:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5330,7 +5534,7 @@ function UrdfModel(options) {
 
 module.exports = UrdfModel;
 
-},{"./UrdfJoint":34,"./UrdfLink":35,"./UrdfMaterial":36,"@xmldom/xmldom":44}],39:[function(require,module,exports){
+},{"./UrdfJoint":35,"./UrdfLink":36,"./UrdfMaterial":37,"@xmldom/xmldom":45}],40:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5352,7 +5556,7 @@ function UrdfSphere(options) {
 }
 
 module.exports = UrdfSphere;
-},{"./UrdfTypes":40}],40:[function(require,module,exports){
+},{"./UrdfTypes":41}],41:[function(require,module,exports){
 module.exports = {
 	URDF_SPHERE : 0,
 	URDF_BOX : 1,
@@ -5360,7 +5564,7 @@ module.exports = {
 	URDF_MESH : 3
 };
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5491,7 +5695,7 @@ function UrdfVisual(options) {
 }
 
 module.exports = UrdfVisual;
-},{"../math/Pose":23,"../math/Quaternion":24,"../math/Vector3":26,"./UrdfBox":31,"./UrdfCylinder":33,"./UrdfMaterial":36,"./UrdfMesh":37,"./UrdfSphere":39}],42:[function(require,module,exports){
+},{"../math/Pose":24,"../math/Quaternion":25,"../math/Vector3":27,"./UrdfBox":32,"./UrdfCylinder":34,"./UrdfMaterial":37,"./UrdfMesh":38,"./UrdfSphere":40}],43:[function(require,module,exports){
 module.exports = require('object-assign')({
     UrdfBox: require('./UrdfBox'),
     UrdfColor: require('./UrdfColor'),
@@ -5504,7 +5708,7 @@ module.exports = require('object-assign')({
     UrdfVisual: require('./UrdfVisual')
 }, require('./UrdfTypes'));
 
-},{"./UrdfBox":31,"./UrdfColor":32,"./UrdfCylinder":33,"./UrdfLink":35,"./UrdfMaterial":36,"./UrdfMesh":37,"./UrdfModel":38,"./UrdfSphere":39,"./UrdfTypes":40,"./UrdfVisual":41,"object-assign":3}],43:[function(require,module,exports){
+},{"./UrdfBox":32,"./UrdfColor":33,"./UrdfCylinder":34,"./UrdfLink":36,"./UrdfMaterial":37,"./UrdfMesh":38,"./UrdfModel":39,"./UrdfSphere":40,"./UrdfTypes":41,"./UrdfVisual":42,"object-assign":3}],44:[function(require,module,exports){
 'use strict';
 
 var UPPER32 = Math.pow(2, 32);
@@ -5624,20 +5828,20 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = cborTypedArrayTagger;
 }
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 exports.DOMImplementation = window.DOMImplementation;
 exports.XMLSerializer = window.XMLSerializer;
 exports.DOMParser = window.DOMParser;
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 module.exports = typeof window !== 'undefined' ? window.WebSocket : WebSocket;
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 /* global document */
 module.exports = function Canvas() {
 	return document.createElement('canvas');
 };
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Graeme Yeates - github.com/megawac
@@ -5695,8 +5899,13 @@ function decompressPng(data, callback) {
 
 module.exports = decompressPng;
 
-},{"canvas":46}],48:[function(require,module,exports){
-var work = require('webworkify');
+},{"canvas":47}],49:[function(require,module,exports){
+try {
+    var work = require('webworkify');
+} catch(ReferenceError) {
+    // webworkify raises ReferenceError when required inside webpack
+    var work = require('webworkify-webpack');
+}
 var workerSocketImpl = require('./workerSocketImpl');
 
 function WorkerSocket(uri) {
@@ -5741,7 +5950,7 @@ WorkerSocket.prototype.close = function() {
 
 module.exports = WorkerSocket;
 
-},{"./workerSocketImpl":49,"webworkify":6}],49:[function(require,module,exports){
+},{"./workerSocketImpl":50,"webworkify":7,"webworkify-webpack":6}],50:[function(require,module,exports){
 var WebSocket = WebSocket || require('ws');
 
 module.exports = function(self) {
@@ -5791,4 +6000,4 @@ module.exports = function(self) {
   });
 };
 
-},{"ws":45}]},{},[8]);
+},{"ws":46}]},{},[9]);
