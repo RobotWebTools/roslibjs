@@ -2,9 +2,11 @@
 
 /**
  * @param {string} url to connect to, e.g. "ws://localhost:9090".
+ * @param {string} sharedWorkerURL : shared worker are scripts. URL of this
+ * script must be the same on all the tabs of your browser to be able to share
+ * the same worker.
  */
 function SharedWorkerConnection(url, sharedWorkerURL) {
-    console.log('Creating shared worker');
     this.worker_ = new SharedWorker(sharedWorkerURL);
     this.worker_.port.start();
     this.worker_.port.postMessage({ type: 'CONNECT', uri: url });

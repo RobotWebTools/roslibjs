@@ -19,6 +19,12 @@ module.exports = function(grunt) {
     copy: {
       shared_worker: {
         files: [{src: ['./src/util/sharedWorkerSocketImpl.js'], dest: './build/sharedWorkerSocketImpl.js'}],
+      },
+      /*This task would not be necessary if I succeed to configure Karma for serving properly the 
+       * sharedWorkerSocketImpl script.
+       */
+      shared_worker_test: {
+        files: [{src: ['./src/util/sharedWorkerSocketImpl.js'], dest: './test/sharedworkersocket/sharedWorkerSocketImpl.js'}],
       }
     },
     jshint: {
@@ -44,6 +50,9 @@ module.exports = function(grunt) {
       workersocket: {
         configFile: './test/workersocket/karma.conf.js',
       },
+      sharedworkersocket :{
+        configFile: './test/sharedworkersocket/karma.conf.js',
+      }
     },
     mochaTest: {
       options: {
@@ -115,6 +124,7 @@ module.exports = function(grunt) {
   grunt.registerTask('test-examples', ['mochaTest:examples', 'karma:examples']);
   grunt.registerTask('test-tcp', ['mochaTest:tcp']);
   grunt.registerTask('test-workersocket', ['karma:workersocket']);
+  grunt.registerTask('test-sharedworkersocket', ['copy:shared_worker_test', 'karma:sharedworkersocket']);
   grunt.registerTask('build', ['browserify', 'copy:shared_worker', 'uglify']);
   grunt.registerTask('build_and_watch', ['watch']);
   grunt.registerTask('doc', ['clean', 'jsdoc']);

@@ -8,7 +8,7 @@
 <script>
   // Connecting to ROS
   // -----------------
-  var ros = new ROSLIB.Ros();
+  var ros = new ROSLIB.Ros({transportLibrary: 'sharedworker', transportOptions: {sharedWorkerURL: '../build/sharedWorkerSocketImpl.js'}});
 
   // If there is an error on the backend, an 'error' emit will be emitted.
   ros.on('error', function(error) {
@@ -63,8 +63,8 @@
     }
   });
 
-  // And finally, publish.
-  cmdVel.publish(twist);
+  // And finally, publish it periodically.
+  setTimeout(()=>{cmdVel.publish(twist);}, 2000);
 
   //Subscribing to a Topic
   //----------------------
