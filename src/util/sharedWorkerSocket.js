@@ -13,14 +13,17 @@ function SharedWorkerConnection(url) {
     //*jslint browser: true */
     /*global window */
 
-    // Here we use brfs to inline the worker code in the script variable bellow.
-    // The following line is evaluated at build time (when browserify "compile" the file).
-    // See the doc : https://www.npmjs.com/package/brfs
+    /** 
+     * Here we use brfs to inline the worker code in the script variable bellow.
+     * The following line is evaluated at build time (when browserify "compile" the file).
+     * See the doc : https://www.npmjs.com/package/brfs
+     */
     var script = fs.readFileSync(__dirname + '/sharedWorkerSocketImpl.js', 'utf8');
     var b64script = window.btoa(window.unescape(window.encodeURIComponent(script)));
-    /* To construct a shared worker we need an URL. This URL must be striclty the same in all
-       browser windows. Here URL is the base64 encoded version of the worker code, so for
-       a same worker code, the URL will be the same in all windows !
+    /**
+     * To construct a shared worker we need an URL. This URL must be striclty the same in all
+     * browser windows. Here URL is the base64 encoded version of the worker code, so for
+     * a same worker code, the URL will be the same in all windows !
      */
     this.worker_ = new window.SharedWorker('data:application/javascript;base64,' + b64script);
 
