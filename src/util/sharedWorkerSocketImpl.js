@@ -1,4 +1,6 @@
-var websocket = undefined;
+/*global onconnect: true*/
+/*global window*/
+var websocket;
 var allPorts = [];
 
 function handleSocketMessage(ev) {
@@ -6,9 +8,9 @@ function handleSocketMessage(ev) {
 
     if (data instanceof ArrayBuffer) {
         // binary message, transfer for speed
-        allPorts.forEach((port) => {
-            port.postMessage(data, [data]);
-        });
+        for (var p = 0; p < allPorts.length; p++) {
+            allPorts[p].postMessage(data, [data]);
+        }
     } else {
         // JSON message, copy string
         broadcastToAllPorts(data);
@@ -26,7 +28,7 @@ function onMessageFromMainThread(messageEvent) {
     switch (messageEvent.data.type) {
         case 'CONNECT':
             if (websocket === undefined) {
-                websocket = new WebSocket(messageEvent.data.uri);
+                websocket = new window.WebSocket(messageEvent.data.uri);
                 websocket.binaryType = 'arraybuffer';
                 websocket.onmessage = handleSocketMessage;
                 websocket.onclose = handleSocketControl;
@@ -42,8 +44,8 @@ function onMessageFromMainThread(messageEvent) {
             }
             break;
         case 'CLOSE':
-            const portToRemove = messageEvent.currentTarget;
-            const index = allPorts.indexOf(portToRemove);
+            var portToRemove = messageEvent.currentTarget;
+            var index = allPorts.indexOf(portToRemove);
             if (index > -1) {
                 allPorts.splice(index, 1);
             }
@@ -57,6 +59,7 @@ function onMessageFromMainThread(messageEvent) {
             break;
     }
 }
+
 /**
  * @param {MessageEvent} messageEvent
  */
@@ -64,11 +67,10 @@ onconnect = function (messageEvent) {
     var port = messageEvent.ports[0];
     allPorts.push(port);
     port.onmessage = onMessageFromMainThread;
-
-}
+};
 
 function broadcastToAllPorts(msg) {
-    allPorts.forEach((port) => {
-        port.postMessage(msg);
-    });
+    for (var p = 0; p < allPorts.length; p++) {
+        allPorts[p].postMessage(msg);
+    }
 }
