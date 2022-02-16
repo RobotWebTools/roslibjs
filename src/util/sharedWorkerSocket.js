@@ -1,13 +1,20 @@
 // Goto chrome://inspect/#workers to inspect webworkers (and see console.logs !)
-
+const fs = require('fs');
 /**
  * @param {string} url to connect to, e.g. "ws://localhost:9090".
- * @param {string} sharedWorkerURL : shared worker are scripts. URL of this
- * script must be the same on all the tabs of your browser to be able to share
- * the same worker.
  */
-function SharedWorkerConnection(url, sharedWorkerURL) {
-    this.worker_ = new SharedWorker(sharedWorkerURL);
+function SharedWorkerConnection(url) {
+    // Here we use brfs to inline the worker code in the script variable bellow.
+    // The following line is evaluated at build time (when browserify "compile" the file).
+    // See the doc : https://www.npmjs.com/package/brfs
+    const script = fs.readFileSync(__dirname + '/sharedWorkerSocketImpl.js', 'utf8');
+    const b64script = window.btoa(unescape(encodeURIComponent( script )));
+    /* To construct a shared worker we need an URL. This URL must be striclty the same in all
+       browser windows. Here URL is the base64 encoded version of the worker code, so for
+       a same worker code, the URL will be the same in all windows !
+     */
+    this.worker_ = new SharedWorker(`data:application/javascript;base64,${b64script}`);
+
     this.worker_.port.start();
     this.worker_.port.postMessage({ type: 'CONNECT', uri: url });
     this.worker_.port.onmessage = (ev) => {

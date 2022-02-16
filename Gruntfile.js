@@ -14,19 +14,11 @@ module.exports = function(grunt) {
       dist: {
         src: ['./src/RosLibBrowser.js'],
         dest: './build/roslib.js',
-      },      
-    },
-    copy: {
-      shared_worker: {
-        files: [{src: ['./src/util/sharedWorkerSocketImpl.js'], dest: './build/sharedWorkerSocketImpl.js'}],
       },
-      /*This task would not be necessary if I succeed to configure Karma for serving properly the 
-       * sharedWorkerSocketImpl script.
-       */
-      shared_worker_test: {
-        files: [{src: ['./src/util/sharedWorkerSocketImpl.js'], dest: './test/sharedworkersocket/sharedWorkerSocketImpl.js'}],
-      }
-    },
+      options: {
+        transform: ['brfs']
+      }     
+    },   
     jshint: {
       options: {
         jshintrc: true
@@ -119,13 +111,13 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('dev', ['browserify', 'copy:shared_worker', 'watch']);
+  grunt.registerTask('dev', ['browserify', 'watch']);
   grunt.registerTask('test', ['jshint', 'mochaTest:test', 'karma:test']);
   grunt.registerTask('test-examples', ['mochaTest:examples', 'karma:examples']);
   grunt.registerTask('test-tcp', ['mochaTest:tcp']);
   grunt.registerTask('test-workersocket', ['karma:workersocket']);
-  grunt.registerTask('test-sharedworkersocket', ['copy:shared_worker_test', 'karma:sharedworkersocket']);
-  grunt.registerTask('build', ['browserify', 'copy:shared_worker', 'uglify']);
+  grunt.registerTask('test-sharedworkersocket', ['karma:sharedworkersocket']);
+  grunt.registerTask('build', ['browserify', 'uglify']);
   grunt.registerTask('build_and_watch', ['watch']);
   grunt.registerTask('doc', ['clean', 'jsdoc']);
 };

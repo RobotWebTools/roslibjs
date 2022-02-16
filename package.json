@@ -13,6 +13,7 @@
     "./src/util/decompressPng.js": "./src/util/shim/decompressPng.js"
   },
   "devDependencies": {
+    "brfs": "^2.0.2",
     "chai": "*",
     "grunt": "^1.0.0",
     "grunt-browserify": "^6.0.0",
