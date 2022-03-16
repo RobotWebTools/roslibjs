@@ -1,5 +1,5 @@
 /*global onconnect: true*/
-/*global window*/
+/*global WebSocket*/
 var websocket;
 var allPorts = [];
 
@@ -28,7 +28,7 @@ function onMessageFromMainThread(messageEvent) {
     switch (messageEvent.data.type) {
         case 'CONNECT':
             if (websocket === undefined) {
-                websocket = new window.WebSocket(messageEvent.data.uri);
+                websocket = new WebSocket(messageEvent.data.uri);
                 websocket.binaryType = 'arraybuffer';
                 websocket.onmessage = handleSocketMessage;
                 websocket.onclose = handleSocketControl;

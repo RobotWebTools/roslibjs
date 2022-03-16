@@ -29,8 +29,9 @@ function SharedWorkerConnection(url) {
 
     this.worker_.port.start();
     this.worker_.port.postMessage({ type: 'CONNECT', uri: url });
-    this.worker_.port.onmessage = function (ev) {
-        this.handleWorkerMessage_(ev);
+    var that = this;
+    this.worker_.port.onmessage = function(ev) {
+        that.handleWorkerMessage_(ev);
     };
 }
 
