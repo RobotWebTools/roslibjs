@@ -57,6 +57,7 @@
     "test": "grunt test",
     "test-examples": "grunt test-examples",
     "test-workersocket": "grunt test-workersocket",
+    "test-sharedworkersocket": "grunt test-sharedworkersocket",
     "test-tcp": "grunt test-tcp",
     "publish": "npm run build && npm run test"
   },
