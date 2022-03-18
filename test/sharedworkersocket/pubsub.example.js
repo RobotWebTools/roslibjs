@@ -6,10 +6,7 @@ describe('Topics Example', function() {
 
     var ros = new ROSLIB.Ros({
         url: 'ws://localhost:9090',
-        transportLibrary: 'sharedworker',
-        transportOptions: {
-            sharedWorkerURL: '/base/sharedWorkerSocketImpl.js'
-        }
+        transportLibrary: 'sharedworker'
     });
 
     var example = ros.Topic({
