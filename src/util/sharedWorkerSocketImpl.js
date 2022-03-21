@@ -19,6 +19,9 @@ function handleSocketMessage(ev) {
 
 function handleSocketControl(ev) {
     broadcastToAllPorts({ type: ev.type });
+    if (ev.type === 'close') {
+        websocket = undefined;
+    }
 }
 
 /**
@@ -35,11 +38,13 @@ function onMessageFromMainThread(messageEvent) {
                 websocket.onopen = handleSocketControl;
                 websocket.onerror = handleSocketControl;
             } else {
-                messageEvent.currentTarget.postMessage({ type: 'open' });
+                if (websocket.readyState === WebSocket.OPEN) {
+                    messageEvent.currentTarget.postMessage({ type: 'open' });
+                }
             }
             break;
         case 'WRITE':
-            if (websocket !== undefined) {
+            if (websocket !== undefined && websocket.readyState === WebSocket.OPEN) {
                 websocket.send(messageEvent.data.dataToWrite);
             }
             break;
