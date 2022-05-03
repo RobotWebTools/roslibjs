@@ -95,11 +95,12 @@ module.exports = function(grunt) {
     jsdoc: {
       doc: {
         src: [
+          './src/*.js',
           './src/**/*.js'
         ],
         options: {
           destination: './doc',
-          private: false
+          configure: 'jsdoc_conf.json'
         }
       }
     }
