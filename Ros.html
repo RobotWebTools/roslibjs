@@ -49,14 +49,15 @@
 
 
 <div class="description">
-    Manages connection to the server and all interactions with ROS.
-
-Emits the following events:
- * 'error' - there was an error with ROS
- * 'connection' - connected to the WebSocket server
- * 'close' - disconnected to the WebSocket server
- * <topicName> - a message came from rosbridge with the given topic name
- * <serviceID> - a service response came from rosbridge with the given ID
+    <p>Manages connection to the server and all interactions with ROS.</p>
+<p>Emits the following events:</p>
+<ul>
+<li>'error' - there was an error with ROS</li>
+<li>'connection' - connected to the WebSocket server</li>
+<li>'close' - disconnected to the WebSocket server</li>
+<li><topicName> - a message came from rosbridge with the given topic name</li>
+<li><serviceID> - a service response came from rosbridge with the given ID</li>
+</ul>
 </div>
 
 
@@ -103,11 +104,13 @@ Emits the following events:
 
             
 
-            <td class="description last">possible keys include: <br>
-  * url (optional) - (can be specified later with `connect`) the WebSocket URL for rosbridge or the node server url to connect using socket.io (if socket.io exists in the page) <br>
-  * groovyCompatibility - don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools (defaults to true)
-  * transportLibrary (optional) - one of 'websocket', 'workersocket' (default), 'socket.io' or RTCPeerConnection instance controlling how the connection is created in `connect`.
-  * transportOptions (optional) - the options to use use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.</td>
+            <td class="description last"><p>possible keys include: <br></p>
+<ul>
+<li>url (optional) - (can be specified later with <code>connect</code>) the WebSocket URL for rosbridge or the node server url to connect using socket.io (if socket.io exists in the page) <br></li>
+<li>groovyCompatibility - don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools (defaults to true)</li>
+<li>transportLibrary (optional) - one of 'websocket', 'workersocket' (default), 'socket.io' or RTCPeerConnection instance controlling how the connection is created in <code>connect</code>.</li>
+<li>transportOptions (optional) - the options to use use when creating a connection. Currently only used if <code>transportLibrary</code> is RTCPeerConnection.</li>
+</ul></td>
         </tr>
 
     
@@ -212,7 +215,7 @@ Emits the following events:
 
 
 <div class="description">
-    Sends an authorization request to the server.
+    <p>Sends an authorization request to the server.</p>
 </div>
 
 
@@ -259,7 +262,7 @@ Emits the following events:
 
             
 
-            <td class="description last">MAC (hash) string given by the trusted source.</td>
+            <td class="description last"><p>MAC (hash) string given by the trusted source.</p></td>
         </tr>
 
     
@@ -277,7 +280,7 @@ Emits the following events:
 
             
 
-            <td class="description last">IP of the client.</td>
+            <td class="description last"><p>IP of the client.</p></td>
         </tr>
 
     
@@ -295,7 +298,7 @@ Emits the following events:
 
             
 
-            <td class="description last">IP of the destination.</td>
+            <td class="description last"><p>IP of the destination.</p></td>
         </tr>
 
     
@@ -313,7 +316,7 @@ Emits the following events:
 
             
 
-            <td class="description last">Random string given by the trusted source.</td>
+            <td class="description last"><p>Random string given by the trusted source.</p></td>
         </tr>
 
     
@@ -331,7 +334,7 @@ Emits the following events:
 
             
 
-            <td class="description last">Time of the authorization request.</td>
+            <td class="description last"><p>Time of the authorization request.</p></td>
         </tr>
 
     
@@ -349,7 +352,7 @@ Emits the following events:
 
             
 
-            <td class="description last">User level as a string given by the client.</td>
+            <td class="description last"><p>User level as a string given by the client.</p></td>
         </tr>
 
     
@@ -367,7 +370,7 @@ Emits the following events:
 
             
 
-            <td class="description last">End time of the client's session.</td>
+            <td class="description last"><p>End time of the client's session.</p></td>
         </tr>
 
     
@@ -452,8 +455,8 @@ Emits the following events:
 
 
 <div class="description">
-    Sends the message over the WebSocket, but queues the message up if not yet
-connected.
+    <p>Sends the message over the WebSocket, but queues the message up if not yet
+connected.</p>
 </div>
 
 
@@ -541,7 +544,7 @@ connected.
 
 
 <div class="description">
-    Disconnect from the WebSocket server.
+    <p>Disconnect from the WebSocket server.</p>
 </div>
 
 
@@ -629,7 +632,7 @@ connected.
 
 
 <div class="description">
-    Connect to the specified WebSocket.
+    <p>Connect to the specified WebSocket.</p>
 </div>
 
 
@@ -676,7 +679,7 @@ connected.
 
             
 
-            <td class="description last">WebSocket URL or RTCDataChannel label for Rosbridge</td>
+            <td class="description last"><p>WebSocket URL or RTCDataChannel label for Rosbridge</p></td>
         </tr>
 
     
@@ -761,7 +764,7 @@ connected.
 
 
 <div class="description">
-    Decode a typedefs into a dictionary like `rosmsg show foo/bar`
+    <p>Decode a typedefs into a dictionary like <code>rosmsg show foo/bar</code></p>
 </div>
 
 
@@ -808,7 +811,7 @@ connected.
 
             
 
-            <td class="description last">array of type_def dictionary</td>
+            <td class="description last"><p>array of type_def dictionary</p></td>
         </tr>
 
     
@@ -893,7 +896,7 @@ connected.
 
 
 <div class="description">
-    Retrieves Action Servers in ROS as an array of string
+    <p>Retrieves Action Servers in ROS as an array of string</p>
 </div>
 
 
@@ -940,8 +943,10 @@ connected.
 
             
 
-            <td class="description last">function with params:
-  * actionservers - Array of action server names</td>
+            <td class="description last"><p>function with params:</p>
+<ul>
+<li>actionservers - Array of action server names</li>
+</ul></td>
         </tr>
 
     
@@ -959,8 +964,10 @@ connected.
 
             
 
-            <td class="description last">the callback function when the service call failed (optional). Params:
-  * error - the error message reported by ROS</td>
+            <td class="description last"><p>the callback function when the service call failed (optional). Params:</p>
+<ul>
+<li>error - the error message reported by ROS</li>
+</ul></td>
         </tr>
 
     
@@ -1045,7 +1052,7 @@ connected.
 
 
 <div class="description">
-    Retrieves a detail of ROS message.
+    <p>Retrieves a detail of ROS message.</p>
 </div>
 
 
@@ -1092,7 +1099,7 @@ connected.
 
             
 
-            <td class="description last">String of a topic type</td>
+            <td class="description last"><p>String of a topic type</p></td>
         </tr>
 
     
@@ -1110,8 +1117,10 @@ connected.
 
             
 
-            <td class="description last">function with params:
-  * details - Array of the message detail</td>
+            <td class="description last"><p>function with params:</p>
+<ul>
+<li>details - Array of the message detail</li>
+</ul></td>
         </tr>
 
     
@@ -1129,8 +1138,10 @@ connected.
 
             
 
-            <td class="description last">the callback function when the service call failed (optional). Params:
-  * error - the error message reported by ROS</td>
+            <td class="description last"><p>the callback function when the service call failed (optional). Params:</p>
+<ul>
+<li>error - the error message reported by ROS</li>
+</ul></td>
         </tr>
 
     
@@ -1215,7 +1226,7 @@ connected.
 
 
 <div class="description">
-    Retrieves list subscribed topics, publishing topics and services of a specific node
+    <p>Retrieves list subscribed topics, publishing topics and services of a specific node</p>
 </div>
 
 
@@ -1262,7 +1273,7 @@ connected.
 
             
 
-            <td class="description last">name of the node:</td>
+            <td class="description last"><p>name of the node:</p></td>
         </tr>
 
     
@@ -1280,10 +1291,12 @@ connected.
 
             
 
-            <td class="description last">function with params:
-  * publications - array of published topic names
-  * subscriptions - array of subscribed topic names
-  * services - array of service names hosted</td>
+            <td class="description last"><p>function with params:</p>
+<ul>
+<li>publications - array of published topic names</li>
+<li>subscriptions - array of subscribed topic names</li>
+<li>services - array of service names hosted</li>
+</ul></td>
         </tr>
 
     
@@ -1301,8 +1314,10 @@ connected.
 
             
 
-            <td class="description last">the callback function when the service call failed (optional). Params:
-  * error - the error message reported by ROS</td>
+            <td class="description last"><p>the callback function when the service call failed (optional). Params:</p>
+<ul>
+<li>error - the error message reported by ROS</li>
+</ul></td>
         </tr>
 
     
@@ -1387,7 +1402,7 @@ connected.
 
 
 <div class="description">
-    Retrieves list of active node names in ROS.
+    <p>Retrieves list of active node names in ROS.</p>
 </div>
 
 
@@ -1434,8 +1449,10 @@ connected.
 
             
 
-            <td class="description last">function with the following params:
-  * nodes - array of node names</td>
+            <td class="description last"><p>function with the following params:</p>
+<ul>
+<li>nodes - array of node names</li>
+</ul></td>
         </tr>
 
     
@@ -1453,8 +1470,10 @@ connected.
 
             
 
-            <td class="description last">the callback function when the service call failed (optional). Params:
-  * error - the error message reported by ROS</td>
+            <td class="description last"><p>the callback function when the service call failed (optional). Params:</p>
+<ul>
+<li>error - the error message reported by ROS</li>
+</ul></td>
         </tr>
 
     
@@ -1539,7 +1558,7 @@ connected.
 
 
 <div class="description">
-    Retrieves list of param names from the ROS Parameter Server.
+    <p>Retrieves list of param names from the ROS Parameter Server.</p>
 </div>
 
 
@@ -1586,8 +1605,10 @@ connected.
 
             
 
-            <td class="description last">function with params:
- * params - array of param names.</td>
+            <td class="description last"><p>function with params:</p>
+<ul>
+<li>params - array of param names.</li>
+</ul></td>
         </tr>
 
     
@@ -1605,8 +1626,10 @@ connected.
 
             
 
-            <td class="description last">the callback function when the service call failed (optional). Params:
-  * error - the error message reported by ROS</td>
+            <td class="description last"><p>the callback function when the service call failed (optional). Params:</p>
+<ul>
+<li>error - the error message reported by ROS</li>
+</ul></td>
         </tr>
 
     
@@ -1691,7 +1714,7 @@ connected.
 
 
 <div class="description">
-    Retrieves a detail of ROS service request.
+    <p>Retrieves a detail of ROS service request.</p>
 </div>
 
 
@@ -1738,7 +1761,7 @@ connected.
 
             
 
-            <td class="description last">name of service:</td>
+            <td class="description last"><p>name of service:</p></td>
         </tr>
 
     
@@ -1756,8 +1779,10 @@ connected.
 
             
 
-            <td class="description last">function with params:
-  * type - String of the service type</td>
+            <td class="description last"><p>function with params:</p>
+<ul>
+<li>type - String of the service type</li>
+</ul></td>
         </tr>
 
     
@@ -1775,8 +1800,10 @@ connected.
 
             
 
-            <td class="description last">the callback function when the service call failed (optional). Params:
-  * error - the error message reported by ROS</td>
+            <td class="description last"><p>the callback function when the service call failed (optional). Params:</p>
+<ul>
+<li>error - the error message reported by ROS</li>
+</ul></td>
         </tr>
 
     
@@ -1861,7 +1888,7 @@ connected.
 
 
 <div class="description">
-    Retrieves a detail of ROS service request.
+    <p>Retrieves a detail of ROS service request.</p>
 </div>
 
 
@@ -1908,7 +1935,7 @@ connected.
 
             
 
-            <td class="description last">name of service</td>
+            <td class="description last"><p>name of service</p></td>
         </tr>
 
     
@@ -1926,8 +1953,10 @@ connected.
 
             
 
-            <td class="description last">function with params:
-  * type - String of the service type</td>
+            <td class="description last"><p>function with params:</p>
+<ul>
+<li>type - String of the service type</li>
+</ul></td>
         </tr>
 
     
@@ -1945,8 +1974,10 @@ connected.
 
             
 
-            <td class="description last">the callback function when the service call failed (optional). Params:
-  * error - the error message reported by ROS</td>
+            <td class="description last"><p>the callback function when the service call failed (optional). Params:</p>
+<ul>
+<li>error - the error message reported by ROS</li>
+</ul></td>
         </tr>
 
     
@@ -2031,7 +2062,7 @@ connected.
 
 
 <div class="description">
-    Retrieves list of active service names in ROS.
+    <p>Retrieves list of active service names in ROS.</p>
 </div>
 
 
@@ -2078,8 +2109,10 @@ connected.
 
             
 
-            <td class="description last">function with the following params:
-  * services - array of service names</td>
+            <td class="description last"><p>function with the following params:</p>
+<ul>
+<li>services - array of service names</li>
+</ul></td>
         </tr>
 
     
@@ -2097,8 +2130,10 @@ connected.
 
             
 
-            <td class="description last">the callback function when the service call failed (optional). Params:
-  * error - the error message reported by ROS</td>
+            <td class="description last"><p>the callback function when the service call failed (optional). Params:</p>
+<ul>
+<li>error - the error message reported by ROS</li>
+</ul></td>
         </tr>
 
     
@@ -2183,7 +2218,7 @@ connected.
 
 
 <div class="description">
-    Retrieves list of services in ROS as an array as specific type
+    <p>Retrieves list of services in ROS as an array as specific type</p>
 </div>
 
 
@@ -2230,7 +2265,7 @@ connected.
 
             
 
-            <td class="description last">service type to find</td>
+            <td class="description last"><p>service type to find</p></td>
         </tr>
 
     
@@ -2248,8 +2283,10 @@ connected.
 
             
 
-            <td class="description last">function with params:
-  * topics - Array of service names</td>
+            <td class="description last"><p>function with params:</p>
+<ul>
+<li>topics - Array of service names</li>
+</ul></td>
         </tr>
 
     
@@ -2267,8 +2304,10 @@ connected.
 
             
 
-            <td class="description last">the callback function when the service call failed (optional). Params:
-  * error - the error message reported by ROS</td>
+            <td class="description last"><p>the callback function when the service call failed (optional). Params:</p>
+<ul>
+<li>error - the error message reported by ROS</li>
+</ul></td>
         </tr>
 
     
@@ -2353,7 +2392,7 @@ connected.
 
 
 <div class="description">
-    Retrieves a type of ROS service.
+    <p>Retrieves a type of ROS service.</p>
 </div>
 
 
@@ -2400,7 +2439,7 @@ connected.
 
             
 
-            <td class="description last">name of service:</td>
+            <td class="description last"><p>name of service:</p></td>
         </tr>
 
     
@@ -2418,8 +2457,10 @@ connected.
 
             
 
-            <td class="description last">function with params:
-  * type - String of the service type</td>
+            <td class="description last"><p>function with params:</p>
+<ul>
+<li>type - String of the service type</li>
+</ul></td>
         </tr>
 
     
@@ -2437,8 +2478,10 @@ connected.
 
             
 
-            <td class="description last">the callback function when the service call failed (optional). Params:
-  * error - the error message reported by ROS</td>
+            <td class="description last"><p>the callback function when the service call failed (optional). Params:</p>
+<ul>
+<li>error - the error message reported by ROS</li>
+</ul></td>
         </tr>
 
     
@@ -2523,7 +2566,7 @@ connected.
 
 
 <div class="description">
-    Retrieves list of topics in ROS as an array.
+    <p>Retrieves list of topics in ROS as an array.</p>
 </div>
 
 
@@ -2570,9 +2613,11 @@ connected.
 
             
 
-            <td class="description last">function with params:
-  * topics - Array of topic names
-  * types - Array of message type names</td>
+            <td class="description last"><p>function with params:</p>
+<ul>
+<li>topics - Array of topic names</li>
+<li>types - Array of message type names</li>
+</ul></td>
         </tr>
 
     
@@ -2590,8 +2635,10 @@ connected.
 
             
 
-            <td class="description last">the callback function when the service call failed (optional). Params:
-  * error - the error message reported by ROS</td>
+            <td class="description last"><p>the callback function when the service call failed (optional). Params:</p>
+<ul>
+<li>error - the error message reported by ROS</li>
+</ul></td>
         </tr>
 
     
@@ -2676,7 +2723,7 @@ connected.
 
 
 <div class="description">
-    Retrieves list of topics and their associated type definitions.
+    <p>Retrieves list of topics and their associated type definitions.</p>
 </div>
 
 
@@ -2723,10 +2770,12 @@ connected.
 
             
 
-            <td class="description last">function with params:
-  * topics - Array of topic names
-  * types - Array of message type names
-  * typedefs_full_text - Array of full definitions of message types, similar to `gendeps --cat`</td>
+            <td class="description last"><p>function with params:</p>
+<ul>
+<li>topics - Array of topic names</li>
+<li>types - Array of message type names</li>
+<li>typedefs_full_text - Array of full definitions of message types, similar to <code>gendeps --cat</code></li>
+</ul></td>
         </tr>
 
     
@@ -2744,8 +2793,10 @@ connected.
 
             
 
-            <td class="description last">the callback function when the service call failed (optional). Params:
-  * error - the error message reported by ROS</td>
+            <td class="description last"><p>the callback function when the service call failed (optional). Params:</p>
+<ul>
+<li>error - the error message reported by ROS</li>
+</ul></td>
         </tr>
 
     
@@ -2830,7 +2881,7 @@ connected.
 
 
 <div class="description">
-    Retrieves Topics in ROS as an array as specific type
+    <p>Retrieves Topics in ROS as an array as specific type</p>
 </div>
 
 
@@ -2877,7 +2928,7 @@ connected.
 
             
 
-            <td class="description last">topic type to find</td>
+            <td class="description last"><p>topic type to find</p></td>
         </tr>
 
     
@@ -2895,8 +2946,10 @@ connected.
 
             
 
-            <td class="description last">function with params:
-  * topics - Array of topic names</td>
+            <td class="description last"><p>function with params:</p>
+<ul>
+<li>topics - Array of topic names</li>
+</ul></td>
         </tr>
 
     
@@ -2914,8 +2967,10 @@ connected.
 
             
 
-            <td class="description last">the callback function when the service call failed (optional). Params:
-  * error - the error message reported by ROS</td>
+            <td class="description last"><p>the callback function when the service call failed (optional). Params:</p>
+<ul>
+<li>error - the error message reported by ROS</li>
+</ul></td>
         </tr>
 
     
@@ -3000,7 +3055,7 @@ connected.
 
 
 <div class="description">
-    Retrieves a type of ROS topic.
+    <p>Retrieves a type of ROS topic.</p>
 </div>
 
 
@@ -3047,7 +3102,7 @@ connected.
 
             
 
-            <td class="description last">name of the topic:</td>
+            <td class="description last"><p>name of the topic:</p></td>
         </tr>
 
     
@@ -3065,8 +3120,10 @@ connected.
 
             
 
-            <td class="description last">function with params:
-  * type - String of the topic type</td>
+            <td class="description last"><p>function with params:</p>
+<ul>
+<li>type - String of the topic type</li>
+</ul></td>
         </tr>
 
     
@@ -3084,8 +3141,10 @@ connected.
 
             
 
-            <td class="description last">the callback function when the service call failed (optional). Params:
-  * error - the error message reported by ROS</td>
+            <td class="description last"><p>the callback function when the service call failed (optional). Params:</p>
+<ul>
+<li>error - the error message reported by ROS</li>
+</ul></td>
         </tr>
 
     
@@ -3170,7 +3229,7 @@ connected.
 
 
 <div class="description">
-    Sends a set_level request to the server
+    <p>Sends a set_level request to the server</p>
 </div>
 
 
@@ -3217,7 +3276,7 @@ connected.
 
             
 
-            <td class="description last">Status level (none, error, warning, info)</td>
+            <td class="description last"><p>Status level (none, error, warning, info)</p></td>
         </tr>
 
     
@@ -3235,7 +3294,7 @@ connected.
 
             
 
-            <td class="description last">Optional: Operation ID to change status level on</td>
+            <td class="description last"><p>Optional: Operation ID to change status level on</p></td>
         </tr>
 
     
@@ -3328,7 +3387,7 @@ connected.
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Jan 10 2022 09:16:37 GMT+0100 (Central European Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Tue May 03 2022 15:43:24 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
