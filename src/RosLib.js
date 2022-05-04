@@ -9,6 +9,10 @@
  * If you use nodejs, this is the variable you get when you require('roslib')
  */
 var ROSLIB = this.ROSLIB || {
+  /**
+   * @default
+   * @description Library version
+   */
   REVISION : '1.3.0'
 };
 
