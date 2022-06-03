@@ -2,6 +2,10 @@ name: CI
 
 on: [push, pull_request]
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   ci:
     name: ${{ matrix.ros_distro }}
@@ -30,8 +34,6 @@ jobs:
           apt-get install -y ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
       - name: Tests
         run: |
-          ls -la /opt/ros
-          ls -la /opt/ros/$ROS_DISTRO
           source /opt/ros/$ROS_DISTRO/setup.bash
           test/build.bash
       - uses: stefanzweifel/git-auto-commit-action@v4
