@@ -7,6 +7,7 @@ jobs:
     name: ${{ matrix.ros_distro }}
     if: ${{ github.actor != 'RWT-bot' }}
     runs-on: ubuntu-latest
+    container: ros:${{ matrix.ros_distro }}-ros-core
     strategy:
       fail-fast: false
       matrix:
@@ -18,12 +19,16 @@ jobs:
           TOKEN: "${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' && secrets.RWT_BOT_PAT || github.token }}"
         with:
           token: ${{ env.TOKEN }}
-      - name: Docker pull
-        run: docker pull ros:${{ matrix.ros_distro }}-ros-core
-      - name: Docker build
-        run: docker build --build-arg ROS_DISTRO="${{ matrix.ros_distro }}" --build-arg NODE_VERSION="${{ matrix.node_version }}" -t roslibjsdocker .
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node_version }}
+      - name: Install apt dependencies
+        env:
+          ROS_DISTRO: ${{ matrix.ros_distro }}
+        run: |
+          apt-get update && apt-get install -y ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
       - name: Tests
-        run: docker run -v $(pwd):/root/roslibjs --rm roslibjsdocker bash -i -c 'bash /root/roslibjs/test/build.bash'
+        run: source /opt/ros/$ROS_DISTRO/setup.bash && bash test/build.bash'
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: ${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' }}
         with:
