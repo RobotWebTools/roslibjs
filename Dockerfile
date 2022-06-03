@@ -10,7 +10,7 @@ RUN apt update && apt-get install -y firefox git wget ros-$ROS_DISTRO-rosbridge-
 # Install nvm, Node.js and node-gyp
 ARG NODE_VERSION=14
 RUN git clone -b v0.39.1 --single-branch --depth 1 https://github.com/nvm-sh/nvm.git $HOME/.nvm \
-    && echo ". $HOME/.nvm/nvm.sh --no-use" && . $HOME/.nvm/nvm.sh --no-use \
+    && echo ". $HOME/.nvm/nvm.sh" && . $HOME/.nvm/nvm.sh \
     && echo "nvm install $NODE_VERSION --no-progress" && nvm install $NODE_VERSION --no-progress \
     && echo "nvm alias default $NODE_VERSION" && nvm alias default $NODE_VERSION \
     && npm install -g node-gyp
