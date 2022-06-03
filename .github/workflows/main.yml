@@ -13,6 +13,8 @@ jobs:
       matrix:
         ros_distro: [melodic, noetic]
         node_version: [14]
+    env:
+      ROS_DISTRO: ${{ matrix.ros_distro }}
     steps:
       - uses: actions/checkout@v3
         env:
@@ -23,8 +25,6 @@ jobs:
         with:
           node-version: ${{ matrix.node_version }}
       - name: Install apt dependencies
-        env:
-          ROS_DISTRO: ${{ matrix.ros_distro }}
         run: |
           apt-get update
           apt-get install -y ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
