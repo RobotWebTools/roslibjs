@@ -11,6 +11,7 @@ RUN apt update && apt-get install -y firefox git wget ros-$ROS_DISTRO-rosbridge-
 ARG NODE_VERSION=14
 RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash \
     && . $HOME/.nvm/nvm.sh \
+    $$ echo "NVM_NO_PROGRESS: ${NVM_NO_PROGRESS}"
     && nvm install $NODE_VERSION --no-progress && nvm alias default $NODE_VERSION \
     && npm install -g node-gyp
 
