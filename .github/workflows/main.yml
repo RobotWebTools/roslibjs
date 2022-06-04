@@ -11,9 +11,7 @@ jobs:
     name: ${{ matrix.ros_distro }}
     if: ${{ github.actor != 'RWT-bot' }}
     runs-on: ubuntu-latest
-    container:
-      image: ros:${{ matrix.ros_distro }}-ros-core
-      options: --user 1001:root
+    container: ros:${{ matrix.ros_distro }}-ros-core
     strategy:
       fail-fast: false
       matrix:
@@ -32,12 +30,12 @@ jobs:
           node-version: ${{ matrix.node_version }}
       - name: Install apt dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y firefox ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
+          apt-get update
+          apt-get install -y firefox ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
       - name: Tests
         run: |
           source /opt/ros/$ROS_DISTRO/setup.bash
-          bash test/build.bash
+          sudo -H -u 1001 bash test/build.bash
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: ${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' }}
         with:
