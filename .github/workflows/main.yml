@@ -35,7 +35,7 @@ jobs:
       - name: Tests
         run: |
           source /opt/ros/$ROS_DISTRO/setup.bash
-          sudo -H -u 1001 bash test/build.bash
+          sudo -H bash test/build.bash
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: ${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' }}
         with:
