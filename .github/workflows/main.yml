@@ -12,6 +12,7 @@ jobs:
     if: ${{ github.actor != 'RWT-bot' }}
     runs-on: ubuntu-latest
     container: ros:${{ matrix.ros_distro }}-ros-core
+    options: --user 1001
     strategy:
       fail-fast: false
       matrix:
