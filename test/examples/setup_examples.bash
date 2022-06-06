@@ -6,8 +6,10 @@ then
     echo "PID of this script: $$"
     echo 'pgrep -f "[r]os"'
     pgrep -f "[r]os"
+    echo "ps -aux"
+    ps -aux
     echo 'pgrep -f "[r]os" | xargs kill -9'
-    # pgrep -f "[r]os" | xargs kill -9
+    pgrep -f "roslaunch" | xargs kill -9
     sleep 1
 
     echo "Starting roscore and various examples in background processes"
