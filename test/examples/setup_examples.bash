@@ -3,6 +3,7 @@
 if command -v rosrun 2>/dev/null
 then
     echo "Shutting everything down"
+    echo "PID of this script: $$"
     echo 'pgrep -f "[r]os"'
     pgrep -f "[r]os"
     echo 'pgrep -f "[r]os" | xargs kill -9'
