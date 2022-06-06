@@ -18,8 +18,9 @@ then
     do
         echo "Waiting for /hello_world_publisher...$i"
         sleep 1
-        rostopic info /listener > /dev/null && LAUNCHED=true && break
+        rostopic info /listener > /dev/null && LAUNCHED=true && echo "break" && break
     done
+    echo "end of loop"
     if [ $LAUNCHED == true ]
     then
         echo "Ready for lift off"
