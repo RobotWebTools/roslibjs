@@ -17,6 +17,8 @@ then
     for i in {1..10}
     do
         echo "Waiting for /hello_world_publisher...$i"
+        echo 'pgrep -f "[r]os"'
+        pgrep -f "[r]os"
         echo "mem usage"
         pgrep -f "[r]os" | xargs top -p
         echo "start op sleep"
