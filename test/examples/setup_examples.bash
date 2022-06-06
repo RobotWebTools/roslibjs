@@ -20,6 +20,7 @@ then
         echo 'pgrep -f "[r]os"'
         pgrep -f "[r]os"
         echo "mem usage"
+        export TERM=linux
         pgrep -f "[r]os" | xargs top -p
         echo "start op sleep"
         sleep 1
