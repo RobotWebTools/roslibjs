@@ -3,6 +3,9 @@
 if command -v rosrun 2>/dev/null
 then
     echo "Shutting everything down"
+    echo 'pgrep -f "[r]os"'
+    pgrep -f "[r]os"
+    echo 'pgrep -f "[r]os" | xargs kill -9'
     pgrep -f "[r]os" | xargs kill -9
     sleep 1
 
