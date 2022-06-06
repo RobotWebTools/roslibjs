@@ -17,6 +17,9 @@ then
     for i in {1..10}
     do
         echo "Waiting for /hello_world_publisher...$i"
+        echo "mem usage"
+        pgrep -f "[r]os" | xargs top -p
+        echo "start op sleep"
         sleep 1
         echo "end of sleep"
         rostopic info /listener
