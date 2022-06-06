@@ -3,7 +3,8 @@ name: CI
 on: [push, pull_request]
 
 defaults:
-  run: bash
+  run:
+    shell: bash
 
 jobs:
   ci:
