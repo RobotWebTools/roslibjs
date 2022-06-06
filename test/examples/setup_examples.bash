@@ -18,6 +18,9 @@ then
     do
         echo "Waiting for /hello_world_publisher...$i"
         sleep 1
+        echo "end of sleep"
+        rostopic info /listener
+        echo "end of 'rostopic info /listener'"
         rostopic info /listener > /dev/null && LAUNCHED=true && echo "break" && break
     done
     echo "end of loop"
