@@ -19,8 +19,12 @@ function handleSocketMessage(ev) {
 
 function handleSocketControl(ev) {
     broadcastToAllPorts({ type: ev.type });
-    if (ev.type === 'close') {
+    if (ev.type === 'close' && websocket !== undefined) {
+        websocket.close();
         websocket = undefined;
+        for (var p = 0; p < allPorts.length; p++) {
+            allPorts[p].close();
+        }
     }
 }
 
@@ -30,7 +34,7 @@ function handleSocketControl(ev) {
 function onMessageFromMainThread(messageEvent) {
     switch (messageEvent.data.type) {
         case 'CONNECT':
-            if (websocket === undefined) {
+            if (websocket === undefined || websocket.url !== messageEvent.data.uri) {
                 websocket = new WebSocket(messageEvent.data.uri);
                 websocket.binaryType = 'arraybuffer';
                 websocket.onmessage = handleSocketMessage;
@@ -54,7 +58,7 @@ function onMessageFromMainThread(messageEvent) {
             if (index > -1) {
                 allPorts.splice(index, 1);
             }
-            // Paranoïd check : 
+            // Paranoïd check :
             // If allPorts became empty the browser will shutdown
             // this worker.
             if (allPorts.length === 0) {
