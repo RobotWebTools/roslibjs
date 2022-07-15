@@ -25,6 +25,7 @@ function handleSocketControl(ev) {
         for (var p = 0; p < allPorts.length; p++) {
             allPorts[p].close();
         }
+        allPorts = [];
     }
 }
 
@@ -34,7 +35,16 @@ function handleSocketControl(ev) {
 function onMessageFromMainThread(messageEvent) {
     switch (messageEvent.data.type) {
         case 'CONNECT':
-            if (websocket === undefined || websocket.url !== messageEvent.data.uri) {
+            // Compare urls figures without special characters
+            var extractNumbersFromUrl = 0;
+            var extractNumbersFromUri = 0;
+            if (websocket !== undefined) {
+                extractNumbersFromUrl = websocket.url.match(/\d/g);
+                extractNumbersFromUrl = extractNumbersFromUrl.join('');
+                extractNumbersFromUri = messageEvent.data.uri.match(/\d/g);
+                extractNumbersFromUri = extractNumbersFromUri.join('');
+            }
+            if (websocket === undefined || extractNumbersFromUrl !== extractNumbersFromUri) {
                 websocket = new WebSocket(messageEvent.data.uri);
                 websocket.binaryType = 'arraybuffer';
                 websocket.onmessage = handleSocketMessage;
@@ -53,18 +63,12 @@ function onMessageFromMainThread(messageEvent) {
             }
             break;
         case 'CLOSE':
-            var portToRemove = messageEvent.currentTarget;
-            var index = allPorts.indexOf(portToRemove);
-            if (index > -1) {
-                allPorts.splice(index, 1);
+            for (var p = 0; p < allPorts.length; p++) {
+                allPorts[p].close();
             }
-            // Paranoïd check :
-            // If allPorts became empty the browser will shutdown
-            // this worker.
-            if (allPorts.length === 0) {
-                websocket.close();
-                websocket = undefined;
-            }
+            websocket.close();
+            websocket = undefined;
+            allPorts = [];
             break;
     }
 }
