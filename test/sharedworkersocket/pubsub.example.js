@@ -2,7 +2,7 @@ var expect = require('chai').expect;
 var ROSLIB = require('../..');
 
 describe('Topics Example', function() {
-    this.timeout(1000);
+    this.timeout(2000);
 
     var ros = new ROSLIB.Ros({
         url: 'ws://localhost:9090',
