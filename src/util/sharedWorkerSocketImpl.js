@@ -5,7 +5,6 @@ var allPorts = [];
 
 function handleSocketMessage(ev) {
     var data = ev.data;
-
     if (data instanceof ArrayBuffer) {
         // binary message, transfer for speed
         for (var p = 0; p < allPorts.length; p++) {
@@ -35,16 +34,23 @@ function handleSocketControl(ev) {
 function onMessageFromMainThread(messageEvent) {
     switch (messageEvent.data.type) {
         case 'CONNECT':
-            // Compare urls figures without special characters
-            var extractNumbersFromUrl = 0;
-            var extractNumbersFromUri = 0;
-            if (websocket !== undefined) {
-                extractNumbersFromUrl = websocket.url.match(/\d/g);
-                extractNumbersFromUrl = extractNumbersFromUrl.join('');
-                extractNumbersFromUri = messageEvent.data.uri.match(/\d/g);
-                extractNumbersFromUri = extractNumbersFromUri.join('');
+            var mustCreateANewWebSocket = false;
+            if (websocket === undefined) {
+                mustCreateANewWebSocket = true;
+            } else if (websocket.url !== messageEvent.data.uri) {
+                // Compare urls figures without special characters to compare websocket url and message url ip and port
+                // Ex: websocket url = ws://127.0.0.1:9090 and message url = ws://127.0.0.1:9090/ strings are differents
+                // but ip and port remain the same
+                var numbersExrtactedFromWebsocketURL = websocket.url.match(/\d/g);
+                numbersExrtactedFromWebsocketURL = numbersExrtactedFromWebsocketURL.join('');
+                var numbersExrtactedFromMessageURL = messageEvent.data.uri.match(/\d/g);
+                numbersExrtactedFromMessageURL = numbersExrtactedFromMessageURL.join('');
+                if(numbersExrtactedFromWebsocketURL !== numbersExrtactedFromMessageURL){
+                    websocket.close();
+                    mustCreateANewWebSocket = true;
+                }
             }
-            if (websocket === undefined || extractNumbersFromUrl !== extractNumbersFromUri) {
+            if (mustCreateANewWebSocket) {
                 websocket = new WebSocket(messageEvent.data.uri);
                 websocket.binaryType = 'arraybuffer';
                 websocket.onmessage = handleSocketMessage;
@@ -63,12 +69,18 @@ function onMessageFromMainThread(messageEvent) {
             }
             break;
         case 'CLOSE':
-            for (var p = 0; p < allPorts.length; p++) {
-                allPorts[p].close();
+            var portToRemove = messageEvent.currentTarget;
+            var index = allPorts.indexOf(portToRemove);
+            if (index > -1) {
+                allPorts.splice(index, 1);
             }
-            websocket.close();
-            websocket = undefined;
-            allPorts = [];
+            // Paranoïd check :
+            // If allPorts became empty the browser will shutdown
+            // this worker.
+            if (allPorts.length === 0) {
+                websocket.close();
+                websocket = undefined;
+            }
             break;
     }
 }
