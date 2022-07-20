@@ -13,7 +13,7 @@ jobs:
         ros_distro: [melodic, noetic]
         node_version: [14]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         env:
           TOKEN: "${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' && secrets.RWT_BOT_PAT || github.token }}"
         with:

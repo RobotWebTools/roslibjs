@@ -1,0 +1,28 @@
+name: Docs Deployment
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  docs:
+    name: Docs Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install
+        run: npm ci
+      - name: Generate docs
+        run: npm run doc
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.RWT_BOT_PAT }}
+          publish_dir: doc
+          destination_dir: .
+          enable_jekyll: false
+          force_orphan: false  # So we keep the doc history
+          commit_message: JSDoc ${{ github.event.release.name }}
