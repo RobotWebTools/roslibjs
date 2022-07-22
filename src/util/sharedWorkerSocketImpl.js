@@ -38,14 +38,12 @@ function onMessageFromMainThread(messageEvent) {
             if (websocket === undefined) {
                 mustCreateANewWebSocket = true;
             } else if (websocket.url !== messageEvent.data.uri) {
-                // Compare urls figures without special characters to compare websocket url and message url ip and port
+                // Compare urls ip and port via URL object host comparison
                 // Ex: websocket url = ws://127.0.0.1:9090 and message url = ws://127.0.0.1:9090/ strings are differents
                 // but ip and port remain the same
-                var numbersExrtactedFromWebsocketURL = websocket.url.match(/\d/g);
-                numbersExrtactedFromWebsocketURL = numbersExrtactedFromWebsocketURL.join('');
-                var numbersExrtactedFromMessageURL = messageEvent.data.uri.match(/\d/g);
-                numbersExrtactedFromMessageURL = numbersExrtactedFromMessageURL.join('');
-                if(numbersExrtactedFromWebsocketURL !== numbersExrtactedFromMessageURL){
+                var websocketURL = new URL(websocket.url);
+                var urlFromMessage = new URL(messageEvent.data.uri);
+                if(websocketURL.host !== urlFromMessage.host){
                     websocket.close();
                     mustCreateANewWebSocket = true;
                 }
