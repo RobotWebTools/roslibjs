@@ -3,13 +3,7 @@
 if command -v rosrun 2>/dev/null
 then
     echo "Shutting everything down"
-    echo "PID of this script: $$"
-    echo 'pgrep -f "[r]os"'
-    pgrep -f "[r]os"
-    echo "ps -aux"
-    ps -aux
-    echo 'pgrep -f "[r]os" | xargs kill -9'
-    pgrep -f "roslaunch" | xargs kill -9
+    pgrep -f "[r]os" | xargs kill -9
     sleep 1
 
     echo "Starting roscore and various examples in background processes"
@@ -19,16 +13,7 @@ then
     for i in {1..10}
     do
         echo "Waiting for /hello_world_publisher...$i"
-        echo 'pgrep -f "[r]os"'
-        pgrep -f "[r]os"
-        echo "mem usage"
-        export TERM=linux
-        pgrep -f "[r]os" | xargs top -p
-        echo "start op sleep"
         sleep 1
-        echo "end of sleep"
-        rostopic info /listener
-        echo "end of 'rostopic info /listener'"
         rostopic info /listener > /dev/null && LAUNCHED=true && echo "break" && break
     done
     echo "end of loop"
