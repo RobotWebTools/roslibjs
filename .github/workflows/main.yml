@@ -28,6 +28,15 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
+      - name: get node version
+        run: |
+          node --version; npm --version; which -a node; echo $PATH
+      - name: get node version sudo
+        run: |
+          sudo node --version; sudo npm --version; sudo which -a node; sudo echo $PATH
+      - name: get node version sudo -H
+        run: |
+          sudo -H node --version; sudo -H npm --version; sudo -H which -a node; sudo -H echo $PATH
       - name: Install apt dependencies
         run: |
           apt-get update
