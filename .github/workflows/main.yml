@@ -31,9 +31,6 @@ jobs:
       - name: get node version
         run: |
           node --version; npm --version; which -a node; echo $PATH
-      - name: get node version sudo -H
-        run: |
-          sudo -H node --version; sudo -H npm --version; sudo -H which -a node; sudo -H echo $PATH
       - name: Install apt dependencies
         run: |
           apt-get update
