@@ -31,9 +31,9 @@ jobs:
       - name: get node version
         run: |
           node --version; npm --version; which -a node; echo $PATH
-      - name: ll /github
+      - name: ls -alF /github
         run: |
-          ll /github
+          ls -alF /github
       - name: whoami
         run: |
           whoami
