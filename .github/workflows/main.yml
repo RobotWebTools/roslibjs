@@ -28,19 +28,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
-      - name: get node version
-        run: |
-          node --version; npm --version; which -a node; echo $PATH
-      - name: ls -alF /github
-        run: |
-          ls -alF /github
-      - name: ls -alF /github/home
-        run: |
-          ls -alF /github/home
-      - name: ls -alF /github/workflow
-        run: |
-          ls -alF /github/workflow
-      - name: Own /github
+      - name: Own /github/home
         run: |
           chown -hR $(whoami):$(whoami) /github/home
       - name: ls -alF /github2
