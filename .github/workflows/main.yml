@@ -31,15 +31,21 @@ jobs:
       - name: get node version
         run: |
           node --version; npm --version; which -a node; echo $PATH
-      - name: Own /github
-        run: |
-          chown -hR root:root /github
       - name: ls -alF /github
         run: |
           ls -alF /github
-      - name: whoami
+      - name: ls -alF /github/home
         run: |
-          whoami
+          ls -alF /github/home
+      - name: ls -alF /github/workflow
+        run: |
+          ls -alF /github/workflow
+      - name: Own /github
+        run: |
+          chown -hR $(whoami):$(whoami) /github/home
+      - name: ls -alF /github2
+        run: |
+          ls -alF /github
       - name: Install apt dependencies
         run: |
           apt-get update
