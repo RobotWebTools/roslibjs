@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         ros_distro: [melodic, noetic]
-        node_version: [14]
+        node_version: [14, 16]
     env:
       ROS_DISTRO: ${{ matrix.ros_distro }}
     steps:
@@ -40,7 +40,7 @@ jobs:
         run: |
           bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && bash test/build.bash"
       - uses: stefanzweifel/git-auto-commit-action@v4
-        if: ${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' }}
+        if: ${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' && matrix.node_version == 16 }}
         with:
           commit_message: Update Build
           file_pattern: 'build/*.js'
