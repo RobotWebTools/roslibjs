@@ -8,7 +8,7 @@ defaults:
 
 jobs:
   ci:
-    name: ${{ matrix.ros_distro }}
+    name: ${{ matrix.ros_distro }} (node ${{ matrix.node_version }})
     if: ${{ github.actor != 'RWT-bot' }}
     runs-on: ubuntu-latest
     container: ros:${{ matrix.ros_distro }}-ros-core
