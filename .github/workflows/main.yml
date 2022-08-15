@@ -31,9 +31,6 @@ jobs:
       - name: Own /github/home
         run: |
           chown -hR $(whoami):$(whoami) /github/home
-      - name: ls -alF /github2
-        run: |
-          ls -alF /github
       - name: Install apt dependencies
         run: |
           apt-get update
