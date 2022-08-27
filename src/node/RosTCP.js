@@ -5,9 +5,9 @@ var socketAdapter = require('../core/SocketAdapter.js');
 var util = require('util');
 
 /**
- * Same as core Ros except supports TCP connections
- * also can receive a socket.io instance (options.socketio) or server instance (option.http)
- * to connect to the front using socket.io
+ * Same as core Ros except supports TCP connections.
+ * This can also receive a socket.io instance (options.socketio) or server instance (option.http)
+ * to connect to the front using socket.io.
  * @private
  */
 function RosTCP(options) {
@@ -33,10 +33,10 @@ function RosTCP(options) {
 util.inherits(RosTCP, Ros);
 
 /**
- * Connects to a live socket
+ * Connect to a live socket.
  *
- * * url (String|Int|Object): Address and port to connect to (see http://nodejs.org/api/net.html)
- *     format {host: String, port: Int} or (port:Int), or "host:port"
+ * @param {string|number|Object} url - Address and port to connect to (see http://nodejs.org/api/net.html).
+ *     Format: {host: String, port: Int} or (port:Int) or "host:port".
  */
 RosTCP.prototype.connect = function(url) {
   if (typeof url === 'string' && (url.slice(0, 5) === 'ws://' || url.slice(0, 6) === 'wss://')) {

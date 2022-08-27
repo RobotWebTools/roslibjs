@@ -11,14 +11,14 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  * An actionlib action server client.
  *
  * Emits the following events:
- *  * 'goal' - goal sent by action client
- *  * 'cancel' - action client has canceled the request
+ *  * 'goal' - Goal sent by action client.
+ *  * 'cancel' - Action client has canceled the request.
  *
- *  @constructor
- *  @param options - object with following keys:
- *   * ros - the ROSLIB.Ros connection handle
- *   * serverName - the action server name, like /fibonacci
- *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
+ * @constructor
+ * @param {Object} options - An object with the following keys:
+ * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+ * @param {string} options.serverName - The action server name, like '/fibonacci'.
+ * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
  */
 
 function SimpleActionServer(options) {
@@ -89,7 +89,7 @@ function SimpleActionServer(options) {
     }
     });
 
-    // helper function for determing ordering of timestamps
+    // helper function to determine ordering of timestamps
     // returns t1 < t2
     var isEarlier = function(t1, t2) {
         if(t1.secs > t2.secs) {
@@ -149,8 +149,10 @@ function SimpleActionServer(options) {
 SimpleActionServer.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
-*  Set action state to succeeded and return to client
-*/
+ * Set action state to succeeded and return to client.
+ *
+ * @param {Object} result - The result to return to the client.
+ */
 
 SimpleActionServer.prototype.setSucceeded = function(result2) {
     
@@ -172,8 +174,10 @@ SimpleActionServer.prototype.setSucceeded = function(result2) {
 };
 
 /**
-*  Set action state to aborted and return to client
-*/
+ * Set action state to aborted and return to client.
+ *
+ * @param {Object} result - The result to return to the client.
+ */
 
 SimpleActionServer.prototype.setAborted = function(result2) {
     var resultMessage = new Message({
@@ -193,8 +197,10 @@ SimpleActionServer.prototype.setAborted = function(result2) {
 };
 
 /**
-*  Function to send feedback
-*/
+ * Send a feedback message.
+ *
+ * @param {Object} feedback - The feedback to send to the client.
+ */
 
 SimpleActionServer.prototype.sendFeedback = function(feedback2) {
 
@@ -206,8 +212,8 @@ SimpleActionServer.prototype.sendFeedback = function(feedback2) {
 };
 
 /**
-*  Handle case where client requests preemption
-*/
+ * Handle case where client requests preemption.
+ */
 
 SimpleActionServer.prototype.setPreempted = function() {
 

@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
  */
 
@@ -15,19 +15,19 @@ var Transform = require('../math/Transform');
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
  *
- *  @constructor
- *  @param options - object with following keys:
- *   * ros - the ROSLIB.Ros connection handle
- *   * fixedFrame - the fixed frame, like /base_link
- *   * angularThres - the angular threshold for the TF republisher
- *   * transThres - the translation threshold for the TF republisher
- *   * rate - the rate for the TF republisher
- *   * updateDelay - the time (in ms) to wait after a new subscription
- *                   to update the TF republisher's list of TFs
- *   * topicTimeout - the timeout parameter for the TF republisher
- *   * serverName (optional) - the name of the tf2_web_republisher server
- *   * repubServiceName (optional) - the name of the republish_tfs service (non groovy compatibility mode only)
- *   																 default: '/republish_tfs'
+ * @constructor
+ * @param {Object} options - An object with the following keys:
+ * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+ * @param {string} options.fixedFrame - The fixed frame, like '/base_link'.
+ * @param {number} options.angularThres - The angular threshold for the TF republisher (defaults to 2.0).
+ * @param {number} options.transThres - The translation threshold for the TF republisher (defaults to 0.01).
+ * @param {number} options.rate - The rate for the TF republisher (defaults to 10.0).
+ * @param {number} options.updateDelay - The time (in ms) to wait after a new subscription
+ *     to update the TF republisher's list of TFs (defaults to 50).
+ * @param {number} options.topicTimeout - The timeout parameter for the TF republisher (defaults to 2.0).
+ * @param {string} [options.serverName] - The name of the tf2_web_republisher server.
+ * @param {string} [options.repubServiceName] - The name of the republish_tfs service (non groovy compatibility mode only).
+ *     Default: '/republish_tfs'.
  */
 function TFClient(options) {
   options = options || {};
@@ -54,7 +54,7 @@ function TFClient(options) {
   this._subscribeCB = null;
   this._isDisposed = false;
 
-  // Create an Action client
+  // Create an Action Client
   this.actionClient = new ActionClient({
     ros : options.ros,
     serverName : this.serverName,
@@ -63,7 +63,7 @@ function TFClient(options) {
     omitResult : true
   });
 
-  // Create a Service client
+  // Create a Service Client
   this.serviceClient = new Service({
     ros: options.ros,
     name: this.repubServiceName,
@@ -75,7 +75,7 @@ function TFClient(options) {
  * Process the incoming TF message and send them out using the callback
  * functions.
  *
- * @param tf - the TF message from the server
+ * @param {Object} tf - The TF message from the server.
  */
 TFClient.prototype.processTFArray = function(tf) {
   var that = this;
@@ -140,9 +140,9 @@ TFClient.prototype.updateGoal = function() {
 
 /**
  * Process the service response and subscribe to the tf republisher
- * topic
+ * topic.
  *
- * @param response the service response containing the topic name
+ * @param {Object} response - The service response containing the topic name.
  */
 TFClient.prototype.processResponse = function(response) {
   // Do not setup a topic subscription if already disposed. Prevents a race condition where
@@ -169,9 +169,9 @@ TFClient.prototype.processResponse = function(response) {
 /**
  * Subscribe to the given TF frame.
  *
- * @param frameID - the TF frame to subscribe to
- * @param callback - function with params:
- *   * transform - the transform data
+ * @param {string} frameID - The TF frame to subscribe to.
+ * @param {function} callback - Function with the following params:
+ * @param {Transform} callback.transform - The transform data.
  */
 TFClient.prototype.subscribe = function(frameID, callback) {
   // remove leading slash, if it's there
@@ -199,8 +199,8 @@ TFClient.prototype.subscribe = function(frameID, callback) {
 /**
  * Unsubscribe from the given TF frame.
  *
- * @param frameID - the TF frame to unsubscribe from
- * @param callback - the callback function to remove
+ * @param {string} frameID - The TF frame to unsubscribe from.
+ * @param {function} callback - The callback function to remove.
  */
 TFClient.prototype.unsubscribe = function(frameID, callback) {
   // remove leading slash, if it's there

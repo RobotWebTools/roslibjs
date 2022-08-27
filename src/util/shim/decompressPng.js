@@ -14,9 +14,9 @@ var Image = Canvas.Image || window.Image;
  * "image" in a canvas element then decodes the * "image" as a Base64 string.
  *
  * @private
- * @param data - object containing the PNG data.
- * @param callback - function with params:
- *   * data - the uncompressed data
+ * @param data - An object containing the PNG data.
+ * @param callback - Function with the following params:
+ * @param callback.data - The uncompressed data.
  */
 function decompressPng(data, callback) {
   // Uncompresses the data before sending it through (use image/canvas to do so).

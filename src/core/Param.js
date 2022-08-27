@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileOverview
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
@@ -10,9 +10,9 @@ var ServiceRequest = require('./ServiceRequest');
  * A ROS parameter.
  *
  * @constructor
- * @param options - possible keys include:
- *   * ros - the ROSLIB.Ros connection handle
- *   * name - the param name, like max_vel_x
+ * @param {Object} options - An object with the following keys:
+ * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+ * @param {string} options.name - The param name, like max_vel_x.
  */
 function Param(options) {
   options = options || {};
@@ -21,10 +21,10 @@ function Param(options) {
 }
 
 /**
- * Fetches the value of the param.
+ * Fetch the value of the param.
  *
- * @param callback - function with the following params:
- *  * value - the value of the param from ROS.
+ * @param {function} callback - Function with the following params:
+ * @param {Object} callback.value - The value of the param from ROS.
  */
 Param.prototype.get = function(callback) {
   var paramClient = new Service({
@@ -44,9 +44,10 @@ Param.prototype.get = function(callback) {
 };
 
 /**
- * Sets the value of the param in ROS.
+ * Set the value of the param in ROS.
  *
- * @param value - value to set param to.
+ * @param {Object} value - The value to set param to.
+ * @param {function} callback - The callback function.
  */
 Param.prototype.set = function(value, callback) {
   var paramClient = new Service({
@@ -65,6 +66,8 @@ Param.prototype.set = function(value, callback) {
 
 /**
  * Delete this parameter on the ROS server.
+ * 
+ * @param {function} callback - The callback function.
  */
 Param.prototype.delete = function(callback) {
   var paramClient = new Service({

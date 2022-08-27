@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileOverview
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
@@ -17,18 +17,18 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  * Manages connection to the server and all interactions with ROS.
  *
  * Emits the following events:
- *  * 'error' - there was an error with ROS
- *  * 'connection' - connected to the WebSocket server
- *  * 'close' - disconnected to the WebSocket server
- *  * <topicName> - a message came from rosbridge with the given topic name
- *  * <serviceID> - a service response came from rosbridge with the given ID
+ *  * 'error' - There was an error with ROS.
+ *  * 'connection' - Connected to the WebSocket server.
+ *  * 'close' - Disconnected to the WebSocket server.
+ *  * &#60;topicName&#62; - A message came from rosbridge with the given topic name.
+ *  * &#60;serviceID&#62; - A service response came from rosbridge with the given ID.
  *
  * @constructor
- * @param options - possible keys include: <br>
- *   * url (optional) - (can be specified later with `connect`) the WebSocket URL for rosbridge or the node server url to connect using socket.io (if socket.io exists in the page) <br>
- *   * groovyCompatibility - don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools (defaults to true)
- *   * transportLibrary (optional) - one of 'websocket', 'workersocket' (default), 'socket.io' or RTCPeerConnection instance controlling how the connection is created in `connect`.
- *   * transportOptions (optional) - the options to use use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.
+ * @param {Object} options - An object with the following keys:
+ * @param {string} [options.url] - The WebSocket URL for rosbridge or the node server URL to connect using socket.io (if socket.io exists in the page). Can be specified later with `connect`.
+ * @param {boolean} [options.groovyCompatibility] - Don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools (defaults to true).
+ * @param {string} [options.transportLibrary] - One of 'websocket', 'workersocket' (default), 'socket.io' or RTCPeerConnection instance controlling how the connection is created in `connect`.
+ * @param {Object} [options.transportOptions] - The options to use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.
  */
 function Ros(options) {
   options = options || {};
@@ -61,7 +61,7 @@ Ros.prototype.__proto__ = EventEmitter2.prototype;
 /**
  * Connect to the specified WebSocket.
  *
- * @param url - WebSocket URL or RTCDataChannel label for Rosbridge
+ * @param {string} url - WebSocket URL or RTCDataChannel label for rosbridge.
  */
 Ros.prototype.connect = function(url) {
   if (this.transportLibrary === 'socket.io') {
@@ -96,15 +96,15 @@ Ros.prototype.close = function() {
 };
 
 /**
- * Sends an authorization request to the server.
+ * Send an authorization request to the server.
  *
- * @param mac - MAC (hash) string given by the trusted source.
- * @param client - IP of the client.
- * @param dest - IP of the destination.
- * @param rand - Random string given by the trusted source.
- * @param t - Time of the authorization request.
- * @param level - User level as a string given by the client.
- * @param end - End time of the client's session.
+ * @param {string} mac - MAC (hash) string given by the trusted source.
+ * @param {string} client - IP of the client.
+ * @param {string} dest - IP of the destination.
+ * @param {string} rand - Random string given by the trusted source.
+ * @param {Object} t - Time of the authorization request.
+ * @param {string} level - User level as a string given by the client.
+ * @param {Object} end - End time of the client's session.
  */
 Ros.prototype.authenticate = function(mac, client, dest, rand, t, level, end) {
   // create the request
@@ -122,7 +122,12 @@ Ros.prototype.authenticate = function(mac, client, dest, rand, t, level, end) {
   this.callOnConnection(auth);
 };
 
-Ros.prototype.sendEncodedMessage= function(messageEncoded) {
+/**
+ * Send an encoded message over the WebSocket.
+ *
+ * @param {Object} messageEncoded - The encoded message to be sent.
+ */
+Ros.prototype.sendEncodedMessage = function(messageEncoded) {
   var emitter = null;
   var that = this;
   if (this.transportLibrary === 'socket.io') {
@@ -141,8 +146,10 @@ Ros.prototype.sendEncodedMessage= function(messageEncoded) {
 };
 
 /**
- * Sends the message over the WebSocket, but queues the message up if not yet
+ * Send the message over the WebSocket, but queue the message up if not yet
  * connected.
+ *
+ * @param {Object} message - The message to be sent.
  */
 Ros.prototype.callOnConnection = function(message) {
   if (this.transportOptions.encoder) {
@@ -153,10 +160,10 @@ Ros.prototype.callOnConnection = function(message) {
 };
 
 /**
- * Sends a set_level request to the server
+ * Send a set_level request to the server.
  *
- * @param level - Status level (none, error, warning, info)
- * @param id - Optional: Operation ID to change status level on
+ * @param {string} level - Status level (none, error, warning, info).
+ * @param {number} [id] - Operation ID to change status level on.
  */
 Ros.prototype.setStatusLevel = function(level, id){
   var levelMsg = {
@@ -169,12 +176,12 @@ Ros.prototype.setStatusLevel = function(level, id){
 };
 
 /**
- * Retrieves Action Servers in ROS as an array of string
+ * Retrieve a list of action servers in ROS as an array of string.
  *
- * @param callback function with params:
- *   * actionservers - Array of action server names
- * @param failedCallback - the callback function when the service call failed (optional). Params:
- *   * error - the error message reported by ROS
+ * @param {function} callback - Function with the following params:
+ * @param {string[]} callback.actionservers - Array of action server names.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
 Ros.prototype.getActionServers = function(callback, failedCallback) {
   var getActionServers = new Service({
@@ -201,13 +208,13 @@ Ros.prototype.getActionServers = function(callback, failedCallback) {
 };
 
 /**
- * Retrieves list of topics in ROS as an array.
+ * Retrieve a list of topics in ROS as an array.
  *
- * @param callback function with params:
- *   * topics - Array of topic names
- *   * types - Array of message type names
- * @param failedCallback - the callback function when the service call failed (optional). Params:
- *   * error - the error message reported by ROS
+ * @param {function} callback - Function with the following params:
+ * @param {string[]} callback.topics - Array of topic names.
+ * @param {string[]} callback.types - Array of message type names.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
 Ros.prototype.getTopics = function(callback, failedCallback) {
   var topicsClient = new Service({
@@ -234,13 +241,13 @@ Ros.prototype.getTopics = function(callback, failedCallback) {
 };
 
 /**
- * Retrieves Topics in ROS as an array as specific type
+ * Retrieve a list of topics in ROS as an array of a specific type.
  *
- * @param topicType topic type to find
- * @param callback function with params:
- *   * topics - Array of topic names
- * @param failedCallback - the callback function when the service call failed (optional). Params:
- *   * error - the error message reported by ROS
+ * @param {string} topicType - The topic type to find.
+ * @param {function} callback - Function with the following params:
+ * @param {string[]} callback.topics - Array of topic names.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
 Ros.prototype.getTopicsForType = function(topicType, callback, failedCallback) {
   var topicsForTypeClient = new Service({
@@ -269,12 +276,12 @@ Ros.prototype.getTopicsForType = function(topicType, callback, failedCallback) {
 };
 
 /**
- * Retrieves list of active service names in ROS.
+ * Retrieve a list of active service names in ROS.
  *
- * @param callback - function with the following params:
- *   * services - array of service names
- * @param failedCallback - the callback function when the service call failed (optional). Params:
- *   * error - the error message reported by ROS
+ * @param {function} callback - Function with the following params:
+ * @param {string[]} callback.services - Array of service names.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
 Ros.prototype.getServices = function(callback, failedCallback) {
   var servicesClient = new Service({
@@ -301,13 +308,13 @@ Ros.prototype.getServices = function(callback, failedCallback) {
 };
 
 /**
- * Retrieves list of services in ROS as an array as specific type
+ * Retrieve a list of services in ROS as an array as specific type.
  *
- * @param serviceType service type to find
- * @param callback function with params:
- *   * topics - Array of service names
- * @param failedCallback - the callback function when the service call failed (optional). Params:
- *   * error - the error message reported by ROS
+ * @param {string} serviceType - The service type to find.
+ * @param {function} callback - Function with the following params:
+ * @param {string[]} callback.topics - Array of service names.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
 Ros.prototype.getServicesForType = function(serviceType, callback, failedCallback) {
   var servicesForTypeClient = new Service({
@@ -336,13 +343,13 @@ Ros.prototype.getServicesForType = function(serviceType, callback, failedCallbac
 };
 
 /**
- * Retrieves a detail of ROS service request.
+ * Retrieve the details of a ROS service request.
  *
- * @param service name of service:
- * @param callback - function with params:
- *   * type - String of the service type
- * @param failedCallback - the callback function when the service call failed (optional). Params:
- *   * error - the error message reported by ROS
+ * @param {string} type - The type of the service.
+ * @param {function} callback - Function with the following params:
+ * @param {string} callback.details - The details of the service request.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
 Ros.prototype.getServiceRequestDetails = function(type, callback, failedCallback) {
   var serviceTypeClient = new Service({
@@ -371,13 +378,13 @@ Ros.prototype.getServiceRequestDetails = function(type, callback, failedCallback
 };
 
 /**
- * Retrieves a detail of ROS service request.
+ * Retrieve the details of a ROS service response.
  *
- * @param service name of service
- * @param callback - function with params:
- *   * type - String of the service type
- * @param failedCallback - the callback function when the service call failed (optional). Params:
- *   * error - the error message reported by ROS
+ * @param {string} type - The type of the service.
+ * @param {function} callback - Function with the following params:
+ * @param {string} callback.details - The details of the service response.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
 Ros.prototype.getServiceResponseDetails = function(type, callback, failedCallback) {
   var serviceTypeClient = new Service({
@@ -406,12 +413,12 @@ Ros.prototype.getServiceResponseDetails = function(type, callback, failedCallbac
 };
 
 /**
- * Retrieves list of active node names in ROS.
+ * Retrieve a list of active node names in ROS.
  *
- * @param callback - function with the following params:
- *   * nodes - array of node names
- * @param failedCallback - the callback function when the service call failed (optional). Params:
- *   * error - the error message reported by ROS
+ * @param {function} callback - Function with the following params:
+ * @param {string[]} callback.nodes - Array of node names.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
 Ros.prototype.getNodes = function(callback, failedCallback) {
   var nodesClient = new Service({
@@ -438,16 +445,16 @@ Ros.prototype.getNodes = function(callback, failedCallback) {
 };
 
 /**
-  * Retrieves list subscribed topics, publishing topics and services of a specific node
-  *
-  * @param node name of the node:
-  * @param callback - function with params:
-  *   * publications - array of published topic names
-  *   * subscriptions - array of subscribed topic names
-  *   * services - array of service names hosted
-  * @param failedCallback - the callback function when the service call failed (optional). Params:
- *   * error - the error message reported by ROS
-  */
+ * Retrieve a list of subscribed topics, publishing topics and services of a specific node.
+ *
+ * @param {string} node - Name of the node.
+ * @param {function} callback - Function with the following params:
+ * @param {string[]} callback.subscriptions - Array of subscribed topic names.
+ * @param {string[]} callback.publications - Array of published topic names.
+ * @param {string[]} callback.services - Array of service names hosted.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
+ */
 Ros.prototype.getNodeDetails = function(node, callback, failedCallback) {
   var nodesClient = new Service({
     ros : this,
@@ -475,12 +482,12 @@ Ros.prototype.getNodeDetails = function(node, callback, failedCallback) {
 };
 
 /**
- * Retrieves list of param names from the ROS Parameter Server.
+ * Retrieve a list of parameter names from the ROS Parameter Server.
  *
- * @param callback function with params:
- *  * params - array of param names.
- * @param failedCallback - the callback function when the service call failed (optional). Params:
- *   * error - the error message reported by ROS
+ * @param {function} callback - Function with the following params:
+ * @param {string[]} callback.params - Array of param names.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
 Ros.prototype.getParams = function(callback, failedCallback) {
   var paramsClient = new Service({
@@ -506,13 +513,13 @@ Ros.prototype.getParams = function(callback, failedCallback) {
 };
 
 /**
- * Retrieves a type of ROS topic.
+ * Retrieve the type of a ROS topic.
  *
- * @param topic name of the topic:
- * @param callback - function with params:
- *   * type - String of the topic type
- * @param failedCallback - the callback function when the service call failed (optional). Params:
- *   * error - the error message reported by ROS
+ * @param {string} topic - Name of the topic.
+ * @param {function} callback - Function with the following params:
+ * @param {string} callback.type - The type of the topic.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
 Ros.prototype.getTopicType = function(topic, callback, failedCallback) {
   var topicTypeClient = new Service({
@@ -541,13 +548,13 @@ Ros.prototype.getTopicType = function(topic, callback, failedCallback) {
 };
 
 /**
- * Retrieves a type of ROS service.
+ * Retrieve the type of a ROS service.
  *
- * @param service name of service:
- * @param callback - function with params:
- *   * type - String of the service type
- * @param failedCallback - the callback function when the service call failed (optional). Params:
- *   * error - the error message reported by ROS
+ * @param {string} service - Name of the service.
+ * @param {function} callback - Function with the following params:
+ * @param {string} callback.type - The type of the service.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
 Ros.prototype.getServiceType = function(service, callback, failedCallback) {
   var serviceTypeClient = new Service({
@@ -576,13 +583,13 @@ Ros.prototype.getServiceType = function(service, callback, failedCallback) {
 };
 
 /**
- * Retrieves a detail of ROS message.
+ * Retrieve the details of a ROS message.
  *
- * @param message - String of a topic type
- * @param callback - function with params:
- *   * details - Array of the message detail
- * @param failedCallback - the callback function when the service call failed (optional). Params:
- *   * error - the error message reported by ROS
+ * @param {string} message - The name of the message type.
+ * @param {function} callback - Function with the following params:
+ * @param {string} callback.details - An array of the message details.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
 Ros.prototype.getMessageDetails = function(message, callback, failedCallback) {
   var messageDetailClient = new Service({
@@ -611,9 +618,9 @@ Ros.prototype.getMessageDetails = function(message, callback, failedCallback) {
 };
 
 /**
- * Decode a typedefs into a dictionary like `rosmsg show foo/bar`
+ * Decode a typedef array into a dictionary like `rosmsg show foo/bar`.
  *
- * @param defs - array of type_def dictionary
+ * @param {Object[]} defs - Array of type_def dictionary.
  */
 Ros.prototype.decodeTypeDefs = function(defs) {
   var that = this;
@@ -662,15 +669,14 @@ Ros.prototype.decodeTypeDefs = function(defs) {
 };
 
 /**
- * Retrieves list of topics and their associated type definitions.
+ * Retrieve a list of topics and their associated type definitions.
  *
- * @param callback function with params:
- *   * topics - Array of topic names
- *   * types - Array of message type names
- *   * typedefs_full_text - Array of full definitions of message types, similar to `gendeps --cat`
- * @param failedCallback - the callback function when the service call failed (optional). Params:
- *   * error - the error message reported by ROS
- *
+ * @param {function} callback - Function with the following params:
+ * @param {string[]} callback.topics - Array of topic names.
+ * @param {string[]} callback.types - Array of message type names.
+ * @param {string[]} callback.typedefs_full_text - Array of full definitions of message types, similar to `gendeps --cat`.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
 Ros.prototype.getTopicsAndRawTypes = function(callback, failedCallback) {
   var topicsAndRawTypesClient = new Service({

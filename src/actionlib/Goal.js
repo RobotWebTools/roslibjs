@@ -7,15 +7,15 @@ var Message = require('../core/Message');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 /**
- * An actionlib goal goal is associated with an action server.
+ * An actionlib goal that is associated with an action server.
  *
  * Emits the following events:
- *  * 'timeout' - if a timeout occurred while sending a goal
+ *  * 'timeout' - If a timeout occurred while sending a goal.
  *
- *  @constructor
- *  @param object with following keys:
- *   * actionClient - the ROSLIB.ActionClient to use with this goal
- *   * goalMessage - The JSON object containing the goal for the action server
+ * @constructor
+ * @param {Object} options - An object with the following keys:
+ * @param {ActionClient} options.actionClient - The ROSLIB.ActionClient to use with this goal.
+ * @param {Object} options.goalMessage - The JSON object containing the goal for the action server.
  */
 function Goal(options) {
   var that = this;
@@ -62,7 +62,7 @@ Goal.prototype.__proto__ = EventEmitter2.prototype;
 /**
  * Send the goal to the action server.
  *
- * @param timeout (optional) - a timeout length for the goal's result
+ * @param {number} [timeout] - A timeout length for the goal's result.
  */
 Goal.prototype.send = function(timeout) {
   var that = this;

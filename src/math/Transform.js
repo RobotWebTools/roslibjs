@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
  */
 
@@ -9,10 +9,10 @@ var Quaternion = require('./Quaternion');
 /**
  * A Transform in 3-space. Values are copied into this object.
  *
- *  @constructor
- *  @param options - object with following keys:
- *   * translation - the Vector3 describing the translation
- *   * rotation - the ROSLIB.Quaternion describing the rotation
+ * @constructor
+ * @param {Object} options - An object with the following keys:
+ * @param {Vector3} options.translation - The ROSLIB.Vector3 describing the translation.
+ * @param {Quaternion} options.rotation - The ROSLIB.Quaternion describing the rotation.
  */
 function Transform(options) {
   options = options || {};
@@ -24,7 +24,7 @@ function Transform(options) {
 /**
  * Clone a copy of this transform.
  *
- * @returns the cloned transform
+ * @returns {Transform} The cloned transform.
  */
 Transform.prototype.clone = function() {
   return new Transform(this);

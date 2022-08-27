@@ -13,9 +13,9 @@ var pngparse = require('pngparse');
  * the "image" as a Base64 string.
  *
  * @private
- * @param data - object containing the PNG data.
- * @param callback - function with params:
- *   * data - the uncompressed data
+ * @param data - An object containing the PNG data.
+ * @param callback - Function with the following params:
+ * @param callback.data - The uncompressed data.
  */
 function decompressPng(data, callback) {
   var buffer = new Buffer(data, 'base64');

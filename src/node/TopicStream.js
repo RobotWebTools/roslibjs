@@ -4,14 +4,12 @@ var DuplexStream = require('stream').Duplex;
 /**
  * Publish a connected ROS topic to a duplex
  * stream. This stream can be piped to, which will
- * publish to the topic
+ * publish to the topic.
  *
- * @options
- *   * subscribe: whether to subscribe to the topic and start emitting
- *              Data
- *   * publish: whether to register the stream as a publisher to the topic
- *   * transform: a function to change the data to be published
- *              or filter it if false is returned
+ * @param {Object} options - An object with the following keys:
+ * @param {boolean} [options.subscribe] - The flag to indicate whether to subscribe to the topic and start emitting data or not (defaults to true).
+ * @param {boolean} [options.publish] - The flag to indicate whether to register the stream as a publisher to the topic or not (defaults to true).
+ * @param {boolean} [options.transform] - A function to change the data to be published or filter it if false is returned.
  */
 Topic.prototype.toStream = function(options) {
     options = options || {subscribe: true, publish: true};

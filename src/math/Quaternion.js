@@ -1,17 +1,17 @@
 /**
- * @fileoverview
+ * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
  */
 
 /**
  * A Quaternion.
  *
- *  @constructor
- *  @param options - object with following keys:
- *   * x - the x value
- *   * y - the y value
- *   * z - the z value
- *   * w - the w value
+ * @constructor
+ * @param {Object} options - An object with the following keys:
+ * @param {number} [options.x] - The x value (defaults to 0).
+ * @param {number} [options.y] - The y value (defaults to 0).
+ * @param {number} [options.z] - The z value (defaults to 0).
+ * @param {number} [options.w] - The w value (defaults to 1).
  */
 function Quaternion(options) {
   options = options || {};
@@ -67,7 +67,7 @@ Quaternion.prototype.invert = function() {
 /**
  * Set the values of this quaternion to the product of itself and the given quaternion.
  *
- * @param q the quaternion to multiply with
+ * @param {Quaternion} q - The quaternion to multiply with.
  */
 Quaternion.prototype.multiply = function(q) {
   var newX = this.x * q.w + this.y * q.z - this.z * q.y + this.w * q.x;
@@ -83,7 +83,7 @@ Quaternion.prototype.multiply = function(q) {
 /**
  * Clone a copy of this quaternion.
  *
- * @returns the cloned quaternion
+ * @returns {Quaternion} The cloned quaternion.
  */
 Quaternion.prototype.clone = function() {
   return new Quaternion(this);

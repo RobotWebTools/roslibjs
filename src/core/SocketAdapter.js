@@ -17,7 +17,7 @@ if(typeof bson !== 'undefined'){
 }
 
 /**
- * Events listeners for a WebSocket or TCP socket to a JavaScript
+ * Event listeners for a WebSocket or TCP socket to a JavaScript
  * ROS Client. Sets up Messages for a given topic to trigger an
  * event on the ROS client.
  *
@@ -70,9 +70,9 @@ function SocketAdapter(client) {
 
   return {
     /**
-     * Emits a 'connection' event on WebSocket connection.
+     * Emit a 'connection' event on WebSocket connection.
      *
-     * @param event - the argument to emit with the event.
+     * @param {function} event - The argument to emit with the event.
      * @memberof SocketAdapter
      */
     onopen: function onOpen(event) {
@@ -81,9 +81,9 @@ function SocketAdapter(client) {
     },
 
     /**
-     * Emits a 'close' event on WebSocket disconnection.
+     * Emit a 'close' event on WebSocket disconnection.
      *
-     * @param event - the argument to emit with the event.
+     * @param {function} event - The argument to emit with the event.
      * @memberof SocketAdapter
      */
     onclose: function onClose(event) {
@@ -92,9 +92,9 @@ function SocketAdapter(client) {
     },
 
     /**
-     * Emits an 'error' event whenever there was an error.
+     * Emit an 'error' event whenever there was an error.
      *
-     * @param event - the argument to emit with the event.
+     * @param {function} event - The argument to emit with the event.
      * @memberof SocketAdapter
      */
     onerror: function onError(event) {
@@ -102,10 +102,10 @@ function SocketAdapter(client) {
     },
 
     /**
-     * Parses message responses from rosbridge and sends to the appropriate
+     * Parse message responses from rosbridge and send to the appropriate
      * topic, service, or param.
      *
-     * @param message - the raw JSON message from rosbridge.
+     * @param {Object} data - The raw JSON message from rosbridge.
      * @memberof SocketAdapter
      */
     onmessage: function onMessage(data) {

@@ -1,5 +1,5 @@
 /**
- * @fileOverview 
+ * @fileOverview
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -10,8 +10,8 @@ var UrdfVisual = require('./UrdfVisual');
  * A Link element in a URDF.
  *
  * @constructor
- * @param options - object with following keys:
- *  * xml - the XML element to parse
+ * @param {Object} options - An object with the following keys:
+ * @param {Element} options.xml - The XML element to parse.
  */
 function UrdfLink(options) {
   this.name = options.xml.getAttribute('name');
