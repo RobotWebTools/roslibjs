@@ -28,10 +28,6 @@ function ActionListener(options) {
   this.ros = options.ros;
   this.serverName = options.serverName;
   this.actionName = options.actionName;
-  this.timeout = options.timeout;
-  this.omitFeedback = options.omitFeedback;
-  this.omitStatus = options.omitStatus;
-  this.omitResult = options.omitResult;
 
 
   // create the topics associated with actionlib
