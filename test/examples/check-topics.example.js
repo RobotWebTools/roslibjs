@@ -15,9 +15,9 @@ describe('Example topics are live', function(done) {
     });
     
     it('getTopics', function(done) {
-        ros.getTopics(function(result) {
+        ros.getTopics(function(topics, types) {
             expectedTopics.forEach(function(topic) {
-                expect(result.topics).to.contain(topic, 'Couldn\'t find topic: ' + topic);
+                expect(topics).to.contain(topic, 'Couldn\'t find topic: ' + topic);
             });
             done();
         });
