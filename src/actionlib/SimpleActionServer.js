@@ -20,7 +20,6 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  * @param {string} options.serverName - The action server name, like '/fibonacci'.
  * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
  */
-
 function SimpleActionServer(options) {
     var that = this;
     options = options || {};
@@ -128,7 +127,6 @@ function SimpleActionServer(options) {
             }
             if(that.currentGoal && isEarlier(that.currentGoal.goal_id.stamp,
                                              cancelMessage.stamp)) {
-                
                 that.emit('cancel');
             }
         }
@@ -153,13 +151,10 @@ SimpleActionServer.prototype.__proto__ = EventEmitter2.prototype;
  *
  * @param {Object} result - The result to return to the client.
  */
-
-SimpleActionServer.prototype.setSucceeded = function(result2) {
-    
-
+SimpleActionServer.prototype.setSucceeded = function(result) {
     var resultMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 3},
-        result : result2
+        result : result
     });
     this.resultPublisher.publish(resultMessage);
 
@@ -178,11 +173,10 @@ SimpleActionServer.prototype.setSucceeded = function(result2) {
  *
  * @param {Object} result - The result to return to the client.
  */
-
-SimpleActionServer.prototype.setAborted = function(result2) {
+SimpleActionServer.prototype.setAborted = function(result) {
     var resultMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 4},
-        result : result2
+        result : result
     });
     this.resultPublisher.publish(resultMessage);
 
@@ -201,12 +195,10 @@ SimpleActionServer.prototype.setAborted = function(result2) {
  *
  * @param {Object} feedback - The feedback to send to the client.
  */
-
-SimpleActionServer.prototype.sendFeedback = function(feedback2) {
-
+SimpleActionServer.prototype.sendFeedback = function(feedback) {
     var feedbackMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 1},
-        feedback : feedback2
+        feedback : feedback
     });
     this.feedbackPublisher.publish(feedbackMessage);
 };
@@ -214,9 +206,7 @@ SimpleActionServer.prototype.sendFeedback = function(feedback2) {
 /**
  * Handle case where client requests preemption.
  */
-
 SimpleActionServer.prototype.setPreempted = function() {
-
     this.statusMessage.status_list = [];
     var resultMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 2},

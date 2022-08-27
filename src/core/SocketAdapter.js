@@ -25,7 +25,6 @@ if(typeof bson !== 'undefined'){
  * @private
  */
 function SocketAdapter(client) {
-
   var decoder = null;
   if (client.transportOptions.decoder) {
     decoder = client.transportOptions.decoder;
