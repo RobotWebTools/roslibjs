@@ -29,16 +29,16 @@ describe('Example topics are live', function(done) {
     });
 
     it('doesn\'t automatically advertise the topic', function(done) {
-        ros.getTopics(function(result) {
-            expect(result.topics).not.to.contain('/some_test_topic');
+        ros.getTopics(function(topics, types) {
+            expect(topics).not.to.contain('/some_test_topic');
             example.advertise();
             done();
         });
     });
 
     it('advertise broadcasts the topic', function(done) {
-        ros.getTopics(function(result) {
-            expect(result.topics).to.contain('/some_test_topic');
+        ros.getTopics(function(topics, types) {
+            expect(topics).to.contain('/some_test_topic');
             example.unadvertise();
             done();
         });
@@ -48,8 +48,8 @@ describe('Example topics are live', function(done) {
         console.log("Unadvertisement test. Wait for 15 seconds..");
         this.timeout(20000);
         setTimeout(function() {
-          ros.getTopics(function(result) {
-              expect(result.topics).not.to.contain('/some_test_topic');
+          ros.getTopics(function(topics, types) {
+              expect(topics).not.to.contain('/some_test_topic');
               done();
           });
         }, 15000);
