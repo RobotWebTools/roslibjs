@@ -227,7 +227,7 @@ Ros.prototype.getTopics = function(callback, failedCallback) {
   if (typeof failedCallback === 'function'){
     topicsClient.callService(request,
       function(result) {
-        callback(result);
+        callback(result.topics, result.types);
       },
       function(message){
         failedCallback(message);
@@ -235,7 +235,7 @@ Ros.prototype.getTopics = function(callback, failedCallback) {
     );
   }else{
     topicsClient.callService(request, function(result) {
-      callback(result);
+      callback(result.topics, result.types);
     });
   }
 };
@@ -364,7 +364,7 @@ Ros.prototype.getServiceRequestDetails = function(type, callback, failedCallback
   if (typeof failedCallback === 'function'){
     serviceTypeClient.callService(request,
       function(result) {
-        callback(result);
+        callback(result.typedefs[0]);
       },
       function(message){
         failedCallback(message);
@@ -372,7 +372,7 @@ Ros.prototype.getServiceRequestDetails = function(type, callback, failedCallback
     );
   }else{
     serviceTypeClient.callService(request, function(result) {
-      callback(result);
+      callback(result.typedefs[0]);
     });
   }
 };
@@ -399,7 +399,7 @@ Ros.prototype.getServiceResponseDetails = function(type, callback, failedCallbac
   if (typeof failedCallback === 'function'){
     serviceTypeClient.callService(request,
       function(result) {
-        callback(result);
+        callback(result.typedefs[0]);
       },
       function(message){
         failedCallback(message);
@@ -407,7 +407,7 @@ Ros.prototype.getServiceResponseDetails = function(type, callback, failedCallbac
     );
   }else{
     serviceTypeClient.callService(request, function(result) {
-      callback(result);
+      callback(result.typedefs[0]);
     });
   }
 };
@@ -476,7 +476,7 @@ Ros.prototype.getNodeDetails = function(node, callback, failedCallback) {
     );
   } else {
     nodesClient.callService(request, function(result) {
-      callback(result);
+      callback(result.subscribing, result.publishing, result.services);
     });
   }
 };
@@ -689,7 +689,7 @@ Ros.prototype.getTopicsAndRawTypes = function(callback, failedCallback) {
   if (typeof failedCallback === 'function'){
     topicsAndRawTypesClient.callService(request,
       function(result) {
-        callback(result);
+        callback(result.topics, result.types, result.typedefs_full_text);
       },
       function(message){
         failedCallback(message);
@@ -697,7 +697,7 @@ Ros.prototype.getTopicsAndRawTypes = function(callback, failedCallback) {
     );
   }else{
     topicsAndRawTypesClient.callService(request, function(result) {
-      callback(result);
+      callback(result.topics, result.types, result.typedefs_full_text);
     });
   }
 };
