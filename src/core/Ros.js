@@ -211,8 +211,9 @@ Ros.prototype.getActionServers = function(callback, failedCallback) {
  * Retrieve a list of topics in ROS as an array.
  *
  * @param {function} callback - Function with the following params:
- * @param {string[]} callback.topics - Array of topic names.
- * @param {string[]} callback.types - Array of message type names.
+ * @param {Object} callback.result - The result object with the following params:
+ * @param {string[]} callback.result.topics - Array of topic names.
+ * @param {string[]} callback.result.types - Array of message type names.
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
@@ -227,7 +228,7 @@ Ros.prototype.getTopics = function(callback, failedCallback) {
   if (typeof failedCallback === 'function'){
     topicsClient.callService(request,
       function(result) {
-        callback(result.topics, result.types);
+        callback(result);
       },
       function(message){
         failedCallback(message);
@@ -235,7 +236,7 @@ Ros.prototype.getTopics = function(callback, failedCallback) {
     );
   }else{
     topicsClient.callService(request, function(result) {
-      callback(result.topics, result.types);
+      callback(result);
     });
   }
 };
@@ -347,7 +348,8 @@ Ros.prototype.getServicesForType = function(serviceType, callback, failedCallbac
  *
  * @param {string} type - The type of the service.
  * @param {function} callback - Function with the following params:
- * @param {string} callback.details - The details of the service request.
+ * @param {Object} callback.result - The result object with the following params:
+ * @param {string[]} callback.result.typedefs - An array containing the details of the service request.
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
@@ -364,7 +366,7 @@ Ros.prototype.getServiceRequestDetails = function(type, callback, failedCallback
   if (typeof failedCallback === 'function'){
     serviceTypeClient.callService(request,
       function(result) {
-        callback(result.typedefs[0]);
+        callback(result);
       },
       function(message){
         failedCallback(message);
@@ -372,7 +374,7 @@ Ros.prototype.getServiceRequestDetails = function(type, callback, failedCallback
     );
   }else{
     serviceTypeClient.callService(request, function(result) {
-      callback(result.typedefs[0]);
+      callback(result);
     });
   }
 };
@@ -382,7 +384,8 @@ Ros.prototype.getServiceRequestDetails = function(type, callback, failedCallback
  *
  * @param {string} type - The type of the service.
  * @param {function} callback - Function with the following params:
- * @param {string} callback.details - The details of the service response.
+ * @param {Object} callback.result - The result object with the following params:
+ * @param {string[]} callback.result.typedefs - An array containing the details of the service response.
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
@@ -399,7 +402,7 @@ Ros.prototype.getServiceResponseDetails = function(type, callback, failedCallbac
   if (typeof failedCallback === 'function'){
     serviceTypeClient.callService(request,
       function(result) {
-        callback(result.typedefs[0]);
+        callback(result);
       },
       function(message){
         failedCallback(message);
@@ -407,7 +410,7 @@ Ros.prototype.getServiceResponseDetails = function(type, callback, failedCallbac
     );
   }else{
     serviceTypeClient.callService(request, function(result) {
-      callback(result.typedefs[0]);
+      callback(result);
     });
   }
 };
@@ -446,12 +449,29 @@ Ros.prototype.getNodes = function(callback, failedCallback) {
 
 /**
  * Retrieve a list of subscribed topics, publishing topics and services of a specific node.
+ * <br>
+ * These are the parameters if failedCallback is <strong>defined</strong>.
  *
  * @param {string} node - Name of the node.
  * @param {function} callback - Function with the following params:
  * @param {string[]} callback.subscriptions - Array of subscribed topic names.
  * @param {string[]} callback.publications - Array of published topic names.
  * @param {string[]} callback.services - Array of service names hosted.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
+ * 
+ * @also
+ * 
+ * Retrieve a list of subscribed topics, publishing topics and services of a specific node.
+ * <br>
+ * These are the parameters if failedCallback is <strong>undefined</strong>.
+ * 
+ * @param {string} node - Name of the node.
+ * @param {function} callback - Function with the following params:
+ * @param {Object} callback.result - The result object with the following params:
+ * @param {string[]} callback.result.subscribing - Array of subscribed topic names.
+ * @param {string[]} callback.result.publishing - Array of published topic names.
+ * @param {string[]} callback.result.services - Array of service names hosted.
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
@@ -476,7 +496,7 @@ Ros.prototype.getNodeDetails = function(node, callback, failedCallback) {
     );
   } else {
     nodesClient.callService(request, function(result) {
-      callback(result.subscribing, result.publishing, result.services);
+      callback(result);
     });
   }
 };
@@ -672,9 +692,10 @@ Ros.prototype.decodeTypeDefs = function(defs) {
  * Retrieve a list of topics and their associated type definitions.
  *
  * @param {function} callback - Function with the following params:
- * @param {string[]} callback.topics - Array of topic names.
- * @param {string[]} callback.types - Array of message type names.
- * @param {string[]} callback.typedefs_full_text - Array of full definitions of message types, similar to `gendeps --cat`.
+ * @param {Object} callback.result - The result object with the following params:
+ * @param {string[]} callback.result.topics - Array of topic names.
+ * @param {string[]} callback.result.types - Array of message type names.
+ * @param {string[]} callback.result.typedefs_full_text - Array of full definitions of message types, similar to `gendeps --cat`.
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
@@ -689,7 +710,7 @@ Ros.prototype.getTopicsAndRawTypes = function(callback, failedCallback) {
   if (typeof failedCallback === 'function'){
     topicsAndRawTypesClient.callService(request,
       function(result) {
-        callback(result.topics, result.types, result.typedefs_full_text);
+        callback(result);
       },
       function(message){
         failedCallback(message);
@@ -697,7 +718,7 @@ Ros.prototype.getTopicsAndRawTypes = function(callback, failedCallback) {
     );
   }else{
     topicsAndRawTypesClient.callService(request, function(result) {
-      callback(result.topics, result.types, result.typedefs_full_text);
+      callback(result);
     });
   }
 };
