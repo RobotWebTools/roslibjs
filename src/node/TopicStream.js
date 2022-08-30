@@ -6,7 +6,7 @@ var DuplexStream = require('stream').Duplex;
  * stream. This stream can be piped to, which will
  * publish to the topic.
  *
- * @param {Object} options - An object with the following keys:
+ * @param {Object} options
  * @param {boolean} [options.subscribe] - The flag to indicate whether to subscribe to the topic and start emitting data or not (defaults to true).
  * @param {boolean} [options.publish] - The flag to indicate whether to register the stream as a publisher to the topic or not (defaults to true).
  * @param {boolean} [options.transform] - A function to change the data to be published or filter it if false is returned.
@@ -21,7 +21,7 @@ Topic.prototype.toStream = function(options) {
         objectMode: true
     });
     stream._read = function() {};
-    
+
     // Publish to the topic if someone pipes to stream
     stream._write = function(chunk, encoding, callback) {
         if (hasTransform) {
@@ -32,7 +32,7 @@ Topic.prototype.toStream = function(options) {
         }
         callback();
     };
-    
+
     if (options.subscribe) {
         this.subscribe(function(message) {
             stream.push(message);

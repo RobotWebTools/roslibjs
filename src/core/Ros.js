@@ -24,7 +24,7 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  *  * &#60;serviceID&#62; - A service response came from rosbridge with the given ID.
  *
  * @constructor
- * @param {Object} options - An object with the following keys:
+ * @param {Object} options
  * @param {string} [options.url] - The WebSocket URL for rosbridge or the node server URL to connect using socket.io (if socket.io exists in the page). Can be specified later with `connect`.
  * @param {boolean} [options.groovyCompatibility] - Don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools (defaults to true).
  * @param {string} [options.transportLibrary] - One of 'websocket', 'workersocket' (default), 'socket.io' or RTCPeerConnection instance controlling how the connection is created in `connect`.
@@ -459,13 +459,13 @@ Ros.prototype.getNodes = function(callback, failedCallback) {
  * @param {string[]} callback.services - Array of service names hosted.
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
- * 
+ *
  * @also
- * 
+ *
  * Retrieve a list of subscribed topics, publishing topics and services of a specific node.
  * <br>
  * These are the parameters if failedCallback is <strong>undefined</strong>.
- * 
+ *
  * @param {string} node - Name of the node.
  * @param {function} callback - Function with the following params:
  * @param {Object} callback.result - The result object with the following params:

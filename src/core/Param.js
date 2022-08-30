@@ -10,7 +10,7 @@ var ServiceRequest = require('./ServiceRequest');
  * A ROS parameter.
  *
  * @constructor
- * @param {Object} options - An object with the following keys:
+ * @param {Object} options
  * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
  * @param {string} options.name - The param name, like max_vel_x.
  */
@@ -66,7 +66,7 @@ Param.prototype.set = function(value, callback) {
 
 /**
  * Delete this parameter on the ROS server.
- * 
+ *
  * @param {function} callback - The callback function.
  */
 Param.prototype.delete = function(callback) {

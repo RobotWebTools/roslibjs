@@ -14,7 +14,7 @@ var Message = require('./Message');
  *  * 'message' - The message data from rosbridge.
  *
  * @constructor
- * @param {Object} options - An object with the following keys:
+ * @param {Object} options
  * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
  * @param {string} options.name - The topic name, like '/cmd_vel'.
  * @param {string} options.messageType - The message type, like 'std_msgs/String'.

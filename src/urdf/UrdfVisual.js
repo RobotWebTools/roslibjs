@@ -18,7 +18,7 @@ var UrdfSphere = require('./UrdfSphere');
  * A Visual element in a URDF.
  *
  * @constructor
- * @param {Object} options - An object with the following keys:
+ * @param {Object} options
  * @param {Element} options.xml - The XML element to parse.
  */
 function UrdfVisual(options) {

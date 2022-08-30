@@ -11,7 +11,7 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  * A ROS service client.
  *
  * @constructor
- * @param {Object} options - An object with the following keys:
+ * @param {Object} options
  * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
  * @param {string} options.name - The service name, like '/add_two_ints'.
  * @param {string} options.serviceType - The service type, like 'rospy_tutorials/AddTwoInts'.

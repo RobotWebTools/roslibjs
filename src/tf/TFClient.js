@@ -16,7 +16,7 @@ var Transform = require('../math/Transform');
  * A TF Client that listens to TFs from tf2_web_republisher.
  *
  * @constructor
- * @param {Object} options - An object with the following keys:
+ * @param {Object} options
  * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
  * @param {string} options.fixedFrame - The fixed frame, like '/base_link'.
  * @param {number} options.angularThres - The angular threshold for the TF republisher (defaults to 2.0).

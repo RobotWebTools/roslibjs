@@ -16,7 +16,7 @@ var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
  * A URDF Model can be used to parse a given URDF into the appropriate elements.
  *
  * @constructor
- * @param {Object} options - An object with the following keys:
+ * @param {Object} options
  * @param {Element} options.xml - The XML element to parse.
  * @param {string} options.string - The XML element to parse as a string.
  */

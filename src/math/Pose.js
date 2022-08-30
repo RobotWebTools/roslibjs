@@ -10,7 +10,7 @@ var Quaternion = require('./Quaternion');
  * A Pose in 3D space. Values are copied into this object.
  *
  * @constructor
- * @param {Object} options - An object with the following keys:
+ * @param {Object} options
  * @param {Vector3} options.position - The ROSLIB.Vector3 describing the position.
  * @param {Quaternion} options.orientation - The ROSLIB.Quaternion describing the orientation.
  */

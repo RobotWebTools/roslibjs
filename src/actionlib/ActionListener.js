@@ -17,7 +17,7 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  *  * 'result' - The result returned from the action server.
  *
  * @constructor
- * @param {Object} options - An object with the following keys:
+ * @param {Object} options
  * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
  * @param {string} options.serverName - The action server name, like '/fibonacci'.
  * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.

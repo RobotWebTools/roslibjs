@@ -7,7 +7,7 @@
  * A 3D vector.
  *
  * @constructor
- * @param {Object} options - An object with the following keys:
+ * @param {Object} options
  * @param {number} [options.x] - The x value (defaults to 0).
  * @param {number} [options.y] - The y value (defaults to 0).
  * @param {number} [options.z] - The z value (defaults to 0).

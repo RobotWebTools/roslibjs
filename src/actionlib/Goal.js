@@ -13,7 +13,7 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  *  * 'timeout' - If a timeout occurred while sending a goal.
  *
  * @constructor
- * @param {Object} options - An object with the following keys:
+ * @param {Object} options
  * @param {ActionClient} options.actionClient - The ROSLIB.ActionClient to use with this goal.
  * @param {Object} options.goalMessage - The JSON object containing the goal for the action server.
  */
