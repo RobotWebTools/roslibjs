@@ -1,16 +1,16 @@
 /**
- * @fileoverview
+ * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
  */
 
 /**
  * A 3D vector.
  *
- *  @constructor
- *  @param options - object with following keys:
- *   * x - the x value
- *   * y - the y value
- *   * z - the z value
+ * @constructor
+ * @param {Object} options
+ * @param {number} [options.x=0] - The x value.
+ * @param {number} [options.y=0] - The y value.
+ * @param {number} [options.z=0] - The z value.
  */
 function Vector3(options) {
   options = options || {};
@@ -22,7 +22,7 @@ function Vector3(options) {
 /**
  * Set the values of this vector to the sum of itself and the given vector.
  *
- * @param v the vector to add with
+ * @param {Vector3} v - The vector to add with.
  */
 Vector3.prototype.add = function(v) {
   this.x += v.x;
@@ -33,7 +33,7 @@ Vector3.prototype.add = function(v) {
 /**
  * Set the values of this vector to the difference of itself and the given vector.
  *
- * @param v the vector to subtract with
+ * @param {Vector3} v - The vector to subtract with.
  */
 Vector3.prototype.subtract = function(v) {
   this.x -= v.x;
@@ -44,7 +44,7 @@ Vector3.prototype.subtract = function(v) {
 /**
  * Multiply the given Quaternion with this vector.
  *
- * @param q - the quaternion to multiply with
+ * @param {Quaternion} q - The quaternion to multiply with.
  */
 Vector3.prototype.multiplyQuaternion = function(q) {
   var ix = q.w * this.x + q.y * this.z - q.z * this.y;
@@ -59,7 +59,7 @@ Vector3.prototype.multiplyQuaternion = function(q) {
 /**
  * Clone a copy of this vector.
  *
- * @returns the cloned vector
+ * @returns {Vector3} The cloned vector.
  */
 Vector3.prototype.clone = function() {
   return new Vector3(this);

@@ -1,5 +1,5 @@
 /**
- * @fileOverview 
+ * @fileOverview
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -11,8 +11,8 @@ var UrdfTypes = require('./UrdfTypes');
  * A Mesh element in a URDF.
  *
  * @constructor
- * @param options - object with following keys:
- *  * xml - the XML element to parse
+ * @param {Object} options
+ * @param {Element} options.xml - The XML element to parse.
  */
 function UrdfMesh(options) {
   this.scale = null;

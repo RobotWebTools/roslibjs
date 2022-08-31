@@ -9,18 +9,18 @@ var Message = require('../core/Message');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 /**
- * An actionlib action listener
+ * An actionlib action listener.
  *
  * Emits the following events:
- *  * 'status' - the status messages received from the action server
- *  * 'feedback' -  the feedback messages received from the action server
- *  * 'result' - the result returned from the action server
+ *  * 'status' - The status messages received from the action server.
+ *  * 'feedback' - The feedback messages received from the action server.
+ *  * 'result' - The result returned from the action server.
  *
- *  @constructor
- *  @param options - object with following keys:
- *   * ros - the ROSLIB.Ros connection handle
- *   * serverName - the action server name, like /fibonacci
- *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
+ * @constructor
+ * @param {Object} options
+ * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+ * @param {string} options.serverName - The action server name, like '/fibonacci'.
+ * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
  */
 function ActionListener(options) {
   var that = this;
@@ -28,10 +28,6 @@ function ActionListener(options) {
   this.ros = options.ros;
   this.serverName = options.serverName;
   this.actionName = options.actionName;
-  this.timeout = options.timeout;
-  this.omitFeedback = options.omitFeedback;
-  this.omitStatus = options.omitStatus;
-  this.omitResult = options.omitResult;
 
 
   // create the topics associated with actionlib

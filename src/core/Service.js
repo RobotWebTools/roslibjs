@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileOverview
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
@@ -11,10 +11,10 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  * A ROS service client.
  *
  * @constructor
- * @params options - possible keys include:
- *   * ros - the ROSLIB.Ros connection handle
- *   * name - the service name, like /add_two_ints
- *   * serviceType - the service type, like 'rospy_tutorials/AddTwoInts'
+ * @param {Object} options
+ * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+ * @param {string} options.name - The service name, like '/add_two_ints'.
+ * @param {string} options.serviceType - The service type, like 'rospy_tutorials/AddTwoInts'.
  */
 function Service(options) {
   options = options || {};
@@ -27,14 +27,14 @@ function Service(options) {
 }
 Service.prototype.__proto__ = EventEmitter2.prototype;
 /**
- * Calls the service. Returns the service response in the
+ * Call the service. Returns the service response in the
  * callback. Does nothing if this service is currently advertised.
  *
- * @param request - the ROSLIB.ServiceRequest to send
- * @param callback - function with params:
- *   * response - the response from the service request
- * @param failedCallback - the callback function when the service call failed (optional). Params:
- *   * error - the error message reported by ROS
+ * @param {ServiceRequest} request - The ROSLIB.ServiceRequest to send.
+ * @param {function} callback - Function with the following params:
+ * @param {Object} callback.response - The response from the service request.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
 Service.prototype.callService = function(request, callback, failedCallback) {
   if (this.isAdvertised) {
@@ -70,11 +70,11 @@ Service.prototype.callService = function(request, callback, failedCallback) {
  * into a server. The callback will be called with every request
  * that's made on this service.
  *
- * @param callback - This works similarly to the callback for a C++ service and should take the following params:
- *   * request - the service request
- *   * response - an empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
- *   It should return true if the service has finished successfully,
- *   i.e. without any fatal errors.
+ * @param {function} callback - This works similarly to the callback for a C++ service and should take the following params:
+ * @param {ServiceRequest} callback.request - The service request.
+ * @param {Object} callback.response - An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
+ *     It should return true if the service has finished successfully,
+ *     i.e., without any fatal errors.
  */
 Service.prototype.advertise = function(callback) {
   if (this.isAdvertised || typeof callback !== 'function') {
