@@ -31,7 +31,7 @@ var Transform = require('../math/Transform');
 function TFClient(options) {
   options = options || {};
   this.ros = options.ros;
-  this.fixedFrame = options.fixedFrame || '/base_link';
+  this.fixedFrame = options.fixedFrame || 'base_link';
   this.angularThres = options.angularThres || 2.0;
   this.transThres = options.transThres || 0.01;
   this.rate = options.rate || 10.0;
@@ -178,7 +178,7 @@ TFClient.prototype.subscribe = function(frameID, callback) {
   {
     frameID = frameID.substring(1);
   }
-  // if there is no callback registered for the given frame, create emtpy callback list
+  // if there is no callback registered for the given frame, create empty callback list
   if (!this.frameInfos[frameID]) {
     this.frameInfos[frameID] = {
       cbs: []
@@ -188,7 +188,7 @@ TFClient.prototype.subscribe = function(frameID, callback) {
       this.republisherUpdateRequested = true;
     }
   }
-  // if we already have a transform, call back immediately
+  // if we already have a transform, callback immediately
   else if (this.frameInfos[frameID].transform) {
     callback(this.frameInfos[frameID].transform);
   }
