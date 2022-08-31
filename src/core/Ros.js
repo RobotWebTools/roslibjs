@@ -26,9 +26,9 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  * @constructor
  * @param {Object} options
  * @param {string} [options.url] - The WebSocket URL for rosbridge or the node server URL to connect using socket.io (if socket.io exists in the page). Can be specified later with `connect`.
- * @param {boolean} [options.groovyCompatibility] - Don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools (defaults to true).
- * @param {string} [options.transportLibrary] - One of 'websocket', 'workersocket' (default), 'socket.io' or RTCPeerConnection instance controlling how the connection is created in `connect`.
- * @param {Object} [options.transportOptions] - The options to use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.
+ * @param {boolean} [options.groovyCompatibility=true] - Don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools.
+ * @param {string} [options.transportLibrary=websocket] - One of 'websocket', 'workersocket', 'socket.io' or RTCPeerConnection instance controlling how the connection is created in `connect`.
+ * @param {Object} [options.transportOptions={}] - The options to use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.
  */
 function Ros(options) {
   options = options || {};

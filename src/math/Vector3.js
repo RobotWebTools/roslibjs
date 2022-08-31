@@ -8,9 +8,9 @@
  *
  * @constructor
  * @param {Object} options
- * @param {number} [options.x] - The x value (defaults to 0).
- * @param {number} [options.y] - The y value (defaults to 0).
- * @param {number} [options.z] - The z value (defaults to 0).
+ * @param {number} [options.x=0] - The x value.
+ * @param {number} [options.y=0] - The y value.
+ * @param {number} [options.z=0] - The z value.
  */
 function Vector3(options) {
   options = options || {};

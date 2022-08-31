@@ -110,7 +110,7 @@ Topic.prototype.subscribe = function(callback) {
 
 /**
  * Unregister as a subscriber for the topic. Unsubscribing will stop
- * and remove all subscribe callbacks. To remove a call back, you must
+ * and remove all subscribe callbacks. To remove a callback, you must
  * explicitly pass the callback function in.
  *
  * @param {function} [callback] - The callback to unregister, if
