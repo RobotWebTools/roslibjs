@@ -18,7 +18,7 @@ var Transform = require('../math/Transform');
  * @constructor
  * @param {Object} options
  * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
- * @param {string} [options.fixedFrame=base_link] - The fixed frame'.
+ * @param {string} [options.fixedFrame=base_link] - The fixed frame.
  * @param {number} [options.angularThres=2.0] - The angular threshold for the TF republisher.
  * @param {number} [options.transThres=0.01] - The translation threshold for the TF republisher.
  * @param {number} [options.rate=10.0] - The rate for the TF republisher.

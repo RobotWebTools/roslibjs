@@ -18,12 +18,12 @@ var Message = require('./Message');
  * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
  * @param {string} options.name - The topic name, like '/cmd_vel'.
  * @param {string} options.messageType - The message type, like 'std_msgs/String'.
- * @param {string} [options.compression] - The type of compression to use, like 'png', 'cbor', or 'cbor-raw'.
- * @param {number} [options.throttle_rate] - The rate (in ms in between messages) at which to throttle the topics.
- * @param {number} [options.queue_size] - The queue created at bridge side for re-publishing webtopics (defaults to 100).
- * @param {boolean} [options.latch] - Latch the topic when publishing (defaults to false).
- * @param {number} [options.queue_length] - The queue length at bridge side used when subscribing (defaults to 0, no queueing).
- * @param {boolean} [options.reconnect_on_close] - The flag to enable resubscription and readvertisement on close event (defaults to true).
+ * @param {string} [options.compression=none] - The type of compression to use, like 'png', 'cbor', or 'cbor-raw'.
+ * @param {number} [options.throttle_rate=0] - The rate (in ms in between messages) at which to throttle the topics.
+ * @param {number} [options.queue_size=100] - The queue created at bridge side for re-publishing webtopics.
+ * @param {boolean} [options.latch=false] - Latch the topic when publishing.
+ * @param {number} [options.queue_length=0] - The queue length at bridge side used when subscribing.
+ * @param {boolean} [options.reconnect_on_close=true] - The flag to enable resubscription and readvertisement on close event.
  */
 function Topic(options) {
   options = options || {};

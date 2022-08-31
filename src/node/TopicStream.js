@@ -7,8 +7,8 @@ var DuplexStream = require('stream').Duplex;
  * publish to the topic.
  *
  * @param {Object} options
- * @param {boolean} [options.subscribe] - The flag to indicate whether to subscribe to the topic and start emitting data or not (defaults to true).
- * @param {boolean} [options.publish] - The flag to indicate whether to register the stream as a publisher to the topic or not (defaults to true).
+ * @param {boolean} [options.subscribe=true] - The flag to indicate whether to subscribe to the topic and start emitting data or not.
+ * @param {boolean} [options.publish=true] - The flag to indicate whether to register the stream as a publisher to the topic or not.
  * @param {boolean} [options.transform] - A function to change the data to be published or filter it if false is returned.
  */
 Topic.prototype.toStream = function(options) {
