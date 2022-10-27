@@ -32,8 +32,7 @@ Talk to @rctoris
 
 ## 4. Update jsdocs in Robot Web Tools website
 
-[Here](https://github.com/RobotWebTools/robotwebtools.github.io/tree/master/jsdoc).
-Check if docs can be hosted directly from its own repository.
+These are update automatically by GitHub Actions [config](.github/workflows/docs.yml).
 
 ## 5. Sync `develop` branch with `master`
 
