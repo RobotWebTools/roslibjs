@@ -30,11 +30,20 @@ Keep all modules under @robot-web-tools scope? or in global scope? What are pros
 
 Talk to @rctoris
 
-## 4. Update jsdocs in Robot Web Tools website
+## 4. Create GitHub Release
 
-These are update automatically by GitHub Actions [config](.github/workflows/docs.yml). The docs are hosted in their own repository at the `gh-pages` branch.
+* Create a new GitHub release based on the new git tag.
+* Add the version number as release title (Without leading `v`).
+* Let GitHub auto-generate the Changelog
+* Mark `Set as latest release`
+* Publish release
 
-## 5. Sync `develop` branch with `master`
+
+## 5. Update JSdocs in Robot Web Tools website
+
+The JSdocs are update automatically by GitHub Actions [config](.github/workflows/docs.yml). The GitHub release created above, will trigger this run. The docs are hosted in their own repository at the `gh-pages` branch.
+
+## 6. Sync `develop` branch with `master`
 
 `Master` branch should represent the latest release.
 
