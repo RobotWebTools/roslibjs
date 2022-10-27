@@ -32,7 +32,7 @@ Talk to @rctoris
 
 ## 4. Update jsdocs in Robot Web Tools website
 
-These are update automatically by GitHub Actions [config](.github/workflows/docs.yml).
+These are update automatically by GitHub Actions [config](.github/workflows/docs.yml). The docs are hosted in their own repository at the `gh-pages` branch.
 
 ## 5. Sync `develop` branch with `master`
 
@@ -40,7 +40,3 @@ These are update automatically by GitHub Actions [config](.github/workflows/docs
 
 * Create a PR against `master` from `develop`
 * Do *Rebase and merge* to have the same history as `develop` branch
-
-## 6. Prepare `develop` branch for a new version
-
-Bump a version in package.json and bowers.json and add `-SNAPSHOT` postfix.
