@@ -31,6 +31,7 @@
     "karma-mocha": "^2.0.0",
     "load-grunt-tasks": "^5.1.0",
     "mocha": "^10.0.0",
+    "puppeteer": "^19.2.0",
     "time-grunt": "^2.0.0"
   },
   "dependencies": {
