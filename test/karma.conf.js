@@ -44,7 +44,7 @@ module.exports = function(config) {
 
     // level of logging
     // possible values: ALL, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, MARK, OFF
-    logLevel: 'ALL',
+    logLevel: 'INFO',
 
 
     // enable / disable watching file and executing tests whenever any file changes
