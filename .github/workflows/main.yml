@@ -29,11 +29,6 @@ jobs:
         with:
           cache: npm
           node-version: ${{ matrix.node_version }}
-      - name: Own /github/home
-        run: |
-          echo $(whoami)
-          chown -hR $(whoami):$(whoami) /github/home
-          chown -hR 1001:121 .
       - name: Install apt dependencies
         run: |
           apt-get update
