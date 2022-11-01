@@ -31,7 +31,12 @@ jobs:
           node-version: ${{ matrix.node_version }}
       - name: Own /github/home
         run: |
+          echo $(whoami)
           chown -hR $(whoami):$(whoami) /github/home
+          echo -e "\e[1m\e[35mls -alF\e[0m"
+          ls -alF
+          echo -e "\e[1m\e[35mls -alF /github/home\e[0m"
+          ls -alF /github/home
       - name: Install apt dependencies
         run: |
           apt-get update
