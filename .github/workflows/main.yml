@@ -25,6 +25,13 @@ jobs:
     env:
       ROS_DISTRO: ${{ matrix.ros_distro }}
     steps:
+      - name: Install git in container
+        run: |
+          apt-get update
+          apt-get install -q -y git
+      - name: Set git safe directory
+        run: |
+          git config --global safe.directory '*'
       - uses: actions/checkout@v3
         env:
           TOKEN: "${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' && secrets.RWT_BOT_PAT || github.token }}"
@@ -39,15 +46,10 @@ jobs:
           chown -hR 1001:121 /github/home .
       - name: Install apt dependencies
         run: |
-          apt-get update
           apt-get install -q -y libasound2 libnss3 ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
       - name: Tests
         run: |
           bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && bash test/build.bash"
-      - name: Install git in container
-        if: ${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' && matrix.node_version == 18 }}
-        run: |
-          apt-get install -q -y git
       - name: Commit update of build
         uses: stefanzweifel/git-auto-commit-action@v4
         if: ${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' && matrix.node_version == 18 }}
