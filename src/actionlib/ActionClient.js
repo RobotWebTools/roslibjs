@@ -11,20 +11,20 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  * An actionlib action client.
  *
  * Emits the following events:
- *  * 'timeout' - if a timeout occurred while sending a goal
- *  * 'status' - the status messages received from the action server
- *  * 'feedback' -  the feedback messages received from the action server
- *  * 'result' - the result returned from the action server
+ *  * 'timeout' - If a timeout occurred while sending a goal.
+ *  * 'status' - The status messages received from the action server.
+ *  * 'feedback' - The feedback messages received from the action server.
+ *  * 'result' - The result returned from the action server.
  *
- *  @constructor
- *  @param options - object with following keys:
- *   * ros - the ROSLIB.Ros connection handle
- *   * serverName - the action server name, like /fibonacci
- *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
- *   * timeout - the timeout length when connecting to the action server
- *   * omitFeedback - the boolean flag to indicate whether to omit the feedback channel or not
- *   * omitStatus - the boolean flag to indicate whether to omit the status channel or not
- *   * omitResult - the boolean flag to indicate whether to omit the result channel or not
+ * @constructor
+ * @param {Object} options
+ * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+ * @param {string} options.serverName - The action server name, like '/fibonacci'.
+ * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
+ * @param {number} [options.timeout] - The timeout length when connecting to the action server.
+ * @param {boolean} [options.omitFeedback] - The flag to indicate whether to omit the feedback channel or not.
+ * @param {boolean} [options.omitStatus] - The flag to indicate whether to omit the status channel or not.
+ * @param {boolean} [options.omitResult] - The flag to indicate whether to omit the result channel or not.
  */
 function ActionClient(options) {
   var that = this;

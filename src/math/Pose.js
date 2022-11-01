@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
  */
 
@@ -9,10 +9,10 @@ var Quaternion = require('./Quaternion');
 /**
  * A Pose in 3D space. Values are copied into this object.
  *
- *  @constructor
- *  @param options - object with following keys:
- *   * position - the Vector3 describing the position
- *   * orientation - the ROSLIB.Quaternion describing the orientation
+ * @constructor
+ * @param {Object} options
+ * @param {Vector3} options.position - The ROSLIB.Vector3 describing the position.
+ * @param {Quaternion} options.orientation - The ROSLIB.Quaternion describing the orientation.
  */
 function Pose(options) {
   options = options || {};
@@ -24,7 +24,7 @@ function Pose(options) {
 /**
  * Apply a transform against this pose.
  *
- * @param tf the transform
+ * @param {Transform} tf - The transform to be applied.
  */
 Pose.prototype.applyTransform = function(tf) {
   this.position.multiplyQuaternion(tf.rotation);
@@ -37,16 +37,16 @@ Pose.prototype.applyTransform = function(tf) {
 /**
  * Clone a copy of this pose.
  *
- * @returns the cloned pose
+ * @returns {Pose} The cloned pose.
  */
 Pose.prototype.clone = function() {
   return new Pose(this);
 };
 
 /**
- * Multiplies this pose with another pose without altering this pose.
+ * Multiply this pose with another pose without altering this pose.
  *
- * @returns Result of multiplication.
+ * @returns {Pose} The result of the multiplication.
  */
 Pose.prototype.multiply = function(pose) {
   var p = pose.clone();
@@ -55,9 +55,9 @@ Pose.prototype.multiply = function(pose) {
 };
 
 /**
- * Computes the inverse of this pose.
+ * Compute the inverse of this pose.
  *
- * @returns Inverse of pose.
+ * @returns {Pose} The inverse of the pose.
  */
 Pose.prototype.getInverse = function() {
   var inverse = this.clone();

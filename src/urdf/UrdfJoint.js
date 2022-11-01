@@ -1,6 +1,6 @@
 /**
  * @fileOverview
- * @author David V. Lu!!  davidvlu@gmail.com
+ * @author David V. Lu!! - davidvlu@gmail.com
  */
 
 var Pose = require('../math/Pose');
@@ -11,8 +11,8 @@ var Quaternion = require('../math/Quaternion');
  * A Joint element in a URDF.
  *
  * @constructor
- * @param options - object with following keys:
- *  * xml - the XML element to parse
+ * @param {Object} options
+ * @param {Element} options.xml - The XML element to parse.
  */
 function UrdfJoint(options) {
   this.name = options.xml.getAttribute('name');
