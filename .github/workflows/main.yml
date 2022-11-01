@@ -8,15 +8,20 @@ defaults:
 
 jobs:
   ci:
-    name: ${{ matrix.ros_distro }}
+    name: ${{ matrix.ros_distro }} (node ${{ matrix.node_version }})
     if: ${{ github.actor != 'RWT-bot' }}
     runs-on: ubuntu-latest
-    container: ros:${{ matrix.ros_distro }}-ros-core
+    container:
+      image: ros:${{ matrix.ros_distro }}-ros-core
+      options: --cap-add=SYS_ADMIN
     strategy:
       fail-fast: false
       matrix:
         ros_distro: [melodic, noetic]
-        node_version: [14]
+        node_version: [16, 18]
+        exclude:
+          - ros_distro: melodic
+            node_version: 18
     env:
       ROS_DISTRO: ${{ matrix.ros_distro }}
     steps:
@@ -29,18 +34,23 @@ jobs:
         with:
           cache: npm
           node-version: ${{ matrix.node_version }}
-      - name: Own /github/home
+      - name: Own /github/home and PWD
         run: |
-          chown -hR $(whoami):$(whoami) /github/home
+          chown -hR 1001:121 /github/home .
       - name: Install apt dependencies
         run: |
           apt-get update
-          apt-get install -y firefox ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
+          apt-get install -q -y libasound2 libnss3 ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
       - name: Tests
         run: |
           bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && bash test/build.bash"
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        if: ${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' }}
+      - name: Install git in container
+        if: ${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' && matrix.node_version == 18 }}
+        run: |
+          apt-get install -q -y git
+      - name: Commit update of build
+        uses: stefanzweifel/git-auto-commit-action@v4
+        if: ${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' && matrix.node_version == 18 }}
         with:
           commit_message: Update Build
           file_pattern: 'build/*.js'
