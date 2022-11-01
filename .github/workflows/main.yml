@@ -27,6 +27,7 @@ jobs:
           token: ${{ env.TOKEN }}
       - uses: actions/setup-node@v3
         with:
+          cache: npm
           node-version: ${{ matrix.node_version }}
       - name: Own /github/home
         run: |
