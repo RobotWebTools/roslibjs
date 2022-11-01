@@ -11,16 +11,15 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  * An actionlib action server client.
  *
  * Emits the following events:
- *  * 'goal' - goal sent by action client
- *  * 'cancel' - action client has canceled the request
+ *  * 'goal' - Goal sent by action client.
+ *  * 'cancel' - Action client has canceled the request.
  *
- *  @constructor
- *  @param options - object with following keys:
- *   * ros - the ROSLIB.Ros connection handle
- *   * serverName - the action server name, like /fibonacci
- *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
+ * @constructor
+ * @param {Object} options
+ * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+ * @param {string} options.serverName - The action server name, like '/fibonacci'.
+ * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
  */
-
 function SimpleActionServer(options) {
     var that = this;
     options = options || {};
@@ -77,7 +76,7 @@ function SimpleActionServer(options) {
     this.nextGoal = null; // the one that'll be preempting
 
     goalListener.subscribe(function(goalMessage) {
-        
+
     if(that.currentGoal) {
             that.nextGoal = goalMessage;
             // needs to happen AFTER rest is set up
@@ -89,7 +88,7 @@ function SimpleActionServer(options) {
     }
     });
 
-    // helper function for determing ordering of timestamps
+    // helper function to determine ordering of timestamps
     // returns t1 < t2
     var isEarlier = function(t1, t2) {
         if(t1.secs > t2.secs) {
@@ -128,7 +127,6 @@ function SimpleActionServer(options) {
             }
             if(that.currentGoal && isEarlier(that.currentGoal.goal_id.stamp,
                                              cancelMessage.stamp)) {
-                
                 that.emit('cancel');
             }
         }
@@ -149,15 +147,14 @@ function SimpleActionServer(options) {
 SimpleActionServer.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
-*  Set action state to succeeded and return to client
-*/
-
-SimpleActionServer.prototype.setSucceeded = function(result2) {
-    
-
+ * Set action state to succeeded and return to client.
+ *
+ * @param {Object} result - The result to return to the client.
+ */
+SimpleActionServer.prototype.setSucceeded = function(result) {
     var resultMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 3},
-        result : result2
+        result : result
     });
     this.resultPublisher.publish(resultMessage);
 
@@ -172,13 +169,14 @@ SimpleActionServer.prototype.setSucceeded = function(result2) {
 };
 
 /**
-*  Set action state to aborted and return to client
-*/
-
-SimpleActionServer.prototype.setAborted = function(result2) {
+ * Set action state to aborted and return to client.
+ *
+ * @param {Object} result - The result to return to the client.
+ */
+SimpleActionServer.prototype.setAborted = function(result) {
     var resultMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 4},
-        result : result2
+        result : result
     });
     this.resultPublisher.publish(resultMessage);
 
@@ -193,24 +191,22 @@ SimpleActionServer.prototype.setAborted = function(result2) {
 };
 
 /**
-*  Function to send feedback
-*/
-
-SimpleActionServer.prototype.sendFeedback = function(feedback2) {
-
+ * Send a feedback message.
+ *
+ * @param {Object} feedback - The feedback to send to the client.
+ */
+SimpleActionServer.prototype.sendFeedback = function(feedback) {
     var feedbackMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 1},
-        feedback : feedback2
+        feedback : feedback
     });
     this.feedbackPublisher.publish(feedbackMessage);
 };
 
 /**
-*  Handle case where client requests preemption
-*/
-
+ * Handle case where client requests preemption.
+ */
 SimpleActionServer.prototype.setPreempted = function() {
-
     this.statusMessage.status_list = [];
     var resultMessage = new Message({
         status : {goal_id : this.currentGoal.goal_id, status : 2},

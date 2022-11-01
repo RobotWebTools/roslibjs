@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileOverview
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
@@ -10,20 +10,20 @@ var Message = require('./Message');
  * Publish and/or subscribe to a topic in ROS.
  *
  * Emits the following events:
- *  * 'warning' - if there are any warning during the Topic creation
- *  * 'message' - the message data from rosbridge
+ *  * 'warning' - If there are any warning during the Topic creation.
+ *  * 'message' - The message data from rosbridge.
  *
  * @constructor
- * @param options - object with following keys:
- *   * ros - the ROSLIB.Ros connection handle
- *   * name - the topic name, like /cmd_vel
- *   * messageType - the message type, like 'std_msgs/String'
- *   * compression - the type of compression to use, like 'png', 'cbor', or 'cbor-raw'
- *   * throttle_rate - the rate (in ms in between messages) at which to throttle the topics
- *   * queue_size - the queue created at bridge side for re-publishing webtopics (defaults to 100)
- *   * latch - latch the topic when publishing
- *   * queue_length - the queue length at bridge side used when subscribing (defaults to 0, no queueing).
- *   * reconnect_on_close - the flag to enable resubscription and readvertisement on close event(defaults to true).
+ * @param {Object} options
+ * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+ * @param {string} options.name - The topic name, like '/cmd_vel'.
+ * @param {string} options.messageType - The message type, like 'std_msgs/String'.
+ * @param {string} [options.compression=none] - The type of compression to use, like 'png', 'cbor', or 'cbor-raw'.
+ * @param {number} [options.throttle_rate=0] - The rate (in ms in between messages) at which to throttle the topics.
+ * @param {number} [options.queue_size=100] - The queue created at bridge side for re-publishing webtopics.
+ * @param {boolean} [options.latch=false] - Latch the topic when publishing.
+ * @param {number} [options.queue_length=0] - The queue length at bridge side used when subscribing.
+ * @param {boolean} [options.reconnect_on_close=true] - The flag to enable resubscription and readvertisement on close event.
  */
 function Topic(options) {
   options = options || {};
@@ -85,8 +85,8 @@ Topic.prototype.__proto__ = EventEmitter2.prototype;
  * Every time a message is published for the given topic, the callback
  * will be called with the message object.
  *
- * @param callback - function with the following params:
- *   * message - the published message
+ * @param {function} callback - Function with the following params:
+ * @param {Object} callback.message - The published message.
  */
 Topic.prototype.subscribe = function(callback) {
   if (typeof callback === 'function') {
@@ -109,13 +109,13 @@ Topic.prototype.subscribe = function(callback) {
 };
 
 /**
- * Unregisters as a subscriber for the topic. Unsubscribing stop remove
- * all subscribe callbacks. To remove a call back, you must explicitly
- * pass the callback function in.
+ * Unregister as a subscriber for the topic. Unsubscribing will stop
+ * and remove all subscribe callbacks. To remove a callback, you must
+ * explicitly pass the callback function in.
  *
- * @param callback - the optional callback to unregister, if
- *     * provided and other listeners are registered the topic won't
- *     * unsubscribe, just stop emitting to the passed listener
+ * @param {function} [callback] - The callback to unregister, if
+ *     provided and other listeners are registered the topic won't
+ *     unsubscribe, just stop emitting to the passed listener.
  */
 Topic.prototype.unsubscribe = function(callback) {
   if (callback) {
@@ -140,7 +140,7 @@ Topic.prototype.unsubscribe = function(callback) {
 
 
 /**
- * Registers as a publisher for the topic.
+ * Register as a publisher for the topic.
  */
 Topic.prototype.advertise = function() {
   if (this.isAdvertised) {
@@ -166,7 +166,7 @@ Topic.prototype.advertise = function() {
 };
 
 /**
- * Unregisters as a publisher for the topic.
+ * Unregister as a publisher for the topic.
  */
 Topic.prototype.unadvertise = function() {
   if (!this.isAdvertised) {
@@ -187,7 +187,7 @@ Topic.prototype.unadvertise = function() {
 /**
  * Publish the message.
  *
- * @param message - A ROSLIB.Message object.
+ * @param {Message} message - A ROSLIB.Message object.
  */
 Topic.prototype.publish = function(message) {
   if (!this.isAdvertised) {

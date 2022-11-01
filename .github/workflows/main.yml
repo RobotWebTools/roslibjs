@@ -1,25 +1,46 @@
 name: CI
 
-on:
-  push:
-  pull_request:
-    branches-ignore:
-      - develop
+on: [push, pull_request]
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
   ci:
     name: ${{ matrix.ros_distro }}
+    if: ${{ github.actor != 'RWT-bot' }}
     runs-on: ubuntu-latest
+    container: ros:${{ matrix.ros_distro }}-ros-core
     strategy:
       fail-fast: false
       matrix:
         ros_distro: [melodic, noetic]
         node_version: [14]
+    env:
+      ROS_DISTRO: ${{ matrix.ros_distro }}
     steps:
-      - uses: actions/checkout@v2
-      - name: Docker pull
-        run: docker pull ros:${{ matrix.ros_distro }}-ros-core
-      - name: Docker build
-        run: docker build --build-arg ROS_DISTRO="${{ matrix.ros_distro }}" --build-arg NODE_VERSION="${{ matrix.node_version }}" -t roslibjsdocker .
+      - uses: actions/checkout@v3
+        env:
+          TOKEN: "${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' && secrets.RWT_BOT_PAT || github.token }}"
+        with:
+          token: ${{ env.TOKEN }}
+      - uses: actions/setup-node@v3
+        with:
+          cache: npm
+          node-version: ${{ matrix.node_version }}
+      - name: Own /github/home
+        run: |
+          chown -hR $(whoami):$(whoami) /github/home
+      - name: Install apt dependencies
+        run: |
+          apt-get update
+          apt-get install -y firefox ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
       - name: Tests
-        run: docker run -v $(pwd):/root/roslibjs --rm roslibjsdocker bash -i -c 'bash /root/roslibjs/test/build.bash'
+        run: |
+          bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && bash test/build.bash"
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        if: ${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' }}
+        with:
+          commit_message: Update Build
+          file_pattern: 'build/*.js'

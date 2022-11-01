@@ -2,14 +2,14 @@
   "name": "roslib",
   "homepage": "https://www.robotwebtools.org",
   "description": "The standard ROS Javascript Library",
-  "version": "1.1.0",
+  "version": "1.3.0",
   "license": "BSD-2-Clause",
   "main": "./src/RosLibNode.js",
   "browser": {
     "./src/RosLibNode.js": "./src/RosLib.js",
     "canvas": "./src/util/shim/canvas.js",
     "ws": "./src/util/shim/WebSocket.js",
-    "xmldom": "./src/util/shim/xmldom.js",
+    "@xmldom/xmldom": "./src/util/shim/@xmldom/xmldom.js",
     "./src/util/decompressPng.js": "./src/util/shim/decompressPng.js"
   },
   "devDependencies": {
@@ -29,18 +29,19 @@
     "karma-firefox-launcher": "^2.1.0",
     "karma-mocha": "^2.0.0",
     "load-grunt-tasks": "^5.1.0",
-    "mocha": "^8.3.0",
+    "mocha": "^10.0.0",
     "time-grunt": "^2.0.0"
   },
   "dependencies": {
+    "@xmldom/xmldom": "^0.8.0",
     "cbor-js": "^0.1.0",
     "eventemitter2": "^6.4.0",
     "object-assign": "^4.0.0",
     "pngparse": "^2.0.0",
     "socket.io": "^4.0.0",
     "webworkify": "^1.5.0",
-    "ws": "^7.2.0",
-    "xmldom": "^0.6.0"
+    "webworkify-webpack": "^2.1.5",
+    "ws": "^8.0.0"
   },
   "directories": {
     "example": "examples",
@@ -51,6 +52,7 @@
   },
   "scripts": {
     "build": "grunt build",
+    "doc": "grunt doc",
     "test": "grunt test",
     "test-examples": "grunt test-examples",
     "test-workersocket": "grunt test-workersocket",

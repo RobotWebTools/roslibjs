@@ -10,4 +10,5 @@ Original Authors
 Contributors
 ------------
 
+ * [Matthijs van der Burgh](https://github.com/MatthijsBurgh) (MatthijsBurgh@outlook.com)
  * Graeme Yeates (yeatesgraeme@gmail.com)

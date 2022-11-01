@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
  */
 
@@ -15,24 +15,23 @@ var Transform = require('../math/Transform');
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
  *
- *  @constructor
- *  @param options - object with following keys:
- *   * ros - the ROSLIB.Ros connection handle
- *   * fixedFrame - the fixed frame, like /base_link
- *   * angularThres - the angular threshold for the TF republisher
- *   * transThres - the translation threshold for the TF republisher
- *   * rate - the rate for the TF republisher
- *   * updateDelay - the time (in ms) to wait after a new subscription
- *                   to update the TF republisher's list of TFs
- *   * topicTimeout - the timeout parameter for the TF republisher
- *   * serverName (optional) - the name of the tf2_web_republisher server
- *   * repubServiceName (optional) - the name of the republish_tfs service (non groovy compatibility mode only)
- *   																 default: '/republish_tfs'
+ * @constructor
+ * @param {Object} options
+ * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+ * @param {string} [options.fixedFrame=base_link] - The fixed frame.
+ * @param {number} [options.angularThres=2.0] - The angular threshold for the TF republisher.
+ * @param {number} [options.transThres=0.01] - The translation threshold for the TF republisher.
+ * @param {number} [options.rate=10.0] - The rate for the TF republisher.
+ * @param {number} [options.updateDelay=50] - The time (in ms) to wait after a new subscription
+ *     to update the TF republisher's list of TFs.
+ * @param {number} [options.topicTimeout=2.0] - The timeout parameter for the TF republisher.
+ * @param {string} [options.serverName=/tf2_web_republisher] - The name of the tf2_web_republisher server.
+ * @param {string} [options.repubServiceName=/republish_tfs] - The name of the republish_tfs service (non groovy compatibility mode only).
  */
 function TFClient(options) {
   options = options || {};
   this.ros = options.ros;
-  this.fixedFrame = options.fixedFrame || '/base_link';
+  this.fixedFrame = options.fixedFrame || 'base_link';
   this.angularThres = options.angularThres || 2.0;
   this.transThres = options.transThres || 0.01;
   this.rate = options.rate || 10.0;
@@ -52,8 +51,9 @@ function TFClient(options) {
   this.frameInfos = {};
   this.republisherUpdateRequested = false;
   this._subscribeCB = null;
+  this._isDisposed = false;
 
-  // Create an Action client
+  // Create an Action Client
   this.actionClient = new ActionClient({
     ros : options.ros,
     serverName : this.serverName,
@@ -62,7 +62,7 @@ function TFClient(options) {
     omitResult : true
   });
 
-  // Create a Service client
+  // Create a Service Client
   this.serviceClient = new Service({
     ros: options.ros,
     name: this.repubServiceName,
@@ -74,7 +74,7 @@ function TFClient(options) {
  * Process the incoming TF message and send them out using the callback
  * functions.
  *
- * @param tf - the TF message from the server
+ * @param {Object} tf - The TF message from the server.
  */
 TFClient.prototype.processTFArray = function(tf) {
   var that = this;
@@ -139,11 +139,17 @@ TFClient.prototype.updateGoal = function() {
 
 /**
  * Process the service response and subscribe to the tf republisher
- * topic
+ * topic.
  *
- * @param response the service response containing the topic name
+ * @param {Object} response - The service response containing the topic name.
  */
 TFClient.prototype.processResponse = function(response) {
+  // Do not setup a topic subscription if already disposed. Prevents a race condition where
+  // The dispose() function is called before the service call receives a response.
+  if (this._isDisposed) {
+    return;
+  }
+
   // if we subscribed to a topic before, unsubscribe so
   // the republisher stops publishing it
   if (this.currentTopic) {
@@ -162,9 +168,9 @@ TFClient.prototype.processResponse = function(response) {
 /**
  * Subscribe to the given TF frame.
  *
- * @param frameID - the TF frame to subscribe to
- * @param callback - function with params:
- *   * transform - the transform data
+ * @param {string} frameID - The TF frame to subscribe to.
+ * @param {function} callback - Function with the following params:
+ * @param {Transform} callback.transform - The transform data.
  */
 TFClient.prototype.subscribe = function(frameID, callback) {
   // remove leading slash, if it's there
@@ -172,7 +178,7 @@ TFClient.prototype.subscribe = function(frameID, callback) {
   {
     frameID = frameID.substring(1);
   }
-  // if there is no callback registered for the given frame, create emtpy callback list
+  // if there is no callback registered for the given frame, create empty callback list
   if (!this.frameInfos[frameID]) {
     this.frameInfos[frameID] = {
       cbs: []
@@ -182,7 +188,7 @@ TFClient.prototype.subscribe = function(frameID, callback) {
       this.republisherUpdateRequested = true;
     }
   }
-  // if we already have a transform, call back immediately
+  // if we already have a transform, callback immediately
   else if (this.frameInfos[frameID].transform) {
     callback(this.frameInfos[frameID].transform);
   }
@@ -192,8 +198,8 @@ TFClient.prototype.subscribe = function(frameID, callback) {
 /**
  * Unsubscribe from the given TF frame.
  *
- * @param frameID - the TF frame to unsubscribe from
- * @param callback - the callback function to remove
+ * @param {string} frameID - The TF frame to unsubscribe from.
+ * @param {function} callback - The callback function to remove.
  */
 TFClient.prototype.unsubscribe = function(frameID, callback) {
   // remove leading slash, if it's there
@@ -216,6 +222,7 @@ TFClient.prototype.unsubscribe = function(frameID, callback) {
  * Unsubscribe and unadvertise all topics associated with this TFClient.
  */
 TFClient.prototype.dispose = function() {
+  this._isDisposed = true;
   this.actionClient.dispose();
   if (this.currentTopic) {
     this.currentTopic.unsubscribe(this._subscribeCB);

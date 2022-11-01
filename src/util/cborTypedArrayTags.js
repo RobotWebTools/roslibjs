@@ -11,7 +11,7 @@ function warnPrecision() {
 }
 
 /**
- * Unpacks 64-bit unsigned integer from byte array.
+ * Unpack 64-bit unsigned integer from byte array.
  * @param {Uint8Array} bytes
 */
 function decodeUint64LE(bytes) {
@@ -36,7 +36,7 @@ function decodeUint64LE(bytes) {
 }
 
 /**
- * Unpacks 64-bit signed integer from byte array.
+ * Unpack 64-bit signed integer from byte array.
  * @param {Uint8Array} bytes
 */
 function decodeInt64LE(bytes) {
@@ -62,9 +62,9 @@ function decodeInt64LE(bytes) {
 }
 
 /**
- * Unpacks typed array from byte array.
+ * Unpack typed array from byte array.
  * @param {Uint8Array} bytes
- * @param {type} ArrayType - desired output array type
+ * @param {type} ArrayType - Desired output array type
 */
 function decodeNativeArray(bytes, ArrayType) {
   var byteLen = bytes.byteLength;
@@ -74,9 +74,10 @@ function decodeNativeArray(bytes, ArrayType) {
 }
 
 /**
- * Support a subset of draft CBOR typed array tags:
- *   <https://tools.ietf.org/html/draft-ietf-cbor-array-tags-00>
- * Only support little-endian tags for now.
+ * Supports a subset of draft CBOR typed array tags:
+ *     <https://tools.ietf.org/html/draft-ietf-cbor-array-tags-00>
+ *
+ * Only supports little-endian tags for now.
  */
 var nativeArrayTypes = {
   64: Uint8Array,
@@ -98,7 +99,7 @@ var conversionArrayTypes = {
 };
 
 /**
- * Handles CBOR typed array tags during decoding.
+ * Handle CBOR typed array tags during decoding.
  * @param {Uint8Array} data
  * @param {Number} tag
  */

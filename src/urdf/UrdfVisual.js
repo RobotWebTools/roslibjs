@@ -1,5 +1,5 @@
 /**
- * @fileOverview 
+ * @fileOverview
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
  * @author Russell Toris - rctoris@wpi.edu
  */
@@ -18,8 +18,8 @@ var UrdfSphere = require('./UrdfSphere');
  * A Visual element in a URDF.
  *
  * @constructor
- * @param options - object with following keys:
- *  * xml - the XML element to parse
+ * @param {Object} options
+ * @param {Element} options.xml - The XML element to parse.
  */
 function UrdfVisual(options) {
   var xml = options.xml;
