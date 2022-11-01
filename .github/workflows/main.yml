@@ -37,7 +37,7 @@ jobs:
       - name: Install apt dependencies
         run: |
           apt-get update
-          apt-get install -y firefox ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
+          apt-get install -q -y firefox ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
       - name: Tests
         run: |
           bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && bash test/build.bash"
