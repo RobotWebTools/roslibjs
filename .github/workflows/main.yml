@@ -44,6 +44,9 @@ jobs:
       - name: Tests
         run: |
           bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && bash test/build.bash"
+      - name: pwd
+        run: |
+          pwd
       - name: Install git in container
         if: ${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' && matrix.node_version == 18 }}
         run: |
