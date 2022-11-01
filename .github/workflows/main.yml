@@ -51,6 +51,10 @@ jobs:
         if: ${{ github.event_name == 'push' && matrix.ros_distro == 'noetic' && matrix.node_version == 18 }}
         run: |
           apt-get install -q -y git
+      - name: git status
+        if: ${{ github.event_name == 'push' && matrix.ros_distro == 'noetic' && matrix.node_version == 18 }}
+        run: |
+          git status
       - name: Commit update of build
         uses: stefanzweifel/git-auto-commit-action@v4
         if: ${{ github.event_name == 'push' && matrix.ros_distro == 'noetic' && matrix.node_version == 18 }}
