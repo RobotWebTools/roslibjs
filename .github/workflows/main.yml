@@ -32,8 +32,7 @@ jobs:
       - name: Own /github/home
         run: |
           echo $(whoami)
-          chown -h $(whoami):$(whoami) /github/home
-          chown -hR 1001:121 .
+          chown -hR 1001:121 /github/home .
       - name: Install apt dependencies
         run: |
           apt-get update
