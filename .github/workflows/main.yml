@@ -11,7 +11,9 @@ jobs:
     name: ${{ matrix.ros_distro }} (node ${{ matrix.node_version }})
     if: ${{ github.actor != 'RWT-bot' }}
     runs-on: ubuntu-latest
-    container: ros:${{ matrix.ros_distro }}-ros-core
+    container:
+      image: ros:${{ matrix.ros_distro }}-ros-core
+      options: --cap-add=SYS_ADMIN
     strategy:
       fail-fast: false
       matrix:
