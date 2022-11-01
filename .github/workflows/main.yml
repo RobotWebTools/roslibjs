@@ -19,6 +19,9 @@ jobs:
       matrix:
         ros_distro: [melodic, noetic]
         node_version: [16, 18]
+        exclude:
+          - ros_distro: melodic
+            node_version: 18
     env:
       ROS_DISTRO: ${{ matrix.ros_distro }}
     steps:
