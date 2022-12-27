@@ -4,7 +4,7 @@
 
 ## The Standard ROS JavaScript Library
 
-For full documentation, see [the ROS wiki](http://wiki.ros.org/roslibjs) or check out some [working demos](http://robotwebtools.org/demos.html).
+For full documentation see the [ROS wiki](http://wiki.ros.org/roslibjs).
 
 [JSDoc](http://robotwebtools.org/roslibjs) can be found on the Robot Web Tools website.
 
