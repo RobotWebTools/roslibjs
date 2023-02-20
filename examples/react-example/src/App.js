@@ -1,13 +1,17 @@
-import logo from './logo.svg';
-import './App.css';
-import Send_message from "./component_examples/example_functions"
+import logo from './logo.svg'
+import './App.css'
+import SendMessage from "./component_examples/example_functions"
 
 function App() {
   return (
-    <div className="App">
-      <Send_message/>
+     <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+      </header>
+
+      <SendMessage/>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
