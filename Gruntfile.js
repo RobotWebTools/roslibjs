@@ -28,7 +28,13 @@ module.exports = function(grunt) {
     karma: {
       options: {
         singleRun: true,
-        browsers: process.env.CI ? ['ChromeHeadless'] : ['Chrome']
+        browsers: process.env.CI ? ['ChromeHeadlessNoSandbox'] : ['Chrome'],
+        customLaunchers: {
+          ChromeHeadlessNoSandbox: {
+            base: 'ChromeHeadless',
+            flags: ['--no-sandbox']
+          }
+        }
       },
       test: {
         configFile: './test/karma.conf.js',
