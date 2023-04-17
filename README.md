@@ -6,9 +6,9 @@
 
 For full documentation see the [ROS wiki](http://wiki.ros.org/roslibjs).
 
-[JSDoc](http://robotwebtools.org/roslibjs) can be found on the Robot Web Tools website.
+[JSDoc](https://robotwebtools.github.io/roslibjs) can be found on the Robot Web Tools website.
 
-This project is released as part of the [Robot Web Tools](http://robotwebtools.org/) effort.
+This project is released as part of the [Robot Web Tools](https://robotwebtools.github.io/) effort.
 
 ## Usage
 
