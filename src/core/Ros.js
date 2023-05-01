@@ -38,7 +38,7 @@ function Ros(options) {
   this.isConnected = false;
   this.transportLibrary = options.transportLibrary || 'websocket';
   this.transportOptions = options.transportOptions || {};
-  this._sendFunc = function(msg) { that.sendEncodedMessage(msg); };
+  this._sendFunc = function (msg) { that.sendEncodedMessage(msg); };
 
   if (typeof options.groovyCompatibility === 'undefined') {
     this.groovyCompatibility = true;
@@ -63,9 +63,9 @@ Ros.prototype.__proto__ = EventEmitter2.prototype;
  *
  * @param {string} url - WebSocket URL or RTCDataChannel label for rosbridge.
  */
-Ros.prototype.connect = function(url) {
+Ros.prototype.connect = function (url) {
   if (this.transportLibrary === 'socket.io') {
-    this.socket = assign(io(url, {'force new connection': true}), socketAdapter(this));
+    this.socket = assign(io(url, { 'force new connection': true }), socketAdapter(this));
     this.socket.on('connect', this.socket.onopen);
     this.socket.on('data', this.socket.onmessage);
     this.socket.on('close', this.socket.onclose);
@@ -89,7 +89,7 @@ Ros.prototype.connect = function(url) {
 /**
  * Disconnect from the WebSocket server.
  */
-Ros.prototype.close = function() {
+Ros.prototype.close = function () {
   if (this.socket) {
     this.socket.close();
   }
@@ -106,17 +106,17 @@ Ros.prototype.close = function() {
  * @param {string} level - User level as a string given by the client.
  * @param {Object} end - End time of the client's session.
  */
-Ros.prototype.authenticate = function(mac, client, dest, rand, t, level, end) {
+Ros.prototype.authenticate = function (mac, client, dest, rand, t, level, end) {
   // create the request
   var auth = {
-    op : 'auth',
-    mac : mac,
-    client : client,
-    dest : dest,
-    rand : rand,
-    t : t,
-    level : level,
-    end : end
+    op: 'auth',
+    mac: mac,
+    client: client,
+    dest: dest,
+    rand: rand,
+    t: t,
+    level: level,
+    end: end
   };
   // send the request
   this.callOnConnection(auth);
@@ -127,17 +127,17 @@ Ros.prototype.authenticate = function(mac, client, dest, rand, t, level, end) {
  *
  * @param {Object} messageEncoded - The encoded message to be sent.
  */
-Ros.prototype.sendEncodedMessage = function(messageEncoded) {
+Ros.prototype.sendEncodedMessage = function (messageEncoded) {
   var emitter = null;
   var that = this;
   if (this.transportLibrary === 'socket.io') {
-    emitter = function(msg){that.socket.emit('operation', msg);};
+    emitter = function (msg) { that.socket.emit('operation', msg); };
   } else {
-    emitter = function(msg){that.socket.send(msg);};
+    emitter = function (msg) { that.socket.send(msg); };
   }
 
   if (!this.isConnected) {
-    that.once('connection', function() {
+    that.once('connection', function () {
       emitter(messageEncoded);
     });
   } else {
@@ -151,10 +151,12 @@ Ros.prototype.sendEncodedMessage = function(messageEncoded) {
  *
  * @param {Object} message - The message to be sent.
  */
-Ros.prototype.callOnConnection = function(message) {
-  if (this.transportOptions.encoder) {
+Ros.prototype.callOnConnection = function (message) {
+
+  // prevent calling on undefined
+  if (this && this.transportOptions && this.transportOptions.encoder) {
     this.transportOptions.encoder(message, this._sendFunc);
-  } else {
+  } else if (this && this._sendFunc) {
     this._sendFunc(JSON.stringify(message));
   }
 };
@@ -165,7 +167,7 @@ Ros.prototype.callOnConnection = function(message) {
  * @param {string} level - Status level (none, error, warning, info).
  * @param {number} [id] - Operation ID to change status level on.
  */
-Ros.prototype.setStatusLevel = function(level, id){
+Ros.prototype.setStatusLevel = function (level, id) {
   var levelMsg = {
     op: 'set_level',
     level: level,
@@ -183,25 +185,25 @@ Ros.prototype.setStatusLevel = function(level, id){
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Ros.prototype.getActionServers = function(callback, failedCallback) {
+Ros.prototype.getActionServers = function (callback, failedCallback) {
   var getActionServers = new Service({
-    ros : this,
-    name : '/rosapi/action_servers',
-    serviceType : 'rosapi/GetActionServers'
+    ros: this,
+    name: '/rosapi/action_servers',
+    serviceType: 'rosapi/GetActionServers'
   });
 
   var request = new ServiceRequest({});
-  if (typeof failedCallback === 'function'){
+  if (typeof failedCallback === 'function') {
     getActionServers.callService(request,
-      function(result) {
+      function (result) {
         callback(result.action_servers);
       },
-      function(message){
+      function (message) {
         failedCallback(message);
       }
     );
-  }else{
-    getActionServers.callService(request, function(result) {
+  } else {
+    getActionServers.callService(request, function (result) {
       callback(result.action_servers);
     });
   }
@@ -217,25 +219,25 @@ Ros.prototype.getActionServers = function(callback, failedCallback) {
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Ros.prototype.getTopics = function(callback, failedCallback) {
+Ros.prototype.getTopics = function (callback, failedCallback) {
   var topicsClient = new Service({
-    ros : this,
-    name : '/rosapi/topics',
-    serviceType : 'rosapi/Topics'
+    ros: this,
+    name: '/rosapi/topics',
+    serviceType: 'rosapi/Topics'
   });
 
   var request = new ServiceRequest();
-  if (typeof failedCallback === 'function'){
+  if (typeof failedCallback === 'function') {
     topicsClient.callService(request,
-      function(result) {
+      function (result) {
         callback(result);
       },
-      function(message){
+      function (message) {
         failedCallback(message);
       }
     );
-  }else{
-    topicsClient.callService(request, function(result) {
+  } else {
+    topicsClient.callService(request, function (result) {
       callback(result);
     });
   }
@@ -250,27 +252,27 @@ Ros.prototype.getTopics = function(callback, failedCallback) {
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Ros.prototype.getTopicsForType = function(topicType, callback, failedCallback) {
+Ros.prototype.getTopicsForType = function (topicType, callback, failedCallback) {
   var topicsForTypeClient = new Service({
-    ros : this,
-    name : '/rosapi/topics_for_type',
-    serviceType : 'rosapi/TopicsForType'
+    ros: this,
+    name: '/rosapi/topics_for_type',
+    serviceType: 'rosapi/TopicsForType'
   });
 
   var request = new ServiceRequest({
     type: topicType
   });
-  if (typeof failedCallback === 'function'){
+  if (typeof failedCallback === 'function') {
     topicsForTypeClient.callService(request,
-      function(result) {
+      function (result) {
         callback(result.topics);
       },
-      function(message){
+      function (message) {
         failedCallback(message);
       }
     );
-  }else{
-    topicsForTypeClient.callService(request, function(result) {
+  } else {
+    topicsForTypeClient.callService(request, function (result) {
       callback(result.topics);
     });
   }
@@ -284,25 +286,25 @@ Ros.prototype.getTopicsForType = function(topicType, callback, failedCallback) {
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Ros.prototype.getServices = function(callback, failedCallback) {
+Ros.prototype.getServices = function (callback, failedCallback) {
   var servicesClient = new Service({
-    ros : this,
-    name : '/rosapi/services',
-    serviceType : 'rosapi/Services'
+    ros: this,
+    name: '/rosapi/services',
+    serviceType: 'rosapi/Services'
   });
 
   var request = new ServiceRequest();
-  if (typeof failedCallback === 'function'){
+  if (typeof failedCallback === 'function') {
     servicesClient.callService(request,
-      function(result) {
+      function (result) {
         callback(result.services);
       },
-      function(message) {
+      function (message) {
         failedCallback(message);
       }
     );
-  }else{
-    servicesClient.callService(request, function(result) {
+  } else {
+    servicesClient.callService(request, function (result) {
       callback(result.services);
     });
   }
@@ -317,27 +319,27 @@ Ros.prototype.getServices = function(callback, failedCallback) {
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Ros.prototype.getServicesForType = function(serviceType, callback, failedCallback) {
+Ros.prototype.getServicesForType = function (serviceType, callback, failedCallback) {
   var servicesForTypeClient = new Service({
-    ros : this,
-    name : '/rosapi/services_for_type',
-    serviceType : 'rosapi/ServicesForType'
+    ros: this,
+    name: '/rosapi/services_for_type',
+    serviceType: 'rosapi/ServicesForType'
   });
 
   var request = new ServiceRequest({
     type: serviceType
   });
-  if (typeof failedCallback === 'function'){
+  if (typeof failedCallback === 'function') {
     servicesForTypeClient.callService(request,
-      function(result) {
+      function (result) {
         callback(result.services);
       },
-      function(message) {
+      function (message) {
         failedCallback(message);
       }
     );
-  }else{
-    servicesForTypeClient.callService(request, function(result) {
+  } else {
+    servicesForTypeClient.callService(request, function (result) {
       callback(result.services);
     });
   }
@@ -353,27 +355,27 @@ Ros.prototype.getServicesForType = function(serviceType, callback, failedCallbac
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Ros.prototype.getServiceRequestDetails = function(type, callback, failedCallback) {
+Ros.prototype.getServiceRequestDetails = function (type, callback, failedCallback) {
   var serviceTypeClient = new Service({
-    ros : this,
-    name : '/rosapi/service_request_details',
-    serviceType : 'rosapi/ServiceRequestDetails'
+    ros: this,
+    name: '/rosapi/service_request_details',
+    serviceType: 'rosapi/ServiceRequestDetails'
   });
   var request = new ServiceRequest({
     type: type
   });
 
-  if (typeof failedCallback === 'function'){
+  if (typeof failedCallback === 'function') {
     serviceTypeClient.callService(request,
-      function(result) {
+      function (result) {
         callback(result);
       },
-      function(message){
+      function (message) {
         failedCallback(message);
       }
     );
-  }else{
-    serviceTypeClient.callService(request, function(result) {
+  } else {
+    serviceTypeClient.callService(request, function (result) {
       callback(result);
     });
   }
@@ -389,27 +391,27 @@ Ros.prototype.getServiceRequestDetails = function(type, callback, failedCallback
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Ros.prototype.getServiceResponseDetails = function(type, callback, failedCallback) {
+Ros.prototype.getServiceResponseDetails = function (type, callback, failedCallback) {
   var serviceTypeClient = new Service({
-    ros : this,
-    name : '/rosapi/service_response_details',
-    serviceType : 'rosapi/ServiceResponseDetails'
+    ros: this,
+    name: '/rosapi/service_response_details',
+    serviceType: 'rosapi/ServiceResponseDetails'
   });
   var request = new ServiceRequest({
     type: type
   });
 
-  if (typeof failedCallback === 'function'){
+  if (typeof failedCallback === 'function') {
     serviceTypeClient.callService(request,
-      function(result) {
+      function (result) {
         callback(result);
       },
-      function(message){
+      function (message) {
         failedCallback(message);
       }
     );
-  }else{
-    serviceTypeClient.callService(request, function(result) {
+  } else {
+    serviceTypeClient.callService(request, function (result) {
       callback(result);
     });
   }
@@ -423,25 +425,25 @@ Ros.prototype.getServiceResponseDetails = function(type, callback, failedCallbac
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Ros.prototype.getNodes = function(callback, failedCallback) {
+Ros.prototype.getNodes = function (callback, failedCallback) {
   var nodesClient = new Service({
-    ros : this,
-    name : '/rosapi/nodes',
-    serviceType : 'rosapi/Nodes'
+    ros: this,
+    name: '/rosapi/nodes',
+    serviceType: 'rosapi/Nodes'
   });
 
   var request = new ServiceRequest();
-  if (typeof failedCallback === 'function'){
+  if (typeof failedCallback === 'function') {
     nodesClient.callService(request,
-      function(result) {
+      function (result) {
         callback(result.nodes);
       },
-      function(message) {
+      function (message) {
         failedCallback(message);
       }
     );
-  }else{
-    nodesClient.callService(request, function(result) {
+  } else {
+    nodesClient.callService(request, function (result) {
       callback(result.nodes);
     });
   }
@@ -475,27 +477,27 @@ Ros.prototype.getNodes = function(callback, failedCallback) {
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Ros.prototype.getNodeDetails = function(node, callback, failedCallback) {
+Ros.prototype.getNodeDetails = function (node, callback, failedCallback) {
   var nodesClient = new Service({
-    ros : this,
-    name : '/rosapi/node_details',
-    serviceType : 'rosapi/NodeDetails'
+    ros: this,
+    name: '/rosapi/node_details',
+    serviceType: 'rosapi/NodeDetails'
   });
 
   var request = new ServiceRequest({
     node: node
   });
-  if (typeof failedCallback === 'function'){
+  if (typeof failedCallback === 'function') {
     nodesClient.callService(request,
-      function(result) {
+      function (result) {
         callback(result.subscribing, result.publishing, result.services);
       },
-      function(message) {
+      function (message) {
         failedCallback(message);
       }
     );
   } else {
-    nodesClient.callService(request, function(result) {
+    nodesClient.callService(request, function (result) {
       callback(result);
     });
   }
@@ -509,24 +511,24 @@ Ros.prototype.getNodeDetails = function(node, callback, failedCallback) {
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Ros.prototype.getParams = function(callback, failedCallback) {
+Ros.prototype.getParams = function (callback, failedCallback) {
   var paramsClient = new Service({
-    ros : this,
-    name : '/rosapi/get_param_names',
-    serviceType : 'rosapi/GetParamNames'
+    ros: this,
+    name: '/rosapi/get_param_names',
+    serviceType: 'rosapi/GetParamNames'
   });
   var request = new ServiceRequest();
-  if (typeof failedCallback === 'function'){
+  if (typeof failedCallback === 'function') {
     paramsClient.callService(request,
-      function(result) {
+      function (result) {
         callback(result.names);
       },
-      function(message){
+      function (message) {
         failedCallback(message);
       }
     );
-  }else{
-    paramsClient.callService(request, function(result) {
+  } else {
+    paramsClient.callService(request, function (result) {
       callback(result.names);
     });
   }
@@ -541,27 +543,27 @@ Ros.prototype.getParams = function(callback, failedCallback) {
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Ros.prototype.getTopicType = function(topic, callback, failedCallback) {
+Ros.prototype.getTopicType = function (topic, callback, failedCallback) {
   var topicTypeClient = new Service({
-    ros : this,
-    name : '/rosapi/topic_type',
-    serviceType : 'rosapi/TopicType'
+    ros: this,
+    name: '/rosapi/topic_type',
+    serviceType: 'rosapi/TopicType'
   });
   var request = new ServiceRequest({
     topic: topic
   });
 
-  if (typeof failedCallback === 'function'){
+  if (typeof failedCallback === 'function') {
     topicTypeClient.callService(request,
-      function(result) {
+      function (result) {
         callback(result.type);
       },
-      function(message){
+      function (message) {
         failedCallback(message);
       }
     );
-  }else{
-    topicTypeClient.callService(request, function(result) {
+  } else {
+    topicTypeClient.callService(request, function (result) {
       callback(result.type);
     });
   }
@@ -576,27 +578,27 @@ Ros.prototype.getTopicType = function(topic, callback, failedCallback) {
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Ros.prototype.getServiceType = function(service, callback, failedCallback) {
+Ros.prototype.getServiceType = function (service, callback, failedCallback) {
   var serviceTypeClient = new Service({
-    ros : this,
-    name : '/rosapi/service_type',
-    serviceType : 'rosapi/ServiceType'
+    ros: this,
+    name: '/rosapi/service_type',
+    serviceType: 'rosapi/ServiceType'
   });
   var request = new ServiceRequest({
     service: service
   });
 
-  if (typeof failedCallback === 'function'){
+  if (typeof failedCallback === 'function') {
     serviceTypeClient.callService(request,
-      function(result) {
+      function (result) {
         callback(result.type);
       },
-      function(message){
+      function (message) {
         failedCallback(message);
       }
     );
-  }else{
-    serviceTypeClient.callService(request, function(result) {
+  } else {
+    serviceTypeClient.callService(request, function (result) {
       callback(result.type);
     });
   }
@@ -611,27 +613,27 @@ Ros.prototype.getServiceType = function(service, callback, failedCallback) {
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Ros.prototype.getMessageDetails = function(message, callback, failedCallback) {
+Ros.prototype.getMessageDetails = function (message, callback, failedCallback) {
   var messageDetailClient = new Service({
-    ros : this,
-    name : '/rosapi/message_details',
-    serviceType : 'rosapi/MessageDetails'
+    ros: this,
+    name: '/rosapi/message_details',
+    serviceType: 'rosapi/MessageDetails'
   });
   var request = new ServiceRequest({
     type: message
   });
 
-  if (typeof failedCallback === 'function'){
+  if (typeof failedCallback === 'function') {
     messageDetailClient.callService(request,
-      function(result) {
+      function (result) {
         callback(result.typedefs);
       },
-      function(message){
+      function (message) {
         failedCallback(message);
       }
     );
-  }else{
-    messageDetailClient.callService(request, function(result) {
+  } else {
+    messageDetailClient.callService(request, function (result) {
       callback(result.typedefs);
     });
   }
@@ -642,11 +644,11 @@ Ros.prototype.getMessageDetails = function(message, callback, failedCallback) {
  *
  * @param {Object[]} defs - Array of type_def dictionary.
  */
-Ros.prototype.decodeTypeDefs = function(defs) {
+Ros.prototype.decodeTypeDefs = function (defs) {
   var that = this;
 
   // calls itself recursively to resolve type definition using hints.
-  var decodeTypeDefsRec = function(theType, hints) {
+  var decodeTypeDefsRec = function (theType, hints) {
     var typeDefDict = {};
     for (var i = 0; i < theType.fieldnames.length; i++) {
       var arrayLen = theType.fieldarraylen[i];
@@ -699,25 +701,25 @@ Ros.prototype.decodeTypeDefs = function(defs) {
  * @param {function} [failedCallback] - The callback function when the service call failed with params:
  * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Ros.prototype.getTopicsAndRawTypes = function(callback, failedCallback) {
+Ros.prototype.getTopicsAndRawTypes = function (callback, failedCallback) {
   var topicsAndRawTypesClient = new Service({
-    ros : this,
-    name : '/rosapi/topics_and_raw_types',
-    serviceType : 'rosapi/TopicsAndRawTypes'
+    ros: this,
+    name: '/rosapi/topics_and_raw_types',
+    serviceType: 'rosapi/TopicsAndRawTypes'
   });
 
   var request = new ServiceRequest();
-  if (typeof failedCallback === 'function'){
+  if (typeof failedCallback === 'function') {
     topicsAndRawTypesClient.callService(request,
-      function(result) {
+      function (result) {
         callback(result);
       },
-      function(message){
+      function (message) {
         failedCallback(message);
       }
     );
-  }else{
-    topicsAndRawTypesClient.callService(request, function(result) {
+  } else {
+    topicsAndRawTypesClient.callService(request, function (result) {
       callback(result);
     });
   }
