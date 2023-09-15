@@ -29,7 +29,7 @@ jobs:
       - name: Set git safe directory
         run: |
           git config --global safe.directory '*'
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         env:
           TOKEN: "${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' && secrets.RWT_BOT_PAT || github.token }}"
         with:
