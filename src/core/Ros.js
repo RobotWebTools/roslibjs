@@ -30,8 +30,7 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  * @param {string} [options.transportLibrary=websocket] - One of 'websocket', 'workersocket', 'socket.io' or RTCPeerConnection instance controlling how the connection is created in `connect`.
  * @param {Object} [options.transportOptions={}] - The options to use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.
  */
-function Ros(options) {
-  options = options || {};
+function Ros(options = {}) {
   var that = this;
   this.socket = null;
   this.idCounter = 0;

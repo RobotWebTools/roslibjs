@@ -28,8 +28,7 @@ var Transform = require('../math/Transform');
  * @param {string} [options.serverName=/tf2_web_republisher] - The name of the tf2_web_republisher server.
  * @param {string} [options.repubServiceName=/republish_tfs] - The name of the republish_tfs service (non groovy compatibility mode only).
  */
-function TFClient(options) {
-  options = options || {};
+function TFClient(options = {}) {
   this.ros = options.ros;
   this.fixedFrame = options.fixedFrame || 'base_link';
   this.angularThres = options.angularThres || 2.0;

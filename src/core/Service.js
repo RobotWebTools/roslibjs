@@ -16,8 +16,7 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  * @param {string} options.name - The service name, like '/add_two_ints'.
  * @param {string} options.serviceType - The service type, like 'rospy_tutorials/AddTwoInts'.
  */
-function Service(options) {
-  options = options || {};
+function Service(options = {}) {
   this.ros = options.ros;
   this.name = options.name;
   this.serviceType = options.serviceType;

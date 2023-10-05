@@ -14,8 +14,7 @@ var Quaternion = require('./Quaternion');
  * @param {Vector3} options.translation - The ROSLIB.Vector3 describing the translation.
  * @param {Quaternion} options.rotation - The ROSLIB.Quaternion describing the rotation.
  */
-function Transform(options) {
-  options = options || {};
+function Transform(options = {}) {
   // Copy the values into this object if they exist
   this.translation = new Vector3(options.translation);
   this.rotation = new Quaternion(options.rotation);

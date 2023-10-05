@@ -14,8 +14,7 @@ var ServiceRequest = require('./ServiceRequest');
  * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
  * @param {string} options.name - The param name, like max_vel_x.
  */
-function Param(options) {
-  options = options || {};
+function Param(options = {}) {
   this.ros = options.ros;
   this.name = options.name;
 }

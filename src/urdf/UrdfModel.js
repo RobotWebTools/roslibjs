@@ -20,8 +20,7 @@ var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
  * @param {Element} options.xml - The XML element to parse.
  * @param {string} options.string - The XML element to parse as a string.
  */
-function UrdfModel(options) {
-  options = options || {};
+function UrdfModel(options = {}) {
   var xmlDoc = options.xml;
   var string = options.string;
   this.materials = {};

@@ -10,8 +10,7 @@ var util = require('util');
  * to connect to the front using socket.io.
  * @private
  */
-function RosTCP(options) {
-  options = options || {};
+function RosTCP(options = {}) {
   if (!options.encoding) {
     console.error('ROSLib uses utf8 encoding by default. ' +
       'It would be more efficient to use ascii (if possible).');

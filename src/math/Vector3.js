@@ -12,8 +12,7 @@
  * @param {number} [options.y=0] - The y value.
  * @param {number} [options.z=0] - The z value.
  */
-function Vector3(options) {
-  options = options || {};
+function Vector3(options = {}) {
   this.x = options.x || 0;
   this.y = options.y || 0;
   this.z = options.z || 0;

@@ -20,9 +20,8 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  * @param {string} options.serverName - The action server name, like '/fibonacci'.
  * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
  */
-function SimpleActionServer(options) {
+function SimpleActionServer(options = {}) {
     var that = this;
-    options = options || {};
     this.ros = options.ros;
     this.serverName = options.serverName;
     this.actionName = options.actionName;

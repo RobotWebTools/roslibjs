@@ -26,9 +26,8 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  * @param {boolean} [options.omitStatus] - The flag to indicate whether to omit the status channel or not.
  * @param {boolean} [options.omitResult] - The flag to indicate whether to omit the result channel or not.
  */
-function ActionClient(options) {
+function ActionClient(options = {}) {
   var that = this;
-  options = options || {};
   this.ros = options.ros;
   this.serverName = options.serverName;
   this.actionName = options.actionName;

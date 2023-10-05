@@ -25,8 +25,7 @@ var Message = require('./Message');
  * @param {number} [options.queue_length=0] - The queue length at bridge side used when subscribing.
  * @param {boolean} [options.reconnect_on_close=true] - The flag to enable resubscription and readvertisement on close event.
  */
-function Topic(options) {
-  options = options || {};
+function Topic(options = {}) {
   this.ros = options.ros;
   this.name = options.name;
   this.messageType = options.messageType;

@@ -11,9 +11,7 @@ var DuplexStream = require('stream').Duplex;
  * @param {boolean} [options.publish=true] - The flag to indicate whether to register the stream as a publisher to the topic or not.
  * @param {boolean} [options.transform] - A function to change the data to be published or filter it if false is returned.
  */
-Topic.prototype.toStream = function(options) {
-    options = options || {subscribe: true, publish: true};
-
+Topic.prototype.toStream = function(options={subscribe: true, publish: true}) {
     var topic = this;
     var hasTransform = typeof options.transform === 'function';
 

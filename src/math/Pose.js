@@ -14,8 +14,7 @@ var Quaternion = require('./Quaternion');
  * @param {Vector3} options.position - The ROSLIB.Vector3 describing the position.
  * @param {Quaternion} options.orientation - The ROSLIB.Quaternion describing the orientation.
  */
-function Pose(options) {
-  options = options || {};
+function Pose(options = {}) {
   // copy the values into this object if they exist
   this.position = new Vector3(options.position);
   this.orientation = new Quaternion(options.orientation);
