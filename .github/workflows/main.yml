@@ -48,7 +48,7 @@ jobs:
         run: |
           bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && bash test/build.bash"
       - name: Commit update of build
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         if: ${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' && matrix.node_version == 18 }}
         with:
           commit_message: Update Build
