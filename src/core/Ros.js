@@ -637,16 +637,11 @@ Ros.prototype.getMessageDetails = function(message, callback, failedCallback) {
   }
 };
 
-/**
- * Decode a typedef array into a dictionary like `rosmsg show foo/bar`.
- *
- * @param {Object[]} defs - Array of type_def dictionary.
- */
 Ros.prototype.decodeTypeDefs = function(defs) {
   var that = this;
 
-  // calls itself recursively to resolve type definition using hints.
   var decodeTypeDefsRec = function(theType, hints) {
+    console.debug(`🍋 decoding typedef`, theType);
     var typeDefDict = {};
     for (var i = 0; i < theType.fieldnames.length; i++) {
       var arrayLen = theType.fieldarraylen[i];
@@ -672,6 +667,7 @@ Ros.prototype.decodeTypeDefs = function(defs) {
         if (sub) {
           var subResult = decodeTypeDefsRec(sub, hints);
           if (arrayLen === -1) {
+            typeDefDict[fieldName] = subResult; // add this decoding result to dictionary
           }
           else {
             typeDefDict[fieldName] = [subResult];
