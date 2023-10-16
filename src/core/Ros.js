@@ -637,12 +637,17 @@ Ros.prototype.getMessageDetails = function(message, callback, failedCallback) {
   }
 };
 
+/**
+ * Decode a typedef array into a dictionary like `rosmsg show foo/bar`.
+ *
+ * @param {Object[]} defs - Array of type_def dictionary.
+ */
 Ros.prototype.decodeTypeDefs = function(defs) {
   var that = this;
 
   var decodeTypeDefsRec = function(theType, hints) {
-    console.debug(`🍋 decoding typedef`, theType);
     var typeDefDict = {};
+    // calls itself recursively to resolve type definition using hints.
     for (var i = 0; i < theType.fieldnames.length; i++) {
       var arrayLen = theType.fieldarraylen[i];
       var fieldName = theType.fieldnames[i];
