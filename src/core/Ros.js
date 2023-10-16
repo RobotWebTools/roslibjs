@@ -646,8 +646,8 @@ Ros.prototype.decodeTypeDefs = function(defs) {
   var that = this;
 
   var decodeTypeDefsRec = function(theType, hints) {
-    var typeDefDict = {};
     // calls itself recursively to resolve type definition using hints.
+    var typeDefDict = {};
     for (var i = 0; i < theType.fieldnames.length; i++) {
       var arrayLen = theType.fieldarraylen[i];
       var fieldName = theType.fieldnames[i];
