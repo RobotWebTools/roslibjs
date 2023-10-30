@@ -34,7 +34,7 @@ jobs:
           TOKEN: "${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' && secrets.RWT_BOT_PAT || github.token }}"
         with:
           token: ${{ env.TOKEN }}
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           cache: npm
           node-version: ${{ matrix.node_version }}
