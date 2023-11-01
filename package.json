@@ -55,7 +55,7 @@
   "scripts": {
     "build": "grunt build",
     "doc": "grunt doc",
-    "test": "grunt test",
+    "test": "npm run build && grunt test",
     "test-examples": "grunt test-examples",
     "test-workersocket": "grunt test-workersocket",
     "test-tcp": "grunt test-tcp",
