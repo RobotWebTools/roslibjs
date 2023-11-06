@@ -11,7 +11,7 @@ var assign = require('object-assign');
  * @constructor
  * @param values - object matching the fields defined in the .action definition file
  */
-function ActionGoal(values) {
+function ActionFeedback(values) {
   assign(this, values);
 }
 

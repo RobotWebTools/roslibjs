@@ -53,9 +53,9 @@ Action.prototype.sendGoal = function(request, resultCallback, feedbackCallback, 
         if (typeof failedCallback === 'function') {
           failedCallback(message.values);
         }
-      } else if (message.op === "action_feedback" && typeof feedbackCallback === 'function') {
+      } else if (message.op === 'action_feedback' && typeof feedbackCallback === 'function') {
         feedbackCallback(new ActionResult(message.values));
-      } else if (message.op === "action_result" && typeof resultCallback === 'function') {
+      } else if (message.op === 'action_result' && typeof resultCallback === 'function') {
         resultCallback(new ActionResult(message.values));
       }
     });
