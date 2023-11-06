@@ -2712,7 +2712,7 @@ assign(ROSLIB, require('./urdf'));
 
 module.exports = ROSLIB;
 
-},{"./actionlib":14,"./core":23,"./math":28,"./tf":31,"./urdf":43,"object-assign":3}],9:[function(require,module,exports){
+},{"./actionlib":14,"./core":26,"./math":31,"./tf":34,"./urdf":46,"object-assign":3}],9:[function(require,module,exports){
 (function (global){(function (){
 global.ROSLIB = require('./RosLib');
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
@@ -2861,7 +2861,7 @@ ActionClient.prototype.dispose = function() {
 
 module.exports = ActionClient;
 
-},{"../core/Message":15,"../core/Topic":22,"eventemitter2":2}],11:[function(require,module,exports){
+},{"../core/Message":18,"../core/Topic":25,"eventemitter2":2}],11:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Justin Young - justin@oodar.com.au
@@ -2950,7 +2950,7 @@ ActionListener.prototype.__proto__ = EventEmitter2.prototype;
 
 module.exports = ActionListener;
 
-},{"../core/Message":15,"../core/Topic":22,"eventemitter2":2}],12:[function(require,module,exports){
+},{"../core/Message":18,"../core/Topic":25,"eventemitter2":2}],12:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
@@ -3040,7 +3040,7 @@ Goal.prototype.cancel = function() {
 };
 
 module.exports = Goal;
-},{"../core/Message":15,"eventemitter2":2}],13:[function(require,module,exports){
+},{"../core/Message":18,"eventemitter2":2}],13:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Laura Lindzey - lindzey@gmail.com
@@ -3270,7 +3270,7 @@ SimpleActionServer.prototype.setPreempted = function() {
 };
 
 module.exports = SimpleActionServer;
-},{"../core/Message":15,"../core/Topic":22,"eventemitter2":2}],14:[function(require,module,exports){
+},{"../core/Message":18,"../core/Topic":25,"eventemitter2":2}],14:[function(require,module,exports){
 var Ros = require('../core/Ros');
 var mixin = require('../mixin');
 
@@ -3283,7 +3283,121 @@ var action = module.exports = {
 
 mixin(Ros, ['ActionClient', 'SimpleActionServer'], action);
 
-},{"../core/Ros":17,"../mixin":29,"./ActionClient":10,"./ActionListener":11,"./Goal":12,"./SimpleActionServer":13}],15:[function(require,module,exports){
+},{"../core/Ros":20,"../mixin":32,"./ActionClient":10,"./ActionListener":11,"./Goal":12,"./SimpleActionServer":13}],15:[function(require,module,exports){
+/**
+ * @fileoverview
+ * @author Sebastian Castro - sebastian.castro@picknik.ai
+ */
+
+var ActionGoal = require('./ActionGoal');
+var ActionResult = require('./ActionResult');
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
+
+/**
+ * A ROS action client.
+ *
+ * @constructor
+ * @params options - possible keys include:
+ *   * ros - the ROSLIB.Ros connection handle
+ *   * name - the service name, like '/fibonacci'
+ *   * actionType - the action type, like 'action_tutorials_interfaces/Fibonacci'
+ */
+function Action(options) {
+  options = options || {};
+  this.ros = options.ros;
+  this.name = options.name;
+  this.actionType = options.actionType;
+  this.isAdvertised = false;
+
+  this._serviceCallback = null;
+}
+Action.prototype.__proto__ = EventEmitter2.prototype;
+
+/**
+ * Calls the service. Returns the service response in the
+ * callback. Does nothing if this service is currently advertised.
+ *
+ * @param request - the ROSLIB.ServiceRequest to send
+ * @param callback - function with params:
+ *   * response - the response from the service request
+ * @param failedCallback - the callback function when the service call failed (optional). Params:
+ *   * error - the error message reported by ROS
+ */
+Action.prototype.sendGoal = function(request, resultCallback, feedbackCallback, failedCallback) {
+  if (this.isAdvertised) {
+    return;
+  }
+
+  var actionGoalId = 'send_action_goal:' + this.name + ':' + (++this.ros.idCounter);
+
+  if (resultCallback || failedCallback) {
+    this.ros.on(actionGoalId, function(message) {
+      if (message.result !== undefined && message.result === false) {
+        if (typeof failedCallback === 'function') {
+          failedCallback(message.values);
+        }
+      } else if (message.op === "action_feedback" && typeof feedbackCallback === 'function') {
+        feedbackCallback(new ActionResult(message.values));
+      } else if (message.op === "action_result" && typeof resultCallback === 'function') {
+        resultCallback(new ActionResult(message.values));
+      }
+    });
+  }
+
+  var call = {
+    op : 'send_action_goal',
+    id : actionGoalId,
+    action : this.name,
+    action_type: this.actionType,
+    args : request,
+    feedback : true,
+  };
+  this.ros.callOnConnection(call);
+};
+
+module.exports = Action;
+
+},{"./ActionGoal":16,"./ActionResult":17,"eventemitter2":2}],16:[function(require,module,exports){
+/**
+ * @fileoverview
+ * @author Sebastian Castro - sebastian.castro@picknik.ai
+ */
+
+var assign = require('object-assign');
+
+/**
+ * An ActionGoal is passed into the an action goal request.
+ *
+ * @constructor
+ * @param values - object matching the fields defined in the .action definition file
+ */
+function ActionGoal(values) {
+  assign(this, values);
+}
+
+module.exports = ActionGoal;
+
+},{"object-assign":3}],17:[function(require,module,exports){
+/**
+ * @fileoverview
+ * @author Sebastian Castro - sebastian.castro@picknik.ai
+ */
+
+var assign = require('object-assign');
+
+/**
+ * An ActionResult is returned from sending an action goal.
+ *
+ * @constructor
+ * @param values - object matching the fields defined in the .action definition file
+ */
+function ActionResult(values) {
+  assign(this, values);
+}
+
+module.exports = ActionResult;
+
+},{"object-assign":3}],18:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -3302,7 +3416,7 @@ function Message(values) {
 }
 
 module.exports = Message;
-},{"object-assign":3}],16:[function(require,module,exports){
+},{"object-assign":3}],19:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -3386,7 +3500,7 @@ Param.prototype.delete = function(callback) {
 };
 
 module.exports = Param;
-},{"./Service":18,"./ServiceRequest":19}],17:[function(require,module,exports){
+},{"./Service":21,"./ServiceRequest":22}],20:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -4088,7 +4202,7 @@ Ros.prototype.getTopicsAndRawTypes = function(callback, failedCallback) {
 
 module.exports = Ros;
 
-},{"../util/workerSocket":49,"./Service":18,"./ServiceRequest":19,"./SocketAdapter.js":21,"eventemitter2":2,"object-assign":3,"ws":46}],18:[function(require,module,exports){
+},{"../util/workerSocket":52,"./Service":21,"./ServiceRequest":22,"./SocketAdapter.js":24,"eventemitter2":2,"object-assign":3,"ws":49}],21:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -4213,7 +4327,7 @@ Service.prototype._serviceResponse = function(rosbridgeRequest) {
 
 module.exports = Service;
 
-},{"./ServiceRequest":19,"./ServiceResponse":20,"eventemitter2":2}],19:[function(require,module,exports){
+},{"./ServiceRequest":22,"./ServiceResponse":23,"eventemitter2":2}],22:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - balexander@willowgarage.com
@@ -4232,7 +4346,7 @@ function ServiceRequest(values) {
 }
 
 module.exports = ServiceRequest;
-},{"object-assign":3}],20:[function(require,module,exports){
+},{"object-assign":3}],23:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - balexander@willowgarage.com
@@ -4251,7 +4365,7 @@ function ServiceResponse(values) {
 }
 
 module.exports = ServiceResponse;
-},{"object-assign":3}],21:[function(require,module,exports){
+},{"object-assign":3}],24:[function(require,module,exports){
 /**
  * Socket event handling utilities for handling events on either
  * WebSocket and TCP sockets
@@ -4292,6 +4406,12 @@ function SocketAdapter(client) {
       client.emit(message.id, message);
     } else if (message.op === 'call_service') {
       client.emit(message.service, message);
+    } else if (message.op === 'send_action_goal') {
+      client.emit(message.action, message);
+    } else if (message.op === 'action_feedback') {
+      client.emit(message.id, message);
+    } else if (message.op === 'action_result') {
+      client.emit(message.id, message);
     } else if(message.op === 'status'){
       if(message.id){
         client.emit('status:'+message.id, message);
@@ -4384,7 +4504,7 @@ function SocketAdapter(client) {
 
 module.exports = SocketAdapter;
 
-},{"../util/cborTypedArrayTags":44,"../util/decompressPng":48,"cbor-js":1}],22:[function(require,module,exports){
+},{"../util/cborTypedArrayTags":47,"../util/decompressPng":51,"cbor-js":1}],25:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -4594,7 +4714,7 @@ Topic.prototype.publish = function(message) {
 
 module.exports = Topic;
 
-},{"./Message":15,"eventemitter2":2}],23:[function(require,module,exports){
+},{"./Message":18,"eventemitter2":2}],26:[function(require,module,exports){
 var mixin = require('../mixin');
 
 var core = module.exports = {
@@ -4604,12 +4724,15 @@ var core = module.exports = {
     Param: require('./Param'),
     Service: require('./Service'),
     ServiceRequest: require('./ServiceRequest'),
-    ServiceResponse: require('./ServiceResponse')
+    ServiceResponse: require('./ServiceResponse'),
+    Action: require('./Action'),
+    ActionGoal: require('./ActionGoal'),
+    ActionResult: require('./ActionResult'),
 };
 
-mixin(core.Ros, ['Param', 'Service', 'Topic'], core);
+mixin(core.Ros, ['Param', 'Service', 'Topic', 'Action'], core);
 
-},{"../mixin":29,"./Message":15,"./Param":16,"./Ros":17,"./Service":18,"./ServiceRequest":19,"./ServiceResponse":20,"./Topic":22}],24:[function(require,module,exports){
+},{"../mixin":32,"./Action":15,"./ActionGoal":16,"./ActionResult":17,"./Message":18,"./Param":19,"./Ros":20,"./Service":21,"./ServiceRequest":22,"./ServiceResponse":23,"./Topic":25}],27:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -4682,7 +4805,7 @@ Pose.prototype.getInverse = function() {
 };
 
 module.exports = Pose;
-},{"./Quaternion":25,"./Vector3":27}],25:[function(require,module,exports){
+},{"./Quaternion":28,"./Vector3":30}],28:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -4776,7 +4899,7 @@ Quaternion.prototype.clone = function() {
 
 module.exports = Quaternion;
 
-},{}],26:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -4810,7 +4933,7 @@ Transform.prototype.clone = function() {
 };
 
 module.exports = Transform;
-},{"./Quaternion":25,"./Vector3":27}],27:[function(require,module,exports){
+},{"./Quaternion":28,"./Vector3":30}],30:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -4879,7 +5002,7 @@ Vector3.prototype.clone = function() {
 };
 
 module.exports = Vector3;
-},{}],28:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 module.exports = {
     Pose: require('./Pose'),
     Quaternion: require('./Quaternion'),
@@ -4887,7 +5010,7 @@ module.exports = {
     Vector3: require('./Vector3')
 };
 
-},{"./Pose":24,"./Quaternion":25,"./Transform":26,"./Vector3":27}],29:[function(require,module,exports){
+},{"./Pose":27,"./Quaternion":28,"./Transform":29,"./Vector3":30}],32:[function(require,module,exports){
 /**
  * Mixin a feature to the core/Ros prototype.
  * For example, mixin(Ros, ['Topic'], {Topic: <Topic>})
@@ -4906,7 +5029,7 @@ module.exports = function(Ros, classes, features) {
     });
 };
 
-},{}],30:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -5141,7 +5264,7 @@ TFClient.prototype.dispose = function() {
 
 module.exports = TFClient;
 
-},{"../actionlib/ActionClient":10,"../actionlib/Goal":12,"../core/Service.js":18,"../core/ServiceRequest.js":19,"../core/Topic.js":22,"../math/Transform":26}],31:[function(require,module,exports){
+},{"../actionlib/ActionClient":10,"../actionlib/Goal":12,"../core/Service.js":21,"../core/ServiceRequest.js":22,"../core/Topic.js":25,"../math/Transform":29}],34:[function(require,module,exports){
 var Ros = require('../core/Ros');
 var mixin = require('../mixin');
 
@@ -5150,7 +5273,7 @@ var tf = module.exports = {
 };
 
 mixin(Ros, ['TFClient'], tf);
-},{"../core/Ros":17,"../mixin":29,"./TFClient":30}],32:[function(require,module,exports){
+},{"../core/Ros":20,"../mixin":32,"./TFClient":33}],35:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5181,7 +5304,7 @@ function UrdfBox(options) {
 }
 
 module.exports = UrdfBox;
-},{"../math/Vector3":27,"./UrdfTypes":41}],33:[function(require,module,exports){
+},{"../math/Vector3":30,"./UrdfTypes":44}],36:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5205,7 +5328,7 @@ function UrdfColor(options) {
 }
 
 module.exports = UrdfColor;
-},{}],34:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5228,7 +5351,7 @@ function UrdfCylinder(options) {
 }
 
 module.exports = UrdfCylinder;
-},{"./UrdfTypes":41}],35:[function(require,module,exports){
+},{"./UrdfTypes":44}],38:[function(require,module,exports){
 /**
  * @fileOverview
  * @author David V. Lu!!  davidvlu@gmail.com
@@ -5321,7 +5444,7 @@ function UrdfJoint(options) {
 
 module.exports = UrdfJoint;
 
-},{"../math/Pose":24,"../math/Quaternion":25,"../math/Vector3":27}],36:[function(require,module,exports){
+},{"../math/Pose":27,"../math/Quaternion":28,"../math/Vector3":30}],39:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5350,7 +5473,7 @@ function UrdfLink(options) {
 }
 
 module.exports = UrdfLink;
-},{"./UrdfVisual":42}],37:[function(require,module,exports){
+},{"./UrdfVisual":45}],40:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5400,7 +5523,7 @@ UrdfMaterial.prototype.assign = function(obj) {
 
 module.exports = UrdfMaterial;
 
-},{"./UrdfColor":33,"object-assign":3}],38:[function(require,module,exports){
+},{"./UrdfColor":36,"object-assign":3}],41:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5437,7 +5560,7 @@ function UrdfMesh(options) {
 }
 
 module.exports = UrdfMesh;
-},{"../math/Vector3":27,"./UrdfTypes":41}],39:[function(require,module,exports){
+},{"../math/Vector3":30,"./UrdfTypes":44}],42:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5534,7 +5657,7 @@ function UrdfModel(options) {
 
 module.exports = UrdfModel;
 
-},{"./UrdfJoint":35,"./UrdfLink":36,"./UrdfMaterial":37,"@xmldom/xmldom":45}],40:[function(require,module,exports){
+},{"./UrdfJoint":38,"./UrdfLink":39,"./UrdfMaterial":40,"@xmldom/xmldom":48}],43:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5556,7 +5679,7 @@ function UrdfSphere(options) {
 }
 
 module.exports = UrdfSphere;
-},{"./UrdfTypes":41}],41:[function(require,module,exports){
+},{"./UrdfTypes":44}],44:[function(require,module,exports){
 module.exports = {
 	URDF_SPHERE : 0,
 	URDF_BOX : 1,
@@ -5564,7 +5687,7 @@ module.exports = {
 	URDF_MESH : 3
 };
 
-},{}],42:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5695,7 +5818,7 @@ function UrdfVisual(options) {
 }
 
 module.exports = UrdfVisual;
-},{"../math/Pose":24,"../math/Quaternion":25,"../math/Vector3":27,"./UrdfBox":32,"./UrdfCylinder":34,"./UrdfMaterial":37,"./UrdfMesh":38,"./UrdfSphere":40}],43:[function(require,module,exports){
+},{"../math/Pose":27,"../math/Quaternion":28,"../math/Vector3":30,"./UrdfBox":35,"./UrdfCylinder":37,"./UrdfMaterial":40,"./UrdfMesh":41,"./UrdfSphere":43}],46:[function(require,module,exports){
 module.exports = require('object-assign')({
     UrdfBox: require('./UrdfBox'),
     UrdfColor: require('./UrdfColor'),
@@ -5708,7 +5831,7 @@ module.exports = require('object-assign')({
     UrdfVisual: require('./UrdfVisual')
 }, require('./UrdfTypes'));
 
-},{"./UrdfBox":32,"./UrdfColor":33,"./UrdfCylinder":34,"./UrdfLink":36,"./UrdfMaterial":37,"./UrdfMesh":38,"./UrdfModel":39,"./UrdfSphere":40,"./UrdfTypes":41,"./UrdfVisual":42,"object-assign":3}],44:[function(require,module,exports){
+},{"./UrdfBox":35,"./UrdfColor":36,"./UrdfCylinder":37,"./UrdfLink":39,"./UrdfMaterial":40,"./UrdfMesh":41,"./UrdfModel":42,"./UrdfSphere":43,"./UrdfTypes":44,"./UrdfVisual":45,"object-assign":3}],47:[function(require,module,exports){
 'use strict';
 
 var UPPER32 = Math.pow(2, 32);
@@ -5828,20 +5951,20 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = cborTypedArrayTagger;
 }
 
-},{}],45:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 exports.DOMImplementation = window.DOMImplementation;
 exports.XMLSerializer = window.XMLSerializer;
 exports.DOMParser = window.DOMParser;
 
-},{}],46:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 module.exports = typeof window !== 'undefined' ? window.WebSocket : WebSocket;
 
-},{}],47:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 /* global document */
 module.exports = function Canvas() {
 	return document.createElement('canvas');
 };
-},{}],48:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Graeme Yeates - github.com/megawac
@@ -5899,7 +6022,7 @@ function decompressPng(data, callback) {
 
 module.exports = decompressPng;
 
-},{"canvas":47}],49:[function(require,module,exports){
+},{"canvas":50}],52:[function(require,module,exports){
 try {
     var work = require('webworkify');
 } catch(ReferenceError) {
@@ -5950,7 +6073,7 @@ WorkerSocket.prototype.close = function() {
 
 module.exports = WorkerSocket;
 
-},{"./workerSocketImpl":50,"webworkify":7,"webworkify-webpack":6}],50:[function(require,module,exports){
+},{"./workerSocketImpl":53,"webworkify":7,"webworkify-webpack":6}],53:[function(require,module,exports){
 var WebSocket = WebSocket || require('ws');
 
 module.exports = function(self) {
@@ -6000,4 +6123,4 @@ module.exports = function(self) {
   });
 };
 
-},{"ws":46}]},{},[9]);
+},{"ws":49}]},{},[9]);

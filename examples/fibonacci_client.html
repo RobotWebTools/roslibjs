@@ -40,30 +40,25 @@
   // The ActionClient
   // ----------------
 
-  var fibonacciClient = new ROSLIB.ActionClient({
+  var fibonacciClient = new ROSLIB.Action({
     ros : ros,
-    serverName : '/fibonacci',
-    actionName : 'actionlib_tutorials/FibonacciAction'
+    name : '/fibonacci',
+    actionType : 'action_tutorials_interfaces/Fibonacci'
   });
 
-  // Create a goal.
-  var goal = new ROSLIB.Goal({
-    actionClient : fibonacciClient,
-    goalMessage : {
-      order : 7
-    }
+  // Send an action goal
+  var goal = new ROSLIB.ActionGoal({
+    order: 5,
   });
 
-  // Print out their output into the terminal.
-  goal.on('feedback', function(feedback) {
-    console.log('Feedback: ' + feedback.sequence);
-  });
-  goal.on('result', function(result) {
-    console.log('Final Result: ' + result.sequence);
-  });
-
-  // Send the goal to the action server.
-  goal.send();
+  fibonacciClient.sendGoal(goal, 
+  function(result) {
+    console.log('Result for action goal on ' + fibonacciClient.name + ': ' + result.result.sequence);
+  },
+  function(feedback) {
+    console.log('Feedback for action on ' + fibonacciClient.name + ': ' + feedback.partial_sequence);
+  },
+  );
 </script>
 </head>
 
@@ -72,9 +67,8 @@
   <p>Run the following commands in the terminal then refresh this page. Check the JavaScript
     console for the output.</p>
   <ol>
-    <li><tt>roscore</tt></li>
-    <li><tt>rosrun actionlib_tutorials fibonacci_server</tt></li>
-    <li><tt>roslaunch rosbridge_server rosbridge_websocket.launch</tt></li>
+    <li><tt>ros2 launch rosbridge_server rosbridge_websocket_launch.xml</tt></li>
+    <li><tt>ros2 run action_tutorials_py fibonacci_action_server</tt></li>
   </ol>
   <div id="statusIndicator">
     <p id="connecting">
