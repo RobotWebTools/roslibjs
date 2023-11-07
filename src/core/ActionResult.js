@@ -6,7 +6,7 @@
 var assign = require('object-assign');
 
 /**
- * An ActionResult is returned from sending an action goal.
+ * An ActionResult is returned from sending a ROS 2 action goal.
  *
  * @constructor
  * @param values - object matching the fields defined in the .action definition file

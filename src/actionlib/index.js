@@ -7,4 +7,4 @@ var action = module.exports = {
     Goal: require('./Goal'),
 };
 
-mixin(Ros, ['ActionClient'], action);
+mixin(Ros, ['ActionClient', 'SimpleActionServer'], action);
