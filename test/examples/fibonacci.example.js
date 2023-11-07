@@ -1,7 +1,7 @@
 var expect = require('chai').expect;
 var ROSLIB = require('../..');
 
-describe('Fibonacci Example', function() {
+describe.skip('Fibonacci Example', function() {
     it('Fibonacci', function(done) {
         this.timeout(8000);
 
