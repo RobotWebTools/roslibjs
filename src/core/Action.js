@@ -24,7 +24,8 @@ function Action(options) {
   this.actionType = options.actionType;
   this.isAdvertised = false;
 
-  this._serviceCallback = null;
+  this._actionCallback = null;
+  this._cancelCallback = null;
 }
 Action.prototype.__proto__ = EventEmitter2.prototype;
 
@@ -68,6 +69,92 @@ Action.prototype.sendGoal = function(request, resultCallback, feedbackCallback, 
     action_type: this.actionType,
     args : request,
     feedback : true,
+  };
+  this.ros.callOnConnection(call);
+
+  return actionGoalId;
+};
+
+Action.prototype.cancelGoal = function(id) {
+  var call = {
+    op: 'cancel_action_goal',
+    id: id,
+    action: this.name,
+  };
+  this.ros.callOnConnection(call);
+};
+
+/**
+ * Advertise the action. This turns the Action object from a client
+ * into a server. The callback will be called with every goal sent to this action.
+ *
+ * @param callback - This works similarly to the callback for a C++ action and should take the following params:
+ *   * goal - the action goal
+ *   It should return true if the action has finished successfully,
+ *   i.e. without any fatal errors.
+ */
+Action.prototype.advertise = function(callback) {
+  if (this.isAdvertised || typeof callback !== 'function') {
+    return;
+  }
+
+  this._actionCallback = callback;
+  this.ros.on(this.name, this._executeAction.bind(this));
+  this.ros.callOnConnection({
+    op: 'advertise_action',
+    type: this.actionType,
+    action: this.name
+  });
+  this.isAdvertised = true;
+};
+
+Action.prototype.unadvertise = function() {
+  if (!this.isAdvertised) {
+    return;
+  }
+  this.ros.callOnConnection({
+    op: 'unadvertise_action',
+    action: this.name
+  });
+  this.isAdvertised = false;
+};
+
+Action.prototype._executeAction = function(rosbridgeRequest) {
+  var id;
+  if (rosbridgeRequest.id) {
+    id = rosbridgeRequest.id;
+  }
+
+  this._actionCallback(rosbridgeRequest.args, id);
+};
+
+Action.prototype.sendFeedback = function(id, feedback) {
+  var call = {
+    op: 'action_feedback',
+    id: id,
+    action: this.name,
+    values: new ActionFeedback(feedback),
+  };
+  this.ros.callOnConnection(call);
+};
+
+Action.prototype.setSucceeded = function(id, result) {
+  var call = {
+    op: 'action_result',
+    id: id,
+    action: this.name,
+    values: new ActionResult(result),
+    result: true,
+  };
+  this.ros.callOnConnection(call);
+};
+
+Action.prototype.setFailed = function(id) {
+  var call = {
+    op: 'action_result',
+    id: id,
+    action: this.name,
+    result: false,
   };
   this.ros.callOnConnection(call);
 };

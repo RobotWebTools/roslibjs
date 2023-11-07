@@ -51,7 +51,7 @@
     order: 5,
   });
 
-  fibonacciClient.sendGoal(goal, 
+  var goal_id = fibonacciClient.sendGoal(goal, 
   function(result) {
     console.log('Result for action goal on ' + fibonacciClient.name + ': ' + result.result.sequence);
   },

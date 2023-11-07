@@ -2702,8 +2702,6 @@ var assign = require('object-assign');
 // Add core components
 assign(ROSLIB, require('./core'));
 
-assign(ROSLIB, require('./actionlib'));
-
 assign(ROSLIB, require('./math'));
 
 assign(ROSLIB, require('./tf'));
@@ -2712,584 +2710,18 @@ assign(ROSLIB, require('./urdf'));
 
 module.exports = ROSLIB;
 
-},{"./actionlib":14,"./core":26,"./math":31,"./tf":34,"./urdf":46,"object-assign":3}],9:[function(require,module,exports){
+},{"./core":22,"./math":27,"./tf":30,"./urdf":42,"object-assign":3}],9:[function(require,module,exports){
 (function (global){(function (){
 global.ROSLIB = require('./RosLib');
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./RosLib":8}],10:[function(require,module,exports){
-/**
- * @fileOverview
- * @author Russell Toris - rctoris@wpi.edu
- */
-
-var Topic = require('../core/Topic');
-var Message = require('../core/Message');
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
-
-/**
- * An actionlib action client.
- *
- * Emits the following events:
- *  * 'timeout' - if a timeout occurred while sending a goal
- *  * 'status' - the status messages received from the action server
- *  * 'feedback' -  the feedback messages received from the action server
- *  * 'result' - the result returned from the action server
- *
- *  @constructor
- *  @param options - object with following keys:
- *   * ros - the ROSLIB.Ros connection handle
- *   * serverName - the action server name, like /fibonacci
- *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
- *   * timeout - the timeout length when connecting to the action server
- */
-function ActionClient(options) {
-  var that = this;
-  options = options || {};
-  this.ros = options.ros;
-  this.serverName = options.serverName;
-  this.actionName = options.actionName;
-  this.timeout = options.timeout;
-  this.omitFeedback = options.omitFeedback;
-  this.omitStatus = options.omitStatus;
-  this.omitResult = options.omitResult;
-  this.goals = {};
-
-  // flag to check if a status has been received
-  var receivedStatus = false;
-
-  // create the topics associated with actionlib
-  this.feedbackListener = new Topic({
-    ros : this.ros,
-    name : this.serverName + '/feedback',
-    messageType : this.actionName + 'Feedback'
-  });
-
-  this.statusListener = new Topic({
-    ros : this.ros,
-    name : this.serverName + '/status',
-    messageType : 'actionlib_msgs/GoalStatusArray'
-  });
-
-  this.resultListener = new Topic({
-    ros : this.ros,
-    name : this.serverName + '/result',
-    messageType : this.actionName + 'Result'
-  });
-
-  this.goalTopic = new Topic({
-    ros : this.ros,
-    name : this.serverName + '/goal',
-    messageType : this.actionName + 'Goal'
-  });
-
-  this.cancelTopic = new Topic({
-    ros : this.ros,
-    name : this.serverName + '/cancel',
-    messageType : 'actionlib_msgs/GoalID'
-  });
-
-  // advertise the goal and cancel topics
-  this.goalTopic.advertise();
-  this.cancelTopic.advertise();
-
-  // subscribe to the status topic
-  if (!this.omitStatus) {
-    this.statusListener.subscribe(function(statusMessage) {
-      receivedStatus = true;
-      statusMessage.status_list.forEach(function(status) {
-        var goal = that.goals[status.goal_id.id];
-        if (goal) {
-          goal.emit('status', status);
-        }
-      });
-    });
-  }
-
-  // subscribe the the feedback topic
-  if (!this.omitFeedback) {
-    this.feedbackListener.subscribe(function(feedbackMessage) {
-      var goal = that.goals[feedbackMessage.status.goal_id.id];
-      if (goal) {
-        goal.emit('status', feedbackMessage.status);
-        goal.emit('feedback', feedbackMessage.feedback);
-      }
-    });
-  }
-
-  // subscribe to the result topic
-  if (!this.omitResult) {
-    this.resultListener.subscribe(function(resultMessage) {
-      var goal = that.goals[resultMessage.status.goal_id.id];
-
-      if (goal) {
-        goal.emit('status', resultMessage.status);
-        goal.emit('result', resultMessage.result);
-      }
-    });
-  }
-
-  // If timeout specified, emit a 'timeout' event if the action server does not respond
-  if (this.timeout) {
-    setTimeout(function() {
-      if (!receivedStatus) {
-        that.emit('timeout');
-      }
-    }, this.timeout);
-  }
-}
-
-ActionClient.prototype.__proto__ = EventEmitter2.prototype;
-
-/**
- * Cancel all goals associated with this ActionClient.
- */
-ActionClient.prototype.cancel = function() {
-  var cancelMessage = new Message();
-  this.cancelTopic.publish(cancelMessage);
-};
-
-/**
- * Unsubscribe and unadvertise all topics associated with this ActionClient.
- */
-ActionClient.prototype.dispose = function() {
-  this.goalTopic.unadvertise();
-  this.cancelTopic.unadvertise();
-  if (!this.omitStatus) {this.statusListener.unsubscribe();}
-  if (!this.omitFeedback) {this.feedbackListener.unsubscribe();}
-  if (!this.omitResult) {this.resultListener.unsubscribe();}
-};
-
-module.exports = ActionClient;
-
-},{"../core/Message":18,"../core/Topic":25,"eventemitter2":2}],11:[function(require,module,exports){
-/**
- * @fileOverview
- * @author Justin Young - justin@oodar.com.au
- * @author Russell Toris - rctoris@wpi.edu
- */
-
-var Topic = require('../core/Topic');
-var Message = require('../core/Message');
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
-
-/**
- * An actionlib action listener
- *
- * Emits the following events:
- *  * 'status' - the status messages received from the action server
- *  * 'feedback' -  the feedback messages received from the action server
- *  * 'result' - the result returned from the action server
- *
- *  @constructor
- *  @param options - object with following keys:
- *   * ros - the ROSLIB.Ros connection handle
- *   * serverName - the action server name, like /fibonacci
- *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
- */
-function ActionListener(options) {
-  var that = this;
-  options = options || {};
-  this.ros = options.ros;
-  this.serverName = options.serverName;
-  this.actionName = options.actionName;
-  this.timeout = options.timeout;
-  this.omitFeedback = options.omitFeedback;
-  this.omitStatus = options.omitStatus;
-  this.omitResult = options.omitResult;
-
-
-  // create the topics associated with actionlib
-  var goalListener = new Topic({
-    ros : this.ros,
-    name : this.serverName + '/goal',
-    messageType : this.actionName + 'Goal'
-  });
-
-  var feedbackListener = new Topic({
-    ros : this.ros,
-    name : this.serverName + '/feedback',
-    messageType : this.actionName + 'Feedback'
-  });
-
-  var statusListener = new Topic({
-    ros : this.ros,
-    name : this.serverName + '/status',
-    messageType : 'actionlib_msgs/GoalStatusArray'
-  });
-
-  var resultListener = new Topic({
-    ros : this.ros,
-    name : this.serverName + '/result',
-    messageType : this.actionName + 'Result'
-  });
-
-  goalListener.subscribe(function(goalMessage) {
-      that.emit('goal', goalMessage);
-  });
-
-  statusListener.subscribe(function(statusMessage) {
-      statusMessage.status_list.forEach(function(status) {
-          that.emit('status', status);
-      });
-  });
-
-  feedbackListener.subscribe(function(feedbackMessage) {
-      that.emit('status', feedbackMessage.status);
-      that.emit('feedback', feedbackMessage.feedback);
-  });
-
-  // subscribe to the result topic
-  resultListener.subscribe(function(resultMessage) {
-      that.emit('status', resultMessage.status);
-      that.emit('result', resultMessage.result);
-  });
-
-}
-
-ActionListener.prototype.__proto__ = EventEmitter2.prototype;
-
-module.exports = ActionListener;
-
-},{"../core/Message":18,"../core/Topic":25,"eventemitter2":2}],12:[function(require,module,exports){
-/**
- * @fileOverview
- * @author Russell Toris - rctoris@wpi.edu
- */
-
-var Message = require('../core/Message');
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
-
-/**
- * An actionlib goal goal is associated with an action server.
- *
- * Emits the following events:
- *  * 'timeout' - if a timeout occurred while sending a goal
- *
- *  @constructor
- *  @param object with following keys:
- *   * actionClient - the ROSLIB.ActionClient to use with this goal
- *   * goalMessage - The JSON object containing the goal for the action server
- */
-function Goal(options) {
-  var that = this;
-  this.actionClient = options.actionClient;
-  this.goalMessage = options.goalMessage;
-  this.isFinished = false;
-
-  // Used to create random IDs
-  var date = new Date();
-
-  // Create a random ID
-  this.goalID = 'goal_' + Math.random() + '_' + date.getTime();
-  // Fill in the goal message
-  this.goalMessage = new Message({
-    goal_id : {
-      stamp : {
-        secs : 0,
-        nsecs : 0
-      },
-      id : this.goalID
-    },
-    goal : this.goalMessage
-  });
-
-  this.on('status', function(status) {
-    that.status = status;
-  });
-
-  this.on('result', function(result) {
-    that.isFinished = true;
-    that.result = result;
-  });
-
-  this.on('feedback', function(feedback) {
-    that.feedback = feedback;
-  });
-
-  // Add the goal
-  this.actionClient.goals[this.goalID] = this;
-}
-
-Goal.prototype.__proto__ = EventEmitter2.prototype;
-
-/**
- * Send the goal to the action server.
- *
- * @param timeout (optional) - a timeout length for the goal's result
- */
-Goal.prototype.send = function(timeout) {
-  var that = this;
-  that.actionClient.goalTopic.publish(that.goalMessage);
-  if (timeout) {
-    setTimeout(function() {
-      if (!that.isFinished) {
-        that.emit('timeout');
-      }
-    }, timeout);
-  }
-};
-
-/**
- * Cancel the current goal.
- */
-Goal.prototype.cancel = function() {
-  var cancelMessage = new Message({
-    id : this.goalID
-  });
-  this.actionClient.cancelTopic.publish(cancelMessage);
-};
-
-module.exports = Goal;
-},{"../core/Message":18,"eventemitter2":2}],13:[function(require,module,exports){
-/**
- * @fileOverview
- * @author Laura Lindzey - lindzey@gmail.com
- */
-
-var Topic = require('../core/Topic');
-var Message = require('../core/Message');
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
-
-/**
- * An actionlib action server client.
- *
- * Emits the following events:
- *  * 'goal' - goal sent by action client
- *  * 'cancel' - action client has canceled the request
- *
- *  @constructor
- *  @param options - object with following keys:
- *   * ros - the ROSLIB.Ros connection handle
- *   * serverName - the action server name, like /fibonacci
- *   * actionName - the action message name, like 'actionlib_tutorials/FibonacciAction'
- */
-
-function SimpleActionServer(options) {
-    var that = this;
-    options = options || {};
-    this.ros = options.ros;
-    this.serverName = options.serverName;
-    this.actionName = options.actionName;
-
-    // create and advertise publishers
-    this.feedbackPublisher = new Topic({
-        ros : this.ros,
-        name : this.serverName + '/feedback',
-        messageType : this.actionName + 'Feedback'
-    });
-    this.feedbackPublisher.advertise();
-
-    var statusPublisher = new Topic({
-        ros : this.ros,
-        name : this.serverName + '/status',
-        messageType : 'actionlib_msgs/GoalStatusArray'
-    });
-    statusPublisher.advertise();
-
-    this.resultPublisher = new Topic({
-        ros : this.ros,
-        name : this.serverName + '/result',
-        messageType : this.actionName + 'Result'
-    });
-    this.resultPublisher.advertise();
-
-    // create and subscribe to listeners
-    var goalListener = new Topic({
-        ros : this.ros,
-        name : this.serverName + '/goal',
-        messageType : this.actionName + 'Goal'
-    });
-
-    var cancelListener = new Topic({
-        ros : this.ros,
-        name : this.serverName + '/cancel',
-        messageType : 'actionlib_msgs/GoalID'
-    });
-
-    // Track the goals and their status in order to publish status...
-    this.statusMessage = new Message({
-        header : {
-            stamp : {secs : 0, nsecs : 100},
-            frame_id : ''
-        },
-        status_list : []
-    });
-
-    // needed for handling preemption prompted by a new goal being received
-    this.currentGoal = null; // currently tracked goal
-    this.nextGoal = null; // the one that'll be preempting
-
-    goalListener.subscribe(function(goalMessage) {
-        
-    if(that.currentGoal) {
-            that.nextGoal = goalMessage;
-            // needs to happen AFTER rest is set up
-            that.emit('cancel');
-    } else {
-            that.statusMessage.status_list = [{goal_id : goalMessage.goal_id, status : 1}];
-            that.currentGoal = goalMessage;
-            that.emit('goal', goalMessage.goal);
-    }
-    });
-
-    // helper function for determing ordering of timestamps
-    // returns t1 < t2
-    var isEarlier = function(t1, t2) {
-        if(t1.secs > t2.secs) {
-            return false;
-        } else if(t1.secs < t2.secs) {
-            return true;
-        } else if(t1.nsecs < t2.nsecs) {
-            return true;
-        } else {
-            return false;
-        }
-    };
-
-    // TODO: this may be more complicated than necessary, since I'm
-    // not sure if the callbacks can ever wind up with a scenario
-    // where we've been preempted by a next goal, it hasn't finished
-    // processing, and then we get a cancel message
-    cancelListener.subscribe(function(cancelMessage) {
-
-        // cancel ALL goals if both empty
-        if(cancelMessage.stamp.secs === 0 && cancelMessage.stamp.secs === 0 && cancelMessage.id === '') {
-            that.nextGoal = null;
-            if(that.currentGoal) {
-                that.emit('cancel');
-            }
-        } else { // treat id and stamp independently
-            if(that.currentGoal && cancelMessage.id === that.currentGoal.goal_id.id) {
-                that.emit('cancel');
-            } else if(that.nextGoal && cancelMessage.id === that.nextGoal.goal_id.id) {
-                that.nextGoal = null;
-            }
-
-            if(that.nextGoal && isEarlier(that.nextGoal.goal_id.stamp,
-                                          cancelMessage.stamp)) {
-                that.nextGoal = null;
-            }
-            if(that.currentGoal && isEarlier(that.currentGoal.goal_id.stamp,
-                                             cancelMessage.stamp)) {
-                
-                that.emit('cancel');
-            }
-        }
-    });
-
-    // publish status at pseudo-fixed rate; required for clients to know they've connected
-    var statusInterval = setInterval( function() {
-        var currentTime = new Date();
-        var secs = Math.floor(currentTime.getTime()/1000);
-        var nsecs = Math.round(1000000000*(currentTime.getTime()/1000-secs));
-        that.statusMessage.header.stamp.secs = secs;
-        that.statusMessage.header.stamp.nsecs = nsecs;
-        statusPublisher.publish(that.statusMessage);
-    }, 500); // publish every 500ms
-
-}
-
-SimpleActionServer.prototype.__proto__ = EventEmitter2.prototype;
-
-/**
-*  Set action state to succeeded and return to client
-*/
-
-SimpleActionServer.prototype.setSucceeded = function(result2) {
-    
-
-    var resultMessage = new Message({
-        status : {goal_id : this.currentGoal.goal_id, status : 3},
-        result : result2
-    });
-    this.resultPublisher.publish(resultMessage);
-
-    this.statusMessage.status_list = [];
-    if(this.nextGoal) {
-        this.currentGoal = this.nextGoal;
-        this.nextGoal = null;
-        this.emit('goal', this.currentGoal.goal);
-    } else {
-        this.currentGoal = null;
-    }
-};
-
-/**
-*  Set action state to aborted and return to client
-*/
-
-SimpleActionServer.prototype.setAborted = function(result2) {
-    var resultMessage = new Message({
-        status : {goal_id : this.currentGoal.goal_id, status : 4},
-        result : result2
-    });
-    this.resultPublisher.publish(resultMessage);
-
-    this.statusMessage.status_list = [];
-    if(this.nextGoal) {
-        this.currentGoal = this.nextGoal;
-        this.nextGoal = null;
-        this.emit('goal', this.currentGoal.goal);
-    } else {
-        this.currentGoal = null;
-    }
-};
-
-/**
-*  Function to send feedback
-*/
-
-SimpleActionServer.prototype.sendFeedback = function(feedback2) {
-
-    var feedbackMessage = new Message({
-        status : {goal_id : this.currentGoal.goal_id, status : 1},
-        feedback : feedback2
-    });
-    this.feedbackPublisher.publish(feedbackMessage);
-};
-
-/**
-*  Handle case where client requests preemption
-*/
-
-SimpleActionServer.prototype.setPreempted = function() {
-
-    this.statusMessage.status_list = [];
-    var resultMessage = new Message({
-        status : {goal_id : this.currentGoal.goal_id, status : 2},
-    });
-    this.resultPublisher.publish(resultMessage);
-
-    if(this.nextGoal) {
-        this.currentGoal = this.nextGoal;
-        this.nextGoal = null;
-        this.emit('goal', this.currentGoal.goal);
-    } else {
-        this.currentGoal = null;
-    }
-};
-
-module.exports = SimpleActionServer;
-},{"../core/Message":18,"../core/Topic":25,"eventemitter2":2}],14:[function(require,module,exports){
-var Ros = require('../core/Ros');
-var mixin = require('../mixin');
-
-var action = module.exports = {
-    ActionClient: require('./ActionClient'),
-    ActionListener: require('./ActionListener'),
-    Goal: require('./Goal'),
-    SimpleActionServer: require('./SimpleActionServer')
-};
-
-mixin(Ros, ['ActionClient', 'SimpleActionServer'], action);
-
-},{"../core/Ros":20,"../mixin":32,"./ActionClient":10,"./ActionListener":11,"./Goal":12,"./SimpleActionServer":13}],15:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sebastian Castro - sebastian.castro@picknik.ai
  */
 
 var ActionGoal = require('./ActionGoal');
+var ActionFeedback = require('./ActionFeedback');
 var ActionResult = require('./ActionResult');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
@@ -3309,7 +2741,8 @@ function Action(options) {
   this.actionType = options.actionType;
   this.isAdvertised = false;
 
-  this._serviceCallback = null;
+  this._actionCallback = null;
+  this._cancelCallback = null;
 }
 Action.prototype.__proto__ = EventEmitter2.prototype;
 
@@ -3318,9 +2751,11 @@ Action.prototype.__proto__ = EventEmitter2.prototype;
  * callback. Does nothing if this service is currently advertised.
  *
  * @param request - the ROSLIB.ServiceRequest to send
- * @param callback - function with params:
- *   * response - the response from the service request
- * @param failedCallback - the callback function when the service call failed (optional). Params:
+ * @param resultCallback - function with params:
+ *   * result - the result from the action
+ * @param feedbackCallback - the callback function when the action publishes feedback (optional). Params:
+ *   * feedback - the feedback from the action
+ * @param failedCallback - the callback function when the action failed (optional). Params:
  *   * error - the error message reported by ROS
  */
 Action.prototype.sendGoal = function(request, resultCallback, feedbackCallback, failedCallback) {
@@ -3336,9 +2771,9 @@ Action.prototype.sendGoal = function(request, resultCallback, feedbackCallback, 
         if (typeof failedCallback === 'function') {
           failedCallback(message.values);
         }
-      } else if (message.op === "action_feedback" && typeof feedbackCallback === 'function') {
+      } else if (message.op === 'action_feedback' && typeof feedbackCallback === 'function') {
         feedbackCallback(new ActionResult(message.values));
-      } else if (message.op === "action_result" && typeof resultCallback === 'function') {
+      } else if (message.op === 'action_result' && typeof resultCallback === 'function') {
         resultCallback(new ActionResult(message.values));
       }
     });
@@ -3353,11 +2788,96 @@ Action.prototype.sendGoal = function(request, resultCallback, feedbackCallback, 
     feedback : true,
   };
   this.ros.callOnConnection(call);
+
+  return actionGoalId;
 };
+
+Action.prototype.cancelGoal = function(id) {
+  var call = {
+    op: 'cancel_action_goal',
+    id: id,
+    action: this.name,
+  };
+  this.ros.callOnConnection(call);
+}
+
+/**
+ * Advertise the action. This turns the Action object from a client
+ * into a server. The callback will be called with every goal sent to this action.
+ *
+ * @param callback - This works similarly to the callback for a C++ action and should take the following params:
+ *   * goal - the action goal
+ *   It should return true if the action has finished successfully,
+ *   i.e. without any fatal errors.
+ */
+Action.prototype.advertise = function(callback) {
+  if (this.isAdvertised || typeof callback !== 'function') {
+    return;
+  }
+
+  this._actionCallback = callback;
+  this.ros.on(this.name, this._executeAction.bind(this));
+  this.ros.callOnConnection({
+    op: 'advertise_action',
+    type: this.actionType,
+    action: this.name
+  });
+  this.isAdvertised = true;
+};
+
+Action.prototype.unadvertise = function() {
+  if (!this.isAdvertised) {
+    return;
+  }
+  this.ros.callOnConnection({
+    op: 'unadvertise_action',
+    action: this.name
+  });
+  this.isAdvertised = false;
+};
+
+Action.prototype._executeAction = function(rosbridgeRequest) {
+  if (rosbridgeRequest.id) {
+    var id = rosbridgeRequest.id;
+  }
+
+  this._actionCallback(rosbridgeRequest.args, id);
+};
+
+Action.prototype.sendFeedback = function(id, feedback) {
+  var call = {
+    op: 'action_feedback',
+    id: id,
+    action: this.name,
+    values: new ActionFeedback(feedback),
+  };
+  this.ros.callOnConnection(call);
+}
+
+Action.prototype.setSucceeded = function(id, result) {
+  var call = {
+    op: 'action_result',
+    id: id,
+    action: this.name,
+    values: new ActionResult(result),
+    result: true,
+  };
+  this.ros.callOnConnection(call);
+}
+
+Action.prototype.setFailed = function(id) {
+  var call = {
+    op: 'action_result',
+    id: id,
+    action: this.name,
+    result: false,
+  };
+  this.ros.callOnConnection(call);
+}
 
 module.exports = Action;
 
-},{"./ActionGoal":16,"./ActionResult":17,"eventemitter2":2}],16:[function(require,module,exports){
+},{"./ActionFeedback":11,"./ActionGoal":12,"./ActionResult":13,"eventemitter2":2}],11:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sebastian Castro - sebastian.castro@picknik.ai
@@ -3366,7 +2886,27 @@ module.exports = Action;
 var assign = require('object-assign');
 
 /**
- * An ActionGoal is passed into the an action goal request.
+ * An ActionFeedback is periodically returned during an in-progress action
+ *
+ * @constructor
+ * @param values - object matching the fields defined in the .action definition file
+ */
+function ActionFeedback(values) {
+  assign(this, values);
+}
+
+module.exports = ActionFeedback;
+
+},{"object-assign":3}],12:[function(require,module,exports){
+/**
+ * @fileoverview
+ * @author Sebastian Castro - sebastian.castro@picknik.ai
+ */
+
+var assign = require('object-assign');
+
+/**
+ * An ActionGoal is passed into an action goal request.
  *
  * @constructor
  * @param values - object matching the fields defined in the .action definition file
@@ -3377,7 +2917,7 @@ function ActionGoal(values) {
 
 module.exports = ActionGoal;
 
-},{"object-assign":3}],17:[function(require,module,exports){
+},{"object-assign":3}],13:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sebastian Castro - sebastian.castro@picknik.ai
@@ -3397,7 +2937,7 @@ function ActionResult(values) {
 
 module.exports = ActionResult;
 
-},{"object-assign":3}],18:[function(require,module,exports){
+},{"object-assign":3}],14:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -3416,7 +2956,7 @@ function Message(values) {
 }
 
 module.exports = Message;
-},{"object-assign":3}],19:[function(require,module,exports){
+},{"object-assign":3}],15:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -3500,7 +3040,7 @@ Param.prototype.delete = function(callback) {
 };
 
 module.exports = Param;
-},{"./Service":21,"./ServiceRequest":22}],20:[function(require,module,exports){
+},{"./Service":17,"./ServiceRequest":18}],16:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -4202,7 +3742,7 @@ Ros.prototype.getTopicsAndRawTypes = function(callback, failedCallback) {
 
 module.exports = Ros;
 
-},{"../util/workerSocket":52,"./Service":21,"./ServiceRequest":22,"./SocketAdapter.js":24,"eventemitter2":2,"object-assign":3,"ws":49}],21:[function(require,module,exports){
+},{"../util/workerSocket":48,"./Service":17,"./ServiceRequest":18,"./SocketAdapter.js":20,"eventemitter2":2,"object-assign":3,"ws":45}],17:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -4327,7 +3867,7 @@ Service.prototype._serviceResponse = function(rosbridgeRequest) {
 
 module.exports = Service;
 
-},{"./ServiceRequest":22,"./ServiceResponse":23,"eventemitter2":2}],22:[function(require,module,exports){
+},{"./ServiceRequest":18,"./ServiceResponse":19,"eventemitter2":2}],18:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - balexander@willowgarage.com
@@ -4346,7 +3886,7 @@ function ServiceRequest(values) {
 }
 
 module.exports = ServiceRequest;
-},{"object-assign":3}],23:[function(require,module,exports){
+},{"object-assign":3}],19:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - balexander@willowgarage.com
@@ -4365,7 +3905,7 @@ function ServiceResponse(values) {
 }
 
 module.exports = ServiceResponse;
-},{"object-assign":3}],24:[function(require,module,exports){
+},{"object-assign":3}],20:[function(require,module,exports){
 /**
  * Socket event handling utilities for handling events on either
  * WebSocket and TCP sockets
@@ -4408,13 +3948,15 @@ function SocketAdapter(client) {
       client.emit(message.service, message);
     } else if (message.op === 'send_action_goal') {
       client.emit(message.action, message);
+    } else if (message.op === 'cancel_action_goal') {
+      client.emit(message.id, message);
     } else if (message.op === 'action_feedback') {
       client.emit(message.id, message);
     } else if (message.op === 'action_result') {
       client.emit(message.id, message);
     } else if(message.op === 'status'){
-      if(message.id){
-        client.emit('status:'+message.id, message);
+      if (message.id) {
+        client.emit('status:' + message.id, message);
       } else {
         client.emit('status', message);
       }
@@ -4504,7 +4046,7 @@ function SocketAdapter(client) {
 
 module.exports = SocketAdapter;
 
-},{"../util/cborTypedArrayTags":47,"../util/decompressPng":51,"cbor-js":1}],25:[function(require,module,exports){
+},{"../util/cborTypedArrayTags":43,"../util/decompressPng":47,"cbor-js":1}],21:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -4714,7 +4256,7 @@ Topic.prototype.publish = function(message) {
 
 module.exports = Topic;
 
-},{"./Message":18,"eventemitter2":2}],26:[function(require,module,exports){
+},{"./Message":14,"eventemitter2":2}],22:[function(require,module,exports){
 var mixin = require('../mixin');
 
 var core = module.exports = {
@@ -4727,12 +4269,13 @@ var core = module.exports = {
     ServiceResponse: require('./ServiceResponse'),
     Action: require('./Action'),
     ActionGoal: require('./ActionGoal'),
+    ActionFeedback: require('./ActionFeedback'),
     ActionResult: require('./ActionResult'),
 };
 
 mixin(core.Ros, ['Param', 'Service', 'Topic', 'Action'], core);
 
-},{"../mixin":32,"./Action":15,"./ActionGoal":16,"./ActionResult":17,"./Message":18,"./Param":19,"./Ros":20,"./Service":21,"./ServiceRequest":22,"./ServiceResponse":23,"./Topic":25}],27:[function(require,module,exports){
+},{"../mixin":28,"./Action":10,"./ActionFeedback":11,"./ActionGoal":12,"./ActionResult":13,"./Message":14,"./Param":15,"./Ros":16,"./Service":17,"./ServiceRequest":18,"./ServiceResponse":19,"./Topic":21}],23:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -4805,7 +4348,7 @@ Pose.prototype.getInverse = function() {
 };
 
 module.exports = Pose;
-},{"./Quaternion":28,"./Vector3":30}],28:[function(require,module,exports){
+},{"./Quaternion":24,"./Vector3":26}],24:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -4899,7 +4442,7 @@ Quaternion.prototype.clone = function() {
 
 module.exports = Quaternion;
 
-},{}],29:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -4933,7 +4476,7 @@ Transform.prototype.clone = function() {
 };
 
 module.exports = Transform;
-},{"./Quaternion":28,"./Vector3":30}],30:[function(require,module,exports){
+},{"./Quaternion":24,"./Vector3":26}],26:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -5002,7 +4545,7 @@ Vector3.prototype.clone = function() {
 };
 
 module.exports = Vector3;
-},{}],31:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 module.exports = {
     Pose: require('./Pose'),
     Quaternion: require('./Quaternion'),
@@ -5010,7 +4553,7 @@ module.exports = {
     Vector3: require('./Vector3')
 };
 
-},{"./Pose":27,"./Quaternion":28,"./Transform":29,"./Vector3":30}],32:[function(require,module,exports){
+},{"./Pose":23,"./Quaternion":24,"./Transform":25,"./Vector3":26}],28:[function(require,module,exports){
 /**
  * Mixin a feature to the core/Ros prototype.
  * For example, mixin(Ros, ['Topic'], {Topic: <Topic>})
@@ -5029,14 +4572,11 @@ module.exports = function(Ros, classes, features) {
     });
 };
 
-},{}],33:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /**
  * @fileoverview
  * @author David Gossow - dgossow@willowgarage.com
  */
-
-var ActionClient = require('../actionlib/ActionClient');
-var Goal = require('../actionlib/Goal');
 
 var Service = require('../core/Service.js');
 var ServiceRequest = require('../core/ServiceRequest.js');
@@ -5264,7 +4804,7 @@ TFClient.prototype.dispose = function() {
 
 module.exports = TFClient;
 
-},{"../actionlib/ActionClient":10,"../actionlib/Goal":12,"../core/Service.js":21,"../core/ServiceRequest.js":22,"../core/Topic.js":25,"../math/Transform":29}],34:[function(require,module,exports){
+},{"../core/Service.js":17,"../core/ServiceRequest.js":18,"../core/Topic.js":21,"../math/Transform":25}],30:[function(require,module,exports){
 var Ros = require('../core/Ros');
 var mixin = require('../mixin');
 
@@ -5273,7 +4813,7 @@ var tf = module.exports = {
 };
 
 mixin(Ros, ['TFClient'], tf);
-},{"../core/Ros":20,"../mixin":32,"./TFClient":33}],35:[function(require,module,exports){
+},{"../core/Ros":16,"../mixin":28,"./TFClient":29}],31:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5304,7 +4844,7 @@ function UrdfBox(options) {
 }
 
 module.exports = UrdfBox;
-},{"../math/Vector3":30,"./UrdfTypes":44}],36:[function(require,module,exports){
+},{"../math/Vector3":26,"./UrdfTypes":40}],32:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5328,7 +4868,7 @@ function UrdfColor(options) {
 }
 
 module.exports = UrdfColor;
-},{}],37:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5351,7 +4891,7 @@ function UrdfCylinder(options) {
 }
 
 module.exports = UrdfCylinder;
-},{"./UrdfTypes":44}],38:[function(require,module,exports){
+},{"./UrdfTypes":40}],34:[function(require,module,exports){
 /**
  * @fileOverview
  * @author David V. Lu!!  davidvlu@gmail.com
@@ -5444,7 +4984,7 @@ function UrdfJoint(options) {
 
 module.exports = UrdfJoint;
 
-},{"../math/Pose":27,"../math/Quaternion":28,"../math/Vector3":30}],39:[function(require,module,exports){
+},{"../math/Pose":23,"../math/Quaternion":24,"../math/Vector3":26}],35:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5473,7 +5013,7 @@ function UrdfLink(options) {
 }
 
 module.exports = UrdfLink;
-},{"./UrdfVisual":45}],40:[function(require,module,exports){
+},{"./UrdfVisual":41}],36:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5523,7 +5063,7 @@ UrdfMaterial.prototype.assign = function(obj) {
 
 module.exports = UrdfMaterial;
 
-},{"./UrdfColor":36,"object-assign":3}],41:[function(require,module,exports){
+},{"./UrdfColor":32,"object-assign":3}],37:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5560,7 +5100,7 @@ function UrdfMesh(options) {
 }
 
 module.exports = UrdfMesh;
-},{"../math/Vector3":30,"./UrdfTypes":44}],42:[function(require,module,exports){
+},{"../math/Vector3":26,"./UrdfTypes":40}],38:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5657,7 +5197,7 @@ function UrdfModel(options) {
 
 module.exports = UrdfModel;
 
-},{"./UrdfJoint":38,"./UrdfLink":39,"./UrdfMaterial":40,"@xmldom/xmldom":48}],43:[function(require,module,exports){
+},{"./UrdfJoint":34,"./UrdfLink":35,"./UrdfMaterial":36,"@xmldom/xmldom":44}],39:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5679,7 +5219,7 @@ function UrdfSphere(options) {
 }
 
 module.exports = UrdfSphere;
-},{"./UrdfTypes":44}],44:[function(require,module,exports){
+},{"./UrdfTypes":40}],40:[function(require,module,exports){
 module.exports = {
 	URDF_SPHERE : 0,
 	URDF_BOX : 1,
@@ -5687,7 +5227,7 @@ module.exports = {
 	URDF_MESH : 3
 };
 
-},{}],45:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 /**
  * @fileOverview 
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -5818,7 +5358,7 @@ function UrdfVisual(options) {
 }
 
 module.exports = UrdfVisual;
-},{"../math/Pose":27,"../math/Quaternion":28,"../math/Vector3":30,"./UrdfBox":35,"./UrdfCylinder":37,"./UrdfMaterial":40,"./UrdfMesh":41,"./UrdfSphere":43}],46:[function(require,module,exports){
+},{"../math/Pose":23,"../math/Quaternion":24,"../math/Vector3":26,"./UrdfBox":31,"./UrdfCylinder":33,"./UrdfMaterial":36,"./UrdfMesh":37,"./UrdfSphere":39}],42:[function(require,module,exports){
 module.exports = require('object-assign')({
     UrdfBox: require('./UrdfBox'),
     UrdfColor: require('./UrdfColor'),
@@ -5831,7 +5371,7 @@ module.exports = require('object-assign')({
     UrdfVisual: require('./UrdfVisual')
 }, require('./UrdfTypes'));
 
-},{"./UrdfBox":35,"./UrdfColor":36,"./UrdfCylinder":37,"./UrdfLink":39,"./UrdfMaterial":40,"./UrdfMesh":41,"./UrdfModel":42,"./UrdfSphere":43,"./UrdfTypes":44,"./UrdfVisual":45,"object-assign":3}],47:[function(require,module,exports){
+},{"./UrdfBox":31,"./UrdfColor":32,"./UrdfCylinder":33,"./UrdfLink":35,"./UrdfMaterial":36,"./UrdfMesh":37,"./UrdfModel":38,"./UrdfSphere":39,"./UrdfTypes":40,"./UrdfVisual":41,"object-assign":3}],43:[function(require,module,exports){
 'use strict';
 
 var UPPER32 = Math.pow(2, 32);
@@ -5951,20 +5491,20 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = cborTypedArrayTagger;
 }
 
-},{}],48:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 exports.DOMImplementation = window.DOMImplementation;
 exports.XMLSerializer = window.XMLSerializer;
 exports.DOMParser = window.DOMParser;
 
-},{}],49:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 module.exports = typeof window !== 'undefined' ? window.WebSocket : WebSocket;
 
-},{}],50:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 /* global document */
 module.exports = function Canvas() {
 	return document.createElement('canvas');
 };
-},{}],51:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 /**
  * @fileOverview
  * @author Graeme Yeates - github.com/megawac
@@ -6022,7 +5562,7 @@ function decompressPng(data, callback) {
 
 module.exports = decompressPng;
 
-},{"canvas":50}],52:[function(require,module,exports){
+},{"canvas":46}],48:[function(require,module,exports){
 try {
     var work = require('webworkify');
 } catch(ReferenceError) {
@@ -6073,7 +5613,7 @@ WorkerSocket.prototype.close = function() {
 
 module.exports = WorkerSocket;
 
-},{"./workerSocketImpl":53,"webworkify":7,"webworkify-webpack":6}],53:[function(require,module,exports){
+},{"./workerSocketImpl":49,"webworkify":7,"webworkify-webpack":6}],49:[function(require,module,exports){
 var WebSocket = WebSocket || require('ws');
 
 module.exports = function(self) {
@@ -6123,4 +5663,4 @@ module.exports = function(self) {
   });
 };
 
-},{"ws":49}]},{},[9]);
+},{"ws":45}]},{},[9]);
