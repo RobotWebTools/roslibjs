@@ -30,18 +30,19 @@ function Action(options) {
 Action.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
- * Calls the service. Returns the service response in the
- * callback. Does nothing if this service is currently advertised.
+ * Sends an action goal. Returns the feedback in the feedback callback while the action is running
+ * and the result in the result callback when the action is completed.
+ * Does nothing if this action is currently advertised.
  *
- * @param request - the ROSLIB.ServiceRequest to send
- * @param resultCallback - function with params:
+ * @param goal - the ROSLIB.ActionGoal to send
+ * @param resultCallback - the callback function when the action is completed with params:
  *   * result - the result from the action
  * @param feedbackCallback - the callback function when the action publishes feedback (optional). Params:
  *   * feedback - the feedback from the action
  * @param failedCallback - the callback function when the action failed (optional). Params:
  *   * error - the error message reported by ROS
  */
-Action.prototype.sendGoal = function(request, resultCallback, feedbackCallback, failedCallback) {
+Action.prototype.sendGoal = function(goal, resultCallback, feedbackCallback, failedCallback) {
   if (this.isAdvertised) {
     return;
   }
@@ -67,7 +68,7 @@ Action.prototype.sendGoal = function(request, resultCallback, feedbackCallback, 
     id : actionGoalId,
     action : this.name,
     action_type: this.actionType,
-    args : request,
+    args : goal,
     feedback : true,
   };
   this.ros.callOnConnection(call);
@@ -75,6 +76,11 @@ Action.prototype.sendGoal = function(request, resultCallback, feedbackCallback, 
   return actionGoalId;
 };
 
+/**
+ * Cancels an action goal.
+ * 
+ * @param id - the ID of the action goal to cancel.
+ */
 Action.prototype.cancelGoal = function(id) {
   var call = {
     op: 'cancel_action_goal',
@@ -108,6 +114,9 @@ Action.prototype.advertise = function(callback) {
   this.isAdvertised = true;
 };
 
+/**
+ * Unadvertise a previously advertised action.
+ */
 Action.prototype.unadvertise = function() {
   if (!this.isAdvertised) {
     return;
