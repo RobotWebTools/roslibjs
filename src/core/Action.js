@@ -55,7 +55,7 @@ Action.prototype.sendGoal = function(request, resultCallback, feedbackCallback, 
           failedCallback(message.values);
         }
       } else if (message.op === 'action_feedback' && typeof feedbackCallback === 'function') {
-        feedbackCallback(new ActionResult(message.values));
+        feedbackCallback(new ActionFeedback(message.values));
       } else if (message.op === 'action_result' && typeof resultCallback === 'function') {
         resultCallback(new ActionResult(message.values));
       }
