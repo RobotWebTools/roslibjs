@@ -128,6 +128,13 @@ Action.prototype.unadvertise = function() {
   this.isAdvertised = false;
 };
 
+/**
+ * Helper function that executes an action by calling the provided
+ * action callback with the auto-generated ID as a user-accessible input.
+ * Should not be called manually.
+ * 
+ * @param rosbridgeRequest - The ROSLIB.ActionGoal to send
+ */
 Action.prototype._executeAction = function(rosbridgeRequest) {
   var id;
   if (rosbridgeRequest.id) {
@@ -137,6 +144,12 @@ Action.prototype._executeAction = function(rosbridgeRequest) {
   this._actionCallback(rosbridgeRequest.args, id);
 };
 
+/**
+ * Helper function to send action feedback inside an action handler.
+ *
+ * @param id - The action goal ID.
+ * @param feedback - The feedback to send.
+ */
 Action.prototype.sendFeedback = function(id, feedback) {
   var call = {
     op: 'action_feedback',
@@ -147,6 +160,12 @@ Action.prototype.sendFeedback = function(id, feedback) {
   this.ros.callOnConnection(call);
 };
 
+/**
+ * Helper function to set an action as succeeded.
+ *
+ * @param id - The action goal ID.
+ * @param result - The result to set.
+ */
 Action.prototype.setSucceeded = function(id, result) {
   var call = {
     op: 'action_result',
@@ -158,6 +177,11 @@ Action.prototype.setSucceeded = function(id, result) {
   this.ros.callOnConnection(call);
 };
 
+/**
+ * Helper function to set an action as failed.
+ *
+ * @param id - The action goal ID.
+ */
 Action.prototype.setFailed = function(id) {
   var call = {
     op: 'action_result',
