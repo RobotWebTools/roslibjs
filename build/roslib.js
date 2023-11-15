@@ -3316,18 +3316,19 @@ function Action(options) {
 Action.prototype.__proto__ = EventEmitter2.prototype;
 
 /**
- * Calls the service. Returns the service response in the
- * callback. Does nothing if this service is currently advertised.
+ * Sends an action goal. Returns the feedback in the feedback callback while the action is running
+ * and the result in the result callback when the action is completed.
+ * Does nothing if this action is currently advertised.
  *
- * @param request - the ROSLIB.ServiceRequest to send
- * @param resultCallback - function with params:
+ * @param goal - the ROSLIB.ActionGoal to send
+ * @param resultCallback - the callback function when the action is completed with params:
  *   * result - the result from the action
  * @param feedbackCallback - the callback function when the action publishes feedback (optional). Params:
  *   * feedback - the feedback from the action
  * @param failedCallback - the callback function when the action failed (optional). Params:
  *   * error - the error message reported by ROS
  */
-Action.prototype.sendGoal = function(request, resultCallback, feedbackCallback, failedCallback) {
+Action.prototype.sendGoal = function(goal, resultCallback, feedbackCallback, failedCallback) {
   if (this.isAdvertised) {
     return;
   }
@@ -3341,7 +3342,7 @@ Action.prototype.sendGoal = function(request, resultCallback, feedbackCallback, 
           failedCallback(message.values);
         }
       } else if (message.op === 'action_feedback' && typeof feedbackCallback === 'function') {
-        feedbackCallback(new ActionResult(message.values));
+        feedbackCallback(new ActionFeedback(message.values));
       } else if (message.op === 'action_result' && typeof resultCallback === 'function') {
         resultCallback(new ActionResult(message.values));
       }
@@ -3353,7 +3354,7 @@ Action.prototype.sendGoal = function(request, resultCallback, feedbackCallback, 
     id : actionGoalId,
     action : this.name,
     action_type: this.actionType,
-    args : request,
+    args : goal,
     feedback : true,
   };
   this.ros.callOnConnection(call);
@@ -3361,6 +3362,11 @@ Action.prototype.sendGoal = function(request, resultCallback, feedbackCallback, 
   return actionGoalId;
 };
 
+/**
+ * Cancels an action goal.
+ * 
+ * @param id - the ID of the action goal to cancel.
+ */
 Action.prototype.cancelGoal = function(id) {
   var call = {
     op: 'cancel_action_goal',
@@ -3394,6 +3400,9 @@ Action.prototype.advertise = function(callback) {
   this.isAdvertised = true;
 };
 
+/**
+ * Unadvertise a previously advertised action.
+ */
 Action.prototype.unadvertise = function() {
   if (!this.isAdvertised) {
     return;
@@ -3405,6 +3414,13 @@ Action.prototype.unadvertise = function() {
   this.isAdvertised = false;
 };
 
+/**
+ * Helper function that executes an action by calling the provided
+ * action callback with the auto-generated ID as a user-accessible input.
+ * Should not be called manually.
+ * 
+ * @param rosbridgeRequest - The ROSLIB.ActionGoal to send
+ */
 Action.prototype._executeAction = function(rosbridgeRequest) {
   var id;
   if (rosbridgeRequest.id) {
@@ -3414,6 +3430,12 @@ Action.prototype._executeAction = function(rosbridgeRequest) {
   this._actionCallback(rosbridgeRequest.args, id);
 };
 
+/**
+ * Helper function to send action feedback inside an action handler.
+ *
+ * @param id - The action goal ID.
+ * @param feedback - The feedback to send.
+ */
 Action.prototype.sendFeedback = function(id, feedback) {
   var call = {
     op: 'action_feedback',
@@ -3424,6 +3446,12 @@ Action.prototype.sendFeedback = function(id, feedback) {
   this.ros.callOnConnection(call);
 };
 
+/**
+ * Helper function to set an action as succeeded.
+ *
+ * @param id - The action goal ID.
+ * @param result - The result to set.
+ */
 Action.prototype.setSucceeded = function(id, result) {
   var call = {
     op: 'action_result',
@@ -3435,6 +3463,11 @@ Action.prototype.setSucceeded = function(id, result) {
   this.ros.callOnConnection(call);
 };
 
+/**
+ * Helper function to set an action as failed.
+ *
+ * @param id - The action goal ID.
+ */
 Action.prototype.setFailed = function(id) {
   var call = {
     op: 'action_result',
