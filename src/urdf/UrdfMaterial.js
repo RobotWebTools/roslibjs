@@ -8,12 +8,12 @@ var UrdfColor = require('./UrdfColor');
 
 /**
  * A Material element in a URDF.
- *
- * @constructor
- * @param {Object} options
- * @param {Element} options.xml - The XML element to parse.
  */
 class UrdfMaterial {
+  /**
+   * @param {Object} options
+   * @param {Element} options.xml - The XML element to parse.
+   */
   constructor(options) {
     this.textureFilename = null;
     this.color = null;

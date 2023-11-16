@@ -17,21 +17,21 @@ var Ros = require("../core/Ros");
 
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
- *
- * @constructor
- * @param {Object} options
- * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
- * @param {string} [options.fixedFrame=base_link] - The fixed frame.
- * @param {number} [options.angularThres=2.0] - The angular threshold for the TF republisher.
- * @param {number} [options.transThres=0.01] - The translation threshold for the TF republisher.
- * @param {number} [options.rate=10.0] - The rate for the TF republisher.
- * @param {number} [options.updateDelay=50] - The time (in ms) to wait after a new subscription
- *     to update the TF republisher's list of TFs.
- * @param {number} [options.topicTimeout=2.0] - The timeout parameter for the TF republisher.
- * @param {string} [options.serverName=/tf2_web_republisher] - The name of the tf2_web_republisher server.
- * @param {string} [options.repubServiceName=/republish_tfs] - The name of the republish_tfs service (non groovy compatibility mode only).
  */
 class TFClient extends EventEmitter2 {
+  /**
+   * @param {Object} options
+   * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+   * @param {string} [options.fixedFrame=base_link] - The fixed frame.
+   * @param {number} [options.angularThres=2.0] - The angular threshold for the TF republisher.
+   * @param {number} [options.transThres=0.01] - The translation threshold for the TF republisher.
+   * @param {number} [options.rate=10.0] - The rate for the TF republisher.
+   * @param {number} [options.updateDelay=50] - The time (in ms) to wait after a new subscription
+   *     to update the TF republisher's list of TFs.
+   * @param {number} [options.topicTimeout=2.0] - The timeout parameter for the TF republisher.
+   * @param {string} [options.serverName="/tf2_web_republisher"] - The name of the tf2_web_republisher server.
+   * @param {string} [options.repubServiceName="/republish_tfs"] - The name of the republish_tfs service (non groovy compatibility mode only).
+   */
   constructor(options) {
     super(options);
     options = options || {};

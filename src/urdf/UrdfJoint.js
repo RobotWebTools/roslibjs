@@ -9,12 +9,12 @@ var Quaternion = require('../math/Quaternion');
 
 /**
  * A Joint element in a URDF.
- *
- * @constructor
- * @param {Object} options
- * @param {Element} options.xml - The XML element to parse.
  */
 class UrdfJoint {
+  /**
+   * @param {Object} options
+   * @param {Element} options.xml - The XML element to parse.
+   */
   constructor(options) {
     this.name = options.xml.getAttribute("name");
     this.type = options.xml.getAttribute("type");

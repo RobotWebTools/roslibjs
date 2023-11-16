@@ -9,13 +9,13 @@ var Transform = require("./Transform");
 
 /**
  * A Pose in 3D space. Values are copied into this object.
- *
- * @constructor
- * @param {Object} options
- * @param {Vector3} options.position - The ROSLIB.Vector3 describing the position.
- * @param {Quaternion} options.orientation - The ROSLIB.Quaternion describing the orientation.
  */
 class Pose {
+  /**
+   * @param {Object} options
+   * @param {Vector3} options.position - The ROSLIB.Vector3 describing the position.
+   * @param {Quaternion} options.orientation - The ROSLIB.Quaternion describing the orientation.
+   */
   constructor(options) {
     options = options || {};
     // copy the values into this object if they exist

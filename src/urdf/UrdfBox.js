@@ -9,12 +9,12 @@ var UrdfTypes = require('./UrdfTypes');
 
 /**
  * A Box element in a URDF.
- *
- * @constructor
- * @param {Object} options
- * @param {Element} options.xml - The XML element to parse.
  */
 class UrdfBox {
+  /**
+   * @param {Object} options
+   * @param {Element} options.xml - The XML element to parse.
+   */
   constructor(options) {
     this.dimension = null;
     this.type = UrdfTypes.URDF_BOX;

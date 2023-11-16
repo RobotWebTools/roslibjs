@@ -8,13 +8,13 @@ var Quaternion = require('./Quaternion');
 
 /**
  * A Transform in 3-space. Values are copied into this object.
- *
- * @constructor
- * @param {Object} options
- * @param {Vector3} options.translation - The ROSLIB.Vector3 describing the translation.
- * @param {Quaternion} options.rotation - The ROSLIB.Quaternion describing the rotation.
  */
 class Transform {
+  /**
+   * @param {Object} options
+   * @param {Vector3} options.translation - The ROSLIB.Vector3 describing the translation.
+   * @param {Quaternion} options.rotation - The ROSLIB.Quaternion describing the rotation.
+  */
   constructor(options) {
     options = options || {};
     // Copy the values into this object if they exist

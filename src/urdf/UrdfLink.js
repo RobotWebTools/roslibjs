@@ -8,12 +8,12 @@ var UrdfVisual = require('./UrdfVisual');
 
 /**
  * A Link element in a URDF.
- *
- * @constructor
- * @param {Object} options
- * @param {Element} options.xml - The XML element to parse.
  */
 class UrdfLink {
+  /**
+   * @param {Object} options
+   * @param {Element} options.xml - The XML element to parse.
+   */
   constructor(options) {
     this.name = options.xml.getAttribute("name");
     this.visuals = [];

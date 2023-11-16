@@ -16,12 +16,12 @@ var UrdfSphere = require('./UrdfSphere');
 
 /**
  * A Visual element in a URDF.
- *
- * @constructor
- * @param {Object} options
- * @param {Element} options.xml - The XML element to parse.
  */
 class UrdfVisual {
+  /**
+   * @param {Object} options
+   * @param {Element} options.xml - The XML element to parse.
+   */
   constructor(options) {
     var xml = options.xml;
     this.origin = null;

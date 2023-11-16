@@ -17,19 +17,20 @@ var Ros = require("../core/Ros");
  *  * 'feedback' - The feedback messages received from the action server.
  *  * 'result' - The result returned from the action server.
  *
- * @constructor
- * @param {Object} options
- * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
- * @param {string} options.serverName - The action server name, like '/fibonacci'.
- * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
- * @param {number} [options.timeout] - The timeout length when connecting to the action server.
- * @param {boolean} [options.omitFeedback] - The flag to indicate whether to omit the feedback channel or not.
- * @param {boolean} [options.omitStatus] - The flag to indicate whether to omit the status channel or not.
- * @param {boolean} [options.omitResult] - The flag to indicate whether to omit the result channel or not.
  */
 class ActionClient extends EventEmitter2 {
+  /**
+   * @param {Object} options
+   * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+   * @param {string} options.serverName - The action server name, like '/fibonacci'.
+   * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
+   * @param {number} [options.timeout] - The timeout length when connecting to the action server.
+   * @param {boolean} [options.omitFeedback] - The flag to indicate whether to omit the feedback channel or not.
+   * @param {boolean} [options.omitStatus] - The flag to indicate whether to omit the status channel or not.
+   * @param {boolean} [options.omitResult] - The flag to indicate whether to omit the result channel or not.
+   */
   constructor(options) {
-    super(options);
+    super();
     var that = this;
     options = options || {};
     this.ros = options.ros;

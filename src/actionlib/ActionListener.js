@@ -17,15 +17,17 @@ var Ros = require("../core/Ros");
  *  * 'feedback' - The feedback messages received from the action server.
  *  * 'result' - The result returned from the action server.
  *
- * @constructor
- * @param {Object} options
- * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
- * @param {string} options.serverName - The action server name, like '/fibonacci'.
- * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
+
  */
 class ActionListener extends EventEmitter2 {
+  /**
+   * @param {Object} options
+   * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+   * @param {string} options.serverName - The action server name, like '/fibonacci'.
+   * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
+   */
   constructor(options) {
-    super(options);
+    super();
     var that = this;
     options = options || {};
     this.ros = options.ros;

@@ -9,13 +9,13 @@ var Ros = require("../core/Ros");
 
 /**
  * A ROS parameter.
- *
- * @constructor
- * @param {Object} options
- * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
- * @param {string} options.name - The param name, like max_vel_x.
  */
 class Param {
+  /**
+   * @param {Object} options
+   * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+   * @param {string} options.name - The param name, like max_vel_x.
+   */
   constructor(options) {
     options = options || {};
     this.ros = options.ros;

@@ -10,14 +10,14 @@ var Ros = require("../core/Ros");
 
 /**
  * A ROS service client.
- *
- * @constructor
- * @param {Object} options
- * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
- * @param {string} options.name - The service name, like '/add_two_ints'.
- * @param {string} options.serviceType - The service type, like 'rospy_tutorials/AddTwoInts'.
  */
 class Service extends EventEmitter2 {
+  /**
+   * @param {Object} options
+   * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+   * @param {string} options.name - The service name, like '/add_two_ints'.
+   * @param {string} options.serviceType - The service type, like 'rospy_tutorials/AddTwoInts'.
+   */
   constructor(options) {
     super(options);
     options = options || {};

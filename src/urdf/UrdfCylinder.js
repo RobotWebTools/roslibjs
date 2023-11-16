@@ -8,12 +8,12 @@ var UrdfTypes = require('./UrdfTypes');
 
 /**
  * A Cylinder element in a URDF.
- *
- * @constructor
- * @param {Object} options
- * @param {Element} options.xml - The XML element to parse.
  */
 class UrdfCylinder {
+  /**
+   * @param {Object} options
+   * @param {Element} options.xml - The XML element to parse.
+   */
   constructor(options) {
     this.type = UrdfTypes.URDF_CYLINDER;
     this.length = parseFloat(options.xml.getAttribute("length"));

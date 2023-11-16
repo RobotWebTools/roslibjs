@@ -12,13 +12,13 @@ var ActionClient = require("./ActionClient");
  *
  * Emits the following events:
  *  * 'timeout' - If a timeout occurred while sending a goal.
- *
- * @constructor
- * @param {Object} options
- * @param {ActionClient} options.actionClient - The ROSLIB.ActionClient to use with this goal.
- * @param {Object} options.goalMessage - The JSON object containing the goal for the action server.
  */
 class Goal extends EventEmitter2 {
+  /**
+   * @param {Object} options
+   * @param {ActionClient} options.actionClient - The ROSLIB.ActionClient to use with this goal.
+   * @param {Object} options.goalMessage - The JSON object containing the goal for the action server.
+   */
   constructor(options) {
     super(options);
     var that = this;

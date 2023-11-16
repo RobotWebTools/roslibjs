@@ -7,14 +7,14 @@ var Quaternion = require("./Quaternion");
 
 /**
  * A 3D vector.
- *
- * @constructor
- * @param {Object} options
- * @param {number} [options.x=0] - The x value.
- * @param {number} [options.y=0] - The y value.
- * @param {number} [options.z=0] - The z value.
  */
 class Vector3 {
+  /**
+   * @param {Object} options
+   * @param {number} [options.x=0] - The x value.
+   * @param {number} [options.y=0] - The y value.
+   * @param {number} [options.z=0] - The z value.
+   */
   constructor(options) {
     options = options || {};
     this.x = options.x || 0;

@@ -13,20 +13,20 @@ var Ros = require("../core/Ros");
  * Emits the following events:
  *  * 'warning' - If there are any warning during the Topic creation.
  *  * 'message' - The message data from rosbridge.
- *
- * @constructor
- * @param {Object} options
- * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
- * @param {string} options.name - The topic name, like '/cmd_vel'.
- * @param {string} options.messageType - The message type, like 'std_msgs/String'.
- * @param {string} [options.compression=none] - The type of compression to use, like 'png', 'cbor', or 'cbor-raw'.
- * @param {number} [options.throttle_rate=0] - The rate (in ms in between messages) at which to throttle the topics.
- * @param {number} [options.queue_size=100] - The queue created at bridge side for re-publishing webtopics.
- * @param {boolean} [options.latch=false] - Latch the topic when publishing.
- * @param {number} [options.queue_length=0] - The queue length at bridge side used when subscribing.
- * @param {boolean} [options.reconnect_on_close=true] - The flag to enable resubscription and readvertisement on close event.
  */
 class Topic extends EventEmitter2 {
+  /**
+   * @param {Object} options
+   * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+   * @param {string} options.name - The topic name, like '/cmd_vel'.
+   * @param {string} options.messageType - The message type, like 'std_msgs/String'.
+   * @param {string} [options.compression=none] - The type of compression to use, like 'png', 'cbor', or 'cbor-raw'.
+   * @param {number} [options.throttle_rate=0] - The rate (in ms in between messages) at which to throttle the topics.
+   * @param {number} [options.queue_size=100] - The queue created at bridge side for re-publishing webtopics.
+   * @param {boolean} [options.latch=false] - Latch the topic when publishing.
+   * @param {number} [options.queue_length=0] - The queue length at bridge side used when subscribing.
+   * @param {boolean} [options.reconnect_on_close=true] - The flag to enable resubscription and readvertisement on close event.
+   */
   constructor(options) {
     super(options);
     options = options || {};

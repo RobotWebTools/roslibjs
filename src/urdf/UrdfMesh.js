@@ -9,12 +9,12 @@ var UrdfTypes = require('./UrdfTypes');
 
 /**
  * A Mesh element in a URDF.
- *
- * @constructor
- * @param {Object} options
- * @param {Element} options.xml - The XML element to parse.
  */
 class UrdfMesh {
+  /**
+   * @param {Object} options
+   * @param {Element} options.xml - The XML element to parse.
+   */
   constructor(options) {
     this.scale = null;
 
