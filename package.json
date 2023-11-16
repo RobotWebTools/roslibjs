@@ -32,7 +32,8 @@
     "load-grunt-tasks": "^5.1.0",
     "mocha": "^10.0.0",
     "puppeteer": "^21.0.1",
-    "time-grunt": "^2.0.0"
+    "time-grunt": "^2.0.0",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
     "@xmldom/xmldom": "^0.8.0",
