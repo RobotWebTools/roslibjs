@@ -179,12 +179,18 @@ class Ros extends EventEmitter2 {
     this.callOnConnection(levelMsg);
   }
   /**
+   * @callback getActionServersCallback
+   * @param {string[]} actionservers - Array of action server names.
+   */
+  /**
+   * @callback getActionServersFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
    * Retrieve a list of action servers in ROS as an array of string.
    *
-   * @param {function} callback - Function with the following params:
-   * @param {string[]} callback.actionservers - Array of action server names.
-   * @param {function} [failedCallback] - The callback function when the service call failed with params:
-   * @param {string} failedCallback.error - The error message reported by ROS.
+   * @param {getActionServersCallback} callback - Function with the following params:
+   * @param {getActionServersFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getActionServers(callback, failedCallback) {
     var getActionServers = new Service({
@@ -211,14 +217,20 @@ class Ros extends EventEmitter2 {
     }
   }
   /**
+   * @callback getTopicsCallback
+   * @param {Object} result - The result object with the following params:
+   * @param {string[]} result.topics - Array of topic names.
+   * @param {string[]} result.types - Array of message type names.
+   */
+  /**
+   * @callback getTopicsFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
    * Retrieve a list of topics in ROS as an array.
    *
-   * @param {function} callback - Function with the following params:
-   * @param {Object} callback.result - The result object with the following params:
-   * @param {string[]} callback.result.topics - Array of topic names.
-   * @param {string[]} callback.result.types - Array of message type names.
-   * @param {function} [failedCallback] - The callback function when the service call failed with params:
-   * @param {string} failedCallback.error - The error message reported by ROS.
+   * @param {getTopicsCallback} callback - Function with the following params:
+   * @param {getTopicsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getTopics(callback, failedCallback) {
     var topicsClient = new Service({
@@ -245,13 +257,19 @@ class Ros extends EventEmitter2 {
     }
   }
   /**
+   * @callback getTopicsForTypeCallback
+   * @param {string[]} topics - Array of topic names.
+   */
+  /**
+   * @callback getTopicsForTypeFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
    * Retrieve a list of topics in ROS as an array of a specific type.
    *
    * @param {string} topicType - The topic type to find.
-   * @param {function} callback - Function with the following params:
-   * @param {string[]} callback.topics - Array of topic names.
-   * @param {function} [failedCallback] - The callback function when the service call failed with params:
-   * @param {string} failedCallback.error - The error message reported by ROS.
+   * @param {getTopicsForTypeCallback} callback - Function with the following params:
+   * @param {getTopicsForTypeFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getTopicsForType(topicType, callback, failedCallback) {
     var topicsForTypeClient = new Service({
@@ -280,12 +298,18 @@ class Ros extends EventEmitter2 {
     }
   }
   /**
+   * @callback getServicesCallback
+   * @param {string[]} services - Array of service names.
+   */
+  /**
+   * @callback getServicesFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
    * Retrieve a list of active service names in ROS.
    *
-   * @param {function} callback - Function with the following params:
-   * @param {string[]} callback.services - Array of service names.
-   * @param {function} [failedCallback] - The callback function when the service call failed with params:
-   * @param {string} failedCallback.error - The error message reported by ROS.
+   * @param {getServicesCallback} callback - Function with the following params:
+   * @param {getServicesFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getServices(callback, failedCallback) {
     var servicesClient = new Service({
@@ -312,13 +336,19 @@ class Ros extends EventEmitter2 {
     }
   }
   /**
+   * @callback getServicesForTypeCallback
+   * @param {string[]} topics - Array of service names.
+   */
+  /**
+   * @callback getServicesForTypeFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
    * Retrieve a list of services in ROS as an array as specific type.
    *
    * @param {string} serviceType - The service type to find.
-   * @param {function} callback - Function with the following params:
-   * @param {string[]} callback.topics - Array of service names.
-   * @param {function} [failedCallback] - The callback function when the service call failed with params:
-   * @param {string} failedCallback.error - The error message reported by ROS.
+   * @param {getServicesForTypeCallback} callback - Function with the following params:
+   * @param {getServicesForTypeFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getServicesForType(serviceType, callback, failedCallback) {
     var servicesForTypeClient = new Service({
@@ -347,14 +377,20 @@ class Ros extends EventEmitter2 {
     }
   }
   /**
+   * @callback getServiceRequestDetailsCallback
+   * @param {Object} result - The result object with the following params:
+   * @param {string[]} result.typedefs - An array containing the details of the service request.
+   */
+  /**
+   * @callback getServiceRequestDetailsFailedCallback
+   * @param {string} failedCallback.error - The error message reported by ROS.
+   */
+  /**
    * Retrieve the details of a ROS service request.
    *
    * @param {string} type - The type of the service.
-   * @param {function} callback - Function with the following params:
-   * @param {Object} callback.result - The result object with the following params:
-   * @param {string[]} callback.result.typedefs - An array containing the details of the service request.
-   * @param {function} [failedCallback] - The callback function when the service call failed with params:
-   * @param {string} failedCallback.error - The error message reported by ROS.
+   * @param {getServiceRequestDetailsCallback} callback - Function with the following params:
+   * @param {getServiceRequestDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getServiceRequestDetails(type, callback, failedCallback) {
     var serviceTypeClient = new Service({
@@ -383,14 +419,20 @@ class Ros extends EventEmitter2 {
     }
   }
   /**
+   * @callback getServiceResponseDetailsCallback
+   * @param {Object} result - The result object with the following params:
+   * @param {string[]} result.typedefs - An array containing the details of the service response.
+   */
+  /**
+   * @callback getServiceResponseDetailsFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
    * Retrieve the details of a ROS service response.
    *
    * @param {string} type - The type of the service.
-   * @param {function} callback - Function with the following params:
-   * @param {Object} callback.result - The result object with the following params:
-   * @param {string[]} callback.result.typedefs - An array containing the details of the service response.
-   * @param {function} [failedCallback] - The callback function when the service call failed with params:
-   * @param {string} failedCallback.error - The error message reported by ROS.
+   * @param {getServiceResponseDetailsCallback} callback - Function with the following params:
+   * @param {getServiceResponseDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getServiceResponseDetails(type, callback, failedCallback) {
     var serviceTypeClient = new Service({
@@ -419,12 +461,18 @@ class Ros extends EventEmitter2 {
     }
   }
   /**
+   * @callback getNodesCallback
+   * @param {string[]} nodes - Array of node names.
+   */
+  /**
+   * @callback getNodesFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
    * Retrieve a list of active node names in ROS.
    *
-   * @param {function} callback - Function with the following params:
-   * @param {string[]} callback.nodes - Array of node names.
-   * @param {function} [failedCallback] - The callback function when the service call failed with params:
-   * @param {string} failedCallback.error - The error message reported by ROS.
+   * @param {getNodesCallback} callback - Function with the following params:
+   * @param {getNodesFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getNodes(callback, failedCallback) {
     var nodesClient = new Service({
@@ -451,17 +499,30 @@ class Ros extends EventEmitter2 {
     }
   }
   /**
+   * @callback getNodeDetailsCallback
+   * @param {string[]} subscriptions - Array of subscribed topic names.
+   * @param {string[]} publications - Array of published topic names.
+   * @param {string[]} services - Array of service names hosted.
+   */
+  /**
+   * @callback getNodeDetailsFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
+   * @callback getNodeDetailsLegacyCallback
+   * @param {Object} result - The result object with the following params:
+   * @param {string[]} result.subscribing - Array of subscribed topic names.
+   * @param {string[]} result.publishing - Array of published topic names.
+   * @param {string[]} result.services - Array of service names hosted.
+   */
+  /**
    * Retrieve a list of subscribed topics, publishing topics and services of a specific node.
    * <br>
    * These are the parameters if failedCallback is <strong>defined</strong>.
    *
    * @param {string} node - Name of the node.
-   * @param {function} callback - Function with the following params:
-   * @param {string[]} callback.subscriptions - Array of subscribed topic names.
-   * @param {string[]} callback.publications - Array of published topic names.
-   * @param {string[]} callback.services - Array of service names hosted.
-   * @param {function} [failedCallback] - The callback function when the service call failed with params:
-   * @param {string} failedCallback.error - The error message reported by ROS.
+   * @param {getNodeDetailsCallback} callback - Function with the following params:
+   * @param {getNodeDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    *
    * @also
    *
@@ -470,13 +531,8 @@ class Ros extends EventEmitter2 {
    * These are the parameters if failedCallback is <strong>undefined</strong>.
    *
    * @param {string} node - Name of the node.
-   * @param {function} callback - Function with the following params:
-   * @param {Object} callback.result - The result object with the following params:
-   * @param {string[]} callback.result.subscribing - Array of subscribed topic names.
-   * @param {string[]} callback.result.publishing - Array of published topic names.
-   * @param {string[]} callback.result.services - Array of service names hosted.
-   * @param {function} [failedCallback] - The callback function when the service call failed with params:
-   * @param {string} failedCallback.error - The error message reported by ROS.
+   * @param {getNodeDetailsLegacyCallback} callback - Function with the following params:
+   * @param {getNodeDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getNodeDetails(node, callback, failedCallback) {
     var nodesClient = new Service({
@@ -500,17 +556,24 @@ class Ros extends EventEmitter2 {
       );
     } else {
       nodesClient.callService(request, function (result) {
+        // @ts-expect-error -- callback parameter polymorphism, see JSDoc comment above
         callback(result);
       });
     }
   }
   /**
+   * @callback getParamsCallback
+   * @param {string[]} params - Array of param names.
+   */
+  /**
+   * @callback getParamsFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
    * Retrieve a list of parameter names from the ROS Parameter Server.
    *
-   * @param {function} callback - Function with the following params:
-   * @param {string[]} callback.params - Array of param names.
-   * @param {function} [failedCallback] - The callback function when the service call failed with params:
-   * @param {string} failedCallback.error - The error message reported by ROS.
+   * @param {getParamsCallback} callback - Function with the following params:
+   * @param {getParamsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getParams(callback, failedCallback) {
     var paramsClient = new Service({
@@ -536,13 +599,19 @@ class Ros extends EventEmitter2 {
     }
   }
   /**
+   * @callback getTopicTypeCallback
+   * @param {string} type - The type of the topic.
+   */
+  /**
+   * @callback getTopicTypeFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
    * Retrieve the type of a ROS topic.
    *
    * @param {string} topic - Name of the topic.
-   * @param {function} callback - Function with the following params:
-   * @param {string} callback.type - The type of the topic.
-   * @param {function} [failedCallback] - The callback function when the service call failed with params:
-   * @param {string} failedCallback.error - The error message reported by ROS.
+   * @param {getTopicTypeCallback} callback - Function with the following params:
+   * @param {getTopicTypeFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getTopicType(topic, callback, failedCallback) {
     var topicTypeClient = new Service({
@@ -571,13 +640,19 @@ class Ros extends EventEmitter2 {
     }
   }
   /**
+   * @callback getServiceTypeCallback
+   * @param {string} type - The type of the service.
+   */
+  /**
+   * @callback getServiceTypeFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
    * Retrieve the type of a ROS service.
    *
    * @param {string} service - Name of the service.
-   * @param {function} callback - Function with the following params:
-   * @param {string} callback.type - The type of the service.
-   * @param {function} [failedCallback] - The callback function when the service call failed with params:
-   * @param {string} failedCallback.error - The error message reported by ROS.
+   * @param {getServiceTypeCallback} callback - Function with the following params:
+   * @param {getServiceTypeFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getServiceType(service, callback, failedCallback) {
     var serviceTypeClient = new Service({
@@ -606,13 +681,19 @@ class Ros extends EventEmitter2 {
     }
   }
   /**
+   * @callback getMessageDetailsCallback
+   * @param {string} details - An array of the message details.
+   */
+  /**
+   * @callback getMessageDetailsFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
    * Retrieve the details of a ROS message.
    *
    * @param {string} message - The name of the message type.
-   * @param {function} callback - Function with the following params:
-   * @param {string} callback.details - An array of the message details.
-   * @param {function} [failedCallback] - The callback function when the service call failed with params:
-   * @param {string} failedCallback.error - The error message reported by ROS.
+   * @param {getMessageDetailsCallback} callback - Function with the following params:
+   * @param {getMessageDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getMessageDetails(message, callback, failedCallback) {
     var messageDetailClient = new Service({
@@ -692,15 +773,21 @@ class Ros extends EventEmitter2 {
     return decodeTypeDefsRec(defs[0], defs);
   }
   /**
+   * @callback getTopicsAndRawTypesCallback
+   * @param {Object} result - The result object with the following params:
+   * @param {string[]} result.topics - Array of topic names.
+   * @param {string[]} result.types - Array of message type names.
+   * @param {string[]} result.typedefs_full_text - Array of full definitions of message types, similar to `gendeps --cat`.
+   */
+  /**
+   * @callback getTopicsAndRawTypesFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
    * Retrieve a list of topics and their associated type definitions.
    *
-   * @param {function} callback - Function with the following params:
-   * @param {Object} callback.result - The result object with the following params:
-   * @param {string[]} callback.result.topics - Array of topic names.
-   * @param {string[]} callback.result.types - Array of message type names.
-   * @param {string[]} callback.result.typedefs_full_text - Array of full definitions of message types, similar to `gendeps --cat`.
-   * @param {function} [failedCallback] - The callback function when the service call failed with params:
-   * @param {string} failedCallback.error - The error message reported by ROS.
+   * @param {getTopicsAndRawTypesCallback} callback - Function with the following params:
+   * @param {getTopicsAndRawTypesFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getTopicsAndRawTypes(callback, failedCallback) {
     var topicsAndRawTypesClient = new Service({
