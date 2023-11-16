@@ -5,6 +5,7 @@
 
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
 var Message = require('./Message');
+var Ros = require("../core/Ros");
 
 /**
  * Publish and/or subscribe to a topic in ROS.

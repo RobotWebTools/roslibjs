@@ -3,6 +3,8 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
+var Quaternion = require("./Quaternion");
+
 /**
  * A 3D vector.
  *

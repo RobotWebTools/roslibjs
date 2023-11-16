@@ -5,6 +5,7 @@
 
 var Service = require('./Service');
 var ServiceRequest = require('./ServiceRequest');
+var Ros = require("../core/Ros");
 
 /**
  * A ROS parameter.

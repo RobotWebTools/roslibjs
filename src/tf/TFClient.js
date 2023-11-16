@@ -13,6 +13,8 @@ var Topic = require('../core/Topic.js');
 
 var Transform = require('../math/Transform');
 
+var Ros = require("../core/Ros");
+
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
  *

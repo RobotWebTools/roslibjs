@@ -6,6 +6,7 @@
 var ServiceResponse = require('./ServiceResponse');
 var ServiceRequest = require('./ServiceRequest');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
+var Ros = require("../core/Ros");
 
 /**
  * A ROS service client.

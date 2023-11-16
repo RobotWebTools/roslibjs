@@ -5,6 +5,7 @@
 
 var Vector3 = require('./Vector3');
 var Quaternion = require('./Quaternion');
+var Transform = require("./Transform");
 
 /**
  * A Pose in 3D space. Values are copied into this object.
