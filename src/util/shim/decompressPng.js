@@ -9,14 +9,17 @@ var Canvas = require('canvas');
 var Image = Canvas.Image || window.Image;
 
 /**
+ * @callback decompressPngCallback
+ * @param data - The uncompressed data.
+ */
+/**
  * If a message was compressed as a PNG image (a compression hack since
  * gzipping over WebSockets * is not supported yet), this function places the
  * "image" in a canvas element then decodes the * "image" as a Base64 string.
  *
  * @private
  * @param data - An object containing the PNG data.
- * @param callback - Function with the following params:
- * @param callback.data - The uncompressed data.
+ * @param {decompressPngCallback} callback - Function with the following params:
  */
 function decompressPng(data, callback) {
   // Uncompresses the data before sending it through (use image/canvas to do so).

@@ -383,7 +383,7 @@ class Ros extends EventEmitter2 {
    */
   /**
    * @callback getServiceRequestDetailsFailedCallback
-   * @param {string} failedCallback.error - The error message reported by ROS.
+   * @param {string} error - The error message reported by ROS.
    */
   /**
    * Retrieve the details of a ROS service request.

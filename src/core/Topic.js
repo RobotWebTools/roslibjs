@@ -92,11 +92,14 @@ class Topic extends EventEmitter2 {
     };
   }
   /**
+   * @callback subscribeCallback
+   * @param {Object} message - The published message.
+   */
+  /**
    * Every time a message is published for the given topic, the callback
    * will be called with the message object.
    *
-   * @param {function} callback - Function with the following params:
-   * @param {Object} callback.message - The published message.
+   * @param {subscribeCallback} callback - Function with the following params:
    */
   subscribe(callback) {
     if (typeof callback === "function") {
@@ -124,7 +127,7 @@ class Topic extends EventEmitter2 {
    * and remove all subscribe callbacks. To remove a callback, you must
    * explicitly pass the callback function in.
    *
-   * @param {function} [callback] - The callback to unregister, if
+   * @param {import('eventemitter2').ListenerFn} [callback] - The callback to unregister, if
    *     provided and other listeners are registered the topic won't
    *     unsubscribe, just stop emitting to the passed listener.
    */

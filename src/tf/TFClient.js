@@ -165,11 +165,14 @@ class TFClient extends EventEmitter2 {
     this.currentTopic.subscribe(this._subscribeCB);
   }
   /**
+   * @callback subscribeCallback
+   * @param {Transform} callback.transform - The transform data.
+   */
+  /**
    * Subscribe to the given TF frame.
    *
    * @param {string} frameID - The TF frame to subscribe to.
-   * @param {function} callback - Function with the following params:
-   * @param {Transform} callback.transform - The transform data.
+   * @param {subscribeCallback} callback - Function with the following params:
    */
   subscribe(frameID, callback) {
     // remove leading slash, if it's there

@@ -22,10 +22,13 @@ class Param {
     this.name = options.name;
   }
   /**
+   * @callback getCallback
+   * @param {Object} value - The value of the param from ROS.
+   */
+  /**
    * Fetch the value of the param.
    *
-   * @param {function} callback - Function with the following params:
-   * @param {Object} callback.value - The value of the param from ROS.
+   * @param {getCallback} callback - Function with the following params:
    */
   get(callback) {
     var paramClient = new Service({
