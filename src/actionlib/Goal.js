@@ -20,7 +20,7 @@ class Goal extends EventEmitter2 {
    * @param {Object} options.goalMessage - The JSON object containing the goal for the action server.
    */
   constructor(options) {
-    super(options);
+    super();
     var that = this;
     this.actionClient = options.actionClient;
     this.goalMessage = options.goalMessage;

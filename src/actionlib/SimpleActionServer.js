@@ -23,7 +23,7 @@ class SimpleActionServer extends EventEmitter2 {
    * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
    */
   constructor(options) {
-    super(options);
+    super();
     var that = this;
     options = options || {};
     this.ros = options.ros;

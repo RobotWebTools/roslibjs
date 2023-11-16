@@ -33,7 +33,7 @@ class TFClient extends EventEmitter2 {
    * @param {string} [options.repubServiceName="/republish_tfs"] - The name of the republish_tfs service (non groovy compatibility mode only).
    */
   constructor(options) {
-    super(options);
+    super();
     options = options || {};
     this.ros = options.ros;
     this.fixedFrame = options.fixedFrame || "base_link";

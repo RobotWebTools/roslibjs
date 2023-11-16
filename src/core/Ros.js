@@ -32,7 +32,7 @@ class Ros extends EventEmitter2 {
    * @param {Object} [options.transportOptions={}] - The options to use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.
    */
   constructor(options) {
-    super(options);
+    super();
     options = options || {};
     var that = this;
     this.socket = null;

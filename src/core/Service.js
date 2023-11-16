@@ -19,7 +19,7 @@ class Service extends EventEmitter2 {
    * @param {string} options.serviceType - The service type, like 'rospy_tutorials/AddTwoInts'.
    */
   constructor(options) {
-    super(options);
+    super();
     options = options || {};
     this.ros = options.ros;
     this.name = options.name;

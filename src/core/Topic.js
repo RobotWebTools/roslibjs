@@ -28,7 +28,7 @@ class Topic extends EventEmitter2 {
    * @param {boolean} [options.reconnect_on_close=true] - The flag to enable resubscription and readvertisement on close event.
    */
   constructor(options) {
-    super(options);
+    super();
     options = options || {};
     this.ros = options.ros;
     this.name = options.name;
