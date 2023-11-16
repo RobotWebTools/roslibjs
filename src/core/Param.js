@@ -47,10 +47,18 @@ class Param {
     });
   }
   /**
+   * @callback setParamCallback
+   * @param {Object} response - The response from the service request.
+   */
+  /**
+   * @callback setParamFailedCallback
+   * @param {Object} response - The response from the service request.
+   */
+  /**
    * Set the value of the param in ROS.
    *
    * @param {Object} value - The value to set param to.
-   * @param {function} callback - The callback function.
+   * @param {setParamCallback} callback - The callback function.
    */
   set(value, callback) {
     var paramClient = new Service({
@@ -69,7 +77,7 @@ class Param {
   /**
    * Delete this parameter on the ROS server.
    *
-   * @param {function} callback - The callback function.
+   * @param {setParamCallback} callback - The callback function.
    */
   delete(callback) {
     var paramClient = new Service({
