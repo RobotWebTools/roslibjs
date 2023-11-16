@@ -75,6 +75,7 @@ class Ros extends EventEmitter2 {
       this.socket.on("error", this.socket.onerror);
     } else if (this.transportLibrary.constructor.name === "RTCPeerConnection") {
       this.socket = assign(
+        // @ts-expect-error -- this is kinda wild. `this.transportLibrary` can either be a string or an RTCDataChannel. This needs fixing.
         this.transportLibrary.createDataChannel(url, this.transportOptions),
         socketAdapter(this)
       );
