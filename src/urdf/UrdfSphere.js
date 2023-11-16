@@ -13,9 +13,11 @@ var UrdfTypes = require('./UrdfTypes');
  * @param {Object} options
  * @param {Element} options.xml - The XML element to parse.
  */
-function UrdfSphere(options) {
-  this.type = UrdfTypes.URDF_SPHERE;
-  this.radius = parseFloat(options.xml.getAttribute('radius'));
+class UrdfSphere {
+  constructor(options) {
+    this.type = UrdfTypes.URDF_SPHERE;
+    this.radius = parseFloat(options.xml.getAttribute("radius"));
+  }
 }
 
 module.exports = UrdfSphere;

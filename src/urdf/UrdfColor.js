@@ -11,13 +11,15 @@
  * @param {Object} options
  * @param {Element} options.xml - The XML element to parse.
  */
-function UrdfColor(options) {
-  // Parse the xml string
-  var rgba = options.xml.getAttribute('rgba').split(' ');
-  this.r = parseFloat(rgba[0]);
-  this.g = parseFloat(rgba[1]);
-  this.b = parseFloat(rgba[2]);
-  this.a = parseFloat(rgba[3]);
+class UrdfColor {
+  constructor(options) {
+    // Parse the xml string
+    var rgba = options.xml.getAttribute("rgba").split(" ");
+    this.r = parseFloat(rgba[0]);
+    this.g = parseFloat(rgba[1]);
+    this.b = parseFloat(rgba[2]);
+    this.a = parseFloat(rgba[3]);
+  }
 }
 
 module.exports = UrdfColor;

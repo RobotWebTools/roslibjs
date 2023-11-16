@@ -13,10 +13,12 @@ var UrdfTypes = require('./UrdfTypes');
  * @param {Object} options
  * @param {Element} options.xml - The XML element to parse.
  */
-function UrdfCylinder(options) {
-  this.type = UrdfTypes.URDF_CYLINDER;
-  this.length = parseFloat(options.xml.getAttribute('length'));
-  this.radius = parseFloat(options.xml.getAttribute('radius'));
+class UrdfCylinder {
+  constructor(options) {
+    this.type = UrdfTypes.URDF_CYLINDER;
+    this.length = parseFloat(options.xml.getAttribute("length"));
+    this.radius = parseFloat(options.xml.getAttribute("radius"));
+  }
 }
 
 module.exports = UrdfCylinder;
