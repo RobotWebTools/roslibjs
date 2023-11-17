@@ -42,6 +42,8 @@ class Topic extends EventEmitter2 {
       options.reconnect_on_close !== undefined
         ? options.reconnect_on_close
         : true;
+    this.waitForReconnect = undefined;
+    this.reconnectFunc = undefined;
 
     // Check for valid compression types
     if (

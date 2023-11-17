@@ -19400,27 +19400,27 @@ var ActionClient = /** @class */ (function (_super) {
         _this.feedbackListener = new Topic({
             ros: _this.ros,
             name: _this.serverName + '/feedback',
-            messageType: _this.actionName + 'Feedback',
+            messageType: _this.actionName + 'Feedback'
         });
         _this.statusListener = new Topic({
             ros: _this.ros,
             name: _this.serverName + '/status',
-            messageType: 'actionlib_msgs/GoalStatusArray',
+            messageType: 'actionlib_msgs/GoalStatusArray'
         });
         _this.resultListener = new Topic({
             ros: _this.ros,
             name: _this.serverName + '/result',
-            messageType: _this.actionName + 'Result',
+            messageType: _this.actionName + 'Result'
         });
         _this.goalTopic = new Topic({
             ros: _this.ros,
             name: _this.serverName + '/goal',
-            messageType: _this.actionName + 'Goal',
+            messageType: _this.actionName + 'Goal'
         });
         _this.cancelTopic = new Topic({
             ros: _this.ros,
             name: _this.serverName + '/cancel',
-            messageType: 'actionlib_msgs/GoalID',
+            messageType: 'actionlib_msgs/GoalID'
         });
         // advertise the goal and cancel topics
         _this.goalTopic.advertise();
@@ -19548,22 +19548,22 @@ var ActionListener = /** @class */ (function (_super) {
         var goalListener = new Topic({
             ros: _this.ros,
             name: _this.serverName + '/goal',
-            messageType: _this.actionName + 'Goal',
+            messageType: _this.actionName + 'Goal'
         });
         var feedbackListener = new Topic({
             ros: _this.ros,
             name: _this.serverName + '/feedback',
-            messageType: _this.actionName + 'Feedback',
+            messageType: _this.actionName + 'Feedback'
         });
         var statusListener = new Topic({
             ros: _this.ros,
             name: _this.serverName + '/status',
-            messageType: 'actionlib_msgs/GoalStatusArray',
+            messageType: 'actionlib_msgs/GoalStatusArray'
         });
         var resultListener = new Topic({
             ros: _this.ros,
             name: _this.serverName + '/result',
-            messageType: _this.actionName + 'Result',
+            messageType: _this.actionName + 'Result'
         });
         goalListener.subscribe(function (goalMessage) {
             that.emit('goal', goalMessage);
@@ -19627,13 +19627,13 @@ var Goal = /** @class */ (function (_super) {
      */
     function Goal(options) {
         var _this = _super.call(this) || this;
-        _this.feedback = undefined;
-        _this.status = undefined;
-        _this.result = undefined;
         var that = _this;
         _this.actionClient = options.actionClient;
         _this.goalMessage = options.goalMessage;
         _this.isFinished = false;
+        _this.status = undefined;
+        _this.result = undefined;
+        _this.feedback = undefined;
         // Used to create random IDs
         var date = new Date();
         // Create a random ID
@@ -19643,11 +19643,11 @@ var Goal = /** @class */ (function (_super) {
             goal_id: {
                 stamp: {
                     secs: 0,
-                    nsecs: 0,
+                    nsecs: 0
                 },
-                id: _this.goalID,
+                id: _this.goalID
             },
-            goal: _this.goalMessage,
+            goal: _this.goalMessage
         });
         _this.on('status', function (status) {
             that.status = status;
@@ -19684,7 +19684,7 @@ var Goal = /** @class */ (function (_super) {
      */
     Goal.prototype.cancel = function () {
         var cancelMessage = new Message({
-            id: this.goalID,
+            id: this.goalID
         });
         this.actionClient.cancelTopic.publish(cancelMessage);
     };
@@ -19742,39 +19742,39 @@ var SimpleActionServer = /** @class */ (function (_super) {
         _this.feedbackPublisher = new Topic({
             ros: _this.ros,
             name: _this.serverName + '/feedback',
-            messageType: _this.actionName + 'Feedback',
+            messageType: _this.actionName + 'Feedback'
         });
         _this.feedbackPublisher.advertise();
         var statusPublisher = new Topic({
             ros: _this.ros,
             name: _this.serverName + '/status',
-            messageType: 'actionlib_msgs/GoalStatusArray',
+            messageType: 'actionlib_msgs/GoalStatusArray'
         });
         statusPublisher.advertise();
         _this.resultPublisher = new Topic({
             ros: _this.ros,
             name: _this.serverName + '/result',
-            messageType: _this.actionName + 'Result',
+            messageType: _this.actionName + 'Result'
         });
         _this.resultPublisher.advertise();
         // create and subscribe to listeners
         var goalListener = new Topic({
             ros: _this.ros,
             name: _this.serverName + '/goal',
-            messageType: _this.actionName + 'Goal',
+            messageType: _this.actionName + 'Goal'
         });
         var cancelListener = new Topic({
             ros: _this.ros,
             name: _this.serverName + '/cancel',
-            messageType: 'actionlib_msgs/GoalID',
+            messageType: 'actionlib_msgs/GoalID'
         });
         // Track the goals and their status in order to publish status...
         _this.statusMessage = new Message({
             header: {
                 stamp: { secs: 0, nsecs: 100 },
-                frame_id: '',
+                frame_id: ''
             },
-            status_list: [],
+            status_list: []
         });
         // needed for handling preemption prompted by a new goal being received
         _this.currentGoal = null; // currently tracked goal
@@ -19788,7 +19788,7 @@ var SimpleActionServer = /** @class */ (function (_super) {
             else {
                 // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
                 that.statusMessage.status_list = [
-                    { goal_id: goalMessage.goal_id, status: 1 },
+                    { goal_id: goalMessage.goal_id, status: 1 }
                 ];
                 that.currentGoal = goalMessage;
                 that.emit('goal', goalMessage.goal);
@@ -19865,7 +19865,7 @@ var SimpleActionServer = /** @class */ (function (_super) {
     SimpleActionServer.prototype.setSucceeded = function (result) {
         var resultMessage = new Message({
             status: { goal_id: this.currentGoal.goal_id, status: 3 },
-            result: result,
+            result: result
         });
         this.resultPublisher.publish(resultMessage);
         // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
@@ -19887,7 +19887,7 @@ var SimpleActionServer = /** @class */ (function (_super) {
     SimpleActionServer.prototype.setAborted = function (result) {
         var resultMessage = new Message({
             status: { goal_id: this.currentGoal.goal_id, status: 4 },
-            result: result,
+            result: result
         });
         this.resultPublisher.publish(resultMessage);
         // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
@@ -19909,7 +19909,7 @@ var SimpleActionServer = /** @class */ (function (_super) {
     SimpleActionServer.prototype.sendFeedback = function (feedback) {
         var feedbackMessage = new Message({
             status: { goal_id: this.currentGoal.goal_id, status: 1 },
-            feedback: feedback,
+            feedback: feedback
         });
         this.feedbackPublisher.publish(feedbackMessage);
     };
@@ -19920,7 +19920,7 @@ var SimpleActionServer = /** @class */ (function (_super) {
         // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
         this.statusMessage.status_list = [];
         var resultMessage = new Message({
-            status: { goal_id: this.currentGoal.goal_id, status: 2 },
+            status: { goal_id: this.currentGoal.goal_id, status: 2 }
         });
         this.resultPublisher.publish(resultMessage);
         if (this.nextGoal) {
@@ -19940,12 +19940,12 @@ module.exports = SimpleActionServer;
 "use strict";
 var Ros = require('../core/Ros');
 var mixin = require('../mixin');
-var action = module.exports = {
+var action = (module.exports = {
     ActionClient: require('./ActionClient'),
     ActionListener: require('./ActionListener'),
     Goal: require('./Goal'),
     SimpleActionServer: require('./SimpleActionServer')
-};
+});
 mixin(Ros, ['ActionClient', 'SimpleActionServer'], action);
 
 },{"../core/Ros":81,"../mixin":93,"./ActionClient":74,"./ActionListener":75,"./Goal":76,"./SimpleActionServer":77}],79:[function(require,module,exports){
@@ -20000,11 +20000,11 @@ var Param = /** @class */ (function () {
     Param.prototype.get = function (callback) {
         var paramClient = new Service({
             ros: this.ros,
-            name: "/rosapi/get_param",
-            serviceType: "rosapi/GetParam",
+            name: '/rosapi/get_param',
+            serviceType: 'rosapi/GetParam'
         });
         var request = new ServiceRequest({
-            name: this.name,
+            name: this.name
         });
         paramClient.callService(request, function (result) {
             var value = JSON.parse(result.value);
@@ -20028,12 +20028,12 @@ var Param = /** @class */ (function () {
     Param.prototype.set = function (value, callback) {
         var paramClient = new Service({
             ros: this.ros,
-            name: "/rosapi/set_param",
-            serviceType: "rosapi/SetParam",
+            name: '/rosapi/set_param',
+            serviceType: 'rosapi/SetParam'
         });
         var request = new ServiceRequest({
             name: this.name,
-            value: JSON.stringify(value),
+            value: JSON.stringify(value)
         });
         paramClient.callService(request, callback);
     };
@@ -20045,11 +20045,11 @@ var Param = /** @class */ (function () {
     Param.prototype.delete = function (callback) {
         var paramClient = new Service({
             ros: this.ros,
-            name: "/rosapi/delete_param",
-            serviceType: "rosapi/DeleteParam",
+            name: '/rosapi/delete_param',
+            serviceType: 'rosapi/DeleteParam'
         });
         var request = new ServiceRequest({
-            name: this.name,
+            name: this.name
         });
         paramClient.callService(request, callback);
     };
@@ -20193,7 +20193,7 @@ var Ros = /** @class */ (function (_super) {
             rand: rand,
             t: t,
             level: level,
-            end: end,
+            end: end
         };
         // send the request
         this.callOnConnection(auth);
@@ -20249,7 +20249,7 @@ var Ros = /** @class */ (function (_super) {
         var levelMsg = {
             op: 'set_level',
             level: level,
-            id: id,
+            id: id
         };
         this.callOnConnection(levelMsg);
     };
@@ -20271,7 +20271,7 @@ var Ros = /** @class */ (function (_super) {
         var getActionServers = new Service({
             ros: this,
             name: '/rosapi/action_servers',
-            serviceType: 'rosapi/GetActionServers',
+            serviceType: 'rosapi/GetActionServers'
         });
         var request = new ServiceRequest({});
         if (typeof failedCallback === 'function') {
@@ -20307,7 +20307,7 @@ var Ros = /** @class */ (function (_super) {
         var topicsClient = new Service({
             ros: this,
             name: '/rosapi/topics',
-            serviceType: 'rosapi/Topics',
+            serviceType: 'rosapi/Topics'
         });
         var request = new ServiceRequest();
         if (typeof failedCallback === 'function') {
@@ -20342,10 +20342,10 @@ var Ros = /** @class */ (function (_super) {
         var topicsForTypeClient = new Service({
             ros: this,
             name: '/rosapi/topics_for_type',
-            serviceType: 'rosapi/TopicsForType',
+            serviceType: 'rosapi/TopicsForType'
         });
         var request = new ServiceRequest({
-            type: topicType,
+            type: topicType
         });
         if (typeof failedCallback === 'function') {
             topicsForTypeClient.callService(request, function (result) {
@@ -20378,7 +20378,7 @@ var Ros = /** @class */ (function (_super) {
         var servicesClient = new Service({
             ros: this,
             name: '/rosapi/services',
-            serviceType: 'rosapi/Services',
+            serviceType: 'rosapi/Services'
         });
         var request = new ServiceRequest();
         if (typeof failedCallback === 'function') {
@@ -20413,10 +20413,10 @@ var Ros = /** @class */ (function (_super) {
         var servicesForTypeClient = new Service({
             ros: this,
             name: '/rosapi/services_for_type',
-            serviceType: 'rosapi/ServicesForType',
+            serviceType: 'rosapi/ServicesForType'
         });
         var request = new ServiceRequest({
-            type: serviceType,
+            type: serviceType
         });
         if (typeof failedCallback === 'function') {
             servicesForTypeClient.callService(request, function (result) {
@@ -20451,10 +20451,10 @@ var Ros = /** @class */ (function (_super) {
         var serviceTypeClient = new Service({
             ros: this,
             name: '/rosapi/service_request_details',
-            serviceType: 'rosapi/ServiceRequestDetails',
+            serviceType: 'rosapi/ServiceRequestDetails'
         });
         var request = new ServiceRequest({
-            type: type,
+            type: type
         });
         if (typeof failedCallback === 'function') {
             serviceTypeClient.callService(request, function (result) {
@@ -20489,10 +20489,10 @@ var Ros = /** @class */ (function (_super) {
         var serviceTypeClient = new Service({
             ros: this,
             name: '/rosapi/service_response_details',
-            serviceType: 'rosapi/ServiceResponseDetails',
+            serviceType: 'rosapi/ServiceResponseDetails'
         });
         var request = new ServiceRequest({
-            type: type,
+            type: type
         });
         if (typeof failedCallback === 'function') {
             serviceTypeClient.callService(request, function (result) {
@@ -20525,7 +20525,7 @@ var Ros = /** @class */ (function (_super) {
         var nodesClient = new Service({
             ros: this,
             name: '/rosapi/nodes',
-            serviceType: 'rosapi/Nodes',
+            serviceType: 'rosapi/Nodes'
         });
         var request = new ServiceRequest();
         if (typeof failedCallback === 'function') {
@@ -20581,10 +20581,10 @@ var Ros = /** @class */ (function (_super) {
         var nodesClient = new Service({
             ros: this,
             name: '/rosapi/node_details',
-            serviceType: 'rosapi/NodeDetails',
+            serviceType: 'rosapi/NodeDetails'
         });
         var request = new ServiceRequest({
-            node: node,
+            node: node
         });
         if (typeof failedCallback === 'function') {
             nodesClient.callService(request, function (result) {
@@ -20618,7 +20618,7 @@ var Ros = /** @class */ (function (_super) {
         var paramsClient = new Service({
             ros: this,
             name: '/rosapi/get_param_names',
-            serviceType: 'rosapi/GetParamNames',
+            serviceType: 'rosapi/GetParamNames'
         });
         var request = new ServiceRequest();
         if (typeof failedCallback === 'function') {
@@ -20653,10 +20653,10 @@ var Ros = /** @class */ (function (_super) {
         var topicTypeClient = new Service({
             ros: this,
             name: '/rosapi/topic_type',
-            serviceType: 'rosapi/TopicType',
+            serviceType: 'rosapi/TopicType'
         });
         var request = new ServiceRequest({
-            topic: topic,
+            topic: topic
         });
         if (typeof failedCallback === 'function') {
             topicTypeClient.callService(request, function (result) {
@@ -20690,10 +20690,10 @@ var Ros = /** @class */ (function (_super) {
         var serviceTypeClient = new Service({
             ros: this,
             name: '/rosapi/service_type',
-            serviceType: 'rosapi/ServiceType',
+            serviceType: 'rosapi/ServiceType'
         });
         var request = new ServiceRequest({
-            service: service,
+            service: service
         });
         if (typeof failedCallback === 'function') {
             serviceTypeClient.callService(request, function (result) {
@@ -20727,10 +20727,10 @@ var Ros = /** @class */ (function (_super) {
         var messageDetailClient = new Service({
             ros: this,
             name: '/rosapi/message_details',
-            serviceType: 'rosapi/MessageDetails',
+            serviceType: 'rosapi/MessageDetails'
         });
         var request = new ServiceRequest({
-            type: message,
+            type: message
         });
         if (typeof failedCallback === 'function') {
             messageDetailClient.callService(request, function (result) {
@@ -20816,7 +20816,7 @@ var Ros = /** @class */ (function (_super) {
         var topicsAndRawTypesClient = new Service({
             ros: this,
             name: '/rosapi/topics_and_raw_types',
-            serviceType: 'rosapi/TopicsAndRawTypes',
+            serviceType: 'rosapi/TopicsAndRawTypes'
         });
         var request = new ServiceRequest();
         if (typeof failedCallback === 'function') {
@@ -20919,7 +20919,7 @@ var Service = /** @class */ (function (_super) {
             id: serviceCallId,
             service: this.name,
             type: this.serviceType,
-            args: request,
+            args: request
         };
         this.ros.callOnConnection(call);
     };
@@ -20946,7 +20946,7 @@ var Service = /** @class */ (function (_super) {
         this.ros.callOnConnection({
             op: 'advertise_service',
             type: this.serviceType,
-            service: this.name,
+            service: this.name
         });
         this.isAdvertised = true;
     };
@@ -20956,20 +20956,19 @@ var Service = /** @class */ (function (_super) {
         }
         this.ros.callOnConnection({
             op: 'unadvertise_service',
-            service: this.name,
+            service: this.name
         });
         this.isAdvertised = false;
     };
     Service.prototype._serviceResponse = function (rosbridgeRequest) {
         var response = {};
-        if (this._serviceCallback) {
-            var success = this._serviceCallback(rosbridgeRequest.args, response);
-        }
+        // @ts-expect-error -- possibly null
+        var success = this._serviceCallback(rosbridgeRequest.args, response);
         var call = {
             op: 'service_response',
             service: this.name,
             values: new ServiceResponse(response),
-            result: success,
+            result: success
         };
         if (rosbridgeRequest.id) {
             call.id = rosbridgeRequest.id;
@@ -21030,9 +21029,9 @@ var decompressPng = require('../util/decompressPng');
 var CBOR = require('cbor-js');
 var typedArrayTagger = require('../util/cborTypedArrayTags');
 var BSON = null;
-// @ts-expect-error -- require tricks to not include BSON in roslibjs. should we be doing this?
+// @ts-expect-error -- Workarounds for not including BSON in bundle. need to revisit
 if (typeof bson !== 'undefined') {
-    // @ts-expect-error -- require tricks to not include BSON in roslibjs. should we be doing this?
+    // @ts-expect-error -- Workarounds for not including BSON in bundle. need to revisit
     BSON = bson().BSON;
 }
 /**
@@ -21081,16 +21080,10 @@ function SocketAdapter(client) {
         }
         var reader = new FileReader();
         reader.onload = function () {
-            if (this.result) {
-                if (typeof this.result === 'string') {
-                    var uint8Array = new Uint8Array(this.result.split('').map(function (c) { return c.charCodeAt(0); }));
-                }
-                else {
-                    var uint8Array = new Uint8Array(this.result);
-                }
-                var msg = BSON.deserialize(uint8Array);
-                callback(msg);
-            }
+            // @ts-expect-error -- this doesn't seem right, but don't want to break current type coercion assumption
+            var uint8Array = new Uint8Array(this.result);
+            var msg = BSON.deserialize(uint8Array);
+            callback(msg);
         };
         reader.readAsArrayBuffer(data);
     }
@@ -21202,9 +21195,6 @@ var Topic = /** @class */ (function (_super) {
      */
     function Topic(options) {
         var _this = _super.call(this) || this;
-        _this.waitForReconnect = false;
-        /** @type {import('eventemitter2').ListenerFn|undefined} */
-        _this.reconnectFunc = undefined;
         _this.ros = options.ros;
         _this.name = options.name;
         _this.messageType = options.messageType;
@@ -21218,6 +21208,8 @@ var Topic = /** @class */ (function (_super) {
             options.reconnect_on_close !== undefined
                 ? options.reconnect_on_close
                 : true;
+        _this.waitForReconnect = undefined;
+        _this.reconnectFunc = undefined;
         // Check for valid compression types
         if (_this.compression &&
             _this.compression !== 'png' &&
@@ -21285,7 +21277,7 @@ var Topic = /** @class */ (function (_super) {
             topic: this.name,
             compression: this.compression,
             throttle_rate: this.throttle_rate,
-            queue_length: this.queue_length,
+            queue_length: this.queue_length
         });
     };
     /**
@@ -21310,14 +21302,14 @@ var Topic = /** @class */ (function (_super) {
         }
         // Note: Don't call this.removeAllListeners, allow client to handle that themselves
         this.ros.off(this.name, this._messageCallback);
-        if (this.reconnect_on_close && this.reconnectFunc) {
+        if (this.reconnect_on_close) {
             this.ros.off('close', this.reconnectFunc);
         }
         this.emit('unsubscribe');
         this.ros.callOnConnection({
             op: 'unsubscribe',
             id: this.subscribeId,
-            topic: this.name,
+            topic: this.name
         });
         this.subscribeId = null;
     };
@@ -21336,7 +21328,7 @@ var Topic = /** @class */ (function (_super) {
             type: this.messageType,
             topic: this.name,
             latch: this.latch,
-            queue_size: this.queue_size,
+            queue_size: this.queue_size
         });
         this.isAdvertised = true;
         if (!this.reconnect_on_close) {
@@ -21353,14 +21345,14 @@ var Topic = /** @class */ (function (_super) {
         if (!this.isAdvertised) {
             return;
         }
-        if (this.reconnect_on_close && this.reconnectFunc) {
+        if (this.reconnect_on_close) {
             this.ros.off('close', this.reconnectFunc);
         }
         this.emit('unadvertise');
         this.ros.callOnConnection({
             op: 'unadvertise',
             id: this.advertiseId,
-            topic: this.name,
+            topic: this.name
         });
         this.isAdvertised = false;
     };
@@ -21379,7 +21371,7 @@ var Topic = /** @class */ (function (_super) {
             id: 'publish:' + this.name + ':' + this.ros.idCounter,
             topic: this.name,
             msg: message,
-            latch: this.latch,
+            latch: this.latch
         };
         this.ros.callOnConnection(call);
     };
@@ -21390,7 +21382,7 @@ module.exports = Topic;
 },{"../core/Ros":81,"./Message":79,"eventemitter2":16}],87:[function(require,module,exports){
 "use strict";
 var mixin = require('../mixin');
-var core = module.exports = {
+var core = (module.exports = {
     Ros: require('./Ros'),
     Topic: require('./Topic'),
     Message: require('./Message'),
@@ -21398,7 +21390,7 @@ var core = module.exports = {
     Service: require('./Service'),
     ServiceRequest: require('./ServiceRequest'),
     ServiceResponse: require('./ServiceResponse')
-};
+});
 mixin(core.Ros, ['Param', 'Service', 'Topic'], core);
 
 },{"../mixin":93,"./Message":79,"./Param":80,"./Ros":81,"./Service":82,"./ServiceRequest":83,"./ServiceResponse":84,"./Topic":86}],88:[function(require,module,exports){
@@ -21455,7 +21447,7 @@ var Pose = /** @class */ (function () {
         var p = pose.clone();
         p.applyTransform({
             rotation: this.orientation,
-            translation: this.position,
+            translation: this.position
         });
         return p;
     };
@@ -21749,10 +21741,6 @@ var TFClient = /** @class */ (function (_super) {
      */
     function TFClient(options) {
         var _this = _super.call(this) || this;
-        /** @type {Goal|undefined} */
-        _this.currentGoal = undefined;
-        /** @type {Topic|undefined} */
-        _this.currentTopic = undefined;
         _this.ros = options.ros;
         _this.fixedFrame = options.fixedFrame || 'base_link';
         _this.angularThres = options.angularThres || 2.0;
@@ -21764,13 +21752,17 @@ var TFClient = /** @class */ (function (_super) {
         var nsecs = Math.floor((seconds - secs) * 1000000000);
         _this.topicTimeout = {
             secs: secs,
-            nsecs: nsecs,
+            nsecs: nsecs
         };
         _this.serverName = options.serverName || '/tf2_web_republisher';
         _this.repubServiceName = options.repubServiceName || '/republish_tfs';
+        /** @type {Goal|false} */
+        _this.currentGoal = false;
+        /** @type {Topic|false} */
+        _this.currentTopic = false;
         _this.frameInfos = {};
         _this.republisherUpdateRequested = false;
-        _this._subscribeCB = null;
+        _this._subscribeCB = undefined;
         _this._isDisposed = false;
         // Create an Action Client
         _this.actionClient = new ActionClient({
@@ -21778,13 +21770,13 @@ var TFClient = /** @class */ (function (_super) {
             serverName: _this.serverName,
             actionName: 'tf2_web_republisher/TFSubscriptionAction',
             omitStatus: true,
-            omitResult: true,
+            omitResult: true
         });
         // Create a Service Client
         _this.serviceClient = new Service({
             ros: options.ros,
             name: _this.repubServiceName,
-            serviceType: 'tf2_web_republisher/RepublishTFs',
+            serviceType: 'tf2_web_republisher/RepublishTFs'
         });
         return _this;
     }
@@ -21793,7 +21785,6 @@ var TFClient = /** @class */ (function (_super) {
      * functions.
      *
      * @param {Object} tf - The TF message from the server.
-     * @param {Array} tf.transforms - The list of transforms.
      */
     TFClient.prototype.processTFArray = function (tf) {
         var that = this;
@@ -21806,7 +21797,7 @@ var TFClient = /** @class */ (function (_super) {
             if (info) {
                 info.transform = new Transform({
                     translation: transform.transform.translation,
-                    rotation: transform.transform.rotation,
+                    rotation: transform.transform.rotation
                 });
                 info.cbs.forEach(function (cb) {
                     cb(info.transform);
@@ -21824,7 +21815,7 @@ var TFClient = /** @class */ (function (_super) {
             target_frame: this.fixedFrame,
             angular_thres: this.angularThres,
             trans_thres: this.transThres,
-            rate: this.rate,
+            rate: this.rate
         };
         // if we're running in groovy compatibility mode (the default)
         // then use the action interface to tf2_web_republisher
@@ -21834,7 +21825,7 @@ var TFClient = /** @class */ (function (_super) {
             }
             this.currentGoal = new Goal({
                 actionClient: this.actionClient,
-                goalMessage: goalMessage,
+                goalMessage: goalMessage
             });
             this.currentGoal.on('feedback', this.processTFArray.bind(this));
             this.currentGoal.send();
@@ -21863,13 +21854,13 @@ var TFClient = /** @class */ (function (_super) {
         }
         // if we subscribed to a topic before, unsubscribe so
         // the republisher stops publishing it
-        if (this.currentTopic && this._subscribeCB) {
+        if (this.currentTopic) {
             this.currentTopic.unsubscribe(this._subscribeCB);
         }
         this.currentTopic = new Topic({
             ros: this.ros,
             name: response.topic_name,
-            messageType: 'tf2_web_republisher/TFArray',
+            messageType: 'tf2_web_republisher/TFArray'
         });
         this._subscribeCB = this.processTFArray.bind(this);
         this.currentTopic.subscribe(this._subscribeCB);
@@ -21892,7 +21883,7 @@ var TFClient = /** @class */ (function (_super) {
         // if there is no callback registered for the given frame, create empty callback list
         if (!this.frameInfos[frameID]) {
             this.frameInfos[frameID] = {
-                cbs: [],
+                cbs: []
             };
             if (!this.republisherUpdateRequested) {
                 setTimeout(this.updateGoal.bind(this), this.updateDelay);
@@ -21932,7 +21923,7 @@ var TFClient = /** @class */ (function (_super) {
     TFClient.prototype.dispose = function () {
         this._isDisposed = true;
         this.actionClient.dispose();
-        if (this.currentTopic && this._subscribeCB) {
+        if (this.currentTopic) {
             this.currentTopic.unsubscribe(this._subscribeCB);
         }
     };
@@ -21944,9 +21935,9 @@ module.exports = TFClient;
 "use strict";
 var Ros = require('../core/Ros');
 var mixin = require('../mixin');
-var tf = module.exports = {
+var tf = (module.exports = {
     TFClient: require('./TFClient')
-};
+});
 mixin(Ros, ['TFClient'], tf);
 
 },{"../core/Ros":81,"../mixin":93,"./TFClient":94}],96:[function(require,module,exports){
@@ -21970,15 +21961,13 @@ var UrdfBox = /** @class */ (function () {
         this.dimension = null;
         this.type = UrdfTypes.URDF_BOX;
         // Parse the xml string
-        var size = options.xml.getAttribute('size');
-        if (size) {
-            var xyz = size.split(' ');
-            this.dimension = new Vector3({
-                x: parseFloat(xyz[0]),
-                y: parseFloat(xyz[1]),
-                z: parseFloat(xyz[2]),
-            });
-        }
+        // @ts-expect-error -- possibly null
+        var xyz = options.xml.getAttribute('size').split(' ');
+        this.dimension = new Vector3({
+            x: parseFloat(xyz[0]),
+            y: parseFloat(xyz[1]),
+            z: parseFloat(xyz[2])
+        });
     }
     return UrdfBox;
 }());
@@ -22001,14 +21990,12 @@ var UrdfColor = /** @class */ (function () {
      */
     function UrdfColor(options) {
         // Parse the xml string
-        var rgbaValue = options.xml.getAttribute('rgba');
-        if (rgbaValue) {
-            var rgba = rgbaValue.split(' ');
-            this.r = parseFloat(rgba[0]);
-            this.g = parseFloat(rgba[1]);
-            this.b = parseFloat(rgba[2]);
-            this.a = parseFloat(rgba[3]);
-        }
+        // @ts-expect-error -- possibly null
+        var rgba = options.xml.getAttribute('rgba').split(' ');
+        this.r = parseFloat(rgba[0]);
+        this.g = parseFloat(rgba[1]);
+        this.b = parseFloat(rgba[2]);
+        this.a = parseFloat(rgba[3]);
     }
     return UrdfColor;
 }());
@@ -22032,8 +22019,10 @@ var UrdfCylinder = /** @class */ (function () {
      */
     function UrdfCylinder(options) {
         this.type = UrdfTypes.URDF_CYLINDER;
-        this.length = parseFloat(options.xml.getAttribute('length') || 'NaN');
-        this.radius = parseFloat(options.xml.getAttribute('radius') || 'NaN');
+        // @ts-expect-error -- possibly null
+        this.length = parseFloat(options.xml.getAttribute('length'));
+        // @ts-expect-error -- possibly null
+        this.radius = parseFloat(options.xml.getAttribute('radius'));
     }
     return UrdfCylinder;
 }());
@@ -22087,7 +22076,7 @@ var UrdfJoint = /** @class */ (function () {
                 position = new Vector3({
                     x: parseFloat(xyz[0]),
                     y: parseFloat(xyz[1]),
-                    z: parseFloat(xyz[2]),
+                    z: parseFloat(xyz[2])
                 });
             }
             // Check the RPY
@@ -22114,13 +22103,13 @@ var UrdfJoint = /** @class */ (function () {
                     x: x,
                     y: y,
                     z: z,
-                    w: w,
+                    w: w
                 });
                 orientation.normalize();
             }
             this.origin = new Pose({
                 position: position,
-                orientation: orientation,
+                orientation: orientation
             });
         }
     }
@@ -22150,7 +22139,7 @@ var UrdfLink = /** @class */ (function () {
         var visuals = options.xml.getElementsByTagName('visual');
         for (var i = 0; i < visuals.length; i++) {
             this.visuals.push(new UrdfVisual({
-                xml: visuals[i],
+                xml: visuals[i]
             }));
         }
     }
@@ -22188,7 +22177,7 @@ var UrdfMaterial = /** @class */ (function () {
         if (colors.length > 0) {
             // Parse the RBGA string
             this.color = new UrdfColor({
-                xml: colors[0],
+                xml: colors[0]
             });
         }
     }
@@ -22232,7 +22221,7 @@ var UrdfMesh = /** @class */ (function () {
             this.scale = new Vector3({
                 x: parseFloat(xyz[0]),
                 y: parseFloat(xyz[1]),
-                z: parseFloat(xyz[2]),
+                z: parseFloat(xyz[2])
             });
         }
     }
@@ -22286,7 +22275,7 @@ var UrdfModel = /** @class */ (function () {
             var node = nodes[i];
             if (node.tagName === "material") {
                 var material = new UrdfMaterial({
-                    xml: node,
+                    xml: node
                 });
                 // Make sure this is unique
                 if (this.materials[material.name] !== void 0) {
@@ -22303,7 +22292,7 @@ var UrdfModel = /** @class */ (function () {
             }
             else if (node.tagName === "link") {
                 var link = new UrdfLink({
-                    xml: node,
+                    xml: node
                 });
                 // Make sure this is unique
                 if (this.links[link.name] !== void 0) {
@@ -22328,7 +22317,7 @@ var UrdfModel = /** @class */ (function () {
             }
             else if (node.tagName === "joint") {
                 var joint = new UrdfJoint({
-                    xml: node,
+                    xml: node
                 });
                 this.joints[joint.name] = joint;
             }
@@ -22415,7 +22404,7 @@ var UrdfVisual = /** @class */ (function () {
                 position = new Vector3({
                     x: parseFloat(xyz[0]),
                     y: parseFloat(xyz[1]),
-                    z: parseFloat(xyz[2]),
+                    z: parseFloat(xyz[2])
                 });
             }
             // Check the RPY
@@ -22442,13 +22431,13 @@ var UrdfVisual = /** @class */ (function () {
                     x: x,
                     y: y,
                     z: z,
-                    w: w,
+                    w: w
                 });
                 orientation.normalize();
             }
             this.origin = new Pose({
                 position: position,
-                orientation: orientation,
+                orientation: orientation
             });
         }
         // Geometry
@@ -22471,22 +22460,22 @@ var UrdfVisual = /** @class */ (function () {
                 var type = shape.nodeName;
                 if (type === 'sphere') {
                     this.geometry = new UrdfSphere({
-                        xml: shape,
+                        xml: shape
                     });
                 }
                 else if (type === 'box') {
                     this.geometry = new UrdfBox({
-                        xml: shape,
+                        xml: shape
                     });
                 }
                 else if (type === 'cylinder') {
                     this.geometry = new UrdfCylinder({
-                        xml: shape,
+                        xml: shape
                     });
                 }
                 else if (type === 'mesh') {
                     this.geometry = new UrdfMesh({
-                        xml: shape,
+                        xml: shape
                     });
                 }
                 else {
@@ -22498,7 +22487,7 @@ var UrdfVisual = /** @class */ (function () {
         var materials = xml.getElementsByTagName('material');
         if (materials.length > 0) {
             this.material = new UrdfMaterial({
-                xml: materials[0],
+                xml: materials[0]
             });
         }
     }
@@ -22533,7 +22522,7 @@ function warnPrecision() {
 /**
  * Unpack 64-bit unsigned integer from byte array.
  * @param {Uint8Array} bytes
-*/
+ */
 function decodeUint64LE(bytes) {
     warnPrecision();
     var byteLen = bytes.byteLength;
@@ -22553,7 +22542,7 @@ function decodeUint64LE(bytes) {
 /**
  * Unpack 64-bit signed integer from byte array.
  * @param {Uint8Array} bytes
-*/
+ */
 function decodeInt64LE(bytes) {
     warnPrecision();
     var byteLen = bytes.byteLength;
@@ -22575,7 +22564,7 @@ function decodeInt64LE(bytes) {
  * Unpack typed array from byte array.
  * @param {Uint8Array} bytes
  * @param {ArrayConstructor} ArrayType - Desired output array type
-*/
+ */
 function decodeNativeArray(bytes, ArrayType) {
     var byteLen = bytes.byteLength;
     var offset = bytes.byteOffset;
@@ -22674,14 +22663,10 @@ catch (ReferenceError) {
 var workerSocketImpl = require('./workerSocketImpl');
 var WorkerSocket = /** @class */ (function () {
     function WorkerSocket(uri) {
-        this.onmessage = undefined;
-        this.onclose = undefined;
-        this.onopen = undefined;
-        this.onerror = undefined;
         this.socket_ = work(workerSocketImpl);
         this.socket_.addEventListener('message', this.handleWorkerMessage_.bind(this));
         this.socket_.postMessage({
-            uri: uri,
+            uri: uri
         });
     }
     WorkerSocket.prototype.handleWorkerMessage_ = function (ev) {
@@ -22712,7 +22697,7 @@ var WorkerSocket = /** @class */ (function () {
     };
     WorkerSocket.prototype.close = function () {
         this.socket_.postMessage({
-            close: true,
+            close: true
         });
     };
     return WorkerSocket;

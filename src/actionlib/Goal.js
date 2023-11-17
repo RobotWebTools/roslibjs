@@ -25,6 +25,9 @@ class Goal extends EventEmitter2 {
     this.actionClient = options.actionClient;
     this.goalMessage = options.goalMessage;
     this.isFinished = false;
+    this.status = undefined;
+    this.result = undefined;
+    this.feedback = undefined;
 
     // Used to create random IDs
     var date = new Date();

@@ -10,6 +10,10 @@ var workerSocketImpl = require('./workerSocketImpl');
 
 class WorkerSocket {
   constructor(uri) {
+    this.onclose = undefined;
+    this.onerror = undefined;
+    this.onopen = undefined;
+    this.onmessage = undefined;
     this.socket_ = work(workerSocketImpl);
 
     this.socket_.addEventListener(

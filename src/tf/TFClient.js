@@ -50,11 +50,13 @@ class TFClient extends EventEmitter2 {
     this.serverName = options.serverName || '/tf2_web_republisher';
     this.repubServiceName = options.repubServiceName || '/republish_tfs';
 
+    /** @type {Goal|false} */
     this.currentGoal = false;
+    /** @type {Topic|false} */
     this.currentTopic = false;
     this.frameInfos = {};
     this.republisherUpdateRequested = false;
-    this._subscribeCB = null;
+    this._subscribeCB = undefined;
     this._isDisposed = false;
 
     // Create an Action Client
@@ -86,7 +88,7 @@ class TFClient extends EventEmitter2 {
       if (frameID[0] === '/') {
         frameID = frameID.substring(1);
       }
-      var info = this.frameInfos[frameID];
+      var info = that.frameInfos[frameID];
       if (info) {
         info.transform = new Transform({
           translation: transform.transform.translation,
