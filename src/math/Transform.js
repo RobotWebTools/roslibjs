@@ -16,7 +16,6 @@ class Transform {
    * @param {Quaternion} options.rotation - The ROSLIB.Quaternion describing the rotation.
    */
   constructor(options) {
-    options = options || {};
     // Copy the values into this object if they exist
     this.translation = new Vector3(options.translation);
     this.rotation = new Quaternion(options.rotation);

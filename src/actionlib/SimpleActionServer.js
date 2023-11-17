@@ -25,7 +25,6 @@ class SimpleActionServer extends EventEmitter2 {
   constructor(options) {
     super();
     var that = this;
-    options = options || {};
     this.ros = options.ros;
     this.serverName = options.serverName;
     this.actionName = options.actionName;

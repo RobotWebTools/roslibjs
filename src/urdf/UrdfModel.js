@@ -22,7 +22,6 @@ class UrdfModel {
    * @param {string} options.string - The XML element to parse as a string.
    */
   constructor(options) {
-    options = options || {};
     var xmlDoc = options.xml;
     var string = options.string;
     this.materials = {};

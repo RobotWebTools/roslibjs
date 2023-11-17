@@ -20,7 +20,6 @@ class Service extends EventEmitter2 {
    */
   constructor(options) {
     super();
-    options = options || {};
     this.ros = options.ros;
     this.name = options.name;
     this.serviceType = options.serviceType;

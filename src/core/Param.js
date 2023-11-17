@@ -17,7 +17,6 @@ class Param {
    * @param {string} options.name - The param name, like max_vel_x.
    */
   constructor(options) {
-    options = options || {};
     this.ros = options.ros;
     this.name = options.name;
   }

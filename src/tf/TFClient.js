@@ -34,7 +34,6 @@ class TFClient extends EventEmitter2 {
    */
   constructor(options) {
     super();
-    options = options || {};
     this.ros = options.ros;
     this.fixedFrame = options.fixedFrame || 'base_link';
     this.angularThres = options.angularThres || 2.0;
