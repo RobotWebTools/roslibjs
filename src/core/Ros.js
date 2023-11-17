@@ -66,6 +66,7 @@ class Ros extends EventEmitter2 {
   connect(url) {
     if (this.transportLibrary === "socket.io") {
       this.socket = assign(
+        // @ts-expect-error -- this doesn't seem to work
         io(url, { "force new connection": true }),
         socketAdapter(this)
       );

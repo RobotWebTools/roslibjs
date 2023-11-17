@@ -5,6 +5,7 @@ class SocketIO {
     this.socketio = null;
     this.socket = Ros.socket;
     if (options.http) {
+      // @ts-expect-error -- this doesn't seem to work.
       this.socketio = io(options.http);
     } else if (options.socketio) {
       this.socketio = options.socketio;
@@ -28,6 +29,7 @@ class SocketIO {
   }
   sendToFront(name, event) {
     return function (event) {
+      // @ts-expect-error -- this doesn't seem to work.
       this.socketio.emit(name, event);
     };
   }

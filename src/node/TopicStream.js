@@ -5,17 +5,17 @@ var DuplexStream = require('stream').Duplex;
  * Publish a connected ROS topic to a duplex
  * stream. This stream can be piped to, which will
  * publish to the topic.
- *
- * @param {Object} options
- * @param {boolean} [options.subscribe=true] - The flag to indicate whether to subscribe to the topic and start emitting data or not.
- * @param {boolean} [options.publish=true] - The flag to indicate whether to register the stream as a publisher to the topic or not.
- * @param {boolean} [options.transform] - A function to change the data to be published or filter it if false is returned.
- */
+*
+* @param {Object} options
+* @param {boolean} [options.subscribe=true] - The flag to indicate whether to subscribe to the topic and start emitting data or not.
+* @param {boolean} [options.publish=true] - The flag to indicate whether to register the stream as a publisher to the topic or not.
+* @param {function} [options.transform] - A function to change the data to be published or filter it if false is returned.
+*/
+// @ts-expect-error -- prototype call here is unhappy - maybe we need to get rid of this or roll it into Topic.
 Topic.prototype.toStream = function(options) {
     options = options || {subscribe: true, publish: true};
 
     var topic = this;
-    var hasTransform = typeof options.transform === 'function';
 
     var stream = new DuplexStream({
         objectMode: true
@@ -24,8 +24,8 @@ Topic.prototype.toStream = function(options) {
 
     // Publish to the topic if someone pipes to stream
     stream._write = function(chunk, encoding, callback) {
-        if (hasTransform) {
-            chunk = options.transform(chunk);
+        if (typeof options.transform === "function") {
+          chunk = options.transform(chunk);
         }
         if (chunk === false) {
             topic.publish(chunk);

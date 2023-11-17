@@ -84,6 +84,7 @@ class SimpleActionServer extends EventEmitter2 {
         // needs to happen AFTER rest is set up
         that.emit("cancel");
       } else {
+        // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
         that.statusMessage.status_list = [
           { goal_id: goalMessage.goal_id, status: 1 },
         ];
@@ -157,7 +158,9 @@ class SimpleActionServer extends EventEmitter2 {
       var nsecs = Math.round(
         1000000000 * (currentTime.getTime() / 1000 - secs)
       );
+      // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
       that.statusMessage.header.stamp.secs = secs;
+      // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
       that.statusMessage.header.stamp.nsecs = nsecs;
       statusPublisher.publish(that.statusMessage);
     }, 500); // publish every 500ms
@@ -174,6 +177,7 @@ class SimpleActionServer extends EventEmitter2 {
     });
     this.resultPublisher.publish(resultMessage);
 
+    // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
     this.statusMessage.status_list = [];
     if (this.nextGoal) {
       this.currentGoal = this.nextGoal;
@@ -195,6 +199,7 @@ class SimpleActionServer extends EventEmitter2 {
     });
     this.resultPublisher.publish(resultMessage);
 
+    // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
     this.statusMessage.status_list = [];
     if (this.nextGoal) {
       this.currentGoal = this.nextGoal;
@@ -220,6 +225,7 @@ class SimpleActionServer extends EventEmitter2 {
    * Handle case where client requests preemption.
    */
   setPreempted() {
+    // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
     this.statusMessage.status_list = [];
     var resultMessage = new Message({
       status: { goal_id: this.currentGoal.goal_id, status: 2 },
