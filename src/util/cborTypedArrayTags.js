@@ -64,7 +64,7 @@ function decodeInt64LE(bytes) {
 /**
  * Unpack typed array from byte array.
  * @param {Uint8Array} bytes
- * @param {type} ArrayType - Desired output array type
+ * @param {ArrayConstructor} ArrayType - Desired output array type
 */
 function decodeNativeArray(bytes, ArrayType) {
   var byteLen = bytes.byteLength;
