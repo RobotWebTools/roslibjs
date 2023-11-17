@@ -33,18 +33,18 @@ class UrdfModel {
     if (string) {
       // Parse the string
       var parser = new DOMParser();
-      xmlDoc = parser.parseFromString(string, "text/xml");
+      xmlDoc = parser.parseFromString(string, "text/xml").documentElement;
     }
 
     // Initialize the model with the given XML node.
     // Get the robot tag
-    var robotXml = xmlDoc.documentElement;
+    var robotXml = xmlDoc;
 
     // Get the robot name
     this.name = robotXml.getAttribute("name");
 
     // Parse all the visual elements we need
-    for (var nodes = robotXml.childNodes, i = 0; i < nodes.length; i++) {
+    for (var nodes = robotXml.children, i = 0; i < nodes.length; i++) {
       var node = nodes[i];
       if (node.tagName === "material") {
         var material = new UrdfMaterial({
