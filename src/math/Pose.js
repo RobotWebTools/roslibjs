@@ -12,13 +12,14 @@ var Transform = require("./Transform");
  */
 class Pose {
   /**
-   * @param {Object} options
-   * @param {Vector3} options.position - The ROSLIB.Vector3 describing the position.
-   * @param {Quaternion} options.orientation - The ROSLIB.Quaternion describing the orientation.
+   * @param {Object} [options]
+   * @param {Vector3} [options.position] - The ROSLIB.Vector3 describing the position.
+   * @param {Quaternion} [options.orientation] - The ROSLIB.Quaternion describing the orientation.
    */
   constructor(options) {
     options = options || {};
     // copy the values into this object if they exist
+    options = options || {};
     this.position = new Vector3(options.position);
     this.orientation = new Quaternion(options.orientation);
   }
