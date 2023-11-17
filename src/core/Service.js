@@ -50,7 +50,7 @@ class Service extends EventEmitter2 {
     }
 
     var serviceCallId =
-      'call_service:' + this.name + ':' + ++this.ros.idCounter;
+      'call_service:' + this.name + ':' + (++this.ros.idCounter).toString();
 
     if (callback || failedCallback) {
       this.ros.once(serviceCallId, function (message) {

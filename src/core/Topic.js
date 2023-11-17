@@ -110,7 +110,8 @@ class Topic extends EventEmitter2 {
       return;
     }
     this.ros.on(this.name, this._messageCallback);
-    this.subscribeId = 'subscribe:' + this.name + ':' + ++this.ros.idCounter;
+    this.subscribeId =
+      'subscribe:' + this.name + ':' + (++this.ros.idCounter).toString();
 
     this.callForSubscribeAndAdvertise({
       op: 'subscribe',
@@ -162,7 +163,8 @@ class Topic extends EventEmitter2 {
     if (this.isAdvertised) {
       return;
     }
-    this.advertiseId = 'advertise:' + this.name + ':' + ++this.ros.idCounter;
+    this.advertiseId =
+      'advertise:' + this.name + ':' + (++this.ros.idCounter).toString();
     this.callForSubscribeAndAdvertise({
       op: 'advertise',
       id: this.advertiseId,
