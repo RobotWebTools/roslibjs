@@ -37,10 +37,10 @@ class UrdfVisual {
       this.origin = new Pose();
     } else {
       // Check the XYZ
-      var xyz = origins[0].getAttribute("xyz");
+      var xyzValue = origins[0].getAttribute("xyz");
       var position = new Vector3();
-      if (xyz) {
-        xyz = xyz.split(" ");
+      if (xyzValue) {
+        var xyz = xyzValue.split(" ");
         position = new Vector3({
           x: parseFloat(xyz[0]),
           y: parseFloat(xyz[1]),
@@ -49,10 +49,10 @@ class UrdfVisual {
       }
 
       // Check the RPY
-      var rpy = origins[0].getAttribute("rpy");
+      var rpyValue = origins[0].getAttribute("rpy");
       var orientation = new Quaternion();
-      if (rpy) {
-        rpy = rpy.split(" ");
+      if (rpyValue) {
+        var rpy = rpyValue.split(" ");
         // Convert from RPY
         var roll = parseFloat(rpy[0]);
         var pitch = parseFloat(rpy[1]);
@@ -93,33 +93,35 @@ class UrdfVisual {
       var geom = geoms[0];
       var shape = null;
       // Check for the shape
-      for (var i = 0; i < geom.childNodes.length; i++) {
-        var node = geom.childNodes[i];
+      for (var i = 0; i < geom.children.length; i++) {
+        var node = geom.children[i];
         if (node.nodeType === 1) {
           shape = node;
           break;
         }
       }
-      // Check the type
-      var type = shape.nodeName;
-      if (type === "sphere") {
-        this.geometry = new UrdfSphere({
-          xml: shape,
-        });
-      } else if (type === "box") {
-        this.geometry = new UrdfBox({
-          xml: shape,
-        });
-      } else if (type === "cylinder") {
-        this.geometry = new UrdfCylinder({
-          xml: shape,
-        });
-      } else if (type === "mesh") {
-        this.geometry = new UrdfMesh({
-          xml: shape,
-        });
-      } else {
-        console.warn("Unknown geometry type " + type);
+      if (shape) {
+        // Check the type
+        var type = shape.nodeName;
+        if (type === "sphere") {
+          this.geometry = new UrdfSphere({
+            xml: shape,
+          });
+        } else if (type === "box") {
+          this.geometry = new UrdfBox({
+            xml: shape,
+          });
+        } else if (type === "cylinder") {
+          this.geometry = new UrdfCylinder({
+            xml: shape,
+          });
+        } else if (type === "mesh") {
+          this.geometry = new UrdfMesh({
+            xml: shape,
+          });
+        } else {
+          console.warn("Unknown geometry type " + type);
+        }
       }
     }
 
