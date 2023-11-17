@@ -11,7 +11,6 @@ var socketAdapter = require('../core/SocketAdapter.js');
  */
 class RosTCP extends Ros {
   constructor(options) {
-    super(options);
     options = options || {};
     if (!options.encoding) {
       console.error(
@@ -19,8 +18,8 @@ class RosTCP extends Ros {
           'It would be more efficient to use ascii (if possible).'
       );
     }
+    super(options);
     this.encoding = options.encoding || 'utf8';
-    Ros.call(this, options);
 
     if (!this.socket && (options.host || options.port)) {
       this.connect({
