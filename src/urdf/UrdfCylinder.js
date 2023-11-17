@@ -16,7 +16,9 @@ class UrdfCylinder {
    */
   constructor(options) {
     this.type = UrdfTypes.URDF_CYLINDER;
+    // @ts-expect-error -- possibly null
     this.length = parseFloat(options.xml.getAttribute('length'));
+    // @ts-expect-error -- possibly null
     this.radius = parseFloat(options.xml.getAttribute('radius'));
   }
 }

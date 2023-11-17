@@ -112,6 +112,7 @@ class Service extends EventEmitter2 {
   }
   _serviceResponse(rosbridgeRequest) {
     var response = {};
+    // @ts-expect-error -- possibly null
     var success = this._serviceCallback(rosbridgeRequest.args, response);
 
     var call = {
