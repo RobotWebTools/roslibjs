@@ -5,6 +5,7 @@
 
 'use strict';
 
+// @ts-expect-error -- this is for optionally polyfilling canvas
 var Canvas = require('canvas');
 var Image = Canvas.Image || window.Image;
 

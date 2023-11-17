@@ -1,8 +1,10 @@
 try {
-    var work = require('webworkify');
+  // @ts-expect-error -- webworker include workarounds I don't know enough about to fix right now
+  var work = require("webworkify");
 } catch(ReferenceError) {
-    // webworkify raises ReferenceError when required inside webpack
-    var work = require('webworkify-webpack');
+  // @ts-expect-error -- webworker include workarounds I don't know enough about to fix right now
+  // webworkify raises ReferenceError when required inside webpack
+  var work = require("webworkify-webpack");
 }
 var workerSocketImpl = require('./workerSocketImpl');
 
