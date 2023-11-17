@@ -5,7 +5,7 @@
 
 var Vector3 = require('./Vector3');
 var Quaternion = require('./Quaternion');
-var Transform = require("./Transform");
+var Transform = require('./Transform');
 
 /**
  * A Pose in 3D space. Values are copied into this object.
@@ -52,7 +52,7 @@ class Pose {
     var p = pose.clone();
     p.applyTransform({
       rotation: this.orientation,
-      translation: this.position,
+      translation: this.position
     });
     return p;
   }
@@ -71,9 +71,5 @@ class Pose {
     return inverse;
   }
 }
-
-
-
-
 
 module.exports = Pose;

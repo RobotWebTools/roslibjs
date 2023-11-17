@@ -6,7 +6,7 @@
 var ServiceResponse = require('./ServiceResponse');
 var ServiceRequest = require('./ServiceRequest');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
-var Ros = require("../core/Ros");
+var Ros = require('../core/Ros');
 
 /**
  * A ROS service client.
@@ -50,26 +50,26 @@ class Service extends EventEmitter2 {
     }
 
     var serviceCallId =
-      "call_service:" + this.name + ":" + ++this.ros.idCounter;
+      'call_service:' + this.name + ':' + ++this.ros.idCounter;
 
     if (callback || failedCallback) {
       this.ros.once(serviceCallId, function (message) {
         if (message.result !== undefined && message.result === false) {
-          if (typeof failedCallback === "function") {
+          if (typeof failedCallback === 'function') {
             failedCallback(message.values);
           }
-        } else if (typeof callback === "function") {
+        } else if (typeof callback === 'function') {
           callback(new ServiceResponse(message.values));
         }
       });
     }
 
     var call = {
-      op: "call_service",
+      op: 'call_service',
       id: serviceCallId,
       service: this.name,
       type: this.serviceType,
-      args: request,
+      args: request
     };
     this.ros.callOnConnection(call);
   }
@@ -88,16 +88,16 @@ class Service extends EventEmitter2 {
    * @param {advertiseCallback} callback - This works similarly to the callback for a C++ service and should take the following params
    */
   advertise(callback) {
-    if (this.isAdvertised || typeof callback !== "function") {
+    if (this.isAdvertised || typeof callback !== 'function') {
       return;
     }
 
     this._serviceCallback = callback;
     this.ros.on(this.name, this._serviceResponse.bind(this));
     this.ros.callOnConnection({
-      op: "advertise_service",
+      op: 'advertise_service',
       type: this.serviceType,
-      service: this.name,
+      service: this.name
     });
     this.isAdvertised = true;
   }
@@ -106,8 +106,8 @@ class Service extends EventEmitter2 {
       return;
     }
     this.ros.callOnConnection({
-      op: "unadvertise_service",
-      service: this.name,
+      op: 'unadvertise_service',
+      service: this.name
     });
     this.isAdvertised = false;
   }
@@ -116,10 +116,10 @@ class Service extends EventEmitter2 {
     var success = this._serviceCallback(rosbridgeRequest.args, response);
 
     var call = {
-      op: "service_response",
+      op: 'service_response',
       service: this.name,
       values: new ServiceResponse(response),
-      result: success,
+      result: success
     };
 
     if (rosbridgeRequest.id) {

@@ -5,7 +5,7 @@
 
 var Service = require('./Service');
 var ServiceRequest = require('./ServiceRequest');
-var Ros = require("../core/Ros");
+var Ros = require('../core/Ros');
 
 /**
  * A ROS parameter.
@@ -33,12 +33,12 @@ class Param {
   get(callback) {
     var paramClient = new Service({
       ros: this.ros,
-      name: "/rosapi/get_param",
-      serviceType: "rosapi/GetParam",
+      name: '/rosapi/get_param',
+      serviceType: 'rosapi/GetParam'
     });
 
     var request = new ServiceRequest({
-      name: this.name,
+      name: this.name
     });
 
     paramClient.callService(request, function (result) {
@@ -63,13 +63,13 @@ class Param {
   set(value, callback) {
     var paramClient = new Service({
       ros: this.ros,
-      name: "/rosapi/set_param",
-      serviceType: "rosapi/SetParam",
+      name: '/rosapi/set_param',
+      serviceType: 'rosapi/SetParam'
     });
 
     var request = new ServiceRequest({
       name: this.name,
-      value: JSON.stringify(value),
+      value: JSON.stringify(value)
     });
 
     paramClient.callService(request, callback);
@@ -82,19 +82,16 @@ class Param {
   delete(callback) {
     var paramClient = new Service({
       ros: this.ros,
-      name: "/rosapi/delete_param",
-      serviceType: "rosapi/DeleteParam",
+      name: '/rosapi/delete_param',
+      serviceType: 'rosapi/DeleteParam'
     });
 
     var request = new ServiceRequest({
-      name: this.name,
+      name: this.name
     });
 
     paramClient.callService(request, callback);
   }
 }
-
-
-
 
 module.exports = Param;

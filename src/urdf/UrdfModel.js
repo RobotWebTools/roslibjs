@@ -33,7 +33,7 @@ class UrdfModel {
     if (string) {
       // Parse the string
       var parser = new DOMParser();
-      xmlDoc = parser.parseFromString(string, "text/xml").documentElement;
+      xmlDoc = parser.parseFromString(string, 'text/xml').documentElement;
     }
 
     // Initialize the model with the given XML node.
@@ -41,32 +41,32 @@ class UrdfModel {
     var robotXml = xmlDoc;
 
     // Get the robot name
-    this.name = robotXml.getAttribute("name");
+    this.name = robotXml.getAttribute('name');
 
     // Parse all the visual elements we need
     for (var nodes = robotXml.children, i = 0; i < nodes.length; i++) {
       var node = nodes[i];
-      if (node.tagName === "material") {
+      if (node.tagName === 'material') {
         var material = new UrdfMaterial({
-          xml: node,
+          xml: node
         });
         // Make sure this is unique
         if (this.materials[material.name] !== void 0) {
           if (this.materials[material.name].isLink()) {
             this.materials[material.name].assign(material);
           } else {
-            console.warn("Material " + material.name + "is not unique.");
+            console.warn('Material ' + material.name + 'is not unique.');
           }
         } else {
           this.materials[material.name] = material;
         }
-      } else if (node.tagName === "link") {
+      } else if (node.tagName === 'link') {
         var link = new UrdfLink({
-          xml: node,
+          xml: node
         });
         // Make sure this is unique
         if (this.links[link.name] !== void 0) {
-          console.warn("Link " + link.name + " is not unique.");
+          console.warn('Link ' + link.name + ' is not unique.');
         } else {
           // Check for a material
           for (var j = 0; j < link.visuals.length; j++) {
@@ -83,9 +83,9 @@ class UrdfModel {
           // Add the link
           this.links[link.name] = link;
         }
-      } else if (node.tagName === "joint") {
+      } else if (node.tagName === 'joint') {
         var joint = new UrdfJoint({
-          xml: node,
+          xml: node
         });
         this.joints[joint.name] = joint;
       }

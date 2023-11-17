@@ -19,17 +19,17 @@ class UrdfMesh {
     this.scale = null;
 
     this.type = UrdfTypes.URDF_MESH;
-    this.filename = options.xml.getAttribute("filename");
+    this.filename = options.xml.getAttribute('filename');
 
     // Check for a scale
-    var scale = options.xml.getAttribute("scale");
+    var scale = options.xml.getAttribute('scale');
     if (scale) {
       // Get the XYZ
-      var xyz = scale.split(" ");
+      var xyz = scale.split(' ');
       this.scale = new Vector3({
         x: parseFloat(xyz[0]),
         y: parseFloat(xyz[1]),
-        z: parseFloat(xyz[2]),
+        z: parseFloat(xyz[2])
       });
     }
   }

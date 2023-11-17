@@ -16,48 +16,48 @@ class UrdfJoint {
    * @param {Element} options.xml - The XML element to parse.
    */
   constructor(options) {
-    this.name = options.xml.getAttribute("name");
-    this.type = options.xml.getAttribute("type");
+    this.name = options.xml.getAttribute('name');
+    this.type = options.xml.getAttribute('type');
 
-    var parents = options.xml.getElementsByTagName("parent");
+    var parents = options.xml.getElementsByTagName('parent');
     if (parents.length > 0) {
-      this.parent = parents[0].getAttribute("link");
+      this.parent = parents[0].getAttribute('link');
     }
 
-    var children = options.xml.getElementsByTagName("child");
+    var children = options.xml.getElementsByTagName('child');
     if (children.length > 0) {
-      this.child = children[0].getAttribute("link");
+      this.child = children[0].getAttribute('link');
     }
 
-    var limits = options.xml.getElementsByTagName("limit");
+    var limits = options.xml.getElementsByTagName('limit');
     if (limits.length > 0) {
-      this.minval = parseFloat(limits[0].getAttribute("lower") || "NaN");
-      this.maxval = parseFloat(limits[0].getAttribute("upper") || "NaN");
+      this.minval = parseFloat(limits[0].getAttribute('lower') || 'NaN');
+      this.maxval = parseFloat(limits[0].getAttribute('upper') || 'NaN');
     }
 
     // Origin
-    var origins = options.xml.getElementsByTagName("origin");
+    var origins = options.xml.getElementsByTagName('origin');
     if (origins.length === 0) {
       // use the identity as the default
       this.origin = new Pose();
     } else {
       // Check the XYZ
-      var xyzValue = origins[0].getAttribute("xyz");
+      var xyzValue = origins[0].getAttribute('xyz');
       var position = new Vector3();
       if (xyzValue) {
-        var xyz = xyzValue.split(" ");
+        var xyz = xyzValue.split(' ');
         position = new Vector3({
           x: parseFloat(xyz[0]),
           y: parseFloat(xyz[1]),
-          z: parseFloat(xyz[2]),
+          z: parseFloat(xyz[2])
         });
       }
 
       // Check the RPY
-      var rpyValue = origins[0].getAttribute("rpy");
+      var rpyValue = origins[0].getAttribute('rpy');
       var orientation = new Quaternion();
       if (rpyValue) {
-        var rpy = rpyValue.split(" ");
+        var rpy = rpyValue.split(' ');
         // Convert from RPY
         var roll = parseFloat(rpy[0]);
         var pitch = parseFloat(rpy[1]);
@@ -82,13 +82,13 @@ class UrdfJoint {
           x: x,
           y: y,
           z: z,
-          w: w,
+          w: w
         });
         orientation.normalize();
       }
       this.origin = new Pose({
         position: position,
-        orientation: orientation,
+        orientation: orientation
       });
     }
   }

@@ -7,7 +7,7 @@
 var Topic = require('../core/Topic');
 var Message = require('../core/Message');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
-var Ros = require("../core/Ros");
+var Ros = require('../core/Ros');
 
 /**
  * An actionlib action listener.
@@ -37,47 +37,47 @@ class ActionListener extends EventEmitter2 {
     // create the topics associated with actionlib
     var goalListener = new Topic({
       ros: this.ros,
-      name: this.serverName + "/goal",
-      messageType: this.actionName + "Goal",
+      name: this.serverName + '/goal',
+      messageType: this.actionName + 'Goal'
     });
 
     var feedbackListener = new Topic({
       ros: this.ros,
-      name: this.serverName + "/feedback",
-      messageType: this.actionName + "Feedback",
+      name: this.serverName + '/feedback',
+      messageType: this.actionName + 'Feedback'
     });
 
     var statusListener = new Topic({
       ros: this.ros,
-      name: this.serverName + "/status",
-      messageType: "actionlib_msgs/GoalStatusArray",
+      name: this.serverName + '/status',
+      messageType: 'actionlib_msgs/GoalStatusArray'
     });
 
     var resultListener = new Topic({
       ros: this.ros,
-      name: this.serverName + "/result",
-      messageType: this.actionName + "Result",
+      name: this.serverName + '/result',
+      messageType: this.actionName + 'Result'
     });
 
     goalListener.subscribe(function (goalMessage) {
-      that.emit("goal", goalMessage);
+      that.emit('goal', goalMessage);
     });
 
     statusListener.subscribe(function (statusMessage) {
       statusMessage.status_list.forEach(function (status) {
-        that.emit("status", status);
+        that.emit('status', status);
       });
     });
 
     feedbackListener.subscribe(function (feedbackMessage) {
-      that.emit("status", feedbackMessage.status);
-      that.emit("feedback", feedbackMessage.feedback);
+      that.emit('status', feedbackMessage.status);
+      that.emit('feedback', feedbackMessage.feedback);
     });
 
     // subscribe to the result topic
     resultListener.subscribe(function (resultMessage) {
-      that.emit("status", resultMessage.status);
-      that.emit("result", resultMessage.result);
+      that.emit('status', resultMessage.status);
+      that.emit('result', resultMessage.result);
     });
   }
 }

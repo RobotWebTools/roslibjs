@@ -14,7 +14,7 @@ class Transform {
    * @param {Object} options
    * @param {Vector3} options.translation - The ROSLIB.Vector3 describing the translation.
    * @param {Quaternion} options.rotation - The ROSLIB.Quaternion describing the rotation.
-  */
+   */
   constructor(options) {
     options = options || {};
     // Copy the values into this object if they exist
@@ -30,6 +30,5 @@ class Transform {
     return new Transform(this);
   }
 }
-
 
 module.exports = Transform;

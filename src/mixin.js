@@ -6,12 +6,12 @@
  *
  * @author Graeme Yeates - github.com/megawac
  */
-module.exports = function(Ros, classes, features) {
-    classes.forEach(function(className) {
-        var Class = features[className];
-        Ros.prototype[className] = function(options) {
-            options.ros = this;
-            return new Class(options);
-        };
-    });
+module.exports = function (Ros, classes, features) {
+  classes.forEach(function (className) {
+    var Class = features[className];
+    Ros.prototype[className] = function (options) {
+      options.ros = this;
+      return new Class(options);
+    };
+  });
 };

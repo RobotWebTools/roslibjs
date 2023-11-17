@@ -5,7 +5,7 @@
 
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
 var Message = require('./Message');
-var Ros = require("../core/Ros");
+var Ros = require('../core/Ros');
 
 /**
  * Publish and/or subscribe to a topic in ROS.
@@ -34,7 +34,7 @@ class Topic extends EventEmitter2 {
     this.name = options.name;
     this.messageType = options.messageType;
     this.isAdvertised = false;
-    this.compression = options.compression || "none";
+    this.compression = options.compression || 'none';
     this.throttle_rate = options.throttle_rate || 0;
     this.latch = options.latch || false;
     this.queue_size = options.queue_size || 100;
@@ -47,22 +47,22 @@ class Topic extends EventEmitter2 {
     // Check for valid compression types
     if (
       this.compression &&
-      this.compression !== "png" &&
-      this.compression !== "cbor" &&
-      this.compression !== "cbor-raw" &&
-      this.compression !== "none"
+      this.compression !== 'png' &&
+      this.compression !== 'cbor' &&
+      this.compression !== 'cbor-raw' &&
+      this.compression !== 'none'
     ) {
       this.emit(
-        "warning",
+        'warning',
         this.compression +
-          " compression is not supported. No compression will be used."
+          ' compression is not supported. No compression will be used.'
       );
-      this.compression = "none";
+      this.compression = 'none';
     }
 
     // Check if throttle rate is negative
     if (this.throttle_rate < 0) {
-      this.emit("warning", this.throttle_rate + " is not allowed. Set to 0");
+      this.emit('warning', this.throttle_rate + ' is not allowed. Set to 0');
       this.throttle_rate = 0;
     }
 
@@ -76,19 +76,19 @@ class Topic extends EventEmitter2 {
           if (!that.waitForReconnect) {
             that.waitForReconnect = true;
             that.ros.callOnConnection(message);
-            that.ros.once("connection", function () {
+            that.ros.once('connection', function () {
               that.waitForReconnect = false;
             });
           }
         };
-        that.ros.on("close", that.reconnectFunc);
+        that.ros.on('close', that.reconnectFunc);
       };
     } else {
       this.callForSubscribeAndAdvertise = this.ros.callOnConnection;
     }
 
     this._messageCallback = function (data) {
-      that.emit("message", new Message(data));
+      that.emit('message', new Message(data));
     };
   }
   /**
@@ -102,24 +102,24 @@ class Topic extends EventEmitter2 {
    * @param {subscribeCallback} callback - Function with the following params:
    */
   subscribe(callback) {
-    if (typeof callback === "function") {
-      this.on("message", callback);
+    if (typeof callback === 'function') {
+      this.on('message', callback);
     }
 
     if (this.subscribeId) {
       return;
     }
     this.ros.on(this.name, this._messageCallback);
-    this.subscribeId = "subscribe:" + this.name + ":" + ++this.ros.idCounter;
+    this.subscribeId = 'subscribe:' + this.name + ':' + ++this.ros.idCounter;
 
     this.callForSubscribeAndAdvertise({
-      op: "subscribe",
+      op: 'subscribe',
       id: this.subscribeId,
       type: this.messageType,
       topic: this.name,
       compression: this.compression,
       throttle_rate: this.throttle_rate,
-      queue_length: this.queue_length,
+      queue_length: this.queue_length
     });
   }
   /**
@@ -133,9 +133,9 @@ class Topic extends EventEmitter2 {
    */
   unsubscribe(callback) {
     if (callback) {
-      this.off("message", callback);
+      this.off('message', callback);
       // If there is any other callbacks still subscribed don't unsubscribe
-      if (this.listeners("message").length) {
+      if (this.listeners('message').length) {
         return;
       }
     }
@@ -145,13 +145,13 @@ class Topic extends EventEmitter2 {
     // Note: Don't call this.removeAllListeners, allow client to handle that themselves
     this.ros.off(this.name, this._messageCallback);
     if (this.reconnect_on_close) {
-      this.ros.off("close", this.reconnectFunc);
+      this.ros.off('close', this.reconnectFunc);
     }
-    this.emit("unsubscribe");
+    this.emit('unsubscribe');
     this.ros.callOnConnection({
-      op: "unsubscribe",
+      op: 'unsubscribe',
       id: this.subscribeId,
-      topic: this.name,
+      topic: this.name
     });
     this.subscribeId = null;
   }
@@ -162,20 +162,20 @@ class Topic extends EventEmitter2 {
     if (this.isAdvertised) {
       return;
     }
-    this.advertiseId = "advertise:" + this.name + ":" + ++this.ros.idCounter;
+    this.advertiseId = 'advertise:' + this.name + ':' + ++this.ros.idCounter;
     this.callForSubscribeAndAdvertise({
-      op: "advertise",
+      op: 'advertise',
       id: this.advertiseId,
       type: this.messageType,
       topic: this.name,
       latch: this.latch,
-      queue_size: this.queue_size,
+      queue_size: this.queue_size
     });
     this.isAdvertised = true;
 
     if (!this.reconnect_on_close) {
       var that = this;
-      this.ros.on("close", function () {
+      this.ros.on('close', function () {
         that.isAdvertised = false;
       });
     }
@@ -188,13 +188,13 @@ class Topic extends EventEmitter2 {
       return;
     }
     if (this.reconnect_on_close) {
-      this.ros.off("close", this.reconnectFunc);
+      this.ros.off('close', this.reconnectFunc);
     }
-    this.emit("unadvertise");
+    this.emit('unadvertise');
     this.ros.callOnConnection({
-      op: "unadvertise",
+      op: 'unadvertise',
       id: this.advertiseId,
-      topic: this.name,
+      topic: this.name
     });
     this.isAdvertised = false;
   }
@@ -210,11 +210,11 @@ class Topic extends EventEmitter2 {
 
     this.ros.idCounter++;
     var call = {
-      op: "publish",
-      id: "publish:" + this.name + ":" + this.ros.idCounter,
+      op: 'publish',
+      id: 'publish:' + this.name + ':' + this.ros.idCounter,
       topic: this.name,
       msg: message,
-      latch: this.latch,
+      latch: this.latch
     };
     this.ros.callOnConnection(call);
   }

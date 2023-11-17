@@ -3,7 +3,7 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
-const { EventEmitter2 } = require("eventemitter2");
+const { EventEmitter2 } = require('eventemitter2');
 var ActionClient = require('../actionlib/ActionClient');
 var Goal = require('../actionlib/Goal');
 
@@ -13,7 +13,7 @@ var Topic = require('../core/Topic.js');
 
 var Transform = require('../math/Transform');
 
-var Ros = require("../core/Ros");
+var Ros = require('../core/Ros');
 
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
@@ -36,7 +36,7 @@ class TFClient extends EventEmitter2 {
     super();
     options = options || {};
     this.ros = options.ros;
-    this.fixedFrame = options.fixedFrame || "base_link";
+    this.fixedFrame = options.fixedFrame || 'base_link';
     this.angularThres = options.angularThres || 2.0;
     this.transThres = options.transThres || 0.01;
     this.rate = options.rate || 10.0;
@@ -46,10 +46,10 @@ class TFClient extends EventEmitter2 {
     var nsecs = Math.floor((seconds - secs) * 1000000000);
     this.topicTimeout = {
       secs: secs,
-      nsecs: nsecs,
+      nsecs: nsecs
     };
-    this.serverName = options.serverName || "/tf2_web_republisher";
-    this.repubServiceName = options.repubServiceName || "/republish_tfs";
+    this.serverName = options.serverName || '/tf2_web_republisher';
+    this.repubServiceName = options.repubServiceName || '/republish_tfs';
 
     this.currentGoal = false;
     this.currentTopic = false;
@@ -62,16 +62,16 @@ class TFClient extends EventEmitter2 {
     this.actionClient = new ActionClient({
       ros: options.ros,
       serverName: this.serverName,
-      actionName: "tf2_web_republisher/TFSubscriptionAction",
+      actionName: 'tf2_web_republisher/TFSubscriptionAction',
       omitStatus: true,
-      omitResult: true,
+      omitResult: true
     });
 
     // Create a Service Client
     this.serviceClient = new Service({
       ros: options.ros,
       name: this.repubServiceName,
-      serviceType: "tf2_web_republisher/RepublishTFs",
+      serviceType: 'tf2_web_republisher/RepublishTFs'
     });
   }
   /**
@@ -84,14 +84,14 @@ class TFClient extends EventEmitter2 {
     var that = this;
     tf.transforms.forEach(function (transform) {
       var frameID = transform.child_frame_id;
-      if (frameID[0] === "/") {
+      if (frameID[0] === '/') {
         frameID = frameID.substring(1);
       }
       var info = this.frameInfos[frameID];
       if (info) {
         info.transform = new Transform({
           translation: transform.transform.translation,
-          rotation: transform.transform.rotation,
+          rotation: transform.transform.rotation
         });
         info.cbs.forEach(function (cb) {
           cb(info.transform);
@@ -109,7 +109,7 @@ class TFClient extends EventEmitter2 {
       target_frame: this.fixedFrame,
       angular_thres: this.angularThres,
       trans_thres: this.transThres,
-      rate: this.rate,
+      rate: this.rate
     };
 
     // if we're running in groovy compatibility mode (the default)
@@ -120,10 +120,10 @@ class TFClient extends EventEmitter2 {
       }
       this.currentGoal = new Goal({
         actionClient: this.actionClient,
-        goalMessage: goalMessage,
+        goalMessage: goalMessage
       });
 
-      this.currentGoal.on("feedback", this.processTFArray.bind(this));
+      this.currentGoal.on('feedback', this.processTFArray.bind(this));
       this.currentGoal.send();
     } else {
       // otherwise, use the service interface
@@ -159,7 +159,7 @@ class TFClient extends EventEmitter2 {
     this.currentTopic = new Topic({
       ros: this.ros,
       name: response.topic_name,
-      messageType: "tf2_web_republisher/TFArray",
+      messageType: 'tf2_web_republisher/TFArray'
     });
     this._subscribeCB = this.processTFArray.bind(this);
     this.currentTopic.subscribe(this._subscribeCB);
@@ -176,13 +176,13 @@ class TFClient extends EventEmitter2 {
    */
   subscribe(frameID, callback) {
     // remove leading slash, if it's there
-    if (frameID[0] === "/") {
+    if (frameID[0] === '/') {
       frameID = frameID.substring(1);
     }
     // if there is no callback registered for the given frame, create empty callback list
     if (!this.frameInfos[frameID]) {
       this.frameInfos[frameID] = {
-        cbs: [],
+        cbs: []
       };
       if (!this.republisherUpdateRequested) {
         setTimeout(this.updateGoal.bind(this), this.updateDelay);
@@ -204,7 +204,7 @@ class TFClient extends EventEmitter2 {
    */
   unsubscribe(frameID, callback) {
     // remove leading slash, if it's there
-    if (frameID[0] === "/") {
+    if (frameID[0] === '/') {
       frameID = frameID.substring(1);
     }
     var info = this.frameInfos[frameID];
@@ -228,11 +228,5 @@ class TFClient extends EventEmitter2 {
     }
   }
 }
-
-
-
-
-
-
 
 module.exports = TFClient;

@@ -14,7 +14,7 @@ class UrdfColor {
    */
   constructor(options) {
     // Parse the xml string
-    var rgba = options.xml.getAttribute("rgba").split(" ");
+    var rgba = options.xml.getAttribute('rgba').split(' ');
     this.r = parseFloat(rgba[0]);
     this.g = parseFloat(rgba[1]);
     this.b = parseFloat(rgba[2]);

@@ -13,16 +13,16 @@ class SocketIO {
 
     var that = this;
 
-    this.socketio.on("connection", function (socket) {
-      socket.on("operation", that.sendToRosbridge.bind(that));
+    this.socketio.on('connection', function (socket) {
+      socket.on('operation', that.sendToRosbridge.bind(that));
     });
 
-    Ros.on("connection", function () {
+    Ros.on('connection', function () {
       that.socket
-        .on("message", that.sendToFront("data").bind(that))
-        .on("close", that.sendToFront("close").bind(that))
-        .on("error", that.sendToFront("error").bind(that))
-        .on("connect", that.sendToFront("connect").bind(that));
+        .on('message', that.sendToFront('data').bind(that))
+        .on('close', that.sendToFront('close').bind(that))
+        .on('error', that.sendToFront('error').bind(that))
+        .on('connect', that.sendToFront('connect').bind(that));
     });
 
     return this.socketio;
@@ -37,7 +37,5 @@ class SocketIO {
     this.socket.send(msg);
   }
 }
-
-
 
 module.exports = SocketIO;

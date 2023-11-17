@@ -15,14 +15,14 @@ class UrdfLink {
    * @param {Element} options.xml - The XML element to parse.
    */
   constructor(options) {
-    this.name = options.xml.getAttribute("name");
+    this.name = options.xml.getAttribute('name');
     this.visuals = [];
-    var visuals = options.xml.getElementsByTagName("visual");
+    var visuals = options.xml.getElementsByTagName('visual');
 
     for (var i = 0; i < visuals.length; i++) {
       this.visuals.push(
         new UrdfVisual({
-          xml: visuals[i],
+          xml: visuals[i]
         })
       );
     }

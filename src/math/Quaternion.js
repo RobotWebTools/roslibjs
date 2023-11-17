@@ -19,7 +19,7 @@ class Quaternion {
     this.x = options.x || 0;
     this.y = options.y || 0;
     this.z = options.z || 0;
-    this.w = typeof options.w === "number" ? options.w : 1;
+    this.w = typeof options.w === 'number' ? options.w : 1;
   }
   /**
    * Perform a conjugation on this quaternion.
@@ -88,11 +88,5 @@ class Quaternion {
     return new Quaternion(this);
   }
 }
-
-
-
-
-
-
 
 module.exports = Quaternion;

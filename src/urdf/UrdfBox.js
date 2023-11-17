@@ -20,11 +20,11 @@ class UrdfBox {
     this.type = UrdfTypes.URDF_BOX;
 
     // Parse the xml string
-    var xyz = options.xml.getAttribute("size").split(" ");
+    var xyz = options.xml.getAttribute('size').split(' ');
     this.dimension = new Vector3({
       x: parseFloat(xyz[0]),
       y: parseFloat(xyz[1]),
-      z: parseFloat(xyz[2]),
+      z: parseFloat(xyz[2])
     });
   }
 }

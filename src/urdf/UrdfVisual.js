@@ -28,31 +28,31 @@ class UrdfVisual {
     this.geometry = null;
     this.material = null;
 
-    this.name = options.xml.getAttribute("name");
+    this.name = options.xml.getAttribute('name');
 
     // Origin
-    var origins = xml.getElementsByTagName("origin");
+    var origins = xml.getElementsByTagName('origin');
     if (origins.length === 0) {
       // use the identity as the default
       this.origin = new Pose();
     } else {
       // Check the XYZ
-      var xyzValue = origins[0].getAttribute("xyz");
+      var xyzValue = origins[0].getAttribute('xyz');
       var position = new Vector3();
       if (xyzValue) {
-        var xyz = xyzValue.split(" ");
+        var xyz = xyzValue.split(' ');
         position = new Vector3({
           x: parseFloat(xyz[0]),
           y: parseFloat(xyz[1]),
-          z: parseFloat(xyz[2]),
+          z: parseFloat(xyz[2])
         });
       }
 
       // Check the RPY
-      var rpyValue = origins[0].getAttribute("rpy");
+      var rpyValue = origins[0].getAttribute('rpy');
       var orientation = new Quaternion();
       if (rpyValue) {
-        var rpy = rpyValue.split(" ");
+        var rpy = rpyValue.split(' ');
         // Convert from RPY
         var roll = parseFloat(rpy[0]);
         var pitch = parseFloat(rpy[1]);
@@ -77,18 +77,18 @@ class UrdfVisual {
           x: x,
           y: y,
           z: z,
-          w: w,
+          w: w
         });
         orientation.normalize();
       }
       this.origin = new Pose({
         position: position,
-        orientation: orientation,
+        orientation: orientation
       });
     }
 
     // Geometry
-    var geoms = xml.getElementsByTagName("geometry");
+    var geoms = xml.getElementsByTagName('geometry');
     if (geoms.length > 0) {
       var geom = geoms[0];
       var shape = null;
@@ -103,33 +103,33 @@ class UrdfVisual {
       if (shape) {
         // Check the type
         var type = shape.nodeName;
-        if (type === "sphere") {
+        if (type === 'sphere') {
           this.geometry = new UrdfSphere({
-            xml: shape,
+            xml: shape
           });
-        } else if (type === "box") {
+        } else if (type === 'box') {
           this.geometry = new UrdfBox({
-            xml: shape,
+            xml: shape
           });
-        } else if (type === "cylinder") {
+        } else if (type === 'cylinder') {
           this.geometry = new UrdfCylinder({
-            xml: shape,
+            xml: shape
           });
-        } else if (type === "mesh") {
+        } else if (type === 'mesh') {
           this.geometry = new UrdfMesh({
-            xml: shape,
+            xml: shape
           });
         } else {
-          console.warn("Unknown geometry type " + type);
+          console.warn('Unknown geometry type ' + type);
         }
       }
     }
 
     // Material
-    var materials = xml.getElementsByTagName("material");
+    var materials = xml.getElementsByTagName('material');
     if (materials.length > 0) {
       this.material = new UrdfMaterial({
-        xml: materials[0],
+        xml: materials[0]
       });
     }
   }

@@ -1,4 +1,5 @@
-module.exports = require('object-assign')({
+module.exports = require('object-assign')(
+  {
     UrdfBox: require('./UrdfBox'),
     UrdfColor: require('./UrdfColor'),
     UrdfCylinder: require('./UrdfCylinder'),
@@ -8,4 +9,6 @@ module.exports = require('object-assign')({
     UrdfModel: require('./UrdfModel'),
     UrdfSphere: require('./UrdfSphere'),
     UrdfVisual: require('./UrdfVisual')
-}, require('./UrdfTypes'));
+  },
+  require('./UrdfTypes')
+);

@@ -5,7 +5,7 @@
 
 var Message = require('../core/Message');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
-var ActionClient = require("./ActionClient");
+var ActionClient = require('./ActionClient');
 
 /**
  * An actionlib goal that is associated with an action server.
@@ -30,29 +30,29 @@ class Goal extends EventEmitter2 {
     var date = new Date();
 
     // Create a random ID
-    this.goalID = "goal_" + Math.random() + "_" + date.getTime();
+    this.goalID = 'goal_' + Math.random() + '_' + date.getTime();
     // Fill in the goal message
     this.goalMessage = new Message({
       goal_id: {
         stamp: {
           secs: 0,
-          nsecs: 0,
+          nsecs: 0
         },
-        id: this.goalID,
+        id: this.goalID
       },
-      goal: this.goalMessage,
+      goal: this.goalMessage
     });
 
-    this.on("status", function (status) {
+    this.on('status', function (status) {
       that.status = status;
     });
 
-    this.on("result", function (result) {
+    this.on('result', function (result) {
       that.isFinished = true;
       that.result = result;
     });
 
-    this.on("feedback", function (feedback) {
+    this.on('feedback', function (feedback) {
       that.feedback = feedback;
     });
 
@@ -70,7 +70,7 @@ class Goal extends EventEmitter2 {
     if (timeout) {
       setTimeout(function () {
         if (!that.isFinished) {
-          that.emit("timeout");
+          that.emit('timeout');
         }
       }, timeout);
     }
@@ -80,11 +80,10 @@ class Goal extends EventEmitter2 {
    */
   cancel() {
     var cancelMessage = new Message({
-      id: this.goalID,
+      id: this.goalID
     });
     this.actionClient.cancelTopic.publish(cancelMessage);
   }
 }
-
 
 module.exports = Goal;

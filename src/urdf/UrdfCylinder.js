@@ -16,8 +16,8 @@ class UrdfCylinder {
    */
   constructor(options) {
     this.type = UrdfTypes.URDF_CYLINDER;
-    this.length = parseFloat(options.xml.getAttribute("length"));
-    this.radius = parseFloat(options.xml.getAttribute("radius"));
+    this.length = parseFloat(options.xml.getAttribute('length'));
+    this.radius = parseFloat(options.xml.getAttribute('radius'));
   }
 }
 

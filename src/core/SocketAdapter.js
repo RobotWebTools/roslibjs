@@ -13,7 +13,7 @@ var CBOR = require('cbor-js');
 var typedArrayTagger = require('../util/cborTypedArrayTags');
 var BSON = null;
 // @ts-expect-error -- Workarounds for not including BSON in bundle. need to revisit
-if(typeof bson !== 'undefined'){
+if (typeof bson !== 'undefined') {
   // @ts-expect-error -- Workarounds for not including BSON in bundle. need to revisit
   BSON = bson().BSON;
 }
@@ -39,9 +39,9 @@ function SocketAdapter(client) {
       client.emit(message.id, message);
     } else if (message.op === 'call_service') {
       client.emit(message.service, message);
-    } else if(message.op === 'status'){
-      if(message.id){
-        client.emit('status:'+message.id, message);
+    } else if (message.op === 'status') {
+      if (message.id) {
+        client.emit('status:' + message.id, message);
       } else {
         client.emit('status', message);
       }
@@ -61,7 +61,7 @@ function SocketAdapter(client) {
       throw 'Cannot process BSON encoded message without BSON header.';
     }
     var reader = new FileReader();
-    reader.onload  = function() {
+    reader.onload = function () {
       // @ts-expect-error -- this doesn't seem right, but don't want to break current type coercion assumption
       var uint8Array = new Uint8Array(this.result);
       var msg = BSON.deserialize(uint8Array);

@@ -23,8 +23,8 @@ var pngparse = require('pngparse');
 function decompressPng(data, callback) {
   var buffer = new Buffer(data, 'base64');
 
-  pngparse.parse(buffer, function(err, data) {
-    if(err) {
+  pngparse.parse(buffer, function (err, data) {
+    if (err) {
       console.warn('Cannot process PNG encoded message ');
     } else {
       var jsonData = data.data.toString();

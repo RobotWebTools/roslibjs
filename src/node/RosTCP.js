@@ -1,7 +1,7 @@
 var Ros = require('../core/Ros');
 var SocketIO = require('./SocketIO');
 var net = require('net');
-var socketAdapter = require("../core/SocketAdapter.js");
+var socketAdapter = require('../core/SocketAdapter.js');
 
 /**
  * Same as core Ros except supports TCP connections.
@@ -15,17 +15,17 @@ class RosTCP extends Ros {
     options = options || {};
     if (!options.encoding) {
       console.error(
-        "ROSLib uses utf8 encoding by default. " +
-          "It would be more efficient to use ascii (if possible)."
+        'ROSLib uses utf8 encoding by default. ' +
+          'It would be more efficient to use ascii (if possible).'
       );
     }
-    this.encoding = options.encoding || "utf8";
+    this.encoding = options.encoding || 'utf8';
     Ros.call(this, options);
 
     if (!this.socket && (options.host || options.port)) {
       this.connect({
         host: options.host,
-        port: options.port,
+        port: options.port
       });
     }
     if (options.http || options.socketio) {
@@ -40,18 +40,18 @@ class RosTCP extends Ros {
    */
   connect(url) {
     if (
-      typeof url === "string" &&
-      (url.slice(0, 5) === "ws://" || url.slice(0, 6) === "wss://")
+      typeof url === 'string' &&
+      (url.slice(0, 5) === 'ws://' || url.slice(0, 6) === 'wss://')
     ) {
       Ros.prototype.connect.call(this, url);
     } else {
       var events = socketAdapter(this);
       this.socket = net
         .connect(url)
-        .on("data", events.onmessage)
-        .on("close", events.onclose)
-        .on("error", events.onerror)
-        .on("connect", events.onopen);
+        .on('data', events.onmessage)
+        .on('close', events.onclose)
+        .on('error', events.onerror)
+        .on('connect', events.onopen);
       this.socket.setEncoding(this.encoding);
       this.socket.setTimeout(0);
 
@@ -62,6 +62,5 @@ class RosTCP extends Ros {
     }
   }
 }
-
 
 module.exports = RosTCP;

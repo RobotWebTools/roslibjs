@@ -6,7 +6,7 @@
 var Topic = require('../core/Topic');
 var Message = require('../core/Message');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
-var Ros = require("../core/Ros");
+var Ros = require('../core/Ros');
 
 /**
  * An actionlib action client.
@@ -48,32 +48,32 @@ class ActionClient extends EventEmitter2 {
     // create the topics associated with actionlib
     this.feedbackListener = new Topic({
       ros: this.ros,
-      name: this.serverName + "/feedback",
-      messageType: this.actionName + "Feedback",
+      name: this.serverName + '/feedback',
+      messageType: this.actionName + 'Feedback'
     });
 
     this.statusListener = new Topic({
       ros: this.ros,
-      name: this.serverName + "/status",
-      messageType: "actionlib_msgs/GoalStatusArray",
+      name: this.serverName + '/status',
+      messageType: 'actionlib_msgs/GoalStatusArray'
     });
 
     this.resultListener = new Topic({
       ros: this.ros,
-      name: this.serverName + "/result",
-      messageType: this.actionName + "Result",
+      name: this.serverName + '/result',
+      messageType: this.actionName + 'Result'
     });
 
     this.goalTopic = new Topic({
       ros: this.ros,
-      name: this.serverName + "/goal",
-      messageType: this.actionName + "Goal",
+      name: this.serverName + '/goal',
+      messageType: this.actionName + 'Goal'
     });
 
     this.cancelTopic = new Topic({
       ros: this.ros,
-      name: this.serverName + "/cancel",
-      messageType: "actionlib_msgs/GoalID",
+      name: this.serverName + '/cancel',
+      messageType: 'actionlib_msgs/GoalID'
     });
 
     // advertise the goal and cancel topics
@@ -87,7 +87,7 @@ class ActionClient extends EventEmitter2 {
         statusMessage.status_list.forEach(function (status) {
           var goal = that.goals[status.goal_id.id];
           if (goal) {
-            goal.emit("status", status);
+            goal.emit('status', status);
           }
         });
       });
@@ -98,8 +98,8 @@ class ActionClient extends EventEmitter2 {
       this.feedbackListener.subscribe(function (feedbackMessage) {
         var goal = that.goals[feedbackMessage.status.goal_id.id];
         if (goal) {
-          goal.emit("status", feedbackMessage.status);
-          goal.emit("feedback", feedbackMessage.feedback);
+          goal.emit('status', feedbackMessage.status);
+          goal.emit('feedback', feedbackMessage.feedback);
         }
       });
     }
@@ -110,8 +110,8 @@ class ActionClient extends EventEmitter2 {
         var goal = that.goals[resultMessage.status.goal_id.id];
 
         if (goal) {
-          goal.emit("status", resultMessage.status);
-          goal.emit("result", resultMessage.result);
+          goal.emit('status', resultMessage.status);
+          goal.emit('result', resultMessage.result);
         }
       });
     }
@@ -120,7 +120,7 @@ class ActionClient extends EventEmitter2 {
     if (this.timeout) {
       setTimeout(function () {
         if (!receivedStatus) {
-          that.emit("timeout");
+          that.emit('timeout');
         }
       }, this.timeout);
     }
@@ -149,6 +149,5 @@ class ActionClient extends EventEmitter2 {
     }
   }
 }
-
 
 module.exports = ActionClient;

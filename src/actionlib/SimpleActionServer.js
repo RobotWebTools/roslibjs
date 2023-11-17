@@ -6,7 +6,7 @@
 var Topic = require('../core/Topic');
 var Message = require('../core/Message');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
-var Ros = require("../core/Ros");
+var Ros = require('../core/Ros');
 
 /**
  * An actionlib action server client.
@@ -33,45 +33,45 @@ class SimpleActionServer extends EventEmitter2 {
     // create and advertise publishers
     this.feedbackPublisher = new Topic({
       ros: this.ros,
-      name: this.serverName + "/feedback",
-      messageType: this.actionName + "Feedback",
+      name: this.serverName + '/feedback',
+      messageType: this.actionName + 'Feedback'
     });
     this.feedbackPublisher.advertise();
 
     var statusPublisher = new Topic({
       ros: this.ros,
-      name: this.serverName + "/status",
-      messageType: "actionlib_msgs/GoalStatusArray",
+      name: this.serverName + '/status',
+      messageType: 'actionlib_msgs/GoalStatusArray'
     });
     statusPublisher.advertise();
 
     this.resultPublisher = new Topic({
       ros: this.ros,
-      name: this.serverName + "/result",
-      messageType: this.actionName + "Result",
+      name: this.serverName + '/result',
+      messageType: this.actionName + 'Result'
     });
     this.resultPublisher.advertise();
 
     // create and subscribe to listeners
     var goalListener = new Topic({
       ros: this.ros,
-      name: this.serverName + "/goal",
-      messageType: this.actionName + "Goal",
+      name: this.serverName + '/goal',
+      messageType: this.actionName + 'Goal'
     });
 
     var cancelListener = new Topic({
       ros: this.ros,
-      name: this.serverName + "/cancel",
-      messageType: "actionlib_msgs/GoalID",
+      name: this.serverName + '/cancel',
+      messageType: 'actionlib_msgs/GoalID'
     });
 
     // Track the goals and their status in order to publish status...
     this.statusMessage = new Message({
       header: {
         stamp: { secs: 0, nsecs: 100 },
-        frame_id: "",
+        frame_id: ''
       },
-      status_list: [],
+      status_list: []
     });
 
     // needed for handling preemption prompted by a new goal being received
@@ -82,14 +82,14 @@ class SimpleActionServer extends EventEmitter2 {
       if (that.currentGoal) {
         that.nextGoal = goalMessage;
         // needs to happen AFTER rest is set up
-        that.emit("cancel");
+        that.emit('cancel');
       } else {
         // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
         that.statusMessage.status_list = [
-          { goal_id: goalMessage.goal_id, status: 1 },
+          { goal_id: goalMessage.goal_id, status: 1 }
         ];
         that.currentGoal = goalMessage;
-        that.emit("goal", goalMessage.goal);
+        that.emit('goal', goalMessage.goal);
       }
     });
 
@@ -116,11 +116,11 @@ class SimpleActionServer extends EventEmitter2 {
       if (
         cancelMessage.stamp.secs === 0 &&
         cancelMessage.stamp.secs === 0 &&
-        cancelMessage.id === ""
+        cancelMessage.id === ''
       ) {
         that.nextGoal = null;
         if (that.currentGoal) {
-          that.emit("cancel");
+          that.emit('cancel');
         }
       } else {
         // treat id and stamp independently
@@ -128,7 +128,7 @@ class SimpleActionServer extends EventEmitter2 {
           that.currentGoal &&
           cancelMessage.id === that.currentGoal.goal_id.id
         ) {
-          that.emit("cancel");
+          that.emit('cancel');
         } else if (
           that.nextGoal &&
           cancelMessage.id === that.nextGoal.goal_id.id
@@ -146,7 +146,7 @@ class SimpleActionServer extends EventEmitter2 {
           that.currentGoal &&
           isEarlier(that.currentGoal.goal_id.stamp, cancelMessage.stamp)
         ) {
-          that.emit("cancel");
+          that.emit('cancel');
         }
       }
     });
@@ -173,7 +173,7 @@ class SimpleActionServer extends EventEmitter2 {
   setSucceeded(result) {
     var resultMessage = new Message({
       status: { goal_id: this.currentGoal.goal_id, status: 3 },
-      result: result,
+      result: result
     });
     this.resultPublisher.publish(resultMessage);
 
@@ -182,7 +182,7 @@ class SimpleActionServer extends EventEmitter2 {
     if (this.nextGoal) {
       this.currentGoal = this.nextGoal;
       this.nextGoal = null;
-      this.emit("goal", this.currentGoal.goal);
+      this.emit('goal', this.currentGoal.goal);
     } else {
       this.currentGoal = null;
     }
@@ -195,7 +195,7 @@ class SimpleActionServer extends EventEmitter2 {
   setAborted(result) {
     var resultMessage = new Message({
       status: { goal_id: this.currentGoal.goal_id, status: 4 },
-      result: result,
+      result: result
     });
     this.resultPublisher.publish(resultMessage);
 
@@ -204,7 +204,7 @@ class SimpleActionServer extends EventEmitter2 {
     if (this.nextGoal) {
       this.currentGoal = this.nextGoal;
       this.nextGoal = null;
-      this.emit("goal", this.currentGoal.goal);
+      this.emit('goal', this.currentGoal.goal);
     } else {
       this.currentGoal = null;
     }
@@ -217,7 +217,7 @@ class SimpleActionServer extends EventEmitter2 {
   sendFeedback(feedback) {
     var feedbackMessage = new Message({
       status: { goal_id: this.currentGoal.goal_id, status: 1 },
-      feedback: feedback,
+      feedback: feedback
     });
     this.feedbackPublisher.publish(feedbackMessage);
   }
@@ -228,19 +228,18 @@ class SimpleActionServer extends EventEmitter2 {
     // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
     this.statusMessage.status_list = [];
     var resultMessage = new Message({
-      status: { goal_id: this.currentGoal.goal_id, status: 2 },
+      status: { goal_id: this.currentGoal.goal_id, status: 2 }
     });
     this.resultPublisher.publish(resultMessage);
 
     if (this.nextGoal) {
       this.currentGoal = this.nextGoal;
       this.nextGoal = null;
-      this.emit("goal", this.currentGoal.goal);
+      this.emit('goal', this.currentGoal.goal);
     } else {
       this.currentGoal = null;
     }
   }
 }
-
 
 module.exports = SimpleActionServer;

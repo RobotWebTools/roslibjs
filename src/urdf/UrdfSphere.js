@@ -16,7 +16,7 @@ class UrdfSphere {
    */
   constructor(options) {
     this.type = UrdfTypes.URDF_SPHERE;
-    this.radius = parseFloat(options.xml.getAttribute("radius") || "NaN");
+    this.radius = parseFloat(options.xml.getAttribute('radius') || 'NaN');
   }
 }
 
