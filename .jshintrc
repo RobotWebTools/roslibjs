@@ -22,6 +22,8 @@
   "trailing": true,
   "quotmark": "single",
   "proto": true,
-  "laxbreak": true
+  "laxbreak": true,
+  // TypeScript will compile down to es5.
+  "esversion": 8
 }
 
