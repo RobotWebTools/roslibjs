@@ -93,8 +93,10 @@ class UrdfVisual {
       var geom = geoms[0];
       var shape = null;
       // Check for the shape
-      for (var i = 0; i < geom.children.length; i++) {
-        var node = geom.children[i];
+      for (var i = 0; i < geom.childNodes.length; i++) {
+        /** @type {Element} */
+        // @ts-expect-error -- unknown why this doesn't work properly.
+        var node = geom.childNodes[i];
         if (node.nodeType === 1) {
           shape = node;
           break;

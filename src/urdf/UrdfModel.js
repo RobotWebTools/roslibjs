@@ -44,7 +44,9 @@ class UrdfModel {
     this.name = robotXml.getAttribute('name');
 
     // Parse all the visual elements we need
-    for (var nodes = robotXml.children, i = 0; i < nodes.length; i++) {
+    for (var nodes = robotXml.childNodes, i = 0; i < nodes.length; i++) {
+      /** @type {Element} */
+      // @ts-expect-error -- unknown why this doesn't work properly.
       var node = nodes[i];
       if (node.tagName === 'material') {
         var material = new UrdfMaterial({
