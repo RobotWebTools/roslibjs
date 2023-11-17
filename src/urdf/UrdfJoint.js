@@ -31,8 +31,8 @@ class UrdfJoint {
 
     var limits = options.xml.getElementsByTagName("limit");
     if (limits.length > 0) {
-      this.minval = parseFloat(limits[0].getAttribute("lower"));
-      this.maxval = parseFloat(limits[0].getAttribute("upper"));
+      this.minval = parseFloat(limits[0].getAttribute("lower") || "NaN");
+      this.maxval = parseFloat(limits[0].getAttribute("upper") || "NaN");
     }
 
     // Origin
@@ -42,10 +42,10 @@ class UrdfJoint {
       this.origin = new Pose();
     } else {
       // Check the XYZ
-      var xyz = origins[0].getAttribute("xyz");
+      var xyzValue = origins[0].getAttribute("xyz");
       var position = new Vector3();
-      if (xyz) {
-        xyz = xyz.split(" ");
+      if (xyzValue) {
+        var xyz = xyzValue.split(" ");
         position = new Vector3({
           x: parseFloat(xyz[0]),
           y: parseFloat(xyz[1]),
@@ -54,10 +54,10 @@ class UrdfJoint {
       }
 
       // Check the RPY
-      var rpy = origins[0].getAttribute("rpy");
+      var rpyValue = origins[0].getAttribute("rpy");
       var orientation = new Quaternion();
-      if (rpy) {
-        rpy = rpy.split(" ");
+      if (rpyValue) {
+        var rpy = rpyValue.split(" ");
         // Convert from RPY
         var roll = parseFloat(rpy[0]);
         var pitch = parseFloat(rpy[1]);
