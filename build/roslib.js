@@ -22261,19 +22261,19 @@ var UrdfModel = /** @class */ (function () {
         if (string) {
             // Parse the string
             var parser = new DOMParser();
-            xmlDoc = parser.parseFromString(string, "text/xml").documentElement;
+            xmlDoc = parser.parseFromString(string, 'text/xml').documentElement;
         }
         // Initialize the model with the given XML node.
         // Get the robot tag
         var robotXml = xmlDoc;
         // Get the robot name
-        this.name = robotXml.getAttribute("name");
+        this.name = robotXml.getAttribute('name');
         // Parse all the visual elements we need
         for (var nodes = robotXml.childNodes, i = 0; i < nodes.length; i++) {
             /** @type {Element} */
             // @ts-expect-error -- unknown why this doesn't work properly.
             var node = nodes[i];
-            if (node.tagName === "material") {
+            if (node.tagName === 'material') {
                 var material = new UrdfMaterial({
                     xml: node
                 });
@@ -22283,20 +22283,20 @@ var UrdfModel = /** @class */ (function () {
                         this.materials[material.name].assign(material);
                     }
                     else {
-                        console.warn("Material " + material.name + "is not unique.");
+                        console.warn('Material ' + material.name + 'is not unique.');
                     }
                 }
                 else {
                     this.materials[material.name] = material;
                 }
             }
-            else if (node.tagName === "link") {
+            else if (node.tagName === 'link') {
                 var link = new UrdfLink({
                     xml: node
                 });
                 // Make sure this is unique
                 if (this.links[link.name] !== void 0) {
-                    console.warn("Link " + link.name + " is not unique.");
+                    console.warn('Link ' + link.name + ' is not unique.');
                 }
                 else {
                     // Check for a material
@@ -22315,7 +22315,7 @@ var UrdfModel = /** @class */ (function () {
                     this.links[link.name] = link;
                 }
             }
-            else if (node.tagName === "joint") {
+            else if (node.tagName === 'joint') {
                 var joint = new UrdfJoint({
                     xml: node
                 });
@@ -22663,6 +22663,10 @@ catch (ReferenceError) {
 var workerSocketImpl = require('./workerSocketImpl');
 var WorkerSocket = /** @class */ (function () {
     function WorkerSocket(uri) {
+        this.onclose = undefined;
+        this.onerror = undefined;
+        this.onopen = undefined;
+        this.onmessage = undefined;
         this.socket_ = work(workerSocketImpl);
         this.socket_.addEventListener('message', this.handleWorkerMessage_.bind(this));
         this.socket_.postMessage({
