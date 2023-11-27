@@ -10,6 +10,7 @@ var Ros = require('../core/Ros');
 
 /**
  * A ROS service client.
+ * @template T, U
  */
 class Service extends EventEmitter2 {
   /**
@@ -29,7 +30,7 @@ class Service extends EventEmitter2 {
   }
   /**
    * @callback callServiceCallback
-   *  @param {Object} response - The response from the service request.
+   *  @param {U} response - The response from the service request.
    */
   /**
    * @callback callServiceFailedCallback
@@ -39,7 +40,7 @@ class Service extends EventEmitter2 {
    * Call the service. Returns the service response in the
    * callback. Does nothing if this service is currently advertised.
    *
-   * @param {ServiceRequest} request - The ROSLIB.ServiceRequest to send.
+   * @param {T} request - The ROSLIB.ServiceRequest to send.
    * @param {callServiceCallback} [callback] - Function with the following params:
    * @param {callServiceFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
@@ -58,6 +59,7 @@ class Service extends EventEmitter2 {
             failedCallback(message.values);
           }
         } else if (typeof callback === 'function') {
+          // @ts-expect-error -- can't figure out how to get ServiceResponse to play nice in typescript here
           callback(new ServiceResponse(message.values));
         }
       });
@@ -74,7 +76,7 @@ class Service extends EventEmitter2 {
   }
   /**
    * @callback advertiseCallback
-   * @param {ServiceRequest} request - The service request.
+   * @param {ServiceRequest<T>} request - The service request.
    * @param {Object} response - An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
    *     It should return true if the service has finished successfully,
    *     i.e., without any fatal errors.

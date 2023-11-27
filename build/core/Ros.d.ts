@@ -175,8 +175,7 @@ declare class Ros extends EventEmitter2 {
     }) => any, failedCallback?: ((error: string) => any) | undefined): void;
     /**
      * @callback getServiceResponseDetailsCallback
-     * @param {Object} result - The result object with the following params:
-     * @param {string[]} result.typedefs - An array containing the details of the service response.
+     * @param {ServiceResponse<{typedefs: string[]}>} result - The result object with the following params:
      */
     /**
      * @callback getServiceResponseDetailsFailedCallback
@@ -189,9 +188,9 @@ declare class Ros extends EventEmitter2 {
      * @param {getServiceResponseDetailsCallback} callback - Function with the following params:
      * @param {getServiceResponseDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
      */
-    getServiceResponseDetails(type: string, callback: (result: {
+    getServiceResponseDetails(type: string, callback: (result: ServiceResponse<{
         typedefs: string[];
-    }) => any, failedCallback?: ((error: string) => any) | undefined): void;
+    }>) => any, failedCallback?: ((error: string) => any) | undefined): void;
     /**
      * @callback getNodesCallback
      * @param {string[]} nodes - Array of node names.
@@ -335,15 +334,16 @@ declare class Ros extends EventEmitter2 {
         types: string[];
         typedefs_full_text: string[];
     }) => any, failedCallback?: ((error: string) => any) | undefined): void;
-    Topic(options: any): Topic;
+    Topic(options: any): Topic<any>;
     Param(options: any): Param;
-    Service(options: any): Service;
+    Service(options: any): Service<any, any>;
     TFClient(options: any): import("../tf/TFClient");
     ActionClient(options: any): import("../actionlib/ActionClient");
     SimpleActionServer(options: any): import("../actionlib/SimpleActionServer");
 }
 import EventEmitter2_1 = require("eventemitter2");
 import EventEmitter2 = EventEmitter2_1.EventEmitter2;
+import ServiceResponse = require("./ServiceResponse");
 import Topic = require("./Topic");
 import Param = require("./Param");
 import Service = require("./Service");

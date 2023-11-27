@@ -1,5 +1,16 @@
 export = TopicStream;
-declare class TopicStream extends Topic {
+declare class TopicStream extends Topic<any> {
+    constructor(options: {
+        ros: import("../core/Ros");
+        name: string;
+        messageType: string;
+        compression?: string | undefined;
+        throttle_rate?: number | undefined;
+        queue_size?: number | undefined;
+        latch?: boolean | undefined;
+        queue_length?: number | undefined;
+        reconnect_on_close?: boolean | undefined;
+    });
     /**
      * Publish a connected ROS topic to a duplex
      * stream. This stream can be piped to, which will

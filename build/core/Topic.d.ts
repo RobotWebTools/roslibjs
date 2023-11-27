@@ -5,8 +5,9 @@ export = Topic;
  * Emits the following events:
  *  * 'warning' - If there are any warning during the Topic creation.
  *  * 'message' - The message data from rosbridge.
+ * @template T
  */
-declare class Topic extends EventEmitter2 {
+declare class Topic<T> extends EventEmitter2 {
     /**
      * @param {Object} options
      * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -46,7 +47,7 @@ declare class Topic extends EventEmitter2 {
     _messageCallback: (data: any) => void;
     /**
      * @callback subscribeCallback
-     * @param {Object} message - The published message.
+     * @param {T} message - The published message.
      */
     /**
      * Every time a message is published for the given topic, the callback
@@ -54,7 +55,7 @@ declare class Topic extends EventEmitter2 {
      *
      * @param {subscribeCallback} callback - Function with the following params:
      */
-    subscribe(callback: (message: any) => any): void;
+    subscribe(callback: (message: T) => any): void;
     subscribeId: string | null | undefined;
     /**
      * Unregister as a subscriber for the topic. Unsubscribing will stop
@@ -78,11 +79,10 @@ declare class Topic extends EventEmitter2 {
     /**
      * Publish the message.
      *
-     * @param {Message} message - A ROSLIB.Message object.
+     * @param {T} message - A ROSLIB.Message object.
      */
-    publish(message: Message): void;
+    publish(message: T): void;
 }
 import EventEmitter2_1 = require("eventemitter2");
 import EventEmitter2 = EventEmitter2_1.EventEmitter2;
 import Ros = require("../core/Ros");
-import Message = require("./Message");

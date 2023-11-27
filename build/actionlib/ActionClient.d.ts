@@ -37,11 +37,11 @@ declare class ActionClient extends EventEmitter2 {
     omitStatus: boolean | undefined;
     omitResult: boolean | undefined;
     goals: {};
-    feedbackListener: Topic;
-    statusListener: Topic;
-    resultListener: Topic;
-    goalTopic: Topic;
-    cancelTopic: Topic;
+    feedbackListener: Topic<any>;
+    statusListener: Topic<any>;
+    resultListener: Topic<any>;
+    goalTopic: Topic<any>;
+    cancelTopic: Topic<any>;
     /**
      * Cancel all goals associated with this ActionClient.
      */

@@ -21,9 +21,18 @@ declare class SimpleActionServer extends EventEmitter2 {
     ros: Ros;
     serverName: string;
     actionName: string;
-    feedbackPublisher: Topic;
-    resultPublisher: Topic;
-    statusMessage: Message;
+    feedbackPublisher: Topic<any>;
+    resultPublisher: Topic<any>;
+    statusMessage: Message<{
+        header: {
+            stamp: {
+                secs: number;
+                nsecs: number;
+            };
+            frame_id: string;
+        };
+        status_list: never[];
+    }>;
     currentGoal: any;
     nextGoal: any;
     /**

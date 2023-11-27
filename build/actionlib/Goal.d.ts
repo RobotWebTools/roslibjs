@@ -16,7 +16,16 @@ declare class Goal extends EventEmitter2 {
         goalMessage: any;
     });
     actionClient: ActionClient;
-    goalMessage: Message;
+    goalMessage: Message<{
+        goal_id: {
+            stamp: {
+                secs: number;
+                nsecs: number;
+            };
+            id: string;
+        };
+        goal: any;
+    }>;
     isFinished: boolean;
     status: any;
     result: any;

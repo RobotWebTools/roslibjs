@@ -16,6 +16,8 @@ declare class RosTCP extends Ros {
      *     Format: {host: String, port: Int} or (port:Int) or "host:port".
      */
     connect(url: string | number | any): void;
+    Topic(options: any): TopicStream;
 }
 import Ros = require("../core/Ros");
 import SocketIO = require("./SocketIO");
+import TopicStream = require("./TopicStream");

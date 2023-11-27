@@ -42,13 +42,13 @@ declare class TFClient extends EventEmitter2 {
     /** @type {Goal|false} */
     currentGoal: Goal | false;
     /** @type {Topic|false} */
-    currentTopic: Topic | false;
+    currentTopic: Topic<any> | false;
     frameInfos: {};
     republisherUpdateRequested: boolean;
     _subscribeCB: ((tf: any) => void) | undefined;
     _isDisposed: boolean;
     actionClient: ActionClient;
-    serviceClient: Service;
+    serviceClient: Service<any, any>;
     /**
      * Process the incoming TF message and send them out using the callback
      * functions.

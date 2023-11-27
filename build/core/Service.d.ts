@@ -1,8 +1,9 @@
 export = Service;
 /**
  * A ROS service client.
+ * @template T, U
  */
-declare class Service extends EventEmitter2 {
+declare class Service<T, U> extends EventEmitter2 {
     /**
      * @param {Object} options
      * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -18,10 +19,10 @@ declare class Service extends EventEmitter2 {
     name: string;
     serviceType: string;
     isAdvertised: boolean;
-    _serviceCallback: ((request: ServiceRequest, response: any) => any) | null;
+    _serviceCallback: ((request: ServiceRequest<T>, response: any) => any) | null;
     /**
      * @callback callServiceCallback
-     *  @param {Object} response - The response from the service request.
+     *  @param {U} response - The response from the service request.
      */
     /**
      * @callback callServiceFailedCallback
@@ -31,14 +32,14 @@ declare class Service extends EventEmitter2 {
      * Call the service. Returns the service response in the
      * callback. Does nothing if this service is currently advertised.
      *
-     * @param {ServiceRequest} request - The ROSLIB.ServiceRequest to send.
+     * @param {T} request - The ROSLIB.ServiceRequest to send.
      * @param {callServiceCallback} [callback] - Function with the following params:
      * @param {callServiceFailedCallback} [failedCallback] - The callback function when the service call failed with params:
      */
-    callService(request: ServiceRequest, callback?: ((response: any) => any) | undefined, failedCallback?: ((error: string) => any) | undefined): void;
+    callService(request: T, callback?: ((response: U) => any) | undefined, failedCallback?: ((error: string) => any) | undefined): void;
     /**
      * @callback advertiseCallback
-     * @param {ServiceRequest} request - The service request.
+     * @param {ServiceRequest<T>} request - The service request.
      * @param {Object} response - An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
      *     It should return true if the service has finished successfully,
      *     i.e., without any fatal errors.
@@ -50,7 +51,7 @@ declare class Service extends EventEmitter2 {
      *
      * @param {advertiseCallback} callback - This works similarly to the callback for a C++ service and should take the following params
      */
-    advertise(callback: (request: ServiceRequest, response: any) => any): void;
+    advertise(callback: (request: ServiceRequest<T>, response: any) => any): void;
     unadvertise(): void;
     _serviceResponse(rosbridgeRequest: any): void;
 }

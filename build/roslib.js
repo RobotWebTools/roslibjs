@@ -19976,11 +19976,17 @@ var assign = require('object-assign');
  * Message objects are used for publishing and subscribing to and from topics.
  *
  * @constructor
- * @param {Object} [values={}] - An object matching the fields defined in the .msg definition file.
- */
-function Message(values) {
-    assign(this, values || {});
-}
+ * @template T
+*/
+var Message = /** @class */ (function () {
+    /**
+     * @param {T} [values={}] - An object matching the fields defined in the .msg definition file.
+     */
+    function Message(values) {
+        assign(this, values || {});
+    }
+    return Message;
+}());
 module.exports = Message;
 
 },{"object-assign":31}],80:[function(require,module,exports){
@@ -20111,6 +20117,7 @@ var WorkerSocket = require('../util/workerSocket');
 var socketAdapter = require('./SocketAdapter.js');
 var Service = require('./Service');
 var ServiceRequest = require('./ServiceRequest');
+var ServiceResponse = require('./ServiceResponse');
 var assign = require('object-assign');
 var Topic = require('./Topic');
 var Param = require('./Param');
@@ -20300,6 +20307,7 @@ var Ros = /** @class */ (function (_super) {
      * @param {getActionServersFailedCallback} [failedCallback] - The callback function when the service call failed with params:
      */
     Ros.prototype.getActionServers = function (callback, failedCallback) {
+        /** @satisfies {Service<any, any>} */
         var getActionServers = new Service({
             ros: this,
             name: '/rosapi/action_servers',
@@ -20503,8 +20511,7 @@ var Ros = /** @class */ (function (_super) {
     };
     /**
      * @callback getServiceResponseDetailsCallback
-     * @param {Object} result - The result object with the following params:
-     * @param {string[]} result.typedefs - An array containing the details of the service response.
+     * @param {ServiceResponse<{typedefs: string[]}>} result - The result object with the following params:
      */
     /**
      * @callback getServiceResponseDetailsFailedCallback
@@ -20518,6 +20525,7 @@ var Ros = /** @class */ (function (_super) {
      * @param {getServiceResponseDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
      */
     Ros.prototype.getServiceResponseDetails = function (type, callback, failedCallback) {
+        /** @satisfies {Service<{},{typedefs: string[]}>} */
         var serviceTypeClient = new Service({
             ros: this,
             name: '/rosapi/service_response_details',
@@ -20886,7 +20894,7 @@ var Ros = /** @class */ (function (_super) {
 }(EventEmitter2));
 module.exports = Ros;
 
-},{"../actionlib":78,"../tf":94,"../util/workerSocket":109,"./Param":80,"./Service":82,"./ServiceRequest":83,"./SocketAdapter.js":85,"./Topic":86,"eventemitter2":16,"object-assign":31,"ws":71}],82:[function(require,module,exports){
+},{"../actionlib":78,"../tf":94,"../util/workerSocket":109,"./Param":80,"./Service":82,"./ServiceRequest":83,"./ServiceResponse":84,"./SocketAdapter.js":85,"./Topic":86,"eventemitter2":16,"object-assign":31,"ws":71}],82:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -20913,6 +20921,7 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
 var Ros = require('../core/Ros');
 /**
  * A ROS service client.
+ * @template T, U
  */
 var Service = /** @class */ (function (_super) {
     __extends(Service, _super);
@@ -20933,7 +20942,7 @@ var Service = /** @class */ (function (_super) {
     }
     /**
      * @callback callServiceCallback
-     *  @param {Object} response - The response from the service request.
+     *  @param {U} response - The response from the service request.
      */
     /**
      * @callback callServiceFailedCallback
@@ -20943,7 +20952,7 @@ var Service = /** @class */ (function (_super) {
      * Call the service. Returns the service response in the
      * callback. Does nothing if this service is currently advertised.
      *
-     * @param {ServiceRequest} request - The ROSLIB.ServiceRequest to send.
+     * @param {T} request - The ROSLIB.ServiceRequest to send.
      * @param {callServiceCallback} [callback] - Function with the following params:
      * @param {callServiceFailedCallback} [failedCallback] - The callback function when the service call failed with params:
      */
@@ -20960,6 +20969,7 @@ var Service = /** @class */ (function (_super) {
                     }
                 }
                 else if (typeof callback === 'function') {
+                    // @ts-expect-error -- can't figure out how to get ServiceResponse to play nice in typescript here
                     callback(new ServiceResponse(message.values));
                 }
             });
@@ -20975,7 +20985,7 @@ var Service = /** @class */ (function (_super) {
     };
     /**
      * @callback advertiseCallback
-     * @param {ServiceRequest} request - The service request.
+     * @param {ServiceRequest<T>} request - The service request.
      * @param {Object} response - An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
      *     It should return true if the service has finished successfully,
      *     i.e., without any fatal errors.
@@ -21040,11 +21050,17 @@ var assign = require('object-assign');
  * A ServiceRequest is passed into the service call.
  *
  * @constructor
- * @param {Object} [values={}] - Object matching the fields defined in the .srv definition file.
- */
-function ServiceRequest(values) {
-    assign(this, values || {});
-}
+ * @template T
+*/
+var ServiceRequest = /** @class */ (function () {
+    /**
+     * @param {T} [values={}] - Object matching the fields defined in the .srv definition file.
+     */
+    function ServiceRequest(values) {
+        assign(this, values || {});
+    }
+    return ServiceRequest;
+}());
 module.exports = ServiceRequest;
 
 },{"object-assign":31}],84:[function(require,module,exports){
@@ -21058,11 +21074,17 @@ var assign = require('object-assign');
  * A ServiceResponse is returned from the service call.
  *
  * @constructor
- * @param {Object} values - Object matching the fields defined in the .srv definition file.
- */
-function ServiceResponse(values) {
-    assign(this, values);
-}
+ * @template T
+*/
+var ServiceResponse = /** @class */ (function () {
+    /**
+     * @param {T} values - Object matching the fields defined in the .srv definition file.
+     */
+    function ServiceResponse(values) {
+        assign(this, values);
+    }
+    return ServiceResponse;
+}());
 module.exports = ServiceResponse;
 
 },{"object-assign":31}],85:[function(require,module,exports){
@@ -21228,6 +21250,7 @@ var Ros = require('../core/Ros');
  * Emits the following events:
  *  * 'warning' - If there are any warning during the Topic creation.
  *  * 'message' - The message data from rosbridge.
+ * @template T
  */
 var Topic = /** @class */ (function (_super) {
     __extends(Topic, _super);
@@ -21302,7 +21325,7 @@ var Topic = /** @class */ (function (_super) {
     }
     /**
      * @callback subscribeCallback
-     * @param {Object} message - The published message.
+     * @param {T} message - The published message.
      */
     /**
      * Every time a message is published for the given topic, the callback
@@ -21409,7 +21432,7 @@ var Topic = /** @class */ (function (_super) {
     /**
      * Publish the message.
      *
-     * @param {Message} message - A ROSLIB.Message object.
+     * @param {T} message - A ROSLIB.Message object.
      */
     Topic.prototype.publish = function (message) {
         if (!this.isAdvertised) {

@@ -9,6 +9,7 @@ var socketAdapter = require('./SocketAdapter.js');
 
 var Service = require('./Service');
 var ServiceRequest = require('./ServiceRequest');
+var ServiceResponse = require('./ServiceResponse');
 
 var assign = require('object-assign');
 const Topic = require('./Topic');
@@ -199,6 +200,7 @@ class Ros extends EventEmitter2 {
    * @param {getActionServersFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getActionServers(callback, failedCallback) {
+    /** @satisfies {Service<any, any>} */
     var getActionServers = new Service({
       ros: this,
       name: '/rosapi/action_servers',
@@ -426,8 +428,7 @@ class Ros extends EventEmitter2 {
   }
   /**
    * @callback getServiceResponseDetailsCallback
-   * @param {Object} result - The result object with the following params:
-   * @param {string[]} result.typedefs - An array containing the details of the service response.
+   * @param {ServiceResponse<{typedefs: string[]}>} result - The result object with the following params:
    */
   /**
    * @callback getServiceResponseDetailsFailedCallback
@@ -441,6 +442,7 @@ class Ros extends EventEmitter2 {
    * @param {getServiceResponseDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getServiceResponseDetails(type, callback, failedCallback) {
+    /** @satisfies {Service<{},{typedefs: string[]}>} */
     var serviceTypeClient = new Service({
       ros: this,
       name: '/rosapi/service_response_details',
