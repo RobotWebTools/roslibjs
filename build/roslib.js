@@ -22240,8 +22240,8 @@ var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
 var UrdfModel = /** @class */ (function () {
     /**
      * @param {Object} options
-     * @param {Element} options.xml - The XML element to parse.
-     * @param {string} options.string - The XML element to parse as a string.
+     * @param {Element} [options.xml] - The XML element to parse.
+     * @param {string} [options.string] - The XML element to parse as a string.
      */
     function UrdfModel(options) {
         var xmlDoc = options.xml;
@@ -22254,6 +22254,9 @@ var UrdfModel = /** @class */ (function () {
             // Parse the string
             var parser = new DOMParser();
             xmlDoc = parser.parseFromString(string, 'text/xml').documentElement;
+        }
+        if (!xmlDoc) {
+            throw new Error('No URDF document parsed!');
         }
         // Initialize the model with the given XML node.
         // Get the robot tag

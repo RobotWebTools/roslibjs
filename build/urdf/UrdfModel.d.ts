@@ -5,12 +5,12 @@ export = UrdfModel;
 declare class UrdfModel {
     /**
      * @param {Object} options
-     * @param {Element} options.xml - The XML element to parse.
-     * @param {string} options.string - The XML element to parse as a string.
+     * @param {Element} [options.xml] - The XML element to parse.
+     * @param {string} [options.string] - The XML element to parse as a string.
      */
     constructor(options: {
-        xml: Element;
-        string: string;
+        xml?: Element | undefined;
+        string?: string | undefined;
     });
     materials: {};
     links: {};

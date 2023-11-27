@@ -18,8 +18,8 @@ var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
 class UrdfModel {
   /**
    * @param {Object} options
-   * @param {Element} options.xml - The XML element to parse.
-   * @param {string} options.string - The XML element to parse as a string.
+   * @param {Element} [options.xml] - The XML element to parse.
+   * @param {string} [options.string] - The XML element to parse as a string.
    */
   constructor(options) {
     var xmlDoc = options.xml;
@@ -33,6 +33,9 @@ class UrdfModel {
       // Parse the string
       var parser = new DOMParser();
       xmlDoc = parser.parseFromString(string, 'text/xml').documentElement;
+    }
+    if (!xmlDoc) {
+      throw new Error('No URDF document parsed!');
     }
 
     // Initialize the model with the given XML node.

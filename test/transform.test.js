@@ -11,8 +11,8 @@ describe('Transform', function() {
     // });
     it('should contain a valid vector and quaternion', function() {
       var t = new ROSLIB.Transform({
-        translation: { x: 1, y: 2, z: 3 },
-        rotation: { x: 0.9, y: 0.8, z: 0.7, w: 1 }
+        translation: new ROSLIB.Vector3({ x: 1, y: 2, z: 3 }),
+        rotation: new ROSLIB.Quaternion({ x: 0.9, y: 0.8, z: 0.7, w: 1 })
       });
       // expect(t.translation).to.be.a('ROSLIB.Vector3');
       expect(t.translation.x).to.equal(1);

@@ -59,7 +59,8 @@ module.exports = function(grunt) {
     mochaTest: {
       options: {
         reporter: 'spec',
-        timeout: 5000
+        timeout: 5000,
+        require: 'ts-node/register'
       },
       test: {
         src: ['./test/*.test.js']

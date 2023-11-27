@@ -13,9 +13,11 @@ describe('ROS', function() {
       var callCount = 50;
       var eventEmitter = new EventEmitter2();
       for (var i = 0; i < callCount; i++) {
-        eventEmitter.on('foo', function() { });
+        eventEmitter.on('foo', function () {});
       }
+      // @ts-expect-error -- hidden property
       expect(eventEmitter._events['foo']).to.have.length(callCount);
+      // @ts-expect-error -- hidden property
       expect(eventEmitter._events['foo']).to.have.property('warned');
 
       // The next part of this test shows that the 'warn' property is not set
@@ -24,7 +26,9 @@ describe('ROS', function() {
       for (var i = 0; i < callCount; i++) {
         ros.callOnConnection({});
       }
+      // @ts-expect-error -- hidden property
       expect(ros._events['connection']).to.have.length(callCount);
+      // @ts-expect-error -- hidden property
       expect(ros._events['connection']).to.not.have.property('warned');
     });
   });
