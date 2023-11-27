@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   Pose: require('./Pose'),
   Quaternion: require('./Quaternion'),
   Transform: require('./Transform'),

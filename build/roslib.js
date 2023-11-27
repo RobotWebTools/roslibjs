@@ -19305,15 +19305,36 @@ module.exports = typeof window !== 'undefined' ? window.WebSocket : WebSocket;
 
 },{}],72:[function(require,module,exports){
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
  */
+__exportStar(require("./core"), exports);
+__exportStar(require("./actionlib"), exports);
+__exportStar(require("./math"), exports);
+__exportStar(require("./tf"), exports);
+__exportStar(require("./urdf"), exports);
 /**
  * If you use roslib in a browser, all the classes will be exported to a global variable called ROSLIB.
  *
  * If you use nodejs, this is the variable you get when you require('roslib').
  */
+// @ts-expect-error
 var ROSLIB = this.ROSLIB || {
     /**
      * @default
@@ -19328,9 +19349,8 @@ assign(ROSLIB, require('./actionlib'));
 assign(ROSLIB, require('./math'));
 assign(ROSLIB, require('./tf'));
 assign(ROSLIB, require('./urdf'));
-module.exports = ROSLIB;
 
-},{"./actionlib":78,"./core":87,"./math":92,"./tf":95,"./urdf":107,"object-assign":31}],73:[function(require,module,exports){
+},{"./actionlib":78,"./core":87,"./math":92,"./tf":94,"./urdf":106,"object-assign":31}],73:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 global.ROSLIB = require('./RosLib');
@@ -19938,17 +19958,14 @@ module.exports = SimpleActionServer;
 
 },{"../core/Message":79,"../core/Ros":81,"../core/Topic":86,"eventemitter2":16}],78:[function(require,module,exports){
 "use strict";
-var Ros = require('../core/Ros');
-var mixin = require('../mixin');
-var action = (module.exports = {
-    ActionClient: require('./ActionClient'),
-    ActionListener: require('./ActionListener'),
-    Goal: require('./Goal'),
-    SimpleActionServer: require('./SimpleActionServer')
-});
-mixin(Ros, ['ActionClient', 'SimpleActionServer'], action);
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SimpleActionServer = exports.Goal = exports.ActionListener = exports.ActionClient = void 0;
+exports.ActionClient = require('./ActionClient');
+exports.ActionListener = require('./ActionListener');
+exports.Goal = require('./Goal');
+exports.SimpleActionServer = require('./SimpleActionServer');
 
-},{"../core/Ros":81,"../mixin":93,"./ActionClient":74,"./ActionListener":75,"./Goal":76,"./SimpleActionServer":77}],79:[function(require,module,exports){
+},{"./ActionClient":74,"./ActionListener":75,"./Goal":76,"./SimpleActionServer":77}],79:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -20836,7 +20853,7 @@ var Ros = /** @class */ (function (_super) {
 }(EventEmitter2));
 module.exports = Ros;
 
-},{"../util/workerSocket":110,"./Service":82,"./ServiceRequest":83,"./SocketAdapter.js":85,"eventemitter2":16,"object-assign":31,"ws":71}],82:[function(require,module,exports){
+},{"../util/workerSocket":109,"./Service":82,"./ServiceRequest":83,"./SocketAdapter.js":85,"eventemitter2":16,"object-assign":31,"ws":71}],82:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -21148,7 +21165,7 @@ function SocketAdapter(client) {
 }
 module.exports = SocketAdapter;
 
-},{"../util/cborTypedArrayTags":108,"../util/decompressPng":109,"cbor-js":14}],86:[function(require,module,exports){
+},{"../util/cborTypedArrayTags":107,"../util/decompressPng":108,"cbor-js":14}],86:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -21381,19 +21398,17 @@ module.exports = Topic;
 
 },{"../core/Ros":81,"./Message":79,"eventemitter2":16}],87:[function(require,module,exports){
 "use strict";
-var mixin = require('../mixin');
-var core = (module.exports = {
-    Ros: require('./Ros'),
-    Topic: require('./Topic'),
-    Message: require('./Message'),
-    Param: require('./Param'),
-    Service: require('./Service'),
-    ServiceRequest: require('./ServiceRequest'),
-    ServiceResponse: require('./ServiceResponse')
-});
-mixin(core.Ros, ['Param', 'Service', 'Topic'], core);
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ServiceResponse = exports.ServiceRequest = exports.Service = exports.Param = exports.Message = exports.Topic = exports.Ros = void 0;
+exports.Ros = require('./Ros');
+exports.Topic = require('./Topic');
+exports.Message = require('./Message');
+exports.Param = require('./Param');
+exports.Service = require('./Service');
+exports.ServiceRequest = require('./ServiceRequest');
+exports.ServiceResponse = require('./ServiceResponse');
 
-},{"../mixin":93,"./Message":79,"./Param":80,"./Ros":81,"./Service":82,"./ServiceRequest":83,"./ServiceResponse":84,"./Topic":86}],88:[function(require,module,exports){
+},{"./Message":79,"./Param":80,"./Ros":81,"./Service":82,"./ServiceRequest":83,"./ServiceResponse":84,"./Topic":86}],88:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -21665,7 +21680,8 @@ module.exports = Vector3;
 
 },{"./Quaternion":89}],92:[function(require,module,exports){
 "use strict";
-module.exports = {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = {
     Pose: require('./Pose'),
     Quaternion: require('./Quaternion'),
     Transform: require('./Transform'),
@@ -21673,26 +21689,6 @@ module.exports = {
 };
 
 },{"./Pose":88,"./Quaternion":89,"./Transform":90,"./Vector3":91}],93:[function(require,module,exports){
-"use strict";
-/**
- * Mixin a feature to the core/Ros prototype.
- * For example, mixin(Ros, ['Topic'], {Topic: <Topic>})
- * will add a topic bound to any Ros instances so a user
- * can call `var topic = ros.Topic({name: '/foo'});`
- *
- * @author Graeme Yeates - github.com/megawac
- */
-module.exports = function (Ros, classes, features) {
-    classes.forEach(function (className) {
-        var Class = features[className];
-        Ros.prototype[className] = function (options) {
-            options.ros = this;
-            return new Class(options);
-        };
-    });
-};
-
-},{}],94:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -21931,16 +21927,13 @@ var TFClient = /** @class */ (function (_super) {
 }(EventEmitter2));
 module.exports = TFClient;
 
-},{"../actionlib/ActionClient":74,"../actionlib/Goal":76,"../core/Ros":81,"../core/Service.js":82,"../core/ServiceRequest.js":83,"../core/Topic.js":86,"../math/Transform":90,"eventemitter2":16}],95:[function(require,module,exports){
+},{"../actionlib/ActionClient":74,"../actionlib/Goal":76,"../core/Ros":81,"../core/Service.js":82,"../core/ServiceRequest.js":83,"../core/Topic.js":86,"../math/Transform":90,"eventemitter2":16}],94:[function(require,module,exports){
 "use strict";
-var Ros = require('../core/Ros');
-var mixin = require('../mixin');
-var tf = (module.exports = {
-    TFClient: require('./TFClient')
-});
-mixin(Ros, ['TFClient'], tf);
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TFClient = void 0;
+exports.TFClient = require('./TFClient');
 
-},{"../core/Ros":81,"../mixin":93,"./TFClient":94}],96:[function(require,module,exports){
+},{"./TFClient":93}],95:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -21973,7 +21966,7 @@ var UrdfBox = /** @class */ (function () {
 }());
 module.exports = UrdfBox;
 
-},{"../math/Vector3":91,"./UrdfTypes":105}],97:[function(require,module,exports){
+},{"../math/Vector3":91,"./UrdfTypes":104}],96:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -22001,7 +21994,7 @@ var UrdfColor = /** @class */ (function () {
 }());
 module.exports = UrdfColor;
 
-},{}],98:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -22028,7 +22021,7 @@ var UrdfCylinder = /** @class */ (function () {
 }());
 module.exports = UrdfCylinder;
 
-},{"./UrdfTypes":105}],99:[function(require,module,exports){
+},{"./UrdfTypes":104}],98:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -22117,7 +22110,7 @@ var UrdfJoint = /** @class */ (function () {
 }());
 module.exports = UrdfJoint;
 
-},{"../math/Pose":88,"../math/Quaternion":89,"../math/Vector3":91}],100:[function(require,module,exports){
+},{"../math/Pose":88,"../math/Quaternion":89,"../math/Vector3":91}],99:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -22147,7 +22140,7 @@ var UrdfLink = /** @class */ (function () {
 }());
 module.exports = UrdfLink;
 
-},{"./UrdfVisual":106}],101:[function(require,module,exports){
+},{"./UrdfVisual":105}],100:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -22192,7 +22185,7 @@ var UrdfMaterial = /** @class */ (function () {
 var assign = require('object-assign');
 module.exports = UrdfMaterial;
 
-},{"./UrdfColor":97,"object-assign":31}],102:[function(require,module,exports){
+},{"./UrdfColor":96,"object-assign":31}],101:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -22229,7 +22222,7 @@ var UrdfMesh = /** @class */ (function () {
 }());
 module.exports = UrdfMesh;
 
-},{"../math/Vector3":91,"./UrdfTypes":105}],103:[function(require,module,exports){
+},{"../math/Vector3":91,"./UrdfTypes":104}],102:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -22327,7 +22320,7 @@ var UrdfModel = /** @class */ (function () {
 }());
 module.exports = UrdfModel;
 
-},{"./UrdfJoint":99,"./UrdfLink":100,"./UrdfMaterial":101,"@xmldom/xmldom":70}],104:[function(require,module,exports){
+},{"./UrdfJoint":98,"./UrdfLink":99,"./UrdfMaterial":100,"@xmldom/xmldom":70}],103:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -22351,16 +22344,16 @@ var UrdfSphere = /** @class */ (function () {
 }());
 module.exports = UrdfSphere;
 
-},{"./UrdfTypes":105}],105:[function(require,module,exports){
+},{"./UrdfTypes":104}],104:[function(require,module,exports){
 "use strict";
-module.exports = {
-    URDF_SPHERE: 0,
-    URDF_BOX: 1,
-    URDF_CYLINDER: 2,
-    URDF_MESH: 3
-};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.URDF_MESH = exports.URDF_CYLINDER = exports.URDF_BOX = exports.URDF_SPHERE = void 0;
+exports.URDF_SPHERE = 0;
+exports.URDF_BOX = 1;
+exports.URDF_CYLINDER = 2;
+exports.URDF_MESH = 3;
 
-},{}],106:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -22495,21 +22488,36 @@ var UrdfVisual = /** @class */ (function () {
 }());
 module.exports = UrdfVisual;
 
-},{"../math/Pose":88,"../math/Quaternion":89,"../math/Vector3":91,"./UrdfBox":96,"./UrdfCylinder":98,"./UrdfMaterial":101,"./UrdfMesh":102,"./UrdfSphere":104}],107:[function(require,module,exports){
+},{"../math/Pose":88,"../math/Quaternion":89,"../math/Vector3":91,"./UrdfBox":95,"./UrdfCylinder":97,"./UrdfMaterial":100,"./UrdfMesh":101,"./UrdfSphere":103}],106:[function(require,module,exports){
 "use strict";
-module.exports = require('object-assign')({
-    UrdfBox: require('./UrdfBox'),
-    UrdfColor: require('./UrdfColor'),
-    UrdfCylinder: require('./UrdfCylinder'),
-    UrdfLink: require('./UrdfLink'),
-    UrdfMaterial: require('./UrdfMaterial'),
-    UrdfMesh: require('./UrdfMesh'),
-    UrdfModel: require('./UrdfModel'),
-    UrdfSphere: require('./UrdfSphere'),
-    UrdfVisual: require('./UrdfVisual')
-}, require('./UrdfTypes'));
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UrdfVisual = exports.UrdfSphere = exports.UrdfModel = exports.UrdfMesh = exports.UrdfMaterial = exports.UrdfLink = exports.UrdfCylinder = exports.UrdfColor = exports.UrdfBox = void 0;
+exports.UrdfBox = require('./UrdfBox');
+exports.UrdfColor = require('./UrdfColor');
+exports.UrdfCylinder = require('./UrdfCylinder');
+exports.UrdfLink = require('./UrdfLink');
+exports.UrdfMaterial = require('./UrdfMaterial');
+exports.UrdfMesh = require('./UrdfMesh');
+exports.UrdfModel = require('./UrdfModel');
+exports.UrdfSphere = require('./UrdfSphere');
+exports.UrdfVisual = require('./UrdfVisual');
+__exportStar(require("./UrdfTypes"), exports);
 
-},{"./UrdfBox":96,"./UrdfColor":97,"./UrdfCylinder":98,"./UrdfLink":100,"./UrdfMaterial":101,"./UrdfMesh":102,"./UrdfModel":103,"./UrdfSphere":104,"./UrdfTypes":105,"./UrdfVisual":106,"object-assign":31}],108:[function(require,module,exports){
+},{"./UrdfBox":95,"./UrdfColor":96,"./UrdfCylinder":97,"./UrdfLink":99,"./UrdfMaterial":100,"./UrdfMesh":101,"./UrdfModel":102,"./UrdfSphere":103,"./UrdfTypes":104,"./UrdfVisual":105}],107:[function(require,module,exports){
 'use strict';
 var UPPER32 = Math.pow(2, 32);
 var warnedPrecision = false;
@@ -22613,7 +22621,7 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = cborTypedArrayTagger;
 }
 
-},{}],109:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 (function (Buffer){(function (){
 /**
  * @fileOverview
@@ -22649,7 +22657,7 @@ function decompressPng(data, callback) {
 module.exports = decompressPng;
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"buffer":11,"pngparse":43}],110:[function(require,module,exports){
+},{"buffer":11,"pngparse":43}],109:[function(require,module,exports){
 "use strict";
 try {
     // @ts-expect-error -- webworker include workarounds I don't know enough about to fix right now
@@ -22708,7 +22716,7 @@ var WorkerSocket = /** @class */ (function () {
 }());
 module.exports = WorkerSocket;
 
-},{"./workerSocketImpl":111,"webworkify":68,"webworkify-webpack":67}],111:[function(require,module,exports){
+},{"./workerSocketImpl":110,"webworkify":68,"webworkify-webpack":67}],110:[function(require,module,exports){
 "use strict";
 var WebSocket = WebSocket || require('ws');
 module.exports = function (self) {

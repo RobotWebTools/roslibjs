@@ -15,6 +15,14 @@ module.exports = function(grunt) {
         command: 'tsc -p .'
       }
     },
+    copy: {
+      main: {
+        expand: true,
+        cwd: 'tsbuild',
+        src: ['**/*.d.ts'],
+        dest: 'build/'
+      }
+    },
     browserify: {
       dist: {
         src: ['./tsbuild/RosLibBrowser.js'],
@@ -25,10 +33,7 @@ module.exports = function(grunt) {
       options: {
         jshintrc: true
       },
-      files: [
-        './Gruntfile.js',
-        './src/**/*.js'
-      ]
+      files: ['./Gruntfile.js', './src/**/*.js']
     },
     karma: {
       options: {
@@ -42,19 +47,19 @@ module.exports = function(grunt) {
         }
       },
       test: {
-        configFile: './test/karma.conf.js',
+        configFile: './test/karma.conf.js'
       },
       examples: {
-        configFile: './test/examples/karma.conf.js',
+        configFile: './test/examples/karma.conf.js'
       },
       workersocket: {
-        configFile: './test/workersocket/karma.conf.js',
-      },
+        configFile: './test/workersocket/karma.conf.js'
+      }
     },
     mochaTest: {
       options: {
-          reporter: 'spec',
-          timeout: 5000
+        reporter: 'spec',
+        timeout: 5000
       },
       test: {
         src: ['./test/*.test.js']
@@ -80,20 +85,14 @@ module.exports = function(grunt) {
         options: {
           interrupt: true
         },
-        files: [
-          './src/**/*.js'
-        ],
+        files: ['./src/**/*.js'],
         tasks: ['browserify']
       },
       build_and_watch: {
         options: {
           interrupt: true
         },
-        files: [
-          'Gruntfile.js',
-          '.jshintrc',
-          './src/**/*.js'
-        ],
+        files: ['Gruntfile.js', '.jshintrc', './src/**/*.js'],
         tasks: ['build']
       }
     },
@@ -105,10 +104,7 @@ module.exports = function(grunt) {
     },
     jsdoc: {
       doc: {
-        src: [
-          './src/*.js',
-          './src/**/*.js'
-        ],
+        src: ['./src/*.js', './src/**/*.js'],
         options: {
           destination: './doc',
           configure: 'jsdoc_conf.json'
@@ -122,7 +118,7 @@ module.exports = function(grunt) {
   grunt.registerTask('test-examples', ['mochaTest:examples', 'karma:examples']);
   grunt.registerTask('test-tcp', ['mochaTest:tcp']);
   grunt.registerTask('test-workersocket', ['karma:workersocket']);
-  grunt.registerTask('build', ['shell', 'browserify', 'uglify']);
+  grunt.registerTask('build', ['shell', 'copy', 'browserify', 'uglify']);
   grunt.registerTask('build_and_watch', ['watch']);
   grunt.registerTask('doc', ['clean', 'jsdoc']);
 };
