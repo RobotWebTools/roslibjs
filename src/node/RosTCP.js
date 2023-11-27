@@ -2,6 +2,7 @@ var Ros = require('../core/Ros');
 var SocketIO = require('./SocketIO');
 var net = require('net');
 var socketAdapter = require('../core/SocketAdapter.js');
+const TopicStream = require('./TopicStream');
 
 /**
  * Same as core Ros except supports TCP connections.
@@ -59,6 +60,9 @@ class RosTCP extends Ros {
       // Similarly for close
       this.socket.close = this.socket.end;
     }
+  }
+  Topic(options) {
+    return new TopicStream({ ros: this, ...options });
   }
 }
 
