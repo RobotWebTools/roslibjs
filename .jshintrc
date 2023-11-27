@@ -24,6 +24,6 @@
   "proto": true,
   "laxbreak": true,
   // TypeScript will compile down to es5.
-  "esversion": 8
+  "esversion": 9
 }
 
