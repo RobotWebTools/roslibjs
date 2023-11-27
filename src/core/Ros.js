@@ -11,6 +11,10 @@ var Service = require('./Service');
 var ServiceRequest = require('./ServiceRequest');
 
 var assign = require('object-assign');
+const Topic = require('./Topic');
+const Param = require('./Param');
+const { TFClient } = require('../tf');
+const { ActionClient, SimpleActionServer } = require('../actionlib');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 /**
@@ -814,6 +818,24 @@ class Ros extends EventEmitter2 {
         callback(result);
       });
     }
+  }
+  Topic(options) {
+    return new Topic({ ros: this, ...options });
+  }
+  Param(options) {
+    return new Param({ ros: this, ...options });
+  }
+  Service(options) {
+    return new Service({ ros: this, ...options });
+  }
+  TFClient(options) {
+    return new TFClient({ ros: this, ...options });
+  }
+  ActionClient(options) {
+    return new ActionClient({ ros: this, ...options });
+  }
+  SimpleActionServer(options) {
+    return new SimpleActionServer({ ros: this, ...options });
   }
 }
 

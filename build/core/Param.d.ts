@@ -36,9 +36,9 @@ declare class Param {
      * Set the value of the param in ROS.
      *
      * @param {Object} value - The value to set param to.
-     * @param {setParamCallback} callback - The callback function.
+     * @param {setParamCallback} [callback] - The callback function.
      */
-    set(value: any, callback: (response: any) => any): void;
+    set(value: any, callback?: ((response: any) => any) | undefined): void;
     /**
      * Delete this parameter on the ROS server.
      *

@@ -335,6 +335,15 @@ declare class Ros extends EventEmitter2 {
         types: string[];
         typedefs_full_text: string[];
     }) => any, failedCallback?: ((error: string) => any) | undefined): void;
+    Topic(options: any): Topic;
+    Param(options: any): Param;
+    Service(options: any): Service;
+    TFClient(options: any): import("../tf/TFClient");
+    ActionClient(options: any): import("../actionlib/ActionClient");
+    SimpleActionServer(options: any): import("../actionlib/SimpleActionServer");
 }
 import EventEmitter2_1 = require("eventemitter2");
 import EventEmitter2 = EventEmitter2_1.EventEmitter2;
+import Topic = require("./Topic");
+import Param = require("./Param");
+import Service = require("./Service");

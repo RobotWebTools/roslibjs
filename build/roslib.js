@@ -20040,7 +20040,7 @@ var Param = /** @class */ (function () {
      * Set the value of the param in ROS.
      *
      * @param {Object} value - The value to set param to.
-     * @param {setParamCallback} callback - The callback function.
+     * @param {setParamCallback} [callback] - The callback function.
      */
     Param.prototype.set = function (value, callback) {
         var paramClient = new Service({
@@ -20095,12 +20095,27 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var WebSocket = require('ws');
 var WorkerSocket = require('../util/workerSocket');
 var socketAdapter = require('./SocketAdapter.js');
 var Service = require('./Service');
 var ServiceRequest = require('./ServiceRequest');
 var assign = require('object-assign');
+var Topic = require('./Topic');
+var Param = require('./Param');
+var TFClient = require('../tf').TFClient;
+var _a = require('../actionlib'), ActionClient = _a.ActionClient, SimpleActionServer = _a.SimpleActionServer;
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
 /**
  * Manages connection to the server and all interactions with ROS.
@@ -20849,11 +20864,29 @@ var Ros = /** @class */ (function (_super) {
             });
         }
     };
+    Ros.prototype.Topic = function (options) {
+        return new Topic(__assign({ ros: this }, options));
+    };
+    Ros.prototype.Param = function (options) {
+        return new Param(__assign({ ros: this }, options));
+    };
+    Ros.prototype.Service = function (options) {
+        return new Service(__assign({ ros: this }, options));
+    };
+    Ros.prototype.TFClient = function (options) {
+        return new TFClient(__assign({ ros: this }, options));
+    };
+    Ros.prototype.ActionClient = function (options) {
+        return new ActionClient(__assign({ ros: this }, options));
+    };
+    Ros.prototype.SimpleActionServer = function (options) {
+        return new SimpleActionServer(__assign({ ros: this }, options));
+    };
     return Ros;
 }(EventEmitter2));
 module.exports = Ros;
 
-},{"../util/workerSocket":109,"./Service":82,"./ServiceRequest":83,"./SocketAdapter.js":85,"eventemitter2":16,"object-assign":31,"ws":71}],82:[function(require,module,exports){
+},{"../actionlib":78,"../tf":94,"../util/workerSocket":109,"./Param":80,"./Service":82,"./ServiceRequest":83,"./SocketAdapter.js":85,"./Topic":86,"eventemitter2":16,"object-assign":31,"ws":71}],82:[function(require,module,exports){
 "use strict";
 /**
  * @fileOverview
@@ -20911,7 +20944,7 @@ var Service = /** @class */ (function (_super) {
      * callback. Does nothing if this service is currently advertised.
      *
      * @param {ServiceRequest} request - The ROSLIB.ServiceRequest to send.
-     * @param {callServiceCallback} callback - Function with the following params:
+     * @param {callServiceCallback} [callback] - Function with the following params:
      * @param {callServiceFailedCallback} [failedCallback] - The callback function when the service call failed with params:
      */
     Service.prototype.callService = function (request, callback, failedCallback) {

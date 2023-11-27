@@ -40,7 +40,7 @@ class Service extends EventEmitter2 {
    * callback. Does nothing if this service is currently advertised.
    *
    * @param {ServiceRequest} request - The ROSLIB.ServiceRequest to send.
-   * @param {callServiceCallback} callback - Function with the following params:
+   * @param {callServiceCallback} [callback] - Function with the following params:
    * @param {callServiceFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   callService(request, callback, failedCallback) {
