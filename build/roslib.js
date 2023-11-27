@@ -19334,7 +19334,7 @@ __exportStar(require("./urdf"), exports);
  *
  * If you use nodejs, this is the variable you get when you require('roslib').
  */
-// @ts-expect-error
+// @ts-expect-error -- global browser-only shenanigans
 var ROSLIB = this.ROSLIB || {
     /**
      * @default
@@ -21681,12 +21681,11 @@ module.exports = Vector3;
 },{"./Quaternion":89}],92:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = {
-    Pose: require('./Pose'),
-    Quaternion: require('./Quaternion'),
-    Transform: require('./Transform'),
-    Vector3: require('./Vector3')
-};
+exports.Vector3 = exports.Transform = exports.Quaternion = exports.Pose = void 0;
+exports.Pose = require('./Pose');
+exports.Quaternion = require('./Quaternion');
+exports.Transform = require('./Transform');
+exports.Vector3 = require('./Vector3');
 
 },{"./Pose":88,"./Quaternion":89,"./Transform":90,"./Vector3":91}],93:[function(require,module,exports){
 "use strict";
