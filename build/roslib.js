@@ -21496,10 +21496,10 @@ module.exports = Pose;
 var Quaternion = /** @class */ (function () {
     /**
      * @param {Object} [options]
-     * @param {number} [options.x=0] - The x value.
-     * @param {number} [options.y=0] - The y value.
-     * @param {number} [options.z=0] - The z value.
-     * @param {number} [options.w=1] - The w value.
+     * @param {number|null} [options.x=0] - The x value.
+     * @param {number|null} [options.y=0] - The y value.
+     * @param {number|null} [options.z=0] - The z value.
+     * @param {number|null} [options.w=1] - The w value.
      */
     function Quaternion(options) {
         options = options || {};
