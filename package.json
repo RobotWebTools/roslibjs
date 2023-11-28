@@ -1,6 +1,6 @@
 {
   "name": "roslib",
-  "homepage": "https://www.robotwebtools.org",
+  "homepage": "https://robotwebtools.github.io",
   "description": "The standard ROS Javascript Library",
   "version": "1.3.0",
   "license": "BSD-2-Clause",
@@ -26,10 +26,12 @@
     "grunt-mocha-test": "^0.13.0",
     "karma": "^6.3.0",
     "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^3.1.1",
     "karma-firefox-launcher": "^2.1.0",
     "karma-mocha": "^2.0.0",
     "load-grunt-tasks": "^5.1.0",
     "mocha": "^10.0.0",
+    "puppeteer": "^21.0.1",
     "time-grunt": "^2.0.0"
   },
   "dependencies": {
@@ -73,5 +75,5 @@
     "roslibjs",
     "robot"
   ],
-  "author": "Robot Webtools Team <robot-web-tools@googlegroups.com> (http://robotwebtools.org)"
+  "author": "Robot Webtools Team <robot-web-tools@googlegroups.com> (https://robotwebtools.github.io)"
 }
