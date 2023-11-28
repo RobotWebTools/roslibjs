@@ -20016,11 +20016,16 @@ var Param = /** @class */ (function () {
      * @param {Object} value - The value of the param from ROS.
      */
     /**
+     * @callback getFailedCallback
+     * @param {string} error - The error message reported by ROS.
+     */
+    /**
      * Fetch the value of the param.
      *
-     * @param {getCallback} callback - Function with the following params:
+     * @param {getCallback} callback - The callback function.
+     * @param {getFailedCallback} [failedCallback] - The callback function when the service call failed.
      */
-    Param.prototype.get = function (callback) {
+    Param.prototype.get = function (callback, failedCallback) {
         var paramClient = new Service({
             ros: this.ros,
             name: '/rosapi/get_param',
@@ -20032,7 +20037,7 @@ var Param = /** @class */ (function () {
         paramClient.callService(request, function (result) {
             var value = JSON.parse(result.value);
             callback(value);
-        });
+        }, failedCallback);
     };
     /**
      * @callback setParamCallback
@@ -20040,15 +20045,16 @@ var Param = /** @class */ (function () {
      */
     /**
      * @callback setParamFailedCallback
-     * @param {Object} response - The response from the service request.
+     * @param {string} error - The error message reported by ROS.
      */
     /**
      * Set the value of the param in ROS.
      *
      * @param {Object} value - The value to set param to.
      * @param {setParamCallback} [callback] - The callback function.
+     * @param {setParamFailedCallback} [failedCallback] - The callback function when the service call failed.
      */
-    Param.prototype.set = function (value, callback) {
+    Param.prototype.set = function (value, callback, failedCallback) {
         var paramClient = new Service({
             ros: this.ros,
             name: '/rosapi/set_param',
@@ -20058,14 +20064,15 @@ var Param = /** @class */ (function () {
             name: this.name,
             value: JSON.stringify(value)
         });
-        paramClient.callService(request, callback);
+        paramClient.callService(request, callback, failedCallback);
     };
     /**
      * Delete this parameter on the ROS server.
      *
      * @param {setParamCallback} callback - The callback function.
+     * @param {setParamFailedCallback} [failedCallback] - The callback function when the service call failed.
      */
-    Param.prototype.delete = function (callback) {
+    Param.prototype.delete = function (callback, failedCallback) {
         var paramClient = new Service({
             ros: this.ros,
             name: '/rosapi/delete_param',
@@ -20074,7 +20081,7 @@ var Param = /** @class */ (function () {
         var request = new ServiceRequest({
             name: this.name
         });
-        paramClient.callService(request, callback);
+        paramClient.callService(request, callback, failedCallback);
     };
     return Param;
 }());
