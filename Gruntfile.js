@@ -15,14 +15,6 @@ module.exports = function(grunt) {
         command: 'tsc -p .'
       }
     },
-    copy: {
-      main: {
-        expand: true,
-        cwd: 'tsbuild',
-        src: ['**/*.d.ts'],
-        dest: 'build/'
-      }
-    },
     browserify: {
       dist: {
         src: ['./tsbuild/RosLibBrowser.js'],
@@ -119,7 +111,7 @@ module.exports = function(grunt) {
   grunt.registerTask('test-examples', ['mochaTest:examples', 'karma:examples']);
   grunt.registerTask('test-tcp', ['mochaTest:tcp']);
   grunt.registerTask('test-workersocket', ['karma:workersocket']);
-  grunt.registerTask('build', ['shell', 'copy', 'browserify', 'uglify']);
+  grunt.registerTask('build', ['shell', 'browserify', 'uglify']);
   grunt.registerTask('build_and_watch', ['watch']);
   grunt.registerTask('doc', ['clean', 'jsdoc']);
 };
