@@ -9,10 +9,10 @@ var assign = require('object-assign');
  * An ActionGoal is passed into a ROS 2 action goal request.
  *
  * @constructor
- * @param values - object matching the fields defined in the .action definition file
+ * @param {Object} [values={}] - Object matching the fields defined in the .action definition file.
  */
 function ActionGoal(values) {
-  assign(this, values);
+  assign(this, values || {});
 }
 
 module.exports = ActionGoal;

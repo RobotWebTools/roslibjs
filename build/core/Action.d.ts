@@ -1,61 +1,107 @@
 export = Action;
 /**
  * A ROS 2 action client.
- *
- * @constructor
- * @params options - possible keys include:
- *   * ros - the ROSLIB.Ros connection handle
- *   * name - the service name, like '/fibonacci'
- *   * actionType - the action type, like 'action_tutorials_interfaces/Fibonacci'
  */
-declare function Action(options: any): void;
-declare class Action {
+declare class Action extends EventEmitter2 {
     /**
-     * A ROS 2 action client.
-     *
-     * @constructor
-     * @params options - possible keys include:
-     *   * ros - the ROSLIB.Ros connection handle
-     *   * name - the service name, like '/fibonacci'
-     *   * actionType - the action type, like 'action_tutorials_interfaces/Fibonacci'
+     * @param {Object} options
+     * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+     * @param {string} options.name - The action name, like '/fibonacci'.
+     * @param {string} options.actionType - The action type, like 'action_tutorials_interfaces/Fibonacci'.
      */
-    constructor(options: any);
-    ros: any;
-    name: any;
-    actionType: any;
+    constructor(options: {
+        ros: Ros;
+        name: string;
+        actionType: string;
+    });
+    ros: Ros;
+    name: string;
+    actionType: string;
     isAdvertised: boolean;
-    _actionCallback: any;
+    _actionCallback: ((request: ActionGoal, response: any) => any) | null;
     _cancelCallback: any;
-    __proto__: EventEmitter2;
     /**
-     * Calls the service. Returns the service response in the
-     * callback. Does nothing if this service is currently advertised.
-     *
-     * @param request - the ROSLIB.ServiceRequest to send
-     * @param resultCallback - function with params:
-     *   * result - the result from the action
-     * @param feedbackCallback - the callback function when the action publishes feedback (optional). Params:
-     *   * feedback - the feedback from the action
-     * @param failedCallback - the callback function when the action failed (optional). Params:
-     *   * error - the error message reported by ROS
+     * @callback sendGoalResultCallback
+     *  @param {Object} result - The result from the action.
      */
-    sendGoal(request: any, resultCallback: any, feedbackCallback: any, failedCallback: any): string | undefined;
-    cancelGoal(id: any): void;
+    /**
+     * @callback sendGoalFeedbackCallback
+     * @param {Object} feedback - The feedback from the action.
+     */
+    /**
+     * @callback sendGoalFailedCallback
+     * @param {string} error - The error message reported by ROS.
+     */
+    /**
+     * Sends an action goal. Returns the feedback in the feedback callback while the action is running
+     * and the result in the result callback when the action is completed.
+     * Does nothing if this action is currently advertised.
+     *
+     * @param {ActionGoal} goal - The ROSLIB.ActionGoal to send.
+     * @param {sendGoalResultCallback} resultCallback - The callback function when the action is completed.
+     * @param {sendGoalFeedbackCallback} [feedbackCallback] - The callback function when the action pulishes feedback.
+     * @param {sendGoalFailedCallback} [failedCallback] - The callback function when the action failed.
+     */
+    sendGoal(goal: ActionGoal, resultCallback: (result: any) => any, feedbackCallback?: ((feedback: any) => any) | undefined, failedCallback?: ((error: string) => any) | undefined): string | undefined;
+    /**
+     * Cancels an action goal.
+     *
+     * @param {string} id - The ID of the action goal to cancel.
+     */
+    cancelGoal(id: string): void;
+    /**
+     * @callback advertiseCallback
+     * @param {ActionGoal} request - The action goal.
+     * @param {Object} response - An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
+     *     It should return true if the action has finished successfully,
+     *     i.e., without any fatal errors.
+     */
     /**
      * Advertise the action. This turns the Action object from a client
      * into a server. The callback will be called with every goal sent to this action.
      *
-     * @param callback - This works similarly to the callback for a C++ action and should take the following params:
-     *   * goal - the action goal
-     *   It should return true if the action has finished successfully,
-     *   i.e. without any fatal errors.
+     * @param {advertiseCallback} callback - This works similarly to the callback for a C++ action.
      */
-    advertise(callback: any): void;
+    advertise(callback: (request: ActionGoal, response: any) => any): void;
+    /**
+     * Unadvertise a previously advertised action.
+     */
     unadvertise(): void;
-    _executeAction(rosbridgeRequest: any): void;
-    sendFeedback(id: any, feedback: any): void;
-    setSucceeded(id: any, result: any): void;
-    setFailed(id: any): void;
+    /**
+     * Helper function that executes an action by calling the provided
+     * action callback with the auto-generated ID as a user-accessible input.
+     * Should not be called manually.
+     *
+     * @param {Object} rosbridgeRequest - The ROSLIB.ActionGoal to send.
+     * @param {string} rosbridgeRequest.id - The ID of the action goal.
+     */
+    _executeAction(rosbridgeRequest: {
+        id: string;
+    }): void;
+    /**
+     * Helper function to send action feedback inside an action handler.
+     *
+     * @param {string} id - The action goal ID.
+     * @param {ActionFeedback} feedback - The feedback to send.
+     */
+    sendFeedback(id: string, feedback: ActionFeedback): void;
+    /**
+     * Helper function to set an action as succeeded.
+     *
+     * @param {string} id - The action goal ID.
+     * @param {ActionResult} result - The result to set.
+     */
+    setSucceeded(id: string, result: ActionResult): void;
+    /**
+     * Helper function to set an action as failed.
+     *
+     * @param {string} id - The action goal ID.
+     */
+    setFailed(id: string): void;
 }
 import EventEmitter2_1 = require("eventemitter2");
 import EventEmitter2 = EventEmitter2_1.EventEmitter2;
+import Ros = require("../core/Ros");
+import ActionGoal = require("./ActionGoal");
+import ActionFeedback = require("./ActionFeedback");
+import ActionResult = require("./ActionResult");
