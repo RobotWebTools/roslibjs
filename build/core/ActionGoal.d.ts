@@ -3,15 +3,11 @@ export = ActionGoal;
  * An ActionGoal is passed into a ROS 2 action goal request.
  *
  * @constructor
- * @param {Object} [values={}] - Object matching the fields defined in the .action definition file.
+ * @template T
  */
-declare function ActionGoal(values?: any): void;
-declare class ActionGoal {
+declare class ActionGoal<T> {
     /**
-     * An ActionGoal is passed into a ROS 2 action goal request.
-     *
-     * @constructor
-     * @param {Object} [values={}] - Object matching the fields defined in the .action definition file.
+     * @param {T} [values={}] - Object matching the fields defined in the .action definition file.
      */
-    constructor(values?: any);
+    constructor(values?: T | undefined);
 }

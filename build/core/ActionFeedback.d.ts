@@ -3,15 +3,11 @@ export = ActionFeedback;
  * An ActionFeedback is periodically returned during an in-progress ROS 2 action.
  *
  * @constructor
- * @param {Object} [values={}] - Object matching the fields defined in the .action definition file.
+ * @template T
  */
-declare function ActionFeedback(values?: any): void;
-declare class ActionFeedback {
+declare class ActionFeedback<T> {
     /**
-     * An ActionFeedback is periodically returned during an in-progress ROS 2 action.
-     *
-     * @constructor
-     * @param {Object} [values={}] - Object matching the fields defined in the .action definition file.
+     * @param {T} [values={}] - Object matching the fields defined in the .action definition file.
      */
-    constructor(values?: any);
+    constructor(values?: T | undefined);
 }

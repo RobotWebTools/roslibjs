@@ -1,8 +1,9 @@
 export = Action;
 /**
  * A ROS 2 action client.
+ * @template TGoal, TFeedback, TResult
  */
-declare class Action extends EventEmitter2 {
+declare class Action<TGoal, TFeedback, TResult> extends EventEmitter2 {
     /**
      * @param {Object} options
      * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -18,15 +19,15 @@ declare class Action extends EventEmitter2 {
     name: string;
     actionType: string;
     isAdvertised: boolean;
-    _actionCallback: ((request: ActionGoal, response: any) => any) | null;
+    _actionCallback: ((request: ActionGoal<TGoal>, response: any) => any) | null;
     _cancelCallback: any;
     /**
      * @callback sendGoalResultCallback
-     *  @param {Object} result - The result from the action.
+     *  @param {TResult} result - The result from the action.
      */
     /**
      * @callback sendGoalFeedbackCallback
-     * @param {Object} feedback - The feedback from the action.
+     * @param {TFeedback} feedback - The feedback from the action.
      */
     /**
      * @callback sendGoalFailedCallback
@@ -37,12 +38,12 @@ declare class Action extends EventEmitter2 {
      * and the result in the result callback when the action is completed.
      * Does nothing if this action is currently advertised.
      *
-     * @param {ActionGoal} goal - The ROSLIB.ActionGoal to send.
+     * @param {TGoal} goal - The ROSLIB.ActionGoal to send.
      * @param {sendGoalResultCallback} resultCallback - The callback function when the action is completed.
      * @param {sendGoalFeedbackCallback} [feedbackCallback] - The callback function when the action pulishes feedback.
      * @param {sendGoalFailedCallback} [failedCallback] - The callback function when the action failed.
      */
-    sendGoal(goal: ActionGoal, resultCallback: (result: any) => any, feedbackCallback?: ((feedback: any) => any) | undefined, failedCallback?: ((error: string) => any) | undefined): string | undefined;
+    sendGoal(goal: TGoal, resultCallback: (result: TResult) => any, feedbackCallback?: ((feedback: TFeedback) => any) | undefined, failedCallback?: ((error: string) => any) | undefined): string | undefined;
     /**
      * Cancels an action goal.
      *
@@ -51,7 +52,7 @@ declare class Action extends EventEmitter2 {
     cancelGoal(id: string): void;
     /**
      * @callback advertiseCallback
-     * @param {ActionGoal} request - The action goal.
+     * @param {ActionGoal<TGoal>} request - The action goal.
      * @param {Object} response - An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
      *     It should return true if the action has finished successfully,
      *     i.e., without any fatal errors.
@@ -62,7 +63,7 @@ declare class Action extends EventEmitter2 {
      *
      * @param {advertiseCallback} callback - This works similarly to the callback for a C++ action.
      */
-    advertise(callback: (request: ActionGoal, response: any) => any): void;
+    advertise(callback: (request: ActionGoal<TGoal>, response: any) => any): void;
     /**
      * Unadvertise a previously advertised action.
      */
@@ -82,16 +83,16 @@ declare class Action extends EventEmitter2 {
      * Helper function to send action feedback inside an action handler.
      *
      * @param {string} id - The action goal ID.
-     * @param {ActionFeedback} feedback - The feedback to send.
+     * @param {ActionFeedback<TFeedback>} feedback - The feedback to send.
      */
-    sendFeedback(id: string, feedback: ActionFeedback): void;
+    sendFeedback(id: string, feedback: ActionFeedback<TFeedback>): void;
     /**
      * Helper function to set an action as succeeded.
      *
      * @param {string} id - The action goal ID.
      * @param {ActionResult} result - The result to set.
      */
-    setSucceeded(id: string, result: ActionResult): void;
+    setSucceeded(id: string, result: ActionResult<any>): void;
     /**
      * Helper function to set an action as failed.
      *

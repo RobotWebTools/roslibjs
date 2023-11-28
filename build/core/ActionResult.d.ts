@@ -3,15 +3,11 @@ export = ActionResult;
  * An ActionResult is returned from sending a ROS 2 action goal.
  *
  * @constructor
- * @param {Object} [values={}] - Object matching the fields defined in the .action definition file.
+ * @template T
  */
-declare function ActionResult(values?: any): void;
-declare class ActionResult {
+declare class ActionResult<T> {
     /**
-     * An ActionResult is returned from sending a ROS 2 action goal.
-     *
-     * @constructor
-     * @param {Object} [values={}] - Object matching the fields defined in the .action definition file.
+     * @param {T} [values={}] - Object matching the fields defined in the .action definition file.
      */
-    constructor(values?: any);
+    constructor(values?: T | undefined);
 }

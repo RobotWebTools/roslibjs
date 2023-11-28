@@ -11,6 +11,7 @@ var Ros = require('../core/Ros');
 
 /**
  * A ROS 2 action client.
+ * @template TGoal, TFeedback, TResult
  */
 class Action extends EventEmitter2 {
   /**
@@ -32,11 +33,11 @@ class Action extends EventEmitter2 {
 
   /**
    * @callback sendGoalResultCallback
-   *  @param {Object} result - The result from the action.
+   *  @param {TResult} result - The result from the action.
    */
   /**
    * @callback sendGoalFeedbackCallback
-   * @param {Object} feedback - The feedback from the action.
+   * @param {TFeedback} feedback - The feedback from the action.
    */
   /**
    * @callback sendGoalFailedCallback
@@ -47,7 +48,7 @@ class Action extends EventEmitter2 {
    * and the result in the result callback when the action is completed.
    * Does nothing if this action is currently advertised.
    *
-   * @param {ActionGoal} goal - The ROSLIB.ActionGoal to send.
+   * @param {TGoal} goal - The ROSLIB.ActionGoal to send.
    * @param {sendGoalResultCallback} resultCallback - The callback function when the action is completed.
    * @param {sendGoalFeedbackCallback} [feedbackCallback] - The callback function when the action pulishes feedback.
    * @param {sendGoalFailedCallback} [failedCallback] - The callback function when the action failed.
@@ -66,8 +67,10 @@ class Action extends EventEmitter2 {
             failedCallback(message.values);
           }
         } else if (message.op === 'action_feedback' && typeof feedbackCallback === 'function') {
+          // @ts-expect-error -- can't figure out how to get ActionFeedback to play nice in typescript here
           feedbackCallback(new ActionFeedback(message.values));
         } else if (message.op === 'action_result' && typeof resultCallback === 'function') {
+          // @ts-expect-error -- can't figure out how to get ActionResult to play nice in typescript here
           resultCallback(new ActionResult(message.values));
         }
       });
@@ -102,7 +105,7 @@ class Action extends EventEmitter2 {
 
   /**
    * @callback advertiseCallback
-   * @param {ActionGoal} request - The action goal.
+   * @param {ActionGoal<TGoal>} request - The action goal.
    * @param {Object} response - An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
    *     It should return true if the action has finished successfully,
    *     i.e., without any fatal errors.
@@ -164,7 +167,7 @@ class Action extends EventEmitter2 {
    * Helper function to send action feedback inside an action handler.
    *
    * @param {string} id - The action goal ID.
-   * @param {ActionFeedback} feedback - The feedback to send.
+   * @param {ActionFeedback<TFeedback>} feedback - The feedback to send.
    */
   sendFeedback(id, feedback) {
     var call = {
