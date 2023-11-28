@@ -24,7 +24,8 @@ declare class Action {
     name: any;
     actionType: any;
     isAdvertised: boolean;
-    _serviceCallback: any;
+    _actionCallback: any;
+    _cancelCallback: any;
     __proto__: EventEmitter2;
     /**
      * Calls the service. Returns the service response in the
@@ -38,7 +39,23 @@ declare class Action {
      * @param failedCallback - the callback function when the action failed (optional). Params:
      *   * error - the error message reported by ROS
      */
-    sendGoal(request: any, resultCallback: any, feedbackCallback: any, failedCallback: any): void;
+    sendGoal(request: any, resultCallback: any, feedbackCallback: any, failedCallback: any): string | undefined;
+    cancelGoal(id: any): void;
+    /**
+     * Advertise the action. This turns the Action object from a client
+     * into a server. The callback will be called with every goal sent to this action.
+     *
+     * @param callback - This works similarly to the callback for a C++ action and should take the following params:
+     *   * goal - the action goal
+     *   It should return true if the action has finished successfully,
+     *   i.e. without any fatal errors.
+     */
+    advertise(callback: any): void;
+    unadvertise(): void;
+    _executeAction(rosbridgeRequest: any): void;
+    sendFeedback(id: any, feedback: any): void;
+    setSucceeded(id: any, result: any): void;
+    setFailed(id: any): void;
 }
 import EventEmitter2_1 = require("eventemitter2");
 import EventEmitter2 = EventEmitter2_1.EventEmitter2;

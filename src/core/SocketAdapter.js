@@ -41,6 +41,8 @@ function SocketAdapter(client) {
       client.emit(message.service, message);
     } else if (message.op === 'send_action_goal') {
       client.emit(message.action, message);
+    } else if (message.op === 'cancel_action_goal') {
+      client.emit(message.id, message);
     } else if (message.op === 'action_feedback') {
       client.emit(message.id, message);
     } else if (message.op === 'action_result') {

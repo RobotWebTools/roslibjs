@@ -7,5 +7,5 @@ export const ServiceRequest: typeof import("./ServiceRequest");
 export const ServiceResponse: typeof import("./ServiceResponse");
 export const Action: typeof import("./Action");
 export const ActionGoal: typeof import("./ActionGoal");
-export const ActionFeedback: any;
+export const ActionFeedback: typeof import("./ActionFeedback");
 export const ActionResult: typeof import("./ActionResult");
