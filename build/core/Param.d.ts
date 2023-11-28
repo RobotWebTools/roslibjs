@@ -19,31 +19,38 @@ declare class Param {
      * @param {Object} value - The value of the param from ROS.
      */
     /**
+     * @callback getFailedCallback
+     * @param {string} error - The error message reported by ROS.
+     */
+    /**
      * Fetch the value of the param.
      *
-     * @param {getCallback} callback - Function with the following params:
+     * @param {getCallback} callback - The callback function.
+     * @param {getFailedCallback} [failedCallback] - The callback function when the service call failed.
      */
-    get(callback: (value: any) => any): void;
+    get(callback: (value: any) => any, failedCallback?: ((error: string) => any) | undefined): void;
     /**
      * @callback setParamCallback
      * @param {Object} response - The response from the service request.
      */
     /**
      * @callback setParamFailedCallback
-     * @param {Object} response - The response from the service request.
+     * @param {string} error - The error message reported by ROS.
      */
     /**
      * Set the value of the param in ROS.
      *
      * @param {Object} value - The value to set param to.
      * @param {setParamCallback} [callback] - The callback function.
+     * @param {setParamFailedCallback} [failedCallback] - The callback function when the service call failed.
      */
-    set(value: any, callback?: ((response: any) => any) | undefined): void;
+    set(value: any, callback?: ((response: any) => any) | undefined, failedCallback?: ((error: string) => any) | undefined): void;
     /**
      * Delete this parameter on the ROS server.
      *
      * @param {setParamCallback} callback - The callback function.
+     * @param {setParamFailedCallback} [failedCallback] - The callback function when the service call failed.
      */
-    delete(callback: (response: any) => any): void;
+    delete(callback: (response: any) => any, failedCallback?: ((error: string) => any) | undefined): void;
 }
 import Ros = require("../core/Ros");
