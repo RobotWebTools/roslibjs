@@ -1,6 +1,6 @@
 export = ActionFeedback;
 /**
- * An ActionFeedback is periodically returned during an in-progress action
+ * An ActionFeedback is periodically returned during an in-progress ROS 2 action
  *
  * @constructor
  * @param values - object matching the fields defined in the .action definition file
@@ -8,7 +8,7 @@ export = ActionFeedback;
 declare function ActionFeedback(values: any): void;
 declare class ActionFeedback {
     /**
-     * An ActionFeedback is periodically returned during an in-progress action
+     * An ActionFeedback is periodically returned during an in-progress ROS 2 action
      *
      * @constructor
      * @param values - object matching the fields defined in the .action definition file

@@ -9,7 +9,7 @@ var ActionResult = require('./ActionResult');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 /**
- * A ROS action client.
+ * A ROS 2 action client.
  *
  * @constructor
  * @params options - possible keys include:

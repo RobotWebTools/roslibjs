@@ -19659,6 +19659,7 @@ var ROSLIB = this.ROSLIB || {
 var assign = require('object-assign');
 // Add core components
 assign(ROSLIB, require('./core'));
+assign(ROSLIB, require('./actionlib'));
 assign(ROSLIB, require('./math'));
 assign(ROSLIB, require('./tf'));
 assign(ROSLIB, require('./urdf'));
@@ -20289,7 +20290,7 @@ var ActionFeedback = require('./ActionFeedback');
 var ActionResult = require('./ActionResult');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
 /**
- * A ROS action client.
+ * A ROS 2 action client.
  *
  * @constructor
  * @params options - possible keys include:
@@ -20435,7 +20436,7 @@ module.exports = Action;
  */
 var assign = require('object-assign');
 /**
- * An ActionFeedback is periodically returned during an in-progress action
+ * An ActionFeedback is periodically returned during an in-progress ROS 2 action
  *
  * @constructor
  * @param values - object matching the fields defined in the .action definition file
@@ -20453,7 +20454,7 @@ module.exports = ActionFeedback;
  */
 var assign = require('object-assign');
 /**
- * An ActionGoal is passed into an action goal request.
+ * An ActionGoal is passed into a ROS 2 action goal request.
  *
  * @constructor
  * @param values - object matching the fields defined in the .action definition file
@@ -20471,7 +20472,7 @@ module.exports = ActionGoal;
  */
 var assign = require('object-assign');
 /**
- * An ActionResult is returned from sending an action goal.
+ * An ActionResult is returned from sending a ROS 2 action goal.
  *
  * @constructor
  * @param values - object matching the fields defined in the .action definition file

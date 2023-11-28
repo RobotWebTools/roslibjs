@@ -1,6 +1,6 @@
 export = Action;
 /**
- * A ROS action client.
+ * A ROS 2 action client.
  *
  * @constructor
  * @params options - possible keys include:
@@ -11,7 +11,7 @@ export = Action;
 declare function Action(options: any): void;
 declare class Action {
     /**
-     * A ROS action client.
+     * A ROS 2 action client.
      *
      * @constructor
      * @params options - possible keys include:
