@@ -1,11 +1,13 @@
-export const Ros = require('./Ros');
-export const Topic = require('./Topic');
-export const Message = require('./Message');
-export const Param = require('./Param');
-export const Service = require('./Service');
-export const ServiceRequest = require('./ServiceRequest');
-export const ServiceResponse = require('./ServiceResponse');
-export const Action = require('./Action');
-export const ActionGoal = require('./ActionGoal');
-export const ActionFeedback = require('./ActionFeedback');
-export const ActionResult = require('./ActionResult');
+module.exports = {
+  Ros: require('./Ros'),
+  Topic: require('./Topic'),
+  Message: require('./Message'),
+  Param: require('./Param'),
+  Service: require('./Service'),
+  ServiceRequest: require('./ServiceRequest'),
+  ServiceResponse: require('./ServiceResponse'),
+  Action: require('./Action'),
+  ActionGoal: require('./ActionGoal'),
+  ActionFeedback: require('./ActionFeedback'),
+  ActionResult: require('./ActionResult')
+};

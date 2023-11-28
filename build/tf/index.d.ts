@@ -1,1 +1,1 @@
-export const TFClient: typeof import("./TFClient");
+export let TFClient: typeof import("./TFClient");
