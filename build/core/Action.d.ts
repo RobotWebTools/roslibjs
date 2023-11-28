@@ -19,7 +19,7 @@ declare class Action<TGoal, TFeedback, TResult> extends EventEmitter2 {
     name: string;
     actionType: string;
     isAdvertised: boolean;
-    _actionCallback: ((request: ActionGoal<TGoal>, response: any) => any) | null;
+    _actionCallback: ((goal: TGoal, response: any) => any) | null;
     _cancelCallback: any;
     /**
      * @callback sendGoalResultCallback
@@ -52,7 +52,7 @@ declare class Action<TGoal, TFeedback, TResult> extends EventEmitter2 {
     cancelGoal(id: string): void;
     /**
      * @callback advertiseCallback
-     * @param {ActionGoal<TGoal>} request - The action goal.
+     * @param {TGoal} goal - The action goal.
      * @param {Object} response - An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
      *     It should return true if the action has finished successfully,
      *     i.e., without any fatal errors.
@@ -63,7 +63,7 @@ declare class Action<TGoal, TFeedback, TResult> extends EventEmitter2 {
      *
      * @param {advertiseCallback} callback - This works similarly to the callback for a C++ action.
      */
-    advertise(callback: (request: ActionGoal<TGoal>, response: any) => any): void;
+    advertise(callback: (goal: TGoal, response: any) => any): void;
     /**
      * Unadvertise a previously advertised action.
      */
@@ -103,6 +103,5 @@ declare class Action<TGoal, TFeedback, TResult> extends EventEmitter2 {
 import EventEmitter2_1 = require("eventemitter2");
 import EventEmitter2 = EventEmitter2_1.EventEmitter2;
 import Ros = require("../core/Ros");
-import ActionGoal = require("./ActionGoal");
 import ActionFeedback = require("./ActionFeedback");
 import ActionResult = require("./ActionResult");

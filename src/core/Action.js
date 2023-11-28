@@ -105,7 +105,7 @@ class Action extends EventEmitter2 {
 
   /**
    * @callback advertiseCallback
-   * @param {ActionGoal<TGoal>} request - The action goal.
+   * @param {TGoal} goal - The action goal.
    * @param {Object} response - An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
    *     It should return true if the action has finished successfully,
    *     i.e., without any fatal errors.
