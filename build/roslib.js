@@ -19350,7 +19350,13 @@ assign(ROSLIB, require('./math'));
 assign(ROSLIB, require('./tf'));
 assign(ROSLIB, require('./urdf'));
 
+<<<<<<< HEAD
 },{"./actionlib":78,"./core":87,"./math":92,"./tf":94,"./urdf":106,"object-assign":31}],73:[function(require,module,exports){
+=======
+module.exports = ROSLIB;
+
+},{"./actionlib":14,"./core":26,"./math":31,"./tf":34,"./urdf":46,"object-assign":3}],9:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 (function (global){(function (){
 "use strict";
 global.ROSLIB = require('./RosLib');
@@ -19514,8 +19520,12 @@ var ActionClient = /** @class */ (function (_super) {
 }(EventEmitter2));
 module.exports = ActionClient;
 
+<<<<<<< HEAD
 },{"../core/Message":79,"../core/Ros":81,"../core/Topic":86,"eventemitter2":16}],75:[function(require,module,exports){
 "use strict";
+=======
+},{"../core/Message":18,"../core/Topic":25,"eventemitter2":2}],11:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author Justin Young - justin@oodar.com.au
@@ -19608,8 +19618,12 @@ var ActionListener = /** @class */ (function (_super) {
 }(EventEmitter2));
 module.exports = ActionListener;
 
+<<<<<<< HEAD
 },{"../core/Message":79,"../core/Ros":81,"../core/Topic":86,"eventemitter2":16}],76:[function(require,module,exports){
 "use strict";
+=======
+},{"../core/Message":18,"../core/Topic":25,"eventemitter2":2}],12:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
@@ -19711,9 +19725,13 @@ var Goal = /** @class */ (function (_super) {
     return Goal;
 }(EventEmitter2));
 module.exports = Goal;
+<<<<<<< HEAD
 
 },{"../core/Message":79,"./ActionClient":74,"eventemitter2":16}],77:[function(require,module,exports){
 "use strict";
+=======
+},{"../core/Message":18,"eventemitter2":2}],13:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author Laura Lindzey - lindzey@gmail.com
@@ -19955,6 +19973,12 @@ var SimpleActionServer = /** @class */ (function (_super) {
     return SimpleActionServer;
 }(EventEmitter2));
 module.exports = SimpleActionServer;
+<<<<<<< HEAD
+=======
+},{"../core/Message":18,"../core/Topic":25,"eventemitter2":2}],14:[function(require,module,exports){
+var Ros = require('../core/Ros');
+var mixin = require('../mixin');
+>>>>>>> 22a24aa (Add action client support)
 
 },{"../core/Message":79,"../core/Ros":81,"../core/Topic":86,"eventemitter2":16}],78:[function(require,module,exports){
 "use strict";
@@ -19965,8 +19989,128 @@ exports.ActionListener = require('./ActionListener');
 exports.Goal = require('./Goal');
 exports.SimpleActionServer = require('./SimpleActionServer');
 
+<<<<<<< HEAD
 },{"./ActionClient":74,"./ActionListener":75,"./Goal":76,"./SimpleActionServer":77}],79:[function(require,module,exports){
 "use strict";
+=======
+mixin(Ros, ['ActionClient', 'SimpleActionServer'], action);
+
+},{"../core/Ros":20,"../mixin":32,"./ActionClient":10,"./ActionListener":11,"./Goal":12,"./SimpleActionServer":13}],15:[function(require,module,exports){
+/**
+ * @fileoverview
+ * @author Sebastian Castro - sebastian.castro@picknik.ai
+ */
+
+var ActionGoal = require('./ActionGoal');
+var ActionResult = require('./ActionResult');
+var EventEmitter2 = require('eventemitter2').EventEmitter2;
+
+/**
+ * A ROS action client.
+ *
+ * @constructor
+ * @params options - possible keys include:
+ *   * ros - the ROSLIB.Ros connection handle
+ *   * name - the service name, like '/fibonacci'
+ *   * actionType - the action type, like 'action_tutorials_interfaces/Fibonacci'
+ */
+function Action(options) {
+  options = options || {};
+  this.ros = options.ros;
+  this.name = options.name;
+  this.actionType = options.actionType;
+  this.isAdvertised = false;
+
+  this._serviceCallback = null;
+}
+Action.prototype.__proto__ = EventEmitter2.prototype;
+
+/**
+ * Calls the service. Returns the service response in the
+ * callback. Does nothing if this service is currently advertised.
+ *
+ * @param request - the ROSLIB.ServiceRequest to send
+ * @param callback - function with params:
+ *   * response - the response from the service request
+ * @param failedCallback - the callback function when the service call failed (optional). Params:
+ *   * error - the error message reported by ROS
+ */
+Action.prototype.sendGoal = function(request, resultCallback, feedbackCallback, failedCallback) {
+  if (this.isAdvertised) {
+    return;
+  }
+
+  var actionGoalId = 'send_action_goal:' + this.name + ':' + (++this.ros.idCounter);
+
+  if (resultCallback || failedCallback) {
+    this.ros.on(actionGoalId, function(message) {
+      if (message.result !== undefined && message.result === false) {
+        if (typeof failedCallback === 'function') {
+          failedCallback(message.values);
+        }
+      } else if (message.op === "action_feedback" && typeof feedbackCallback === 'function') {
+        feedbackCallback(new ActionResult(message.values));
+      } else if (message.op === "action_result" && typeof resultCallback === 'function') {
+        resultCallback(new ActionResult(message.values));
+      }
+    });
+  }
+
+  var call = {
+    op : 'send_action_goal',
+    id : actionGoalId,
+    action : this.name,
+    action_type: this.actionType,
+    args : request,
+    feedback : true,
+  };
+  this.ros.callOnConnection(call);
+};
+
+module.exports = Action;
+
+},{"./ActionGoal":16,"./ActionResult":17,"eventemitter2":2}],16:[function(require,module,exports){
+/**
+ * @fileoverview
+ * @author Sebastian Castro - sebastian.castro@picknik.ai
+ */
+
+var assign = require('object-assign');
+
+/**
+ * An ActionGoal is passed into the an action goal request.
+ *
+ * @constructor
+ * @param values - object matching the fields defined in the .action definition file
+ */
+function ActionGoal(values) {
+  assign(this, values);
+}
+
+module.exports = ActionGoal;
+
+},{"object-assign":3}],17:[function(require,module,exports){
+/**
+ * @fileoverview
+ * @author Sebastian Castro - sebastian.castro@picknik.ai
+ */
+
+var assign = require('object-assign');
+
+/**
+ * An ActionResult is returned from sending an action goal.
+ *
+ * @constructor
+ * @param values - object matching the fields defined in the .action definition file
+ */
+function ActionResult(values) {
+  assign(this, values);
+}
+
+module.exports = ActionResult;
+
+},{"object-assign":3}],18:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -19988,9 +20132,13 @@ var Message = /** @class */ (function () {
     return Message;
 }());
 module.exports = Message;
+<<<<<<< HEAD
 
 },{"object-assign":31}],80:[function(require,module,exports){
 "use strict";
+=======
+},{"object-assign":3}],19:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -20079,9 +20227,13 @@ var Param = /** @class */ (function () {
     return Param;
 }());
 module.exports = Param;
+<<<<<<< HEAD
 
 },{"../core/Ros":81,"./Service":82,"./ServiceRequest":83}],81:[function(require,module,exports){
 "use strict";
+=======
+},{"./Service":21,"./ServiceRequest":22}],20:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -20894,8 +21046,12 @@ var Ros = /** @class */ (function (_super) {
 }(EventEmitter2));
 module.exports = Ros;
 
+<<<<<<< HEAD
 },{"../actionlib":78,"../tf":94,"../util/workerSocket":109,"./Param":80,"./Service":82,"./ServiceRequest":83,"./ServiceResponse":84,"./SocketAdapter.js":85,"./Topic":86,"eventemitter2":16,"object-assign":31,"ws":71}],82:[function(require,module,exports){
 "use strict";
+=======
+},{"../util/workerSocket":52,"./Service":21,"./ServiceRequest":22,"./SocketAdapter.js":24,"eventemitter2":2,"object-assign":3,"ws":49}],21:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -21039,8 +21195,12 @@ var Service = /** @class */ (function (_super) {
 }(EventEmitter2));
 module.exports = Service;
 
+<<<<<<< HEAD
 },{"../core/Ros":81,"./ServiceRequest":83,"./ServiceResponse":84,"eventemitter2":16}],83:[function(require,module,exports){
 "use strict";
+=======
+},{"./ServiceRequest":22,"./ServiceResponse":23,"eventemitter2":2}],22:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author Brandon Alexander - balexander@willowgarage.com
@@ -21062,9 +21222,13 @@ var ServiceRequest = /** @class */ (function () {
     return ServiceRequest;
 }());
 module.exports = ServiceRequest;
+<<<<<<< HEAD
 
 },{"object-assign":31}],84:[function(require,module,exports){
 "use strict";
+=======
+},{"object-assign":3}],23:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author Brandon Alexander - balexander@willowgarage.com
@@ -21086,8 +21250,12 @@ var ServiceResponse = /** @class */ (function () {
     return ServiceResponse;
 }());
 module.exports = ServiceResponse;
+<<<<<<< HEAD
 
 },{"object-assign":31}],85:[function(require,module,exports){
+=======
+},{"object-assign":3}],24:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * Socket event handling utilities for handling events on either
  * WebSocket and TCP sockets
@@ -21115,9 +21283,37 @@ if (typeof bson !== 'undefined') {
  * @private
  */
 function SocketAdapter(client) {
+<<<<<<< HEAD
     var decoder = null;
     if (client.transportOptions.decoder) {
         decoder = client.transportOptions.decoder;
+=======
+
+  var decoder = null;
+  if (client.transportOptions.decoder) {
+    decoder = client.transportOptions.decoder;
+  }
+
+  function handleMessage(message) {
+    if (message.op === 'publish') {
+      client.emit(message.topic, message.msg);
+    } else if (message.op === 'service_response') {
+      client.emit(message.id, message);
+    } else if (message.op === 'call_service') {
+      client.emit(message.service, message);
+    } else if (message.op === 'send_action_goal') {
+      client.emit(message.action, message);
+    } else if (message.op === 'action_feedback') {
+      client.emit(message.id, message);
+    } else if (message.op === 'action_result') {
+      client.emit(message.id, message);
+    } else if(message.op === 'status'){
+      if(message.id){
+        client.emit('status:'+message.id, message);
+      } else {
+        client.emit('status', message);
+      }
+>>>>>>> 22a24aa (Add action client support)
     }
     function handleMessage(message) {
         if (message.op === 'publish') {
@@ -21220,8 +21416,12 @@ function SocketAdapter(client) {
 }
 module.exports = SocketAdapter;
 
+<<<<<<< HEAD
 },{"../util/cborTypedArrayTags":107,"../util/decompressPng":108,"cbor-js":14}],86:[function(require,module,exports){
 "use strict";
+=======
+},{"../util/cborTypedArrayTags":47,"../util/decompressPng":51,"cbor-js":1}],25:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author Brandon Alexander - baalexander@gmail.com
@@ -21452,6 +21652,7 @@ var Topic = /** @class */ (function (_super) {
 }(EventEmitter2));
 module.exports = Topic;
 
+<<<<<<< HEAD
 },{"../core/Ros":81,"./Message":79,"eventemitter2":16}],87:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -21466,6 +21667,27 @@ exports.ServiceResponse = require('./ServiceResponse');
 
 },{"./Message":79,"./Param":80,"./Ros":81,"./Service":82,"./ServiceRequest":83,"./ServiceResponse":84,"./Topic":86}],88:[function(require,module,exports){
 "use strict";
+=======
+},{"./Message":18,"eventemitter2":2}],26:[function(require,module,exports){
+var mixin = require('../mixin');
+
+var core = module.exports = {
+    Ros: require('./Ros'),
+    Topic: require('./Topic'),
+    Message: require('./Message'),
+    Param: require('./Param'),
+    Service: require('./Service'),
+    ServiceRequest: require('./ServiceRequest'),
+    ServiceResponse: require('./ServiceResponse'),
+    Action: require('./Action'),
+    ActionGoal: require('./ActionGoal'),
+    ActionResult: require('./ActionResult'),
+};
+
+mixin(core.Ros, ['Param', 'Service', 'Topic', 'Action'], core);
+
+},{"../mixin":32,"./Action":15,"./ActionGoal":16,"./ActionResult":17,"./Message":18,"./Param":19,"./Ros":20,"./Service":21,"./ServiceRequest":22,"./ServiceResponse":23,"./Topic":25}],27:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -21539,9 +21761,13 @@ var Pose = /** @class */ (function () {
     return Pose;
 }());
 module.exports = Pose;
+<<<<<<< HEAD
 
 },{"./Quaternion":89,"./Transform":90,"./Vector3":91}],89:[function(require,module,exports){
 "use strict";
+=======
+},{"./Quaternion":28,"./Vector3":30}],28:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -21631,8 +21857,12 @@ var Quaternion = /** @class */ (function () {
 }());
 module.exports = Quaternion;
 
+<<<<<<< HEAD
 },{}],90:[function(require,module,exports){
 "use strict";
+=======
+},{}],29:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -21664,9 +21894,13 @@ var Transform = /** @class */ (function () {
     return Transform;
 }());
 module.exports = Transform;
+<<<<<<< HEAD
 
 },{"./Quaternion":89,"./Vector3":91}],91:[function(require,module,exports){
 "use strict";
+=======
+},{"./Quaternion":28,"./Vector3":30}],30:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -21733,6 +21967,7 @@ var Vector3 = /** @class */ (function () {
     return Vector3;
 }());
 module.exports = Vector3;
+<<<<<<< HEAD
 
 },{"./Quaternion":89}],92:[function(require,module,exports){
 "use strict";
@@ -21745,6 +21980,36 @@ exports.Vector3 = require('./Vector3');
 
 },{"./Pose":88,"./Quaternion":89,"./Transform":90,"./Vector3":91}],93:[function(require,module,exports){
 "use strict";
+=======
+},{}],31:[function(require,module,exports){
+module.exports = {
+    Pose: require('./Pose'),
+    Quaternion: require('./Quaternion'),
+    Transform: require('./Transform'),
+    Vector3: require('./Vector3')
+};
+
+},{"./Pose":27,"./Quaternion":28,"./Transform":29,"./Vector3":30}],32:[function(require,module,exports){
+/**
+ * Mixin a feature to the core/Ros prototype.
+ * For example, mixin(Ros, ['Topic'], {Topic: <Topic>})
+ * will add a topic bound to any Ros instances so a user
+ * can call `var topic = ros.Topic({name: '/foo'});`
+ *
+ * @author Graeme Yeates - github.com/megawac
+ */
+module.exports = function(Ros, classes, features) {
+    classes.forEach(function(className) {
+        var Class = features[className];
+        Ros.prototype[className] = function(options) {
+            options.ros = this;
+            return new Class(options);
+        };
+    });
+};
+
+},{}],33:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
@@ -21982,6 +22247,7 @@ var TFClient = /** @class */ (function (_super) {
 }(EventEmitter2));
 module.exports = TFClient;
 
+<<<<<<< HEAD
 },{"../actionlib/ActionClient":74,"../actionlib/Goal":76,"../core/Ros":81,"../core/Service.js":82,"../core/ServiceRequest.js":83,"../core/Topic.js":86,"../math/Transform":90,"eventemitter2":16}],94:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -21990,6 +22256,96 @@ exports.TFClient = require('./TFClient');
 
 },{"./TFClient":93}],95:[function(require,module,exports){
 "use strict";
+=======
+},{"../actionlib/ActionClient":10,"../actionlib/Goal":12,"../core/Service.js":21,"../core/ServiceRequest.js":22,"../core/Topic.js":25,"../math/Transform":29}],34:[function(require,module,exports){
+var Ros = require('../core/Ros');
+var mixin = require('../mixin');
+
+var tf = module.exports = {
+    TFClient: require('./TFClient')
+};
+
+mixin(Ros, ['TFClient'], tf);
+},{"../core/Ros":20,"../mixin":32,"./TFClient":33}],35:[function(require,module,exports){
+/**
+ * @fileOverview 
+ * @author Benjamin Pitzer - ben.pitzer@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
+ */
+
+var Vector3 = require('../math/Vector3');
+var UrdfTypes = require('./UrdfTypes');
+
+/**
+ * A Box element in a URDF.
+ *
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ */
+function UrdfBox(options) {
+  this.dimension = null;
+  this.type = UrdfTypes.URDF_BOX;
+
+  // Parse the xml string
+  var xyz = options.xml.getAttribute('size').split(' ');
+  this.dimension = new Vector3({
+    x : parseFloat(xyz[0]),
+    y : parseFloat(xyz[1]),
+    z : parseFloat(xyz[2])
+  });
+}
+
+module.exports = UrdfBox;
+},{"../math/Vector3":30,"./UrdfTypes":44}],36:[function(require,module,exports){
+/**
+ * @fileOverview 
+ * @author Benjamin Pitzer - ben.pitzer@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
+ */
+
+/**
+ * A Color element in a URDF.
+ *
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ */
+function UrdfColor(options) {
+  // Parse the xml string
+  var rgba = options.xml.getAttribute('rgba').split(' ');
+  this.r = parseFloat(rgba[0]);
+  this.g = parseFloat(rgba[1]);
+  this.b = parseFloat(rgba[2]);
+  this.a = parseFloat(rgba[3]);
+}
+
+module.exports = UrdfColor;
+},{}],37:[function(require,module,exports){
+/**
+ * @fileOverview 
+ * @author Benjamin Pitzer - ben.pitzer@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
+ */
+
+var UrdfTypes = require('./UrdfTypes');
+
+/**
+ * A Cylinder element in a URDF.
+ *
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ */
+function UrdfCylinder(options) {
+  this.type = UrdfTypes.URDF_CYLINDER;
+  this.length = parseFloat(options.xml.getAttribute('length'));
+  this.radius = parseFloat(options.xml.getAttribute('radius'));
+}
+
+module.exports = UrdfCylinder;
+},{"./UrdfTypes":44}],38:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -22165,8 +22521,128 @@ var UrdfJoint = /** @class */ (function () {
 }());
 module.exports = UrdfJoint;
 
+<<<<<<< HEAD
 },{"../math/Pose":88,"../math/Quaternion":89,"../math/Vector3":91}],99:[function(require,module,exports){
 "use strict";
+=======
+},{"../math/Pose":27,"../math/Quaternion":28,"../math/Vector3":30}],39:[function(require,module,exports){
+/**
+ * @fileOverview 
+ * @author Benjamin Pitzer - ben.pitzer@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
+ */
+
+var UrdfVisual = require('./UrdfVisual');
+
+/**
+ * A Link element in a URDF.
+ *
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ */
+function UrdfLink(options) {
+  this.name = options.xml.getAttribute('name');
+  this.visuals = [];
+  var visuals = options.xml.getElementsByTagName('visual');
+
+  for( var i=0; i<visuals.length; i++ ) {
+    this.visuals.push( new UrdfVisual({
+      xml : visuals[i]
+    }) );
+  }
+}
+
+module.exports = UrdfLink;
+},{"./UrdfVisual":45}],40:[function(require,module,exports){
+/**
+ * @fileOverview 
+ * @author Benjamin Pitzer - ben.pitzer@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
+ */
+
+var UrdfColor = require('./UrdfColor');
+
+/**
+ * A Material element in a URDF.
+ *
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ */
+function UrdfMaterial(options) {
+  this.textureFilename = null;
+  this.color = null;
+
+  this.name = options.xml.getAttribute('name');
+
+  // Texture
+  var textures = options.xml.getElementsByTagName('texture');
+  if (textures.length > 0) {
+    this.textureFilename = textures[0].getAttribute('filename');
+  }
+
+  // Color
+  var colors = options.xml.getElementsByTagName('color');
+  if (colors.length > 0) {
+    // Parse the RBGA string
+    this.color = new UrdfColor({
+      xml : colors[0]
+    });
+  }
+}
+
+UrdfMaterial.prototype.isLink = function() {
+  return this.color === null && this.textureFilename === null;
+};
+
+var assign = require('object-assign');
+
+UrdfMaterial.prototype.assign = function(obj) {
+    return assign(this, obj);
+};
+
+module.exports = UrdfMaterial;
+
+},{"./UrdfColor":36,"object-assign":3}],41:[function(require,module,exports){
+/**
+ * @fileOverview 
+ * @author Benjamin Pitzer - ben.pitzer@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
+ */
+
+var Vector3 = require('../math/Vector3');
+var UrdfTypes = require('./UrdfTypes');
+
+/**
+ * A Mesh element in a URDF.
+ *
+ * @constructor
+ * @param options - object with following keys:
+ *  * xml - the XML element to parse
+ */
+function UrdfMesh(options) {
+  this.scale = null;
+
+  this.type = UrdfTypes.URDF_MESH;
+  this.filename = options.xml.getAttribute('filename');
+
+  // Check for a scale
+  var scale = options.xml.getAttribute('scale');
+  if (scale) {
+    // Get the XYZ
+    var xyz = scale.split(' ');
+    this.scale = new Vector3({
+      x : parseFloat(xyz[0]),
+      y : parseFloat(xyz[1]),
+      z : parseFloat(xyz[2])
+    });
+  }
+}
+
+module.exports = UrdfMesh;
+},{"../math/Vector3":30,"./UrdfTypes":44}],42:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -22378,8 +22854,12 @@ var UrdfModel = /** @class */ (function () {
 }());
 module.exports = UrdfModel;
 
+<<<<<<< HEAD
 },{"./UrdfJoint":98,"./UrdfLink":99,"./UrdfMaterial":100,"@xmldom/xmldom":70}],103:[function(require,module,exports){
 "use strict";
+=======
+},{"./UrdfJoint":38,"./UrdfLink":39,"./UrdfMaterial":40,"@xmldom/xmldom":48}],43:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -22401,6 +22881,7 @@ var UrdfSphere = /** @class */ (function () {
     return UrdfSphere;
 }());
 module.exports = UrdfSphere;
+<<<<<<< HEAD
 
 },{"./UrdfTypes":104}],104:[function(require,module,exports){
 "use strict";
@@ -22413,6 +22894,17 @@ exports.URDF_MESH = 3;
 
 },{}],105:[function(require,module,exports){
 "use strict";
+=======
+},{"./UrdfTypes":44}],44:[function(require,module,exports){
+module.exports = {
+	URDF_SPHERE : 0,
+	URDF_BOX : 1,
+	URDF_CYLINDER : 2,
+	URDF_MESH : 3
+};
+
+},{}],45:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author Benjamin Pitzer - ben.pitzer@gmail.com
@@ -22545,6 +23037,7 @@ var UrdfVisual = /** @class */ (function () {
     return UrdfVisual;
 }());
 module.exports = UrdfVisual;
+<<<<<<< HEAD
 
 },{"../math/Pose":88,"../math/Quaternion":89,"../math/Vector3":91,"./UrdfBox":95,"./UrdfCylinder":97,"./UrdfMaterial":100,"./UrdfMesh":101,"./UrdfSphere":103}],106:[function(require,module,exports){
 "use strict";
@@ -22576,6 +23069,22 @@ exports.UrdfVisual = require('./UrdfVisual');
 __exportStar(require("./UrdfTypes"), exports);
 
 },{"./UrdfBox":95,"./UrdfColor":96,"./UrdfCylinder":97,"./UrdfLink":99,"./UrdfMaterial":100,"./UrdfMesh":101,"./UrdfModel":102,"./UrdfSphere":103,"./UrdfTypes":104,"./UrdfVisual":105}],107:[function(require,module,exports){
+=======
+},{"../math/Pose":27,"../math/Quaternion":28,"../math/Vector3":30,"./UrdfBox":35,"./UrdfCylinder":37,"./UrdfMaterial":40,"./UrdfMesh":41,"./UrdfSphere":43}],46:[function(require,module,exports){
+module.exports = require('object-assign')({
+    UrdfBox: require('./UrdfBox'),
+    UrdfColor: require('./UrdfColor'),
+    UrdfCylinder: require('./UrdfCylinder'),
+    UrdfLink: require('./UrdfLink'),
+    UrdfMaterial: require('./UrdfMaterial'),
+    UrdfMesh: require('./UrdfMesh'),
+    UrdfModel: require('./UrdfModel'),
+    UrdfSphere: require('./UrdfSphere'),
+    UrdfVisual: require('./UrdfVisual')
+}, require('./UrdfTypes'));
+
+},{"./UrdfBox":35,"./UrdfColor":36,"./UrdfCylinder":37,"./UrdfLink":39,"./UrdfMaterial":40,"./UrdfMesh":41,"./UrdfModel":42,"./UrdfSphere":43,"./UrdfTypes":44,"./UrdfVisual":45,"object-assign":3}],47:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 'use strict';
 var UPPER32 = Math.pow(2, 32);
 var warnedPrecision = false;
@@ -22679,8 +23188,25 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = cborTypedArrayTagger;
 }
 
+<<<<<<< HEAD
 },{}],108:[function(require,module,exports){
 (function (Buffer){(function (){
+=======
+},{}],48:[function(require,module,exports){
+exports.DOMImplementation = window.DOMImplementation;
+exports.XMLSerializer = window.XMLSerializer;
+exports.DOMParser = window.DOMParser;
+
+},{}],49:[function(require,module,exports){
+module.exports = typeof window !== 'undefined' ? window.WebSocket : WebSocket;
+
+},{}],50:[function(require,module,exports){
+/* global document */
+module.exports = function Canvas() {
+	return document.createElement('canvas');
+};
+},{}],51:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 /**
  * @fileOverview
  * @author Ramon Wijnands - rayman747@hotmail.com
@@ -22714,9 +23240,13 @@ function decompressPng(data, callback) {
 }
 module.exports = decompressPng;
 
+<<<<<<< HEAD
 }).call(this)}).call(this,require("buffer").Buffer)
 },{"buffer":11,"pngparse":43}],109:[function(require,module,exports){
 "use strict";
+=======
+},{"canvas":50}],52:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 try {
     // @ts-expect-error -- webworker include workarounds I don't know enough about to fix right now
     var work = require('webworkify');
@@ -22774,8 +23304,12 @@ var WorkerSocket = /** @class */ (function () {
 }());
 module.exports = WorkerSocket;
 
+<<<<<<< HEAD
 },{"./workerSocketImpl":110,"webworkify":68,"webworkify-webpack":67}],110:[function(require,module,exports){
 "use strict";
+=======
+},{"./workerSocketImpl":53,"webworkify":7,"webworkify-webpack":6}],53:[function(require,module,exports){
+>>>>>>> 22a24aa (Add action client support)
 var WebSocket = WebSocket || require('ws');
 module.exports = function (self) {
     var socket = null;
@@ -22821,4 +23355,8 @@ module.exports = function (self) {
     });
 };
 
+<<<<<<< HEAD
 },{"ws":71}]},{},[73]);
+=======
+},{"ws":49}]},{},[9]);
+>>>>>>> 22a24aa (Add action client support)

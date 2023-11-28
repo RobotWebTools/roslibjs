@@ -5,3 +5,7 @@ export const Param = require('./Param');
 export const Service = require('./Service');
 export const ServiceRequest = require('./ServiceRequest');
 export const ServiceResponse = require('./ServiceResponse');
+export const Action = require('./Action');
+export const ActionGoal = require('./ActionGoal');
+export const ActionFeedback = require('./ActionFeedback');
+export const ActionResult = require('./ActionResult');
