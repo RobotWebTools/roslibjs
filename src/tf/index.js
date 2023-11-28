@@ -1,1 +1,3 @@
-export const TFClient = require('./TFClient');
+module.exports = {
+  TFClient: require('./TFClient')
+};

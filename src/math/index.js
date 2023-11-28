@@ -1,4 +1,6 @@
-export const Pose = require('./Pose');
-export const Quaternion = require('./Quaternion');
-export const Transform = require('./Transform');
-export const Vector3 = require('./Vector3');
+module.exports = {
+  Pose: require('./Pose'),
+  Quaternion: require('./Quaternion'),
+  Transform: require('./Transform'),
+  Vector3: require('./Vector3')
+};

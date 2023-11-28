@@ -19305,52 +19305,35 @@ module.exports = typeof window !== 'undefined' ? window.WebSocket : WebSocket;
 
 },{}],72:[function(require,module,exports){
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
  */
-__exportStar(require("./core"), exports);
-__exportStar(require("./actionlib"), exports);
-__exportStar(require("./math"), exports);
-__exportStar(require("./tf"), exports);
-__exportStar(require("./urdf"), exports);
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 /**
  * If you use roslib in a browser, all the classes will be exported to a global variable called ROSLIB.
  *
  * If you use nodejs, this is the variable you get when you require('roslib').
  */
-// @ts-expect-error -- global browser-only shenanigans
-var ROSLIB = this.ROSLIB || {
+var ROSLIB = __assign(__assign(__assign(__assign(__assign({ 
     /**
      * @default
      * @description Library version
      */
-    REVISION: '1.3.0'
-};
-var assign = require('object-assign');
-// Add core components
-assign(ROSLIB, require('./core'));
-assign(ROSLIB, require('./actionlib'));
-assign(ROSLIB, require('./math'));
-assign(ROSLIB, require('./tf'));
-assign(ROSLIB, require('./urdf'));
+    REVISION: '1.3.0' }, require('./core')), require('./actionlib')), require('./math')), require('./tf')), require('./urdf'));
+module.exports = ROSLIB;
 
-},{"./actionlib":78,"./core":87,"./math":92,"./tf":94,"./urdf":106,"object-assign":31}],73:[function(require,module,exports){
+},{"./actionlib":78,"./core":87,"./math":92,"./tf":94,"./urdf":106}],73:[function(require,module,exports){
 (function (global){(function (){
 "use strict";
 global.ROSLIB = require('./RosLib');
@@ -19958,12 +19941,12 @@ module.exports = SimpleActionServer;
 
 },{"../core/Message":79,"../core/Ros":81,"../core/Topic":86,"eventemitter2":16}],78:[function(require,module,exports){
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SimpleActionServer = exports.Goal = exports.ActionListener = exports.ActionClient = void 0;
-exports.ActionClient = require('./ActionClient');
-exports.ActionListener = require('./ActionListener');
-exports.Goal = require('./Goal');
-exports.SimpleActionServer = require('./SimpleActionServer');
+module.exports = {
+    ActionClient: require('./ActionClient'),
+    ActionListener: require('./ActionListener'),
+    Goal: require('./Goal'),
+    SimpleActionServer: require('./SimpleActionServer')
+};
 
 },{"./ActionClient":74,"./ActionListener":75,"./Goal":76,"./SimpleActionServer":77}],79:[function(require,module,exports){
 "use strict";
@@ -21461,15 +21444,15 @@ module.exports = Topic;
 
 },{"../core/Ros":81,"./Message":79,"eventemitter2":16}],87:[function(require,module,exports){
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ServiceResponse = exports.ServiceRequest = exports.Service = exports.Param = exports.Message = exports.Topic = exports.Ros = void 0;
-exports.Ros = require('./Ros');
-exports.Topic = require('./Topic');
-exports.Message = require('./Message');
-exports.Param = require('./Param');
-exports.Service = require('./Service');
-exports.ServiceRequest = require('./ServiceRequest');
-exports.ServiceResponse = require('./ServiceResponse');
+module.exports = {
+    Ros: require('./Ros'),
+    Topic: require('./Topic'),
+    Message: require('./Message'),
+    Param: require('./Param'),
+    Service: require('./Service'),
+    ServiceRequest: require('./ServiceRequest'),
+    ServiceResponse: require('./ServiceResponse')
+};
 
 },{"./Message":79,"./Param":80,"./Ros":81,"./Service":82,"./ServiceRequest":83,"./ServiceResponse":84,"./Topic":86}],88:[function(require,module,exports){
 "use strict";
@@ -21743,12 +21726,12 @@ module.exports = Vector3;
 
 },{"./Quaternion":89}],92:[function(require,module,exports){
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Vector3 = exports.Transform = exports.Quaternion = exports.Pose = void 0;
-exports.Pose = require('./Pose');
-exports.Quaternion = require('./Quaternion');
-exports.Transform = require('./Transform');
-exports.Vector3 = require('./Vector3');
+module.exports = {
+    Pose: require('./Pose'),
+    Quaternion: require('./Quaternion'),
+    Transform: require('./Transform'),
+    Vector3: require('./Vector3')
+};
 
 },{"./Pose":88,"./Quaternion":89,"./Transform":90,"./Vector3":91}],93:[function(require,module,exports){
 "use strict";
@@ -21991,9 +21974,9 @@ module.exports = TFClient;
 
 },{"../actionlib/ActionClient":74,"../actionlib/Goal":76,"../core/Ros":81,"../core/Service.js":82,"../core/ServiceRequest.js":83,"../core/Topic.js":86,"../math/Transform":90,"eventemitter2":16}],94:[function(require,module,exports){
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TFClient = void 0;
-exports.TFClient = require('./TFClient');
+module.exports = {
+    TFClient: require('./TFClient')
+};
 
 },{"./TFClient":93}],95:[function(require,module,exports){
 "use strict";
@@ -22411,12 +22394,12 @@ module.exports = UrdfSphere;
 
 },{"./UrdfTypes":104}],104:[function(require,module,exports){
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.URDF_MESH = exports.URDF_CYLINDER = exports.URDF_BOX = exports.URDF_SPHERE = void 0;
-exports.URDF_SPHERE = 0;
-exports.URDF_BOX = 1;
-exports.URDF_CYLINDER = 2;
-exports.URDF_MESH = 3;
+module.exports = {
+    URDF_SPHERE: 0,
+    URDF_BOX: 1,
+    URDF_CYLINDER: 2,
+    URDF_MESH: 3
+};
 
 },{}],105:[function(require,module,exports){
 "use strict";
@@ -22555,32 +22538,18 @@ module.exports = UrdfVisual;
 
 },{"../math/Pose":88,"../math/Quaternion":89,"../math/Vector3":91,"./UrdfBox":95,"./UrdfCylinder":97,"./UrdfMaterial":100,"./UrdfMesh":101,"./UrdfSphere":103}],106:[function(require,module,exports){
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.UrdfVisual = exports.UrdfSphere = exports.UrdfModel = exports.UrdfMesh = exports.UrdfMaterial = exports.UrdfLink = exports.UrdfCylinder = exports.UrdfColor = exports.UrdfBox = void 0;
-exports.UrdfBox = require('./UrdfBox');
-exports.UrdfColor = require('./UrdfColor');
-exports.UrdfCylinder = require('./UrdfCylinder');
-exports.UrdfLink = require('./UrdfLink');
-exports.UrdfMaterial = require('./UrdfMaterial');
-exports.UrdfMesh = require('./UrdfMesh');
-exports.UrdfModel = require('./UrdfModel');
-exports.UrdfSphere = require('./UrdfSphere');
-exports.UrdfVisual = require('./UrdfVisual');
-__exportStar(require("./UrdfTypes"), exports);
+module.exports = __assign({ UrdfBox: require('./UrdfBox'), UrdfColor: require('./UrdfColor'), UrdfCylinder: require('./UrdfCylinder'), UrdfLink: require('./UrdfLink'), UrdfMaterial: require('./UrdfMaterial'), UrdfMesh: require('./UrdfMesh'), UrdfModel: require('./UrdfModel'), UrdfSphere: require('./UrdfSphere'), UrdfVisual: require('./UrdfVisual') }, require('./UrdfTypes'));
 
 },{"./UrdfBox":95,"./UrdfColor":96,"./UrdfCylinder":97,"./UrdfLink":99,"./UrdfMaterial":100,"./UrdfMesh":101,"./UrdfModel":102,"./UrdfSphere":103,"./UrdfTypes":104,"./UrdfVisual":105}],107:[function(require,module,exports){
 'use strict';

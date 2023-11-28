@@ -1,4 +1,6 @@
-export const ActionClient = require('./ActionClient');
-export const ActionListener = require('./ActionListener');
-export const Goal = require('./Goal');
-export const SimpleActionServer = require('./SimpleActionServer');
+module.exports = {
+  ActionClient: require('./ActionClient'),
+  ActionListener: require('./ActionListener'),
+  Goal: require('./Goal'),
+  SimpleActionServer: require('./SimpleActionServer')
+};

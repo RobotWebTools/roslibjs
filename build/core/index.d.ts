@@ -1,7 +1,7 @@
-export const Ros: typeof import("./Ros");
-export const Topic: typeof import("./Topic");
-export const Message: typeof import("./Message");
-export const Param: typeof import("./Param");
-export const Service: typeof import("./Service");
-export const ServiceRequest: typeof import("./ServiceRequest");
-export const ServiceResponse: typeof import("./ServiceResponse");
+export let Ros: typeof import("./Ros");
+export let Topic: typeof import("./Topic");
+export let Message: typeof import("./Message");
+export let Param: typeof import("./Param");
+export let Service: typeof import("./Service");
+export let ServiceRequest: typeof import("./ServiceRequest");
+export let ServiceResponse: typeof import("./ServiceResponse");

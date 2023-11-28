@@ -1,4 +1,4 @@
-export const ActionClient: typeof import("./ActionClient");
-export const ActionListener: typeof import("./ActionListener");
-export const Goal: typeof import("./Goal");
-export const SimpleActionServer: typeof import("./SimpleActionServer");
+export let ActionClient: typeof import("./ActionClient");
+export let ActionListener: typeof import("./ActionListener");
+export let Goal: typeof import("./Goal");
+export let SimpleActionServer: typeof import("./SimpleActionServer");
