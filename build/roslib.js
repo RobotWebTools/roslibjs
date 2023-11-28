@@ -20309,17 +20309,19 @@ function Action(options) {
 }
 Action.prototype.__proto__ = EventEmitter2.prototype;
 /**
- * Calls the service. Returns the service response in the
- * callback. Does nothing if this service is currently advertised.
+ * Sends an action goal. Returns the feedback in the feedback callback while the action is running
+ * and the result in the result callback when the action is completed.
+ * Does nothing if this action is currently advertised.
  *
- * @param request - the ROSLIB.ServiceRequest to send
- * @param resultCallback - function with params:
+ * @param goal - the ROSLIB.ActionGoal to send
+ * @param resultCallback - the callback function when the action is completed with params:
  *   * result - the result from the action
  * @param feedbackCallback - the callback function when the action publishes feedback (optional). Params:
  *   * feedback - the feedback from the action
  * @param failedCallback - the callback function when the action failed (optional). Params:
  *   * error - the error message reported by ROS
  */
+<<<<<<< HEAD
 Action.prototype.sendGoal = function (request, resultCallback, feedbackCallback, failedCallback) {
     if (this.isAdvertised) {
         return;
@@ -20358,6 +20360,54 @@ Action.prototype.cancelGoal = function (id) {
         action: this.name,
     };
     this.ros.callOnConnection(call);
+=======
+Action.prototype.sendGoal = function(goal, resultCallback, feedbackCallback, failedCallback) {
+  if (this.isAdvertised) {
+    return;
+  }
+
+  var actionGoalId = 'send_action_goal:' + this.name + ':' + (++this.ros.idCounter);
+
+  if (resultCallback || failedCallback) {
+    this.ros.on(actionGoalId, function(message) {
+      if (message.result !== undefined && message.result === false) {
+        if (typeof failedCallback === 'function') {
+          failedCallback(message.values);
+        }
+      } else if (message.op === 'action_feedback' && typeof feedbackCallback === 'function') {
+        feedbackCallback(new ActionFeedback(message.values));
+      } else if (message.op === 'action_result' && typeof resultCallback === 'function') {
+        resultCallback(new ActionResult(message.values));
+      }
+    });
+  }
+
+  var call = {
+    op : 'send_action_goal',
+    id : actionGoalId,
+    action : this.name,
+    action_type: this.actionType,
+    args : goal,
+    feedback : true,
+  };
+  this.ros.callOnConnection(call);
+
+  return actionGoalId;
+};
+
+/**
+ * Cancels an action goal.
+ * 
+ * @param id - the ID of the action goal to cancel.
+ */
+Action.prototype.cancelGoal = function(id) {
+  var call = {
+    op: 'cancel_action_goal',
+    id: id,
+    action: this.name,
+  };
+  this.ros.callOnConnection(call);
+>>>>>>> 9edabb3 (Add parameter ROS 2 example)
 };
 /**
  * Advertise the action. This turns the Action object from a client
@@ -20381,6 +20431,7 @@ Action.prototype.advertise = function (callback) {
     });
     this.isAdvertised = true;
 };
+<<<<<<< HEAD
 Action.prototype.unadvertise = function () {
     if (!this.isAdvertised) {
         return;
@@ -20425,6 +20476,85 @@ Action.prototype.setFailed = function (id) {
         result: false,
     };
     this.ros.callOnConnection(call);
+=======
+
+/**
+ * Unadvertise a previously advertised action.
+ */
+Action.prototype.unadvertise = function() {
+  if (!this.isAdvertised) {
+    return;
+  }
+  this.ros.callOnConnection({
+    op: 'unadvertise_action',
+    action: this.name
+  });
+  this.isAdvertised = false;
+};
+
+/**
+ * Helper function that executes an action by calling the provided
+ * action callback with the auto-generated ID as a user-accessible input.
+ * Should not be called manually.
+ * 
+ * @param rosbridgeRequest - The ROSLIB.ActionGoal to send
+ */
+Action.prototype._executeAction = function(rosbridgeRequest) {
+  var id;
+  if (rosbridgeRequest.id) {
+    id = rosbridgeRequest.id;
+  }
+
+  this._actionCallback(rosbridgeRequest.args, id);
+};
+
+/**
+ * Helper function to send action feedback inside an action handler.
+ *
+ * @param id - The action goal ID.
+ * @param feedback - The feedback to send.
+ */
+Action.prototype.sendFeedback = function(id, feedback) {
+  var call = {
+    op: 'action_feedback',
+    id: id,
+    action: this.name,
+    values: new ActionFeedback(feedback),
+  };
+  this.ros.callOnConnection(call);
+};
+
+/**
+ * Helper function to set an action as succeeded.
+ *
+ * @param id - The action goal ID.
+ * @param result - The result to set.
+ */
+Action.prototype.setSucceeded = function(id, result) {
+  var call = {
+    op: 'action_result',
+    id: id,
+    action: this.name,
+    values: new ActionResult(result),
+    result: true,
+  };
+  this.ros.callOnConnection(call);
+};
+
+/**
+ * Helper function to set an action as failed.
+ *
+ * @param id - The action goal ID.
+ */
+Action.prototype.setFailed = function(id) {
+  var call = {
+    op: 'action_result',
+    id: id,
+    action: this.name,
+    result: false,
+  };
+  this.ros.callOnConnection(call);
+>>>>>>> 9edabb3 (Add parameter ROS 2 example)
 };
 module.exports = Action;
 

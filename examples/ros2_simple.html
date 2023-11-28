@@ -125,6 +125,23 @@
     response['message'] = 'Set successfully';
     return true;
   });
+
+  // Getting a param value
+  // ---------------------
+
+  // In ROS 2, params are set in the format 'node_name:param_name'
+  var favoriteColor = new ROSLIB.Param({
+    ros : ros,
+    name : '/add_two_ints_server:use_sim_time'
+  });
+
+  favoriteColor.get(function(value) {
+    console.log('The value of use_sim_time before setting is ' + value);
+  });
+  favoriteColor.set("true");
+  favoriteColor.get(function(value) {
+    console.log('The value of use_sim_time after setting is ' + value);
+  });
 </script>
 </head>
 
