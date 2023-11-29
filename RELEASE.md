@@ -16,19 +16,18 @@ github-changes -o RobotWebTools -r roslibjs --only-pulls --use-commit-body -a -b
 * Version bump in package.json, bower.json, and in the main file. e.g) [RosLib.js](src/RosLib.js)
 * Mark *upcoming* in CHAGELOG.md as the new release version
 * Tag the version
-* Create a new release on GitHub. Let GitHub auto-generate the changelog there.
 
 ## 3. Release modules
 
 ### NPM
 
-Keep all modules under @robot-web-tools scope? or in global scope? What are pros and cons?
+Publish the module. We publish in the global scope.
 
 * `npm publish`
 
 ### CDN
 
-Talk to @rctoris
+Hosted via the [JsDelivr](https://www.jsdelivr.com/) CDN, which takes it directly from the repo.
 
 ## 4. Create GitHub Release
 
@@ -37,7 +36,6 @@ Talk to @rctoris
 * Let GitHub auto-generate the Changelog
 * Mark `Set as latest release`
 * Publish release
-
 
 ## 5. Update JSdocs in Robot Web Tools website
 
