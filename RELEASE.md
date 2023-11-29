@@ -5,16 +5,15 @@ Robot Web Tool javascript modules([roslibjs](https://github.com/RobotWebTools/ro
 
 ## 0. Make sure that the releasing module is compatible with other RWT modules
 
-## 1. Generate CHANGELOG using [github-changes](https://github.com/lalitkapoor/github-changes)
+## 1. Generate CHANGELOG using [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator)
 
 ```bash
-github-changes -o RobotWebTools -r roslibjs --only-pulls --use-commit-body -a -b develop
+docker run -it --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator -u robotwebtools -p <PACKAGE_NAME> --usernames-as-github-logins --simple-list --no-issues --date-format "%Y-%m-%d %H:%M %z" -t <YOUR_GITHUB_TOKEN>
 ```
 
 ## 2. Bump a new version
 
 * Version bump in package.json, bower.json, and in the main file. e.g) [RosLib.js](src/RosLib.js)
-* Mark *upcoming* in CHAGELOG.md as the new release version
 * Tag the version
 
 ## 3. Release modules
