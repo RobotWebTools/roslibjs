@@ -90,17 +90,90 @@
 
             <td class="type">
             
+                
+<span class="param-type">Object</span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last"><p>possible keys include:</p>
-<ul>
-<li>ros - the ROSLIB.Ros connection handle</li>
-<li>name - the param name, like max_vel_x</li>
-</ul></td>
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ros</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Ros.html">Ros</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ROSLIB.Ros connection handle.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The param name, like max_vel_x.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -197,7 +270,7 @@
     
 
     
-    <h4 class="name" id="delete"><span class="type-signature"></span>delete<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="delete"><span class="type-signature"></span>delete<span class="signature">(callback<span class="signature-attributes">opt</span>, failedCallback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -206,94 +279,6 @@
 
 <div class="description">
     <p>Delete this parameter on the ROS server.</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_Param.js.html">core/Param.js</a>, <a href="core_Param.js.html#line69">line 69</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(callback)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Fetches the value of the param.</p>
 </div>
 
 
@@ -317,6 +302,8 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -334,16 +321,110 @@
 
             <td class="type">
             
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The callback function when the service call succeeded.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>failedCallback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The callback function when the service call failed.</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last"><p>function with the following params:</p>
-<ul>
-<li>value - the value of the param from ROS.</li>
-</ul></td>
+            <td class="description last"><p>The error message reported by ROS.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -384,7 +465,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_Param.js.html">core/Param.js</a>, <a href="core_Param.js.html#line29">line 29</a>
+        <a href="core_Param.js.html">core/Param.js</a>, <a href="core_Param.js.html#line78">line 78</a>
     </li></ul></dd>
     
 
@@ -420,7 +501,7 @@
     
 
     
-    <h4 class="name" id="set"><span class="type-signature"></span>set<span class="signature">(value)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(callback, failedCallback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -428,7 +509,7 @@
 
 
 <div class="description">
-    <p>Sets the value of the param in ROS.</p>
+    <p>Fetch the value of the param.</p>
 </div>
 
 
@@ -441,6 +522,58 @@
 
     <h5>Parameters:</h5>
     
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Function with the following params:</p>
+                <h6>Properties</h6>
+                
 
 <table class="params">
     <thead>
@@ -469,13 +602,107 @@
 
             <td class="type">
             
+                
+<span class="param-type">Object</span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last"><p>value to set param to.</p></td>
+            <td class="description last"><p>The value of the param from ROS.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>failedCallback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Function when the service call failed with the following params:</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The error message reported by ROS.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -516,7 +743,269 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_Param.js.html">core/Param.js</a>, <a href="core_Param.js.html#line51">line 51</a>
+        <a href="core_Param.js.html">core/Param.js</a>, <a href="core_Param.js.html#line31">line 31</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="set"><span class="type-signature"></span>set<span class="signature">(value, callback<span class="signature-attributes">opt</span>, failedCallback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Set the value of the param in ROS.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The value to set param to.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The callback function.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>failedCallback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The callback function when the service call failed.</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The error message reported by ROS.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="core_Param.js.html">core/Param.js</a>, <a href="core_Param.js.html#line56">line 56</a>
     </li></ul></dd>
     
 
@@ -562,13 +1051,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActionClient.html">ActionClient</a></li><li><a href="ActionListener.html">ActionListener</a></li><li><a href="Goal.html">Goal</a></li><li><a href="Message.html">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="Pose.html">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="Service.html">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="ServiceResponse.html">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="Topic.html">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="UrdfColor.html">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="UrdfMaterial.html">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="UrdfVisual.html">UrdfVisual</a></li><li><a href="Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#cborTypedArrayTagger">cborTypedArrayTagger</a></li><li><a href="global.html#conversionArrayTypes">conversionArrayTypes</a></li><li><a href="global.html#decodeInt64LE">decodeInt64LE</a></li><li><a href="global.html#decodeNativeArray">decodeNativeArray</a></li><li><a href="global.html#decodeUint64LE">decodeUint64LE</a></li><li><a href="global.html#nativeArrayTypes">nativeArrayTypes</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActionClient.html">ActionClient</a></li><li><a href="ActionListener.html">ActionListener</a></li><li><a href="Goal.html">Goal</a></li><li><a href="Message.html">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="Pose.html">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="Service.html">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="ServiceResponse.html">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="Topic.html">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="UrdfColor.html">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="UrdfMaterial.html">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="UrdfVisual.html">UrdfVisual</a></li><li><a href="Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#cborTypedArrayTagger">cborTypedArrayTagger</a></li><li><a href="global.html#conversionArrayTypes">conversionArrayTypes</a></li><li><a href="global.html#decodeInt64LE">decodeInt64LE</a></li><li><a href="global.html#decodeNativeArray">decodeNativeArray</a></li><li><a href="global.html#decodeUint64LE">decodeUint64LE</a></li><li><a href="global.html#nativeArrayTypes">nativeArrayTypes</a></li><li><a href="global.html#REVISION">REVISION</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Tue May 03 2022 15:43:24 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Mon Dec 04 2023 21:14:46 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

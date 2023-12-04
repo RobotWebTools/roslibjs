@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Service<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Service<span class="signature">(options)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -41,7 +41,7 @@
     
 
     
-    <h4 class="name" id="Service"><span class="type-signature"></span>new Service<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Service"><span class="type-signature"></span>new Service<span class="signature">(options)</span><span class="type-signature"></span></h4>
     
 
     
@@ -58,6 +58,150 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ros</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Ros.html">Ros</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ROSLIB.Ros connection handle.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The service name, like '/add_two_ints'.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>serviceType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The service type, like 'rospy_tutorials/AddTwoInts'.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -200,6 +344,11 @@ that's made on this service.</p>
 
             <td class="type">
             
+                
+<span class="param-type">function</span>
+
+
+            
             </td>
 
             
@@ -207,12 +356,80 @@ that's made on this service.</p>
             
 
             <td class="description last"><p>This works similarly to the callback for a C++ service and should take the following params:</p>
-<ul>
-<li>request - the service request</li>
-<li>response - an empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>request</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ServiceRequest.html">ServiceRequest</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The service request.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>response</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
 It should return true if the service has finished successfully,
-i.e. without any fatal errors.</li>
-</ul></td>
+i.e., without any fatal errors.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -289,7 +506,7 @@ i.e. without any fatal errors.</li>
     
 
     
-    <h4 class="name" id="callService"><span class="type-signature"></span>callService<span class="signature">(request, callback, failedCallback)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="callService"><span class="type-signature"></span>callService<span class="signature">(request, callback, failedCallback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -297,7 +514,7 @@ i.e. without any fatal errors.</li>
 
 
 <div class="description">
-    <p>Calls the service. Returns the service response in the
+    <p>Call the service. Returns the service response in the
 callback. Does nothing if this service is currently advertised.</p>
 </div>
 
@@ -322,6 +539,8 @@ callback. Does nothing if this service is currently advertised.</p>
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -339,13 +558,26 @@ callback. Does nothing if this service is currently advertised.</p>
 
             <td class="type">
             
+                
+<span class="param-type"><a href="ServiceRequest.html">ServiceRequest</a></span>
+
+
+            
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last"><p>the ROSLIB.ServiceRequest to send</p></td>
+            <td class="description last"><p>The ROSLIB.ServiceRequest to send.</p></td>
         </tr>
 
     
@@ -357,16 +589,75 @@ callback. Does nothing if this service is currently advertised.</p>
 
             <td class="type">
             
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Function with the following params:</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>response</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last"><p>function with params:</p>
-<ul>
-<li>response - the response from the service request</li>
-</ul></td>
+            <td class="description last"><p>The response from the service request.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -378,16 +669,77 @@ callback. Does nothing if this service is currently advertised.</p>
 
             <td class="type">
             
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The callback function when the service call failed with params:</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last"><p>the callback function when the service call failed (optional). Params:</p>
-<ul>
-<li>error - the error message reported by ROS</li>
-</ul></td>
+            <td class="description last"><p>The error message reported by ROS.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -474,13 +826,13 @@ callback. Does nothing if this service is currently advertised.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActionClient.html">ActionClient</a></li><li><a href="ActionListener.html">ActionListener</a></li><li><a href="Goal.html">Goal</a></li><li><a href="Message.html">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="Pose.html">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="Service.html">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="ServiceResponse.html">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="Topic.html">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="UrdfColor.html">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="UrdfMaterial.html">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="UrdfVisual.html">UrdfVisual</a></li><li><a href="Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#cborTypedArrayTagger">cborTypedArrayTagger</a></li><li><a href="global.html#conversionArrayTypes">conversionArrayTypes</a></li><li><a href="global.html#decodeInt64LE">decodeInt64LE</a></li><li><a href="global.html#decodeNativeArray">decodeNativeArray</a></li><li><a href="global.html#decodeUint64LE">decodeUint64LE</a></li><li><a href="global.html#nativeArrayTypes">nativeArrayTypes</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActionClient.html">ActionClient</a></li><li><a href="ActionListener.html">ActionListener</a></li><li><a href="Goal.html">Goal</a></li><li><a href="Message.html">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="Pose.html">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="Service.html">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="ServiceResponse.html">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="Topic.html">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="UrdfColor.html">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="UrdfMaterial.html">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="UrdfVisual.html">UrdfVisual</a></li><li><a href="Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#cborTypedArrayTagger">cborTypedArrayTagger</a></li><li><a href="global.html#conversionArrayTypes">conversionArrayTypes</a></li><li><a href="global.html#decodeInt64LE">decodeInt64LE</a></li><li><a href="global.html#decodeNativeArray">decodeNativeArray</a></li><li><a href="global.html#decodeUint64LE">decodeUint64LE</a></li><li><a href="global.html#nativeArrayTypes">nativeArrayTypes</a></li><li><a href="global.html#REVISION">REVISION</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Tue May 03 2022 15:43:24 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Mon Dec 04 2023 21:14:46 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

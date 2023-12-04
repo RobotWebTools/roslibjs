@@ -52,8 +52,8 @@
     <p>Publish and/or subscribe to a topic in ROS.</p>
 <p>Emits the following events:</p>
 <ul>
-<li>'warning' - if there are any warning during the Topic creation</li>
-<li>'message' - the message data from rosbridge</li>
+<li>'warning' - If there are any warning during the Topic creation.</li>
+<li>'message' - The message data from rosbridge.</li>
 </ul>
 </div>
 
@@ -95,24 +95,387 @@
 
             <td class="type">
             
+                
+<span class="param-type">Object</span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last"><p>object with following keys:</p>
-<ul>
-<li>ros - the ROSLIB.Ros connection handle</li>
-<li>name - the topic name, like /cmd_vel</li>
-<li>messageType - the message type, like 'std_msgs/String'</li>
-<li>compression - the type of compression to use, like 'png', 'cbor', or 'cbor-raw'</li>
-<li>throttle_rate - the rate (in ms in between messages) at which to throttle the topics</li>
-<li>queue_size - the queue created at bridge side for re-publishing webtopics (defaults to 100)</li>
-<li>latch - latch the topic when publishing</li>
-<li>queue_length - the queue length at bridge side used when subscribing (defaults to 0, no queueing).</li>
-<li>reconnect_on_close - the flag to enable resubscription and readvertisement on close event(defaults to true).</li>
-</ul></td>
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ros</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Ros.html">Ros</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The ROSLIB.Ros connection handle.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The topic name, like '/cmd_vel'.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>messageType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The message type, like 'std_msgs/String'.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>compression</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    none
+                
+                </td>
+            
+
+            <td class="description last"><p>The type of compression to use, like 'png', 'cbor', or 'cbor-raw'.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>throttle_rate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last"><p>The rate (in ms in between messages) at which to throttle the topics.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>queue_size</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    100
+                
+                </td>
+            
+
+            <td class="description last"><p>The queue created at bridge side for re-publishing webtopics.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>latch</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>Latch the topic when publishing.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>queue_length</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last"><p>The queue length at bridge side used when subscribing.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>reconnect_on_close</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>The flag to enable resubscription and readvertisement on close event.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -217,7 +580,7 @@
 
 
 <div class="description">
-    <p>Registers as a publisher for the topic.</p>
+    <p>Register as a publisher for the topic.</p>
 </div>
 
 
@@ -345,6 +708,11 @@
             
 
             <td class="type">
+            
+                
+<span class="param-type"><a href="Message.html">Message</a></span>
+
+
             
             </td>
 
@@ -479,16 +847,67 @@ will be called with the message object.</p>
 
             <td class="type">
             
+                
+<span class="param-type">function</span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last"><p>function with the following params:</p>
-<ul>
-<li>message - the published message</li>
-</ul></td>
+            <td class="description last"><p>Function with the following params:</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The published message.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -565,7 +984,7 @@ will be called with the message object.</p>
     
 
     
-    <h4 class="name" id="toStream"><span class="type-signature"></span>toStream<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="toStream"><span class="type-signature"></span>toStream<span class="signature">(options)</span><span class="type-signature"></span></h4>
     
 
     
@@ -575,7 +994,7 @@ will be called with the message object.</p>
 <div class="description">
     <p>Publish a connected ROS topic to a duplex
 stream. This stream can be piped to, which will
-publish to the topic</p>
+publish to the topic.</p>
 </div>
 
 
@@ -584,6 +1003,200 @@ publish to the topic</p>
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>subscribe</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>The flag to indicate whether to subscribe to the topic and start emitting data or not.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>publish</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>The flag to indicate whether to register the stream as a publisher to the topic or not.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>transform</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>A function to change the data to be published or filter it if false is returned.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -619,7 +1232,7 @@ publish to the topic</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="node_TopicStream.js.html">node/TopicStream.js</a>, <a href="node_TopicStream.js.html#line16">line 16</a>
+        <a href="node_TopicStream.js.html">node/TopicStream.js</a>, <a href="node_TopicStream.js.html#line14">line 14</a>
     </li></ul></dd>
     
 
@@ -663,7 +1276,7 @@ publish to the topic</p>
 
 
 <div class="description">
-    <p>Unregisters as a publisher for the topic.</p>
+    <p>Unregister as a publisher for the topic.</p>
 </div>
 
 
@@ -743,7 +1356,7 @@ publish to the topic</p>
     
 
     
-    <h4 class="name" id="unsubscribe"><span class="type-signature"></span>unsubscribe<span class="signature">(callback)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="unsubscribe"><span class="type-signature"></span>unsubscribe<span class="signature">(callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -751,9 +1364,9 @@ publish to the topic</p>
 
 
 <div class="description">
-    <p>Unregisters as a subscriber for the topic. Unsubscribing stop remove
-all subscribe callbacks. To remove a call back, you must explicitly
-pass the callback function in.</p>
+    <p>Unregister as a subscriber for the topic. Unsubscribing will stop
+and remove all subscribe callbacks. To remove a callback, you must
+explicitly pass the callback function in.</p>
 </div>
 
 
@@ -777,6 +1390,8 @@ pass the callback function in.</p>
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -794,15 +1409,30 @@ pass the callback function in.</p>
 
             <td class="type">
             
+                
+<span class="param-type">function</span>
+
+
+            
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last"><p>the optional callback to unregister, if
-* provided and other listeners are registered the topic won't
-* unsubscribe, just stop emitting to the passed listener</p></td>
+            <td class="description last"><p>The callback to unregister, if
+provided and other listeners are registered the topic won't
+unsubscribe, just stop emitting to the passed listener.</p></td>
         </tr>
 
     
@@ -889,13 +1519,13 @@ pass the callback function in.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActionClient.html">ActionClient</a></li><li><a href="ActionListener.html">ActionListener</a></li><li><a href="Goal.html">Goal</a></li><li><a href="Message.html">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="Pose.html">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="Service.html">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="ServiceResponse.html">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="Topic.html">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="UrdfColor.html">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="UrdfMaterial.html">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="UrdfVisual.html">UrdfVisual</a></li><li><a href="Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#cborTypedArrayTagger">cborTypedArrayTagger</a></li><li><a href="global.html#conversionArrayTypes">conversionArrayTypes</a></li><li><a href="global.html#decodeInt64LE">decodeInt64LE</a></li><li><a href="global.html#decodeNativeArray">decodeNativeArray</a></li><li><a href="global.html#decodeUint64LE">decodeUint64LE</a></li><li><a href="global.html#nativeArrayTypes">nativeArrayTypes</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActionClient.html">ActionClient</a></li><li><a href="ActionListener.html">ActionListener</a></li><li><a href="Goal.html">Goal</a></li><li><a href="Message.html">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="Pose.html">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="Service.html">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="ServiceResponse.html">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="Topic.html">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="UrdfColor.html">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="UrdfMaterial.html">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="UrdfVisual.html">UrdfVisual</a></li><li><a href="Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#cborTypedArrayTagger">cborTypedArrayTagger</a></li><li><a href="global.html#conversionArrayTypes">conversionArrayTypes</a></li><li><a href="global.html#decodeInt64LE">decodeInt64LE</a></li><li><a href="global.html#decodeNativeArray">decodeNativeArray</a></li><li><a href="global.html#decodeUint64LE">decodeUint64LE</a></li><li><a href="global.html#nativeArrayTypes">nativeArrayTypes</a></li><li><a href="global.html#REVISION">REVISION</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Tue May 03 2022 15:43:24 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Mon Dec 04 2023 21:14:46 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

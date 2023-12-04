@@ -27,18 +27,18 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview
+ * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
  */
 
 /**
  * A 3D vector.
  *
- *  @constructor
- *  @param options - object with following keys:
- *   * x - the x value
- *   * y - the y value
- *   * z - the z value
+ * @constructor
+ * @param {Object} options
+ * @param {number} [options.x=0] - The x value.
+ * @param {number} [options.y=0] - The y value.
+ * @param {number} [options.z=0] - The z value.
  */
 function Vector3(options) {
   options = options || {};
@@ -50,7 +50,7 @@ function Vector3(options) {
 /**
  * Set the values of this vector to the sum of itself and the given vector.
  *
- * @param v the vector to add with
+ * @param {Vector3} v - The vector to add with.
  */
 Vector3.prototype.add = function(v) {
   this.x += v.x;
@@ -61,7 +61,7 @@ Vector3.prototype.add = function(v) {
 /**
  * Set the values of this vector to the difference of itself and the given vector.
  *
- * @param v the vector to subtract with
+ * @param {Vector3} v - The vector to subtract with.
  */
 Vector3.prototype.subtract = function(v) {
   this.x -= v.x;
@@ -72,7 +72,7 @@ Vector3.prototype.subtract = function(v) {
 /**
  * Multiply the given Quaternion with this vector.
  *
- * @param q - the quaternion to multiply with
+ * @param {Quaternion} q - The quaternion to multiply with.
  */
 Vector3.prototype.multiplyQuaternion = function(q) {
   var ix = q.w * this.x + q.y * this.z - q.z * this.y;
@@ -87,13 +87,14 @@ Vector3.prototype.multiplyQuaternion = function(q) {
 /**
  * Clone a copy of this vector.
  *
- * @returns the cloned vector
+ * @returns {Vector3} The cloned vector.
  */
 Vector3.prototype.clone = function() {
   return new Vector3(this);
 };
 
-module.exports = Vector3;</code></pre>
+module.exports = Vector3;
+</code></pre>
         </article>
     </section>
 
@@ -103,13 +104,13 @@ module.exports = Vector3;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActionClient.html">ActionClient</a></li><li><a href="ActionListener.html">ActionListener</a></li><li><a href="Goal.html">Goal</a></li><li><a href="Message.html">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="Pose.html">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="Service.html">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="ServiceResponse.html">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="Topic.html">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="UrdfColor.html">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="UrdfMaterial.html">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="UrdfVisual.html">UrdfVisual</a></li><li><a href="Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#cborTypedArrayTagger">cborTypedArrayTagger</a></li><li><a href="global.html#conversionArrayTypes">conversionArrayTypes</a></li><li><a href="global.html#decodeInt64LE">decodeInt64LE</a></li><li><a href="global.html#decodeNativeArray">decodeNativeArray</a></li><li><a href="global.html#decodeUint64LE">decodeUint64LE</a></li><li><a href="global.html#nativeArrayTypes">nativeArrayTypes</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActionClient.html">ActionClient</a></li><li><a href="ActionListener.html">ActionListener</a></li><li><a href="Goal.html">Goal</a></li><li><a href="Message.html">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="Pose.html">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="Service.html">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="ServiceResponse.html">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="Topic.html">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="UrdfColor.html">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="UrdfMaterial.html">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="UrdfVisual.html">UrdfVisual</a></li><li><a href="Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#cborTypedArrayTagger">cborTypedArrayTagger</a></li><li><a href="global.html#conversionArrayTypes">conversionArrayTypes</a></li><li><a href="global.html#decodeInt64LE">decodeInt64LE</a></li><li><a href="global.html#decodeNativeArray">decodeNativeArray</a></li><li><a href="global.html#decodeUint64LE">decodeUint64LE</a></li><li><a href="global.html#nativeArrayTypes">nativeArrayTypes</a></li><li><a href="global.html#REVISION">REVISION</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Tue May 03 2022 15:43:24 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Mon Dec 04 2023 21:14:46 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

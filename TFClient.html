@@ -90,26 +90,396 @@
 
             <td class="type">
             
+                
+<span class="param-type">Object</span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last"><p>object with following keys:</p>
-<ul>
-<li>ros - the ROSLIB.Ros connection handle</li>
-<li>fixedFrame - the fixed frame, like /base_link</li>
-<li>angularThres - the angular threshold for the TF republisher</li>
-<li>transThres - the translation threshold for the TF republisher</li>
-<li>rate - the rate for the TF republisher</li>
-<li>updateDelay - the time (in ms) to wait after a new subscription
-to update the TF republisher's list of TFs</li>
-<li>topicTimeout - the timeout parameter for the TF republisher</li>
-<li>serverName (optional) - the name of the tf2_web_republisher server</li>
-<li>repubServiceName (optional) - the name of the republish_tfs service (non groovy compatibility mode only)
-default: '/republish_tfs'</li>
-</ul></td>
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ros</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Ros.html">Ros</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The ROSLIB.Ros connection handle.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fixedFrame</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    base_link
+                
+                </td>
+            
+
+            <td class="description last"><p>The fixed frame.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>angularThres</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    2.0
+                
+                </td>
+            
+
+            <td class="description last"><p>The angular threshold for the TF republisher.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>transThres</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0.01
+                
+                </td>
+            
+
+            <td class="description last"><p>The translation threshold for the TF republisher.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    10.0
+                
+                </td>
+            
+
+            <td class="description last"><p>The rate for the TF republisher.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>updateDelay</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    50
+                
+                </td>
+            
+
+            <td class="description last"><p>The time (in ms) to wait after a new subscription
+to update the TF republisher's list of TFs.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>topicTimeout</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    2.0
+                
+                </td>
+            
+
+            <td class="description last"><p>The timeout parameter for the TF republisher.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>serverName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    /tf2_web_republisher
+                
+                </td>
+            
+
+            <td class="description last"><p>The name of the tf2_web_republisher server.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>repubServiceName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    /republish_tfs
+                
+                </td>
+            
+
+            <td class="description last"><p>The name of the republish_tfs service (non groovy compatibility mode only).</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -150,7 +520,7 @@ default: '/republish_tfs'</li>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line32">line 32</a>
+        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line31">line 31</a>
     </li></ul></dd>
     
 
@@ -258,7 +628,7 @@ default: '/republish_tfs'</li>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line225">line 225</a>
+        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line224">line 224</a>
     </li></ul></dd>
     
 
@@ -303,7 +673,7 @@ default: '/republish_tfs'</li>
 
 <div class="description">
     <p>Process the service response and subscribe to the tf republisher
-topic</p>
+topic.</p>
 </div>
 
 
@@ -344,13 +714,18 @@ topic</p>
 
             <td class="type">
             
+                
+<span class="param-type">Object</span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last"><p>the service response containing the topic name</p></td>
+            <td class="description last"><p>The service response containing the topic name.</p></td>
         </tr>
 
     
@@ -391,7 +766,7 @@ topic</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line147">line 147</a>
+        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line146">line 146</a>
     </li></ul></dd>
     
 
@@ -477,13 +852,18 @@ functions.</p>
 
             <td class="type">
             
+                
+<span class="param-type">Object</span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last"><p>the TF message from the server</p></td>
+            <td class="description last"><p>The TF message from the server.</p></td>
         </tr>
 
     
@@ -524,7 +904,7 @@ functions.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line80">line 80</a>
+        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line79">line 79</a>
     </li></ul></dd>
     
 
@@ -609,13 +989,18 @@ functions.</p>
 
             <td class="type">
             
+                
+<span class="param-type">string</span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last"><p>the TF frame to subscribe to</p></td>
+            <td class="description last"><p>The TF frame to subscribe to.</p></td>
         </tr>
 
     
@@ -627,16 +1012,67 @@ functions.</p>
 
             <td class="type">
             
+                
+<span class="param-type">function</span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last"><p>function with params:</p>
-<ul>
-<li>transform - the transform data</li>
-</ul></td>
+            <td class="description last"><p>Function with the following params:</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>transform</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Transform.html">Transform</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The transform data.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -677,7 +1113,7 @@ functions.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line176">line 176</a>
+        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line175">line 175</a>
     </li></ul></dd>
     
 
@@ -762,13 +1198,18 @@ functions.</p>
 
             <td class="type">
             
+                
+<span class="param-type">string</span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last"><p>the TF frame to unsubscribe from</p></td>
+            <td class="description last"><p>The TF frame to unsubscribe from.</p></td>
         </tr>
 
     
@@ -780,13 +1221,18 @@ functions.</p>
 
             <td class="type">
             
+                
+<span class="param-type">function</span>
+
+
+            
             </td>
 
             
 
             
 
-            <td class="description last"><p>the callback function to remove</p></td>
+            <td class="description last"><p>The callback function to remove.</p></td>
         </tr>
 
     
@@ -827,7 +1273,7 @@ functions.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line205">line 205</a>
+        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line204">line 204</a>
     </li></ul></dd>
     
 
@@ -916,7 +1362,7 @@ based on the current list of TFs.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line105">line 105</a>
+        <a href="tf_TFClient.js.html">tf/TFClient.js</a>, <a href="tf_TFClient.js.html#line104">line 104</a>
     </li></ul></dd>
     
 
@@ -962,13 +1408,13 @@ based on the current list of TFs.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActionClient.html">ActionClient</a></li><li><a href="ActionListener.html">ActionListener</a></li><li><a href="Goal.html">Goal</a></li><li><a href="Message.html">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="Pose.html">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="Service.html">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="ServiceResponse.html">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="Topic.html">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="UrdfColor.html">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="UrdfMaterial.html">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="UrdfVisual.html">UrdfVisual</a></li><li><a href="Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#cborTypedArrayTagger">cborTypedArrayTagger</a></li><li><a href="global.html#conversionArrayTypes">conversionArrayTypes</a></li><li><a href="global.html#decodeInt64LE">decodeInt64LE</a></li><li><a href="global.html#decodeNativeArray">decodeNativeArray</a></li><li><a href="global.html#decodeUint64LE">decodeUint64LE</a></li><li><a href="global.html#nativeArrayTypes">nativeArrayTypes</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActionClient.html">ActionClient</a></li><li><a href="ActionListener.html">ActionListener</a></li><li><a href="Goal.html">Goal</a></li><li><a href="Message.html">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="Pose.html">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="Service.html">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="ServiceResponse.html">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="Topic.html">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="UrdfColor.html">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="UrdfMaterial.html">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="UrdfVisual.html">UrdfVisual</a></li><li><a href="Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#cborTypedArrayTagger">cborTypedArrayTagger</a></li><li><a href="global.html#conversionArrayTypes">conversionArrayTypes</a></li><li><a href="global.html#decodeInt64LE">decodeInt64LE</a></li><li><a href="global.html#decodeNativeArray">decodeNativeArray</a></li><li><a href="global.html#decodeUint64LE">decodeUint64LE</a></li><li><a href="global.html#nativeArrayTypes">nativeArrayTypes</a></li><li><a href="global.html#REVISION">REVISION</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Tue May 03 2022 15:43:24 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Mon Dec 04 2023 21:14:46 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

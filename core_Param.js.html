@@ -27,7 +27,7 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview
+ * @fileOverview
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
@@ -38,9 +38,9 @@ var ServiceRequest = require('./ServiceRequest');
  * A ROS parameter.
  *
  * @constructor
- * @param options - possible keys include:
- *   * ros - the ROSLIB.Ros connection handle
- *   * name - the param name, like max_vel_x
+ * @param {Object} options
+ * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+ * @param {string} options.name - The param name, like max_vel_x.
  */
 function Param(options) {
   options = options || {};
@@ -49,12 +49,14 @@ function Param(options) {
 }
 
 /**
- * Fetches the value of the param.
+ * Fetch the value of the param.
  *
- * @param callback - function with the following params:
- *  * value - the value of the param from ROS.
+ * @param {function} callback - Function with the following params:
+ * @param {Object} callback.value - The value of the param from ROS.
+ * @param {function} [failedCallback] - Function when the service call failed with the following params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Param.prototype.get = function(callback) {
+Param.prototype.get = function(callback, failedCallback) {
   var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/get_param',
@@ -68,15 +70,18 @@ Param.prototype.get = function(callback) {
   paramClient.callService(request, function(result) {
     var value = JSON.parse(result.value);
     callback(value);
-  });
+  }, failedCallback);
 };
 
 /**
- * Sets the value of the param in ROS.
+ * Set the value of the param in ROS.
  *
- * @param value - value to set param to.
+ * @param {Object} value - The value to set param to.
+ * @param {function} [callback] - The callback function.
+ * @param {function} [failedCallback] - The callback function when the service call failed.
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Param.prototype.set = function(value, callback) {
+Param.prototype.set = function(value, callback, failedCallback) {
   var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/set_param',
@@ -88,13 +93,17 @@ Param.prototype.set = function(value, callback) {
     value : JSON.stringify(value)
   });
 
-  paramClient.callService(request, callback);
+  paramClient.callService(request, callback, failedCallback);
 };
 
 /**
  * Delete this parameter on the ROS server.
+ *
+ * @param {function} [callback] - The callback function when the service call succeeded.
+ * @param {function} [failedCallback] - The callback function when the service call failed.
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
-Param.prototype.delete = function(callback) {
+Param.prototype.delete = function(callback, failedCallback) {
   var paramClient = new Service({
     ros : this.ros,
     name : '/rosapi/delete_param',
@@ -105,10 +114,11 @@ Param.prototype.delete = function(callback) {
     name : this.name
   });
 
-  paramClient.callService(request, callback);
+  paramClient.callService(request, callback, failedCallback);
 };
 
-module.exports = Param;</code></pre>
+module.exports = Param;
+</code></pre>
         </article>
     </section>
 
@@ -118,13 +128,13 @@ module.exports = Param;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActionClient.html">ActionClient</a></li><li><a href="ActionListener.html">ActionListener</a></li><li><a href="Goal.html">Goal</a></li><li><a href="Message.html">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="Pose.html">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="Service.html">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="ServiceResponse.html">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="Topic.html">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="UrdfColor.html">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="UrdfMaterial.html">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="UrdfVisual.html">UrdfVisual</a></li><li><a href="Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#cborTypedArrayTagger">cborTypedArrayTagger</a></li><li><a href="global.html#conversionArrayTypes">conversionArrayTypes</a></li><li><a href="global.html#decodeInt64LE">decodeInt64LE</a></li><li><a href="global.html#decodeNativeArray">decodeNativeArray</a></li><li><a href="global.html#decodeUint64LE">decodeUint64LE</a></li><li><a href="global.html#nativeArrayTypes">nativeArrayTypes</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActionClient.html">ActionClient</a></li><li><a href="ActionListener.html">ActionListener</a></li><li><a href="Goal.html">Goal</a></li><li><a href="Message.html">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="Pose.html">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="Service.html">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="ServiceResponse.html">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="Topic.html">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="UrdfColor.html">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="UrdfMaterial.html">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="UrdfVisual.html">UrdfVisual</a></li><li><a href="Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#cborTypedArrayTagger">cborTypedArrayTagger</a></li><li><a href="global.html#conversionArrayTypes">conversionArrayTypes</a></li><li><a href="global.html#decodeInt64LE">decodeInt64LE</a></li><li><a href="global.html#decodeNativeArray">decodeNativeArray</a></li><li><a href="global.html#decodeUint64LE">decodeUint64LE</a></li><li><a href="global.html#nativeArrayTypes">nativeArrayTypes</a></li><li><a href="global.html#REVISION">REVISION</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Tue May 03 2022 15:43:24 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Mon Dec 04 2023 21:14:46 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

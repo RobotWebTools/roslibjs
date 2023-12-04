@@ -27,7 +27,7 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview
+ * @fileOverview
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
@@ -39,10 +39,10 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  * A ROS service client.
  *
  * @constructor
- * @params options - possible keys include:
- *   * ros - the ROSLIB.Ros connection handle
- *   * name - the service name, like /add_two_ints
- *   * serviceType - the service type, like 'rospy_tutorials/AddTwoInts'
+ * @param {Object} options
+ * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+ * @param {string} options.name - The service name, like '/add_two_ints'.
+ * @param {string} options.serviceType - The service type, like 'rospy_tutorials/AddTwoInts'.
  */
 function Service(options) {
   options = options || {};
@@ -55,14 +55,14 @@ function Service(options) {
 }
 Service.prototype.__proto__ = EventEmitter2.prototype;
 /**
- * Calls the service. Returns the service response in the
+ * Call the service. Returns the service response in the
  * callback. Does nothing if this service is currently advertised.
  *
- * @param request - the ROSLIB.ServiceRequest to send
- * @param callback - function with params:
- *   * response - the response from the service request
- * @param failedCallback - the callback function when the service call failed (optional). Params:
- *   * error - the error message reported by ROS
+ * @param {ServiceRequest} request - The ROSLIB.ServiceRequest to send.
+ * @param {function} callback - Function with the following params:
+ * @param {Object} callback.response - The response from the service request.
+ * @param {function} [failedCallback] - The callback function when the service call failed with params:
+ * @param {string} failedCallback.error - The error message reported by ROS.
  */
 Service.prototype.callService = function(request, callback, failedCallback) {
   if (this.isAdvertised) {
@@ -98,11 +98,11 @@ Service.prototype.callService = function(request, callback, failedCallback) {
  * into a server. The callback will be called with every request
  * that's made on this service.
  *
- * @param callback - This works similarly to the callback for a C++ service and should take the following params:
- *   * request - the service request
- *   * response - an empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
- *   It should return true if the service has finished successfully,
- *   i.e. without any fatal errors.
+ * @param {function} callback - This works similarly to the callback for a C++ service and should take the following params:
+ * @param {ServiceRequest} callback.request - The service request.
+ * @param {Object} callback.response - An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
+ *     It should return true if the service has finished successfully,
+ *     i.e., without any fatal errors.
  */
 Service.prototype.advertise = function(callback) {
   if (this.isAdvertised || typeof callback !== 'function') {
@@ -159,13 +159,13 @@ module.exports = Service;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActionClient.html">ActionClient</a></li><li><a href="ActionListener.html">ActionListener</a></li><li><a href="Goal.html">Goal</a></li><li><a href="Message.html">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="Pose.html">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="Service.html">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="ServiceResponse.html">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="Topic.html">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="UrdfColor.html">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="UrdfMaterial.html">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="UrdfVisual.html">UrdfVisual</a></li><li><a href="Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#cborTypedArrayTagger">cborTypedArrayTagger</a></li><li><a href="global.html#conversionArrayTypes">conversionArrayTypes</a></li><li><a href="global.html#decodeInt64LE">decodeInt64LE</a></li><li><a href="global.html#decodeNativeArray">decodeNativeArray</a></li><li><a href="global.html#decodeUint64LE">decodeUint64LE</a></li><li><a href="global.html#nativeArrayTypes">nativeArrayTypes</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ActionClient.html">ActionClient</a></li><li><a href="ActionListener.html">ActionListener</a></li><li><a href="Goal.html">Goal</a></li><li><a href="Message.html">Message</a></li><li><a href="Param.html">Param</a></li><li><a href="Pose.html">Pose</a></li><li><a href="Quaternion.html">Quaternion</a></li><li><a href="Ros.html">Ros</a></li><li><a href="Service.html">Service</a></li><li><a href="ServiceRequest.html">ServiceRequest</a></li><li><a href="ServiceResponse.html">ServiceResponse</a></li><li><a href="SimpleActionServer.html">SimpleActionServer</a></li><li><a href="TFClient.html">TFClient</a></li><li><a href="Topic.html">Topic</a></li><li><a href="Transform.html">Transform</a></li><li><a href="UrdfBox.html">UrdfBox</a></li><li><a href="UrdfColor.html">UrdfColor</a></li><li><a href="UrdfCylinder.html">UrdfCylinder</a></li><li><a href="UrdfJoint.html">UrdfJoint</a></li><li><a href="UrdfLink.html">UrdfLink</a></li><li><a href="UrdfMaterial.html">UrdfMaterial</a></li><li><a href="UrdfMesh.html">UrdfMesh</a></li><li><a href="UrdfModel.html">UrdfModel</a></li><li><a href="UrdfSphere.html">UrdfSphere</a></li><li><a href="UrdfVisual.html">UrdfVisual</a></li><li><a href="Vector3.html">Vector3</a></li></ul><h3>Global</h3><ul><li><a href="global.html#cborTypedArrayTagger">cborTypedArrayTagger</a></li><li><a href="global.html#conversionArrayTypes">conversionArrayTypes</a></li><li><a href="global.html#decodeInt64LE">decodeInt64LE</a></li><li><a href="global.html#decodeNativeArray">decodeNativeArray</a></li><li><a href="global.html#decodeUint64LE">decodeUint64LE</a></li><li><a href="global.html#nativeArrayTypes">nativeArrayTypes</a></li><li><a href="global.html#REVISION">REVISION</a></li><li><a href="global.html#ROSLIB">ROSLIB</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Tue May 03 2022 15:43:24 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Mon Dec 04 2023 21:14:46 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>
