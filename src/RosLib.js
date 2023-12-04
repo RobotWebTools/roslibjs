@@ -13,7 +13,7 @@ var ROSLIB = this.ROSLIB || {
    * @default
    * @description Library version
    */
-  REVISION : '1.4.0'
+  REVISION : '1.4.1'
 };
 
 var assign = require('object-assign');

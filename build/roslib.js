@@ -509,7 +509,7 @@ else if (!global.CBOR)
     var obj = {};
     var key;
     var len = keys.length;
-    var valuesCount = values ? value.length : 0;
+    var valuesCount = values ? values.length : 0;
     for (var i = 0; i < len; i++) {
       key = keys[i];
       obj[key] = i < valuesCount ? values[i] : undefined;
@@ -2698,7 +2698,7 @@ var ROSLIB = this.ROSLIB || {
    * @default
    * @description Library version
    */
-  REVISION : '1.4.0'
+  REVISION : '1.4.1'
 };
 
 var assign = require('object-assign');
