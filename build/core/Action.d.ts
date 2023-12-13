@@ -19,11 +19,11 @@ declare class Action<TGoal, TFeedback, TResult> extends EventEmitter2 {
     name: string;
     actionType: string;
     isAdvertised: boolean;
-    _actionCallback: ((goal: TGoal, response: any) => any) | null;
-    _cancelCallback: any;
+    _actionCallback: ((goal: TGoal, id: string) => any) | null;
+    _cancelCallback: ((id: string) => any) | null;
     /**
      * @callback sendGoalResultCallback
-     *  @param {TResult} result - The result from the action.
+     * @param {TResult} result - The result from the action.
      */
     /**
      * @callback sendGoalFeedbackCallback
@@ -51,19 +51,22 @@ declare class Action<TGoal, TFeedback, TResult> extends EventEmitter2 {
      */
     cancelGoal(id: string): void;
     /**
-     * @callback advertiseCallback
+     * @callback advertiseActionCallback
      * @param {TGoal} goal - The action goal.
-     * @param {Object} response - An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
-     *     It should return true if the action has finished successfully,
-     *     i.e., without any fatal errors.
+     * @param {string} id - The ID of the action goal to execute.
+     */
+    /**
+     * @callback advertiseCancelCallback
+     * @param {string} id - The ID of the action goal to cancel.
      */
     /**
      * Advertise the action. This turns the Action object from a client
      * into a server. The callback will be called with every goal sent to this action.
      *
-     * @param {advertiseCallback} callback - This works similarly to the callback for a C++ action.
+     * @param {advertiseActionCallback} actionCallback - This works similarly to the callback for a C++ action.
+     * @param {advertiseCancelCallback} cancelCallback - A callback function to execute when the action is canceled.
      */
-    advertise(callback: (goal: TGoal, response: any) => any): void;
+    advertise(actionCallback: (goal: TGoal, id: string) => any, cancelCallback: (id: string) => any): void;
     /**
      * Unadvertise a previously advertised action.
      */
