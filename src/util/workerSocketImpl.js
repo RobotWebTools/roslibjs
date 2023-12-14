@@ -1,6 +1,6 @@
 var WebSocket = WebSocket || require('ws');
 
-module.exports = function(self) {
+module.exports = function (self) {
   var socket = null;
 
   function handleSocketMessage(ev) {
@@ -16,10 +16,10 @@ module.exports = function(self) {
   }
 
   function handleSocketControl(ev) {
-    self.postMessage({type: ev.type});
+    self.postMessage({ type: ev.type });
   }
 
-  self.addEventListener('message', function(ev) {
+  self.addEventListener('message', function (ev) {
     var data = ev.data;
 
     if (typeof data === 'string') {

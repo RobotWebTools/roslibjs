@@ -5,3 +5,5 @@ node_modules
 *.out
 *.log
 *.tar.gz
+tsbuild
+build

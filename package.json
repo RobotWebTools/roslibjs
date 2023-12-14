@@ -13,6 +13,7 @@
     "./src/util/decompressPng.js": "./src/util/shim/decompressPng.js"
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.6",
     "chai": "*",
     "grunt": "^1.0.0",
     "grunt-browserify": "^6.0.0",
@@ -24,6 +25,7 @@
     "grunt-jsdoc": "^2.1.0",
     "grunt-karma": "^4.0.0",
     "grunt-mocha-test": "^0.13.0",
+    "grunt-shell": "^4.0.0",
     "karma": "^6.3.0",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^3.1.1",
@@ -32,7 +34,9 @@
     "load-grunt-tasks": "^5.1.0",
     "mocha": "^10.0.0",
     "puppeteer": "^21.0.1",
-    "time-grunt": "^2.0.0"
+    "time-grunt": "^2.0.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
     "@xmldom/xmldom": "^0.8.0",
@@ -75,5 +79,6 @@
     "roslibjs",
     "robot"
   ],
+  "types": "build/RosLib.d.ts",
   "author": "Robot Webtools Team <robot-web-tools@googlegroups.com> (https://robotwebtools.github.io)"
 }

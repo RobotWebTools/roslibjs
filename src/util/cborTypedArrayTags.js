@@ -6,14 +6,16 @@ var warnedPrecision = false;
 function warnPrecision() {
   if (!warnedPrecision) {
     warnedPrecision = true;
-    console.warn('CBOR 64-bit integer array values may lose precision. No further warnings.');
+    console.warn(
+      'CBOR 64-bit integer array values may lose precision. No further warnings.'
+    );
   }
 }
 
 /**
  * Unpack 64-bit unsigned integer from byte array.
  * @param {Uint8Array} bytes
-*/
+ */
 function decodeUint64LE(bytes) {
   warnPrecision();
 
@@ -28,7 +30,7 @@ function decodeUint64LE(bytes) {
   for (var i = 0; i < arrLen; i++) {
     var si = i * 2;
     var lo = uint32View[si];
-    var hi = uint32View[si+1];
+    var hi = uint32View[si + 1];
     arr[i] = lo + UPPER32 * hi;
   }
 
@@ -38,7 +40,7 @@ function decodeUint64LE(bytes) {
 /**
  * Unpack 64-bit signed integer from byte array.
  * @param {Uint8Array} bytes
-*/
+ */
 function decodeInt64LE(bytes) {
   warnPrecision();
 
@@ -54,7 +56,7 @@ function decodeInt64LE(bytes) {
   for (var i = 0; i < arrLen; i++) {
     var si = i * 2;
     var lo = uint32View[si];
-    var hi = int32View[si+1];
+    var hi = int32View[si + 1];
     arr[i] = lo + UPPER32 * hi;
   }
 
@@ -64,8 +66,8 @@ function decodeInt64LE(bytes) {
 /**
  * Unpack typed array from byte array.
  * @param {Uint8Array} bytes
- * @param {type} ArrayType - Desired output array type
-*/
+ * @param {ArrayConstructor} ArrayType - Desired output array type
+ */
 function decodeNativeArray(bytes, ArrayType) {
   var byteLen = bytes.byteLength;
   var offset = bytes.byteOffset;
