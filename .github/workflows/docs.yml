@@ -22,6 +22,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.RWT_BOT_PAT }}
+          publish_branch: gh-pages-v1
           publish_dir: doc
           destination_dir: .
           enable_jekyll: false
