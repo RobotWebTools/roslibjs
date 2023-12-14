@@ -9,11 +9,11 @@ var assign = require('object-assign');
  * An ActionGoal is passed into a ROS 2 action goal request.
  *
  * @constructor
- * @template T
+ * @template TGoal
  */
 class ActionGoal {
   /**
-   * @param {T} [values={}] - Object matching the fields defined in the .action definition file.
+   * @param {TGoal} [values={}] - Object matching the fields defined in the .action definition file.
    */
   constructor(values) {
     assign(this, values || {});
