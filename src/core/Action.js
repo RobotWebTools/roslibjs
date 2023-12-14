@@ -45,7 +45,7 @@ class Action extends EventEmitter2 {
    * and the result in the result callback when the action is completed.
    * Does nothing if this action is currently advertised.
    *
-   * @param {TGoal} goal - The ROSLIB.ActionGoal to send.
+   * @param {TGoal} goal - The action goal to send.
    * @param {sendGoalResultCallback} resultCallback - The callback function when the action is completed.
    * @param {sendGoalFeedbackCallback} [feedbackCallback] - The callback function when the action pulishes feedback.
    * @param {sendGoalFailedCallback} [failedCallback] - The callback function when the action failed.
@@ -149,14 +149,12 @@ class Action extends EventEmitter2 {
    * action callback with the auto-generated ID as a user-accessible input.
    * Should not be called manually.
    * 
-   * @param {Object} rosbridgeRequest - The ROSLIB.ActionGoal to send.
+   * @param {Object} rosbridgeRequest - The rosbridge request containing the action goal to send and its ID.
    * @param {string} rosbridgeRequest.id - The ID of the action goal.
+   * @param {TGoal} rosbridgeRequest.args - The arguments of the action goal.
    */
   _executeAction(rosbridgeRequest) {
-    var id;
-    if (rosbridgeRequest.id) {
-      id = rosbridgeRequest.id;
-    }
+    var id  = rosbridgeRequest.id;
 
     // If a cancellation callback exists, call it when a cancellation event is emitted.
     if (typeof id === 'string') {
@@ -167,9 +165,11 @@ class Action extends EventEmitter2 {
       });
     }
 
-    // Call the goal execution function provided.
-    // @ts-expect-error -- possibly null
-    this._actionCallback(rosbridgeRequest.args, id);
+    // Call the action goal execution function provided.
+    if (typeof this._actionCallback === 'function')
+    {
+      this._actionCallback(rosbridgeRequest.args, id);
+    }
   }
 
   /**
