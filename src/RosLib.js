@@ -13,7 +13,7 @@ var ROSLIB = {
    * @default
    * @description Library version
    */
-  REVISION: '1.4.1',
+  REVISION: '2.0.0',
   ...require('./core'),
   ...require('./actionlib'),
   ...require('./math'),

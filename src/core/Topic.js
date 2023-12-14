@@ -4,7 +4,6 @@
  */
 
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
-var Message = require('./Message');
 var Ros = require('../core/Ros');
 
 /**
@@ -13,7 +12,7 @@ var Ros = require('../core/Ros');
  * Emits the following events:
  *  * 'warning' - If there are any warning during the Topic creation.
  *  * 'message' - The message data from rosbridge.
- * @template T
+ * @template TMessage
  */
 class Topic extends EventEmitter2 {
   /**
@@ -90,12 +89,12 @@ class Topic extends EventEmitter2 {
     }
 
     this._messageCallback = function (data) {
-      that.emit('message', new Message(data));
+      that.emit('message', data);
     };
   }
   /**
    * @callback subscribeCallback
-   * @param {T} message - The published message.
+   * @param {TMessage} message - The published message.
    */
   /**
    * Every time a message is published for the given topic, the callback
@@ -205,7 +204,7 @@ class Topic extends EventEmitter2 {
   /**
    * Publish the message.
    *
-   * @param {T} message - A ROSLIB.Message object.
+   * @param {TMessage} message - The message to publish.
    */
   publish(message) {
     if (!this.isAdvertised) {

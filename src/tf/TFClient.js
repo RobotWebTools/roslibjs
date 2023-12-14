@@ -8,7 +8,6 @@ var ActionClient = require('../actionlib/ActionClient');
 var Goal = require('../actionlib/Goal');
 
 var Service = require('../core/Service.js');
-var ServiceRequest = require('../core/ServiceRequest.js');
 var Topic = require('../core/Topic.js');
 
 var Transform = require('../math/Transform');
@@ -131,7 +130,7 @@ class TFClient extends EventEmitter2 {
       // The service interface has the same parameters as the action,
       // plus the timeout
       goalMessage.timeout = this.topicTimeout;
-      var request = new ServiceRequest(goalMessage);
+      var request = goalMessage;
 
       this.serviceClient.callService(request, this.processResponse.bind(this));
     }

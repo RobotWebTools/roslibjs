@@ -7,12 +7,10 @@ var WebSocket = require('ws');
 var WorkerSocket = require('../util/workerSocket');
 var socketAdapter = require('./SocketAdapter.js');
 
-var Service = require('./Service');
-var ServiceRequest = require('./ServiceRequest');
-var ServiceResponse = require('./ServiceResponse');
 
 var assign = require('object-assign');
 const Topic = require('./Topic');
+var Service = require('./Service');
 const Param = require('./Param');
 const { TFClient } = require('../tf');
 const { ActionClient, SimpleActionServer } = require('../actionlib');
@@ -207,7 +205,7 @@ class Ros extends EventEmitter2 {
       serviceType: 'rosapi/GetActionServers'
     });
 
-    var request = new ServiceRequest({});
+    var request = {};
     if (typeof failedCallback === 'function') {
       getActionServers.callService(
         request,
@@ -247,7 +245,7 @@ class Ros extends EventEmitter2 {
       serviceType: 'rosapi/Topics'
     });
 
-    var request = new ServiceRequest();
+    var request = {};
     if (typeof failedCallback === 'function') {
       topicsClient.callService(
         request,
@@ -286,9 +284,7 @@ class Ros extends EventEmitter2 {
       serviceType: 'rosapi/TopicsForType'
     });
 
-    var request = new ServiceRequest({
-      type: topicType
-    });
+    var request = {type: topicType};
     if (typeof failedCallback === 'function') {
       topicsForTypeClient.callService(
         request,
@@ -326,7 +322,7 @@ class Ros extends EventEmitter2 {
       serviceType: 'rosapi/Services'
     });
 
-    var request = new ServiceRequest();
+    var request = {};
     if (typeof failedCallback === 'function') {
       servicesClient.callService(
         request,
@@ -365,9 +361,7 @@ class Ros extends EventEmitter2 {
       serviceType: 'rosapi/ServicesForType'
     });
 
-    var request = new ServiceRequest({
-      type: serviceType
-    });
+    var request = {type: serviceType};
     if (typeof failedCallback === 'function') {
       servicesForTypeClient.callService(
         request,
@@ -406,9 +400,7 @@ class Ros extends EventEmitter2 {
       name: '/rosapi/service_request_details',
       serviceType: 'rosapi/ServiceRequestDetails'
     });
-    var request = new ServiceRequest({
-      type: type
-    });
+    var request = {type: type};
 
     if (typeof failedCallback === 'function') {
       serviceTypeClient.callService(
@@ -428,7 +420,7 @@ class Ros extends EventEmitter2 {
   }
   /**
    * @callback getServiceResponseDetailsCallback
-   * @param {ServiceResponse<{typedefs: string[]}>} result - The result object with the following params:
+   * @param {{typedefs: string[]}} result - The result object with the following params:
    */
   /**
    * @callback getServiceResponseDetailsFailedCallback
@@ -448,9 +440,7 @@ class Ros extends EventEmitter2 {
       name: '/rosapi/service_response_details',
       serviceType: 'rosapi/ServiceResponseDetails'
     });
-    var request = new ServiceRequest({
-      type: type
-    });
+    var request = {type: type};
 
     if (typeof failedCallback === 'function') {
       serviceTypeClient.callService(
@@ -489,7 +479,7 @@ class Ros extends EventEmitter2 {
       serviceType: 'rosapi/Nodes'
     });
 
-    var request = new ServiceRequest();
+    var request = {};
     if (typeof failedCallback === 'function') {
       nodesClient.callService(
         request,
@@ -549,9 +539,7 @@ class Ros extends EventEmitter2 {
       serviceType: 'rosapi/NodeDetails'
     });
 
-    var request = new ServiceRequest({
-      node: node
-    });
+    var request = {node: node};
     if (typeof failedCallback === 'function') {
       nodesClient.callService(
         request,
@@ -589,7 +577,7 @@ class Ros extends EventEmitter2 {
       name: '/rosapi/get_param_names',
       serviceType: 'rosapi/GetParamNames'
     });
-    var request = new ServiceRequest();
+    var request = {};
     if (typeof failedCallback === 'function') {
       paramsClient.callService(
         request,
@@ -627,9 +615,7 @@ class Ros extends EventEmitter2 {
       name: '/rosapi/topic_type',
       serviceType: 'rosapi/TopicType'
     });
-    var request = new ServiceRequest({
-      topic: topic
-    });
+    var request = {topic: topic};
 
     if (typeof failedCallback === 'function') {
       topicTypeClient.callService(
@@ -668,9 +654,7 @@ class Ros extends EventEmitter2 {
       name: '/rosapi/service_type',
       serviceType: 'rosapi/ServiceType'
     });
-    var request = new ServiceRequest({
-      service: service
-    });
+    var request = {service: service};
 
     if (typeof failedCallback === 'function') {
       serviceTypeClient.callService(
@@ -709,9 +693,7 @@ class Ros extends EventEmitter2 {
       name: '/rosapi/message_details',
       serviceType: 'rosapi/MessageDetails'
     });
-    var request = new ServiceRequest({
-      type: message
-    });
+    var request = {type: message};
 
     if (typeof failedCallback === 'function') {
       messageDetailClient.callService(
@@ -804,7 +786,7 @@ class Ros extends EventEmitter2 {
       serviceType: 'rosapi/TopicsAndRawTypes'
     });
 
-    var request = new ServiceRequest();
+    var request = {};
     if (typeof failedCallback === 'function') {
       topicsAndRawTypesClient.callService(
         request,

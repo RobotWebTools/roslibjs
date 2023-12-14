@@ -3,7 +3,6 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var Message = require('../core/Message');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
 var ActionClient = require('./ActionClient');
 
@@ -35,7 +34,7 @@ class Goal extends EventEmitter2 {
     // Create a random ID
     this.goalID = 'goal_' + Math.random() + '_' + date.getTime();
     // Fill in the goal message
-    this.goalMessage = new Message({
+    this.goalMessage = {
       goal_id: {
         stamp: {
           secs: 0,
@@ -44,7 +43,7 @@ class Goal extends EventEmitter2 {
         id: this.goalID
       },
       goal: this.goalMessage
-    });
+    };
 
     this.on('status', function (status) {
       that.status = status;
@@ -82,9 +81,9 @@ class Goal extends EventEmitter2 {
    * Cancel the current goal.
    */
   cancel() {
-    var cancelMessage = new Message({
+    var cancelMessage = {
       id: this.goalID
-    });
+    };
     this.actionClient.cancelTopic.publish(cancelMessage);
   }
 }

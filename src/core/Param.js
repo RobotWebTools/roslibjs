@@ -4,7 +4,6 @@
  */
 
 var Service = require('./Service');
-var ServiceRequest = require('./ServiceRequest');
 var Ros = require('../core/Ros');
 
 /**
@@ -41,9 +40,7 @@ class Param {
       serviceType: 'rosapi/GetParam'
     });
 
-    var request = new ServiceRequest({
-      name: this.name
-    });
+    var request = {name: this.name};
 
     paramClient.callService(
       request,
@@ -76,10 +73,10 @@ class Param {
       serviceType: 'rosapi/SetParam'
     });
 
-    var request = new ServiceRequest({
+    var request = {
       name: this.name,
       value: JSON.stringify(value)
-    });
+    };
 
     paramClient.callService(request, callback, failedCallback);
   }
@@ -96,9 +93,7 @@ class Param {
       serviceType: 'rosapi/DeleteParam'
     });
 
-    var request = new ServiceRequest({
-      name: this.name
-    });
+    var request = {name: this.name};
 
     paramClient.callService(request, callback, failedCallback);
   }

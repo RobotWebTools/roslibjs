@@ -65,8 +65,8 @@
   // And finally, publish.
   cmdVel.publish(twist);
 
-  //Subscribing to a Topic
-  //----------------------
+  // Subscribing to a Topic
+  // ----------------------
 
   // Like when publishing a topic, we first create a Topic object with details of the topic's name
   // and message type. Note that we can call publish or subscribe on the same topic object.
@@ -91,7 +91,7 @@
   var addTwoIntsClient = new ROSLIB.Service({
     ros : ros,
     name : '/add_two_ints',
-    serviceType : 'rospy_tutorials/AddTwoInts'
+    serviceType : 'example_interfaces/AddTwoInts'
   });
 
   // Then we create a Service Request. The object we pass in to ROSLIB.ServiceRequest matches the
@@ -125,36 +125,21 @@
     return true;
   });
 
-  // Setting a param value
-  // ---------------------
-
-  ros.getParams(function(params) {
-    console.log(params);
-  });
-
-  // First, we create a Param object with the name of the param.
-  var maxVelX = new ROSLIB.Param({
-    ros : ros,
-    name : 'max_vel_y'
-  });
-
-  //Then we set the value of the param, which is sent to the ROS Parameter Server.
-  maxVelX.set(0.8);
-  maxVelX.get(function(value) {
-    console.log('MAX VAL: ' + value);
-  });
-
   // Getting a param value
   // ---------------------
 
+  // In ROS 2, params are set in the format 'node_name:param_name'
   var favoriteColor = new ROSLIB.Param({
     ros : ros,
-    name : 'favorite_color'
+    name : '/add_two_ints_server:use_sim_time'
   });
 
-  favoriteColor.set('red');
   favoriteColor.get(function(value) {
-    console.log('My robot\'s favorite color is ' + value);
+    console.log('The value of use_sim_time before setting is ' + value);
+  });
+  favoriteColor.set(true);
+  favoriteColor.get(function(value) {
+    console.log('The value of use_sim_time after setting is ' + value);
   });
 </script>
 </head>
@@ -164,11 +149,10 @@
   <p>Run the following commands in the terminal then refresh this page. Check the JavaScript
     console for the output.</p>
   <ol>
-    <li><tt>roscore</tt></li>
-    <li><tt>rostopic pub /listener std_msgs/String "Hello, World"</tt></li>
-    <li><tt>rostopic echo /cmd_vel</tt></li>
-    <li><tt>rosrun rospy_tutorials add_two_ints_server</tt></li>
-    <li><tt>roslaunch rosbridge_server rosbridge_websocket.launch</tt></li>
+    <li><tt>ros2 topic pub /listener std_msgs/msg/String "{ data: 'hello world' }" </tt></li>
+    <li><tt>ros2 topic echo /cmd_vel</tt></li>
+    <li><tt>ros2 run demo_nodes_py add_two_ints_server</tt></li>
+    <li><tt>ros2 launch rosbridge_server rosbridge_websocket_launch.xml</tt></li>
   </ol>
   <div id="statusIndicator">
     <p id="connecting">

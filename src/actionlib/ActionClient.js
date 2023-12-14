@@ -4,7 +4,6 @@
  */
 
 var Topic = require('../core/Topic');
-var Message = require('../core/Message');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
 var Ros = require('../core/Ros');
 
@@ -128,7 +127,7 @@ class ActionClient extends EventEmitter2 {
    * Cancel all goals associated with this ActionClient.
    */
   cancel() {
-    var cancelMessage = new Message();
+    var cancelMessage = {};
     this.cancelTopic.publish(cancelMessage);
   }
   /**

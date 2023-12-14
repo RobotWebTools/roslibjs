@@ -4,7 +4,6 @@
  */
 
 var Topic = require('../core/Topic');
-var Message = require('../core/Message');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
 var Ros = require('../core/Ros');
 
@@ -65,13 +64,13 @@ class SimpleActionServer extends EventEmitter2 {
     });
 
     // Track the goals and their status in order to publish status...
-    this.statusMessage = new Message({
+    this.statusMessage = {
       header: {
         stamp: { secs: 0, nsecs: 100 },
         frame_id: ''
       },
       status_list: []
-    });
+    };
 
     // needed for handling preemption prompted by a new goal being received
     this.currentGoal = null; // currently tracked goal
@@ -84,9 +83,7 @@ class SimpleActionServer extends EventEmitter2 {
         that.emit('cancel');
       } else {
         // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
-        that.statusMessage.status_list = [
-          { goal_id: goalMessage.goal_id, status: 1 }
-        ];
+        that.statusMessage.status_list = [{ goal_id: goalMessage.goal_id, status: 1 }];
         that.currentGoal = goalMessage;
         that.emit('goal', goalMessage.goal);
       }
@@ -157,9 +154,7 @@ class SimpleActionServer extends EventEmitter2 {
       var nsecs = Math.round(
         1000000000 * (currentTime.getTime() / 1000 - secs)
       );
-      // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
       that.statusMessage.header.stamp.secs = secs;
-      // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
       that.statusMessage.header.stamp.nsecs = nsecs;
       statusPublisher.publish(that.statusMessage);
     }, 500); // publish every 500ms
@@ -170,13 +165,12 @@ class SimpleActionServer extends EventEmitter2 {
    * @param {Object} result - The result to return to the client.
    */
   setSucceeded(result) {
-    var resultMessage = new Message({
+    var resultMessage = {
       status: { goal_id: this.currentGoal.goal_id, status: 3 },
       result: result
-    });
+    };
     this.resultPublisher.publish(resultMessage);
 
-    // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
     this.statusMessage.status_list = [];
     if (this.nextGoal) {
       this.currentGoal = this.nextGoal;
@@ -192,13 +186,12 @@ class SimpleActionServer extends EventEmitter2 {
    * @param {Object} result - The result to return to the client.
    */
   setAborted(result) {
-    var resultMessage = new Message({
+    var resultMessage = {
       status: { goal_id: this.currentGoal.goal_id, status: 4 },
       result: result
-    });
+    };
     this.resultPublisher.publish(resultMessage);
 
-    // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
     this.statusMessage.status_list = [];
     if (this.nextGoal) {
       this.currentGoal = this.nextGoal;
@@ -214,21 +207,20 @@ class SimpleActionServer extends EventEmitter2 {
    * @param {Object} feedback - The feedback to send to the client.
    */
   sendFeedback(feedback) {
-    var feedbackMessage = new Message({
+    var feedbackMessage = {
       status: { goal_id: this.currentGoal.goal_id, status: 1 },
       feedback: feedback
-    });
+    };
     this.feedbackPublisher.publish(feedbackMessage);
   }
   /**
    * Handle case where client requests preemption.
    */
   setPreempted() {
-    // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
     this.statusMessage.status_list = [];
-    var resultMessage = new Message({
+    var resultMessage = {
       status: { goal_id: this.currentGoal.goal_id, status: 2 }
-    });
+    };
     this.resultPublisher.publish(resultMessage);
 
     if (this.nextGoal) {
