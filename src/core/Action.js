@@ -3,9 +3,6 @@
  * @author Sebastian Castro - sebastian.castro@picknik.ai
  */
 
-var ActionGoal = require('./ActionGoal');
-var ActionFeedback = require('./ActionFeedback');
-var ActionResult = require('./ActionResult');
 var EventEmitter2 = require('eventemitter2').EventEmitter2;
 var Ros = require('../core/Ros');
 
@@ -67,11 +64,9 @@ class Action extends EventEmitter2 {
             failedCallback(message.values);
           }
         } else if (message.op === 'action_feedback' && typeof feedbackCallback === 'function') {
-          // @ts-expect-error -- can't figure out how to get ActionFeedback to play nice in typescript here
-          feedbackCallback(new ActionFeedback(message.values));
+          feedbackCallback(message.values);
         } else if (message.op === 'action_result' && typeof resultCallback === 'function') {
-          // @ts-expect-error -- can't figure out how to get ActionResult to play nice in typescript here
-          resultCallback(new ActionResult(message.values));
+          resultCallback(message.values);
         }
       });
     }
@@ -181,14 +176,14 @@ class Action extends EventEmitter2 {
    * Helper function to send action feedback inside an action handler.
    *
    * @param {string} id - The action goal ID.
-   * @param {ActionFeedback<TFeedback>} feedback - The feedback to send.
+   * @param {TFeedback} feedback - The feedback to send.
    */
   sendFeedback(id, feedback) {
     var call = {
       op: 'action_feedback',
       id: id,
       action: this.name,
-      values: new ActionFeedback(feedback),
+      values: feedback,
     };
     this.ros.callOnConnection(call);
   }
@@ -197,14 +192,14 @@ class Action extends EventEmitter2 {
    * Helper function to set an action as succeeded.
    *
    * @param {string} id - The action goal ID.
-   * @param {ActionResult} result - The result to set.
+   * @param {TResult} result - The result to set.
    */
   setSucceeded(id, result) {
     var call = {
       op: 'action_result',
       id: id,
       action: this.name,
-      values: new ActionResult(result),
+      values: result,
       result: true,
     };
     this.ros.callOnConnection(call);

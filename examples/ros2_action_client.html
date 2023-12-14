@@ -46,9 +46,7 @@
   });
 
   // Send an action goal
-  var goal = new ROSLIB.ActionGoal({
-    order: 5,
-  });
+  var goal = {order: 5};
 
   var goal_id = fibonacciClient.sendGoal(goal, 
   function(result) {

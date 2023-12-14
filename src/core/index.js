@@ -7,7 +7,4 @@ module.exports = {
   ServiceRequest: require('./ServiceRequest'),
   ServiceResponse: require('./ServiceResponse'),
   Action: require('./Action'),
-  ActionGoal: require('./ActionGoal'),
-  ActionFeedback: require('./ActionFeedback'),
-  ActionResult: require('./ActionResult')
 };
