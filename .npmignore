@@ -1,7 +1,10 @@
-test
-examples
-Gruntfile.js
-.gitignore
-.github
-bower.json
 *.md
+.github
+.gitignore
+.jshintrc
+Gruntfile.js
+bower.json
+examples
+jsdoc_conf.json
+test
+tsconfig.json
