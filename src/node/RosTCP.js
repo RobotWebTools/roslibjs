@@ -1,13 +1,10 @@
 var Ros = require('../core/Ros');
-var SocketIO = require('./SocketIO');
 var net = require('net');
 var socketAdapter = require('../core/SocketAdapter.js');
 const TopicStream = require('./TopicStream');
 
 /**
  * Same as core Ros except supports TCP connections.
- * This can also receive a socket.io instance (options.socketio) or server instance (option.http)
- * to connect to the front using socket.io.
  * @private
  */
 class RosTCP extends Ros {
@@ -27,9 +24,6 @@ class RosTCP extends Ros {
         host: options.host,
         port: options.port
       });
-    }
-    if (options.http || options.socketio) {
-      this.io = new SocketIO(options, this);
     }
   }
   /**
