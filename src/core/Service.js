@@ -10,7 +10,7 @@ var Ros = require('../core/Ros');
 
 /**
  * A ROS service client.
- * @template T, U
+ * @template TRequest, TResponse
  */
 class Service extends EventEmitter2 {
   /**
@@ -30,7 +30,7 @@ class Service extends EventEmitter2 {
   }
   /**
    * @callback callServiceCallback
-   *  @param {U} response - The response from the service request.
+   *  @param {TResponse} response - The response from the service request.
    */
   /**
    * @callback callServiceFailedCallback
@@ -40,7 +40,7 @@ class Service extends EventEmitter2 {
    * Call the service. Returns the service response in the
    * callback. Does nothing if this service is currently advertised.
    *
-   * @param {T} request - The ROSLIB.ServiceRequest to send.
+   * @param {TRequest} request - The ROSLIB.ServiceRequest to send.
    * @param {callServiceCallback} [callback] - Function with the following params:
    * @param {callServiceFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
@@ -76,7 +76,7 @@ class Service extends EventEmitter2 {
   }
   /**
    * @callback advertiseCallback
-   * @param {ServiceRequest<T>} request - The service request.
+   * @param {ServiceRequest<TRequest>} request - The service request.
    * @param {Object} response - An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
    *     It should return true if the service has finished successfully,
    *     i.e., without any fatal errors.

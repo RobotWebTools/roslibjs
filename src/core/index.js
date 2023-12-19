@@ -5,5 +5,6 @@ module.exports = {
   Param: require('./Param'),
   Service: require('./Service'),
   ServiceRequest: require('./ServiceRequest'),
-  ServiceResponse: require('./ServiceResponse')
+  ServiceResponse: require('./ServiceResponse'),
+  Action: require('./Action'),
 };

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script src="../build/roslib.js"></script>
+
+<script>
+  // Connecting to ROS
+  // -----------------
+  var ros = new ROSLIB.Ros({
+    url : 'ws://localhost:9090'
+  });
+
+  // If there is an error on the backend, an 'error' emit will be emitted.
+  ros.on('error', function(error) {
+    console.log(error);
+  });
+
+  // The ActionServer
+  // ----------------
+
+  var fibonacciServer = new ROSLIB.Action({
+    ros : ros,
+    name : '/fibonacci',
+    actionType : 'action_tutorials_interfaces/Fibonacci'
+  });
+
+  var actionCallback = function(goal, id) {
+    console.log('Received action goal on ' + fibonacciServer.name + ', order: ' + goal.order);
+    console.log('ID: ' + id);
+    fibonacciSequence = [];
+    fibonacciSequence.push(0);
+    fibonacciSequence.push(1);
+
+    // failure case
+    if (goal.order > 47) {
+      console.log('Aborting. Value will exceed maximum signed integer value.');
+      fibonacciServer.setFailed(id);
+      return;
+    }
+
+    // publish feedback
+    for (var i = 1; i < goal.order; i++) {
+      fibonacciSequence.push( fibonacciSequence[i] + fibonacciSequence[i-1] );
+      console.log('Sending feedback: ' + fibonacciSequence);
+      fibonacciServer.sendFeedback(id, { partial_sequence : fibonacciSequence });
+    }
+
+    // send result
+    console.log('Sending result: ' + fibonacciSequence);
+    fibonacciServer.setSucceeded(id, { sequence: fibonacciSequence });
+  };
+  var cancelCallback = function(id) {
+    console.log('Canceled action with goal ID ' + id);
+  };
+
+  fibonacciServer.advertise(actionCallback, cancelCallback);
+</script>
+</head>
+
+<body>
+  <h1>Fibonacci ActionServer Example</h1>
+  <p>Run the following commands in the terminal then refresh this page. Check the JavaScript
+    console for the output.</p>
+  <ol>
+    <li><tt>ros2 launch rosbridge_server rosbridge_websocket_launch.xml</tt></li>
+    <li><tt>refresh this page</tt></li>
+    <li><tt>ros2 run action_tutorials_py fibonacci_action_client</tt>
+        <br>or<br>
+        <tt>ros2 action send_goal --feedback /fibonacci action_tutorials_interfaces/action/Fibonacci order:\ 20\ </tt>
+    </li>
+  </ol>
+</body>
+</html>
