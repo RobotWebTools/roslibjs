@@ -31,9 +31,9 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
 class Ros extends EventEmitter2 {
   /**
    * @param {Object} [options]
-   * @param {string} [options.url] - The WebSocket URL for rosbridge or the node server URL to connect using socket.io (if socket.io exists in the page). Can be specified later with `connect`.
+   * @param {string} [options.url] - The WebSocket URL for rosbridge. Can be specified later with `connect`.
    * @param {boolean} [options.groovyCompatibility=true] - Don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools.
-   * @param {string} [options.transportLibrary=websocket] - One of 'websocket', 'workersocket', 'socket.io' or RTCPeerConnection instance controlling how the connection is created in `connect`.
+   * @param {'websocket'|'workersocket'|RTCPeerConnection} [options.transportLibrary='websocket'] - One of 'websocket', 'workersocket', or RTCPeerConnection instance controlling how the connection is created in `connect`.
    * @param {Object} [options.transportOptions={}] - The options to use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.
    */
   constructor(options) {
@@ -69,17 +69,7 @@ class Ros extends EventEmitter2 {
    * @param {string} url - WebSocket URL or RTCDataChannel label for rosbridge.
    */
   connect(url) {
-    if (this.transportLibrary === 'socket.io') {
-      this.socket = assign(
-        // @ts-expect-error -- this doesn't seem to work
-        io(url, { 'force new connection': true }),
-        socketAdapter(this)
-      );
-      this.socket.on('connect', this.socket.onopen);
-      this.socket.on('data', this.socket.onmessage);
-      this.socket.on('close', this.socket.onclose);
-      this.socket.on('error', this.socket.onerror);
-    } else if (this.transportLibrary.constructor.name === 'RTCPeerConnection') {
+    if (this.transportLibrary.constructor.name === 'RTCPeerConnection') {
       this.socket = assign(
         // @ts-expect-error -- this is kinda wild. `this.transportLibrary` can either be a string or an RTCDataChannel. This needs fixing.
         this.transportLibrary.createDataChannel(url, this.transportOptions),
@@ -137,24 +127,12 @@ class Ros extends EventEmitter2 {
    * @param {Object} messageEncoded - The encoded message to be sent.
    */
   sendEncodedMessage(messageEncoded) {
-    var emitter = null;
-    var that = this;
-    if (this.transportLibrary === 'socket.io') {
-      emitter = function (msg) {
-        that.socket.emit('operation', msg);
-      };
-    } else {
-      emitter = function (msg) {
-        that.socket.send(msg);
-      };
-    }
-
     if (!this.isConnected) {
-      that.once('connection', function () {
-        emitter(messageEncoded);
+      this.once('connection', () => {
+        this.socket.send(messageEncoded);
       });
     } else {
-      emitter(messageEncoded);
+      this.socket.send(messageEncoded);
     }
   }
   /**
