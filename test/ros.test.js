@@ -1,17 +1,17 @@
 var expect = require('chai').expect;
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
+var EventEmitter = require('eventemitter3').EventEmitter;
 var ROSLIB = require('..');
 
 describe('ROS', function() {
 
   describe('callOnConnection', function() {
-    it('should accept more than EventEmitter2\'s default listeners', function() {
-      // By default, EventEmitter2 only accepts 10 listeners. When more than
+    it('should accept more than EventEmitter\'s default listeners', function() {
+      // By default, EventEmitter only accepts 10 listeners. When more than
       // the default, a 'warn' property is set on the listener. The firt part
       // of this test proves the 'warn' property will be set with default
-      // EventEmitter2 settings.
+      // EventEmitter settings.
       var callCount = 50;
-      var eventEmitter = new EventEmitter2();
+      var eventEmitter = new EventEmitter();
       for (var i = 0; i < callCount; i++) {
         eventEmitter.on('foo', function () {});
       }

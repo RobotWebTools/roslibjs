@@ -5,7 +5,7 @@
 
 var Topic = require('../core/Topic');
 var Message = require('../core/Message');
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
+var EventEmitter = require('eventemitter3').EventEmitter;
 var Ros = require('../core/Ros');
 
 /**
@@ -18,7 +18,7 @@ var Ros = require('../core/Ros');
  *  * 'result' - The result returned from the action server.
  *
  */
-class ActionClient extends EventEmitter2 {
+class ActionClient extends EventEmitter {
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.

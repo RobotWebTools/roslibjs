@@ -3,7 +3,7 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
+var EventEmitter = require('eventemitter3').EventEmitter;
 var Message = require('./Message');
 var Ros = require('../core/Ros');
 
@@ -15,7 +15,7 @@ var Ros = require('../core/Ros');
  *  * 'message' - The message data from rosbridge.
  * @template T
  */
-class Topic extends EventEmitter2 {
+class Topic extends EventEmitter {
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -130,7 +130,7 @@ class Topic extends EventEmitter2 {
    * and remove all subscribe callbacks. To remove a callback, you must
    * explicitly pass the callback function in.
    *
-   * @param {import('eventemitter2').ListenerFn} [callback] - The callback to unregister, if
+   * @param {import('eventemitter3').EventEmitter.ListenerFn} [callback] - The callback to unregister, if
    *     provided and other listeners are registered the topic won't
    *     unsubscribe, just stop emitting to the passed listener.
    */
