@@ -4,7 +4,6 @@
  */
 
 var WebSocket = require('ws');
-var WorkerSocket = require('../util/workerSocket');
 var socketAdapter = require('./SocketAdapter.js');
 
 var Service = require('./Service');
@@ -33,7 +32,7 @@ class Ros extends EventEmitter {
    * @param {Object} [options]
    * @param {string} [options.url] - The WebSocket URL for rosbridge. Can be specified later with `connect`.
    * @param {boolean} [options.groovyCompatibility=true] - Don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools.
-   * @param {'websocket'|'workersocket'|RTCPeerConnection} [options.transportLibrary='websocket'] - One of 'websocket', 'workersocket', or RTCPeerConnection instance controlling how the connection is created in `connect`.
+   * @param {'websocket'|RTCPeerConnection} [options.transportLibrary='websocket'] - 'websocket', or an RTCPeerConnection instance controlling how the connection is created in `connect`.
    * @param {Object} [options.transportOptions={}] - The options to use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.
    */
   constructor(options) {
@@ -78,8 +77,6 @@ class Ros extends EventEmitter {
         sock.binaryType = 'arraybuffer';
         this.socket = assign(sock, socketAdapter(this));
       }
-    } else if (this.transportLibrary === 'workersocket') {
-      this.socket = assign(new WorkerSocket(url), socketAdapter(this));
     } else {
       throw 'Unknown transportLibrary: ' + this.transportLibrary.toString();
     }
