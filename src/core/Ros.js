@@ -16,7 +16,7 @@ const Topic = require('./Topic');
 const Param = require('./Param');
 const { TFClient } = require('../tf');
 const { ActionClient, SimpleActionServer } = require('../actionlib');
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
+var EventEmitter = require('eventemitter3').EventEmitter;
 
 /**
  * Manages connection to the server and all interactions with ROS.
@@ -28,7 +28,7 @@ var EventEmitter2 = require('eventemitter2').EventEmitter2;
  *  * &#60;topicName&#62; - A message came from rosbridge with the given topic name.
  *  * &#60;serviceID&#62; - A service response came from rosbridge with the given ID.
  */
-class Ros extends EventEmitter2 {
+class Ros extends EventEmitter {
   /**
    * @param {Object} [options]
    * @param {string} [options.url] - The WebSocket URL for rosbridge. Can be specified later with `connect`.
@@ -54,9 +54,6 @@ class Ros extends EventEmitter2 {
     } else {
       this.groovyCompatibility = options.groovyCompatibility;
     }
-
-    // Sets unlimited event listeners.
-    this.setMaxListeners(0);
 
     // begin by checking if a URL was given
     if (options.url) {

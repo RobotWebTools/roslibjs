@@ -4,7 +4,7 @@
  */
 
 var Message = require('../core/Message');
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
+var EventEmitter = require('eventemitter3').EventEmitter;
 var ActionClient = require('./ActionClient');
 
 /**
@@ -13,7 +13,7 @@ var ActionClient = require('./ActionClient');
  * Emits the following events:
  *  * 'timeout' - If a timeout occurred while sending a goal.
  */
-class Goal extends EventEmitter2 {
+class Goal extends EventEmitter {
   /**
    * @param {Object} options
    * @param {ActionClient} options.actionClient - The ROSLIB.ActionClient to use with this goal.

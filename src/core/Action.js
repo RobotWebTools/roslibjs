@@ -3,14 +3,14 @@
  * @author Sebastian Castro - sebastian.castro@picknik.ai
  */
 
-var EventEmitter2 = require('eventemitter2').EventEmitter2;
+var EventEmitter = require('eventemitter3').EventEmitter;
 var Ros = require('../core/Ros');
 
 /**
  * A ROS 2 action client.
  * @template TGoal, TFeedback, TResult
  */
-class Action extends EventEmitter2 {
+class Action extends EventEmitter {
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.

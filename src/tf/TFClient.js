@@ -3,7 +3,7 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
-const { EventEmitter2 } = require('eventemitter2');
+var EventEmitter = require('eventemitter3').EventEmitter;
 var ActionClient = require('../actionlib/ActionClient');
 var Goal = require('../actionlib/Goal');
 
@@ -18,7 +18,7 @@ var Ros = require('../core/Ros');
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
  */
-class TFClient extends EventEmitter2 {
+class TFClient extends EventEmitter {
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
