@@ -43,9 +43,6 @@ module.exports = function(grunt) {
       },
       examples: {
         configFile: './test/examples/karma.conf.js'
-      },
-      workersocket: {
-        configFile: './test/workersocket/karma.conf.js'
       }
     },
     mochaTest: {
@@ -110,7 +107,6 @@ module.exports = function(grunt) {
   grunt.registerTask('test', ['jshint', 'mochaTest:test', 'karma:test']);
   grunt.registerTask('test-examples', ['mochaTest:examples', 'karma:examples']);
   grunt.registerTask('test-tcp', ['mochaTest:tcp']);
-  grunt.registerTask('test-workersocket', ['karma:workersocket']);
   grunt.registerTask('build', ['shell', 'browserify', 'uglify']);
   grunt.registerTask('build_and_watch', ['watch']);
   grunt.registerTask('doc', ['clean', 'jsdoc']);

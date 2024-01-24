@@ -44,8 +44,6 @@
     "eventemitter3": "^5.0.1",
     "object-assign": "^4.0.0",
     "pngparse": "^2.0.0",
-    "webworkify": "^1.5.0",
-    "webworkify-webpack": "^2.1.5",
     "ws": "^8.0.0"
   },
   "directories": {
@@ -60,7 +58,6 @@
     "doc": "grunt doc",
     "test": "grunt test",
     "test-examples": "grunt test-examples",
-    "test-workersocket": "grunt test-workersocket",
     "test-tcp": "grunt test-tcp",
     "publish": "npm run build && npm run test"
   },
