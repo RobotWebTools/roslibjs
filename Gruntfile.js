@@ -13,6 +13,9 @@ module.exports = function(grunt) {
     shell: {
       ts: {
         command: 'tsc -p .'
+      },
+      eslint: {
+        command: 'eslint .'
       }
     },
     browserify: {
@@ -20,12 +23,6 @@ module.exports = function(grunt) {
         src: ['./tsbuild/RosLibBrowser.js'],
         dest: './build/roslib.js'
       }
-    },
-    jshint: {
-      options: {
-        jshintrc: true
-      },
-      files: ['./Gruntfile.js', './src/**/*.js']
     },
     karma: {
       options: {
@@ -82,7 +79,7 @@ module.exports = function(grunt) {
         options: {
           interrupt: true
         },
-        files: ['Gruntfile.js', '.jshintrc', './src/**/*.js'],
+        files: ['Gruntfile.js', 'eslint.config.js', './src/**/*.js'],
         tasks: ['build']
       }
     },
@@ -104,10 +101,10 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('dev', ['browserify', 'watch']);
-  grunt.registerTask('test', ['jshint', 'mochaTest:test', 'karma:test']);
+  grunt.registerTask('test', ['shell:eslint', 'mochaTest:test', 'karma:test']);
   grunt.registerTask('test-examples', ['mochaTest:examples', 'karma:examples']);
   grunt.registerTask('test-tcp', ['mochaTest:tcp']);
-  grunt.registerTask('build', ['shell', 'browserify', 'uglify']);
+  grunt.registerTask('build', ['shell:ts', 'browserify', 'uglify']);
   grunt.registerTask('build_and_watch', ['watch']);
   grunt.registerTask('doc', ['clean', 'jsdoc']);
 };
