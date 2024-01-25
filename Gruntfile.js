@@ -20,7 +20,7 @@ module.exports = function(grunt) {
     },
     browserify: {
       dist: {
-        src: ['./tsbuild/RosLibBrowser.js'],
+        src: ['./tsbuild/RosLib.js'],
         dest: './build/roslib.js'
       }
     },
