@@ -1,7 +1,7 @@
 *.md
 .github
 .gitignore
-.jshintrc
+.eslint.config.js
 Gruntfile.js
 bower.json
 examples

@@ -15,13 +15,14 @@
   "devDependencies": {
     "@types/mocha": "^10.0.6",
     "chai": "*",
+    "eslint": "^8.56.0",
     "grunt": "^1.0.0",
     "grunt-browserify": "^6.0.0",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "^2.0.0",
-    "grunt-contrib-jshint": "^3.0.0",
     "grunt-contrib-uglify": "^5.0.0",
     "grunt-contrib-watch": "^1.0.0",
+    "grunt-eslint": "^24.3.0",
     "grunt-jsdoc": "^2.1.0",
     "grunt-karma": "^4.0.0",
     "grunt-mocha-test": "^0.13.0",
@@ -42,6 +43,7 @@
     "@xmldom/xmldom": "^0.8.0",
     "cbor-js": "^0.1.0",
     "eventemitter3": "^5.0.1",
+    "globals": "^13.24.0",
     "object-assign": "^4.0.0",
     "pngparse": "^2.0.0",
     "ws": "^8.0.0"
