@@ -4,9 +4,8 @@
   "description": "The standard ROS Javascript Library",
   "version": "1.4.1",
   "license": "BSD-2-Clause",
-  "main": "./src/RosLibNode.js",
+  "main": "./src/RosLib.js",
   "browser": {
-    "./src/RosLibNode.js": "./src/RosLib.js",
     "canvas": "./src/util/shim/canvas.js",
     "ws": "./src/util/shim/WebSocket.js",
     "@xmldom/xmldom": "./src/util/shim/@xmldom/xmldom.js",

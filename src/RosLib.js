@@ -22,3 +22,6 @@ var ROSLIB = {
 };
 
 module.exports = ROSLIB;
+
+// Add to global namespace for in-browser support (i.e. CDN)
+global.ROSLIB = ROSLIB;
