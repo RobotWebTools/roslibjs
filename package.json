@@ -42,7 +42,7 @@
     "@xmldom/xmldom": "^0.8.0",
     "cbor-js": "^0.1.0",
     "eventemitter3": "^5.0.1",
-    "globals": "^13.24.0",
+    "globals": "^14.0.0",
     "object-assign": "^4.0.0",
     "pngparse": "^2.0.0",
     "ws": "^8.0.0"
