@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import ROSLIB from 'roslib'
+import ROSLIB from '../../../..'
 
 function SendMessage() {
   const [status, setStatus] = useState("Not connected")

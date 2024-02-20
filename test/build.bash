@@ -28,5 +28,3 @@ echo -e "\e[1m\e[35mnpm run build\e[0m"
 npm run build
 echo -e "\e[1m\e[35mnpm test\e[0m"
 npm test
-echo -e "\e[1m\e[35mnpm run test-examples\e[0m"
-npm run test-examples

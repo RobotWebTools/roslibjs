@@ -2,8 +2,7 @@ var expect = require('chai').expect;
 var ROSLIB = require('../..');
 
 describe('Fibonacci Example', function() {
-    it('Fibonacci', function(done) {
-        this.timeout(8000);
+    it('Fibonacci', () => new Promise((done) =>  {
 
         var ros = new ROSLIB.Ros({
             url: 'ws://localhost:9090'
@@ -51,5 +50,5 @@ describe('Fibonacci Example', function() {
         setTimeout(function(){
           goal.send();
         }, 100);
-    });
+    }), 8000);
 });

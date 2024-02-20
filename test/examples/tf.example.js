@@ -2,7 +2,7 @@ var expect = require('chai').expect;
 var ROSLIB = require('../..');
 
 describe('TF2 Republisher Example', function() {
-    it('tf republisher', function(done) {
+    it('tf republisher', () => new Promise((done) =>  {
         var ros = new ROSLIB.Ros();
         ros.connect('ws://localhost:9090');
 
@@ -19,9 +19,9 @@ describe('TF2 Republisher Example', function() {
             expect(tf.translation).to.be.a.instanceof(ROSLIB.Vector3);
             done();
         });
-    });
+    }));
 
-    it('tf republisher alternative syntax', function(done) {
+    it('tf republisher alternative syntax', () => new Promise((done) =>  {
         var ros = new ROSLIB.Ros({
             url: 'ws://localhost:9090'
         });
@@ -38,5 +38,5 @@ describe('TF2 Republisher Example', function() {
             expect(tf.translation).to.be.a.instanceof(ROSLIB.Vector3);
             done();
         });
-    });
+    }));
 });

@@ -16,7 +16,6 @@ function format(msg) {
 var messages = ['1', '2', '3', '4'].map(format);
 
 describe('Topics Example', function() {
-    this.timeout(1000);
 
     function createAndStreamTopic(topicName) {
         var topic = ros.Topic({
@@ -42,7 +41,7 @@ describe('Topics Example', function() {
     }
 
 
-    it('Listening to a topic & unsubscribes', function(done) {
+    it('Listening to a topic & unsubscribes', () => new Promise((done) => {
         var topic = createAndStreamTopic('/echo/test');
         var expected = messages.slice();
 
@@ -52,8 +51,8 @@ describe('Topics Example', function() {
         });
 
         topic.on('unsubscribe', done);
-    });
-});
+    }));
+}, 1000);
 
 // @ts-expect-error
 if (ROSLIB.Topic.prototype.toStream) {
@@ -88,7 +87,7 @@ if (ROSLIB.Topic.prototype.toStream) {
           return topic;
         }
 
-        it('Topic.toStream()', function(done) {
+        it('Topic.toStream()', () => new Promise((done) =>  {
           // @ts-expect-error
           var stream = createAndStreamTopic('/echo/test-stream').toStream();
           var expected = messages.slice();
@@ -98,6 +97,6 @@ if (ROSLIB.Topic.prototype.toStream) {
             expect(message).to.be.eql(expected.shift());
           });
           stream.on('end', done);
-        });
+        }));
     });
 }
