@@ -8,6 +8,11 @@ module.exports = [
         ...globals.node,
         'bson': true
       },
+      'parserOptions': {
+        'ecmaFeatures': {
+          'jsx': true
+        }
+      }
     }
   },
   {
