@@ -19,6 +19,7 @@ import * as Urdf from './urdf/index.js';
 
 // Add to global namespace for in-browser support (i.e. CDN)
 global.ROSLIB = {
+  REVISION,
   ...Core,
   ...ActionLib,
   ...Math,
