@@ -5,7 +5,7 @@ describe('TF2 Republisher Service Example', function() {
     it('tf republisher', () => new Promise((done) =>  {
         var ros = new ROSLIB.Ros({
           // Use the service interface to tf2_web_republisher
-          groovyCompatibility : false
+          groovyCompatibility: false
         });
         ros.connect('ws://localhost:9090');
 

@@ -32,7 +32,8 @@ module.exports = [
       strict: 0,
       quotes: [2, 'single'],
       'no-proto': 2,
-      'linebreak-style': 2
+      'linebreak-style': 2,
+      'key-spacing': [2, {afterColon: true}]
     },
     files: ['**/*.{js,jsx,cjs}']
   }

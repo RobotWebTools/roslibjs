@@ -72,12 +72,12 @@ class Action extends EventEmitter {
     }
 
     var call = {
-      op : 'send_action_goal',
-      id : actionGoalId,
-      action : this.name,
+      op: 'send_action_goal',
+      id: actionGoalId,
+      action: this.name,
       action_type: this.actionType,
-      args : goal,
-      feedback : true,
+      args: goal,
+      feedback: true,
     };
     this.ros.callOnConnection(call);
 

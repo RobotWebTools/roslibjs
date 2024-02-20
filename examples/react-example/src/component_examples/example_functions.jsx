@@ -47,9 +47,9 @@ function SendMessage() {
     })
 
     const data = new ROSLIB.Message({
-            x : linear.x,
-            y : linear.y,
-            theta : angular.z
+            x: linear.x,
+            y: linear.y,
+            theta: angular.z
     })
 
     // publishes to the queue
