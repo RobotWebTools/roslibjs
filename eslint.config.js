@@ -30,6 +30,6 @@ module.exports = [
       'no-proto': 2,
       'linebreak-style': 2
     },
-    files: ['Gruntfile.js', 'src/**/*.js']
+    files: ['**/*.{js,jsx,cjs}']
   }
 ];
