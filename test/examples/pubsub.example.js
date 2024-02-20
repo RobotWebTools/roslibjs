@@ -1,4 +1,4 @@
-var expect = require('chai').expect;
+import { describe, it, expect, afterAll } from 'vitest';
 var ROSLIB = require('../..');
 
 describe('Topics Example', function() {
