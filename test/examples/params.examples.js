@@ -5,7 +5,7 @@ describe('Param setting', function() {
     var ros = new ROSLIB.Ros({
         url: 'ws://localhost:9090'
     });
-    var param = ros.Param({
+    var param = new ros.Param({
         name: '/test/foo'
     });
 

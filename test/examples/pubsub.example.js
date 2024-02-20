@@ -7,7 +7,7 @@ describe('Topics Example', function() {
         url: 'ws://localhost:9090'
     });
 
-    var example = ros.Topic({
+    var example = new ros.Topic({
         name: '/example_topic',
         messageType: 'std_msgs/String'
     });
@@ -18,7 +18,7 @@ describe('Topics Example', function() {
     var messages1 = ['Hello Example2!', 'Whats good?'].map(format);
     var messages2 = ['Hi there', 'this example working'].map(format);
 
-    var example2 = ros.Topic({
+    var example2 = new ros.Topic({
         name: '/example_topic',
         messageType: 'std_msgs/String'
     });

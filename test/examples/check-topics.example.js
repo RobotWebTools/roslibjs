@@ -23,7 +23,7 @@ describe('Example topics are live', function() {
         });
     }));
 
-    var example = ros.Topic({
+    var example = new ros.Topic({
         name: '/some_test_topic',
         messageType: 'std_msgs/String'
     });

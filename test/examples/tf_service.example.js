@@ -29,7 +29,7 @@ describe('TF2 Republisher Service Example', function() {
             url: 'ws://localhost:9090'
         });
 
-        var tfClient = ros.TFClient({
+        var tfClient = new ros.TFClient({
             fixedFrame: 'world',
             angularThres: 0.01,
             transThres: 0.01
