@@ -5,11 +5,6 @@ var ros = new ROSLIB.Ros({
     url: 'ws://localhost:9090'
 });
 
-var example = ros.Topic({
-    name: '/test_topic',
-    messageType: 'std_msgs/String'
-});
-
 function format(msg) {
     return {data: msg};
 }
@@ -53,50 +48,3 @@ describe('Topics Example', function() {
         topic.on('unsubscribe', done);
     }));
 }, 1000);
-
-// @ts-expect-error
-if (ROSLIB.Topic.prototype.toStream) {
-    var TransformStream = require('stream').Transform;
-    describe('Topic Streams are readable and writable', function() {
-        this.timeout(1000);
-
-        function createAndStreamTopic(topicName) {
-          var stream = new TransformStream({ objectMode: true });
-          var topic = ros.Topic({
-            name: topicName,
-            messageType: 'std_msgs/String'
-          });
-
-          var idx = 0;
-          function emit() {
-            setTimeout(function () {
-              stream.push(messages[idx++]);
-              if (idx < messages.length) {
-                emit();
-              } else {
-                stream.end();
-                topic.unsubscribe();
-                topic.unadvertise();
-              }
-            }, 50);
-          }
-          emit();
-
-          // @ts-expect-error
-          stream.pipe(topic.toStream());
-          return topic;
-        }
-
-        it('Topic.toStream()', () => new Promise((done) =>  {
-          // @ts-expect-error
-          var stream = createAndStreamTopic('/echo/test-stream').toStream();
-          var expected = messages.slice();
-
-          expect(stream).to.be.instanceof(require('stream'));
-          stream.on('data', function (message) {
-            expect(message).to.be.eql(expected.shift());
-          });
-          stream.on('end', done);
-        }));
-    });
-}
