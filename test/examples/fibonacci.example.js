@@ -3,7 +3,6 @@ var ROSLIB = require('../..');
 
 describe('Fibonacci Example', function() {
     it('Fibonacci', function(done) {
-        this.timeout(8000);
 
         var ros = new ROSLIB.Ros({
             url: 'ws://localhost:9090'
@@ -51,5 +50,5 @@ describe('Fibonacci Example', function() {
         setTimeout(function(){
           goal.send();
         }, 100);
-    });
+    }, 8000);
 });

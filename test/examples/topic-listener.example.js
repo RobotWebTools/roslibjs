@@ -16,7 +16,6 @@ function format(msg) {
 var messages = ['1', '2', '3', '4'].map(format);
 
 describe('Topics Example', function() {
-    this.timeout(1000);
 
     function createAndStreamTopic(topicName) {
         var topic = ros.Topic({
@@ -53,7 +52,7 @@ describe('Topics Example', function() {
 
         topic.on('unsubscribe', done);
     });
-});
+}, 1000);
 
 // @ts-expect-error
 if (ROSLIB.Topic.prototype.toStream) {

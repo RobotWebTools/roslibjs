@@ -2,7 +2,6 @@ var expect = require('chai').expect;
 var ROSLIB = require('../..');
 
 describe('Topics Example', function() {
-    this.timeout(1000);
 
     var ros = new ROSLIB.Ros({
         url: 'ws://localhost:9090'
@@ -91,10 +90,10 @@ describe('Topics Example', function() {
         setTimeout(done, 500);
     });
 
-    this.afterAll(function() {
+    afterAll(function() {
         example.unadvertise();
         example.unsubscribe();
         example2.unadvertise();
         example2.unsubscribe();
     });
-});
+}, 1000);

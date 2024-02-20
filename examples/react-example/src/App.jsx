@@ -1,6 +1,7 @@
 import logo from './logo.svg'
 import './App.css'
 import SendMessage from "./component_examples/example_functions"
+import React from "react";
 
 function App() {
   return (

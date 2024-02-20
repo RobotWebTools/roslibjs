@@ -46,12 +46,11 @@ describe('Example topics are live', function(done) {
 
     it('unadvertise will end the topic (if it\s the last around)', function(done) {
         console.log("Unadvertisement test. Wait for 15 seconds..");
-        this.timeout(20000);
         setTimeout(function() {
           ros.getTopics(function(result) {
               expect(result.topics).not.to.contain('/some_test_topic');
               done();
           });
         }, 15000);
-    });
+    }, 20000);
 });
