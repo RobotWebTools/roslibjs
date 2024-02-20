@@ -5,6 +5,11 @@ var ros = new ROSLIB.Ros({
     url: 'ws://localhost:9090'
 });
 
+var example = ros.Topic({
+    name: '/test_topic',
+    messageType: 'std_msgs/String'
+});
+
 function format(msg) {
     return {data: msg};
 }
@@ -13,7 +18,7 @@ var messages = ['1', '2', '3', '4'].map(format);
 describe('Topics Example', function() {
 
     function createAndStreamTopic(topicName) {
-        var topic = new ros.Topic({
+        var topic = ros.Topic({
             name: topicName,
             messageType: 'std_msgs/String'
         });
@@ -57,7 +62,7 @@ if (ROSLIB.Topic.prototype.toStream) {
 
         function createAndStreamTopic(topicName) {
           var stream = new TransformStream({ objectMode: true });
-          var topic = new ros.Topic({
+          var topic = ros.Topic({
             name: topicName,
             messageType: 'std_msgs/String'
           });
