@@ -3,10 +3,6 @@
  * @author Graeme Yeates - github.com/megawac
  */
 
-// @ts-expect-error -- this is for optionally polyfilling canvas
-import Canvas from 'canvas';
-var Image = Canvas.Image || window.Image;
-
 /**
  * @callback decompressPngCallback
  * @param data - The uncompressed data.
@@ -26,8 +22,12 @@ export default function decompressPng(data, callback) {
   // When the image loads, extracts the raw data (JSON message).
   image.onload = function () {
     // Creates a local canvas to draw on.
-    var canvas = new Canvas();
+    var canvas = document.createElement('canvas');
     var context = canvas.getContext('2d');
+
+    if (!context) {
+      throw new Error('Failed to create Canvas context!');
+    }
 
     // Sets width and height.
     canvas.width = image.width;
@@ -35,8 +35,6 @@ export default function decompressPng(data, callback) {
 
     // Prevents anti-aliasing and loosing data
     context.imageSmoothingEnabled = false;
-    context.webkitImageSmoothingEnabled = false;
-    context.mozImageSmoothingEnabled = false;
 
     // Puts the data into the image.
     context.drawImage(image, 0, 0);

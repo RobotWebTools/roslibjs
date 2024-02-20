@@ -7,7 +7,6 @@
  * @fileOverview
  */
 
-import decompressPng from '../util/decompressPng.js';
 import CBOR from 'cbor-js';
 import typedArrayTagger from '../util/cborTypedArrayTags.js';
 var BSON = null;
@@ -57,7 +56,13 @@ export default function SocketAdapter(client) {
 
   function handlePng(message, callback) {
     if (message.op === 'png') {
-      decompressPng(message.data, callback);
+      // If in Node.js..
+      if (typeof window === 'undefined') {
+        import('../util/decompressPng.js').then(({ default: decompressPng }) => decompressPng(message.data, callback));
+      } else {
+        // if in browser..
+        import('../util/shim/decompressPng.js').then(({default: decompressPng}) => decompressPng(message.data, callback));
+      }
     } else {
       callback(message);
     }
