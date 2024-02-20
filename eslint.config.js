@@ -24,7 +24,6 @@ module.exports = [
       eqeqeq: 2,
       'wrap-iife': [2, 'any'],
       'no-use-before-define': 0,
-      'new-cap': 2,
       'no-caller': 2,
       'dot-notation': 0,
       'no-undef': 2,
