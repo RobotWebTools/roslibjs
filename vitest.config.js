@@ -2,7 +2,6 @@ import {defineConfig} from "vitest/config";
 
 export default defineConfig({
   test: {
-    globals: true,
     include: [
       // Default value for vitest; we just want to extend.
       '**\/*.{test,spec}.?(c|m)[jt]s?(x)',

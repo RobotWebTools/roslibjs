@@ -1,4 +1,4 @@
-var expect = require('chai').expect;
+import { describe, it, expect } from 'vitest';
 var CBOR = require('cbor-js');
 var cborTypedArrayTagger = require('../src/util/cborTypedArrayTags.js');
 
