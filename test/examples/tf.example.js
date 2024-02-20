@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from 'vitest';
 var ROSLIB = require('../..');
 
 describe('TF2 Republisher Example', function() {

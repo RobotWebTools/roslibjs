@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from 'vitest';
 var ROSLIB = require('../..');
 
 var expectedTopics = [
@@ -45,7 +45,7 @@ describe('Example topics are live', function() {
     }));
 
     it('unadvertise will end the topic (if it\s the last around)', () => new Promise((done) =>  {
-        console.log("Unadvertisement test. Wait for 15 seconds..");
+        console.log('Unadvertisement test. Wait for 15 seconds..');
         setTimeout(function() {
           ros.getTopics(function(result) {
               expect(result.topics).not.to.contain('/some_test_topic');

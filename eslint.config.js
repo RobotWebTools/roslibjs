@@ -1,13 +1,18 @@
-const globals = require("globals");
+const globals = require('globals');
 
 module.exports = [
   {
     languageOptions: {
-      "globals": {
+      'globals': {
         ...globals.browser,
         ...globals.node,
-        "bson": true
+        'bson': true
       },
+      'parserOptions': {
+        'ecmaFeatures': {
+          'jsx': true
+        }
+      }
     }
   },
   {
@@ -19,7 +24,6 @@ module.exports = [
       eqeqeq: 2,
       'wrap-iife': [2, 'any'],
       'no-use-before-define': 0,
-      'new-cap': 2,
       'no-caller': 2,
       'dot-notation': 0,
       'no-undef': 2,
@@ -30,6 +34,6 @@ module.exports = [
       'no-proto': 2,
       'linebreak-style': 2
     },
-    files: ['Gruntfile.js', 'src/**/*.js']
+    files: ['**/*.{js,jsx,cjs}']
   }
 ];
