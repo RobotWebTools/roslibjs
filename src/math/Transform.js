@@ -3,13 +3,13 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
-var Vector3 = require('./Vector3');
-var Quaternion = require('./Quaternion');
+import Vector3 from './Vector3.js';
+import Quaternion from './Quaternion.js';
 
 /**
  * A Transform in 3-space. Values are copied into this object.
  */
-class Transform {
+export default class Transform {
   /**
    * @param {Object} options
    * @param {Vector3} options.translation - The ROSLIB.Vector3 describing the translation.
@@ -29,5 +29,3 @@ class Transform {
     return new Transform(this);
   }
 }
-
-module.exports = Transform;

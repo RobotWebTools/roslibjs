@@ -1,6 +1,6 @@
-const globals = require('globals');
+import globals from 'globals';
 
-module.exports = [
+export default [
   {
     languageOptions: {
       'globals': {

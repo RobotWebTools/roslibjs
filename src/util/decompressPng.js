@@ -5,7 +5,7 @@
 
 'use strict';
 
-var pngparse = require('pngparse');
+import pngparse from 'pngparse';
 
 /**
  * @callback decompressPngCallback
@@ -20,7 +20,7 @@ var pngparse = require('pngparse');
  * @param data - An object containing the PNG data.
  * @param {decompressPngCallback} callback - Function with the following params:
  */
-function decompressPng(data, callback) {
+export default function decompressPng(data, callback) {
   var buffer = new Buffer(data, 'base64');
 
   pngparse.parse(buffer, function (err, data) {
@@ -32,5 +32,3 @@ function decompressPng(data, callback) {
     }
   });
 }
-
-module.exports = decompressPng;

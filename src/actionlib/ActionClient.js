@@ -3,10 +3,10 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var Topic = require('../core/Topic');
-var Message = require('../core/Message');
-var EventEmitter = require('eventemitter3').EventEmitter;
-var Ros = require('../core/Ros');
+import Topic from '../core/Topic.js';
+import Message from '../core/Message.js';
+import Ros from '../core/Ros.js';
+import { EventEmitter } from 'eventemitter3';
 
 /**
  * An actionlib action client.
@@ -18,7 +18,7 @@ var Ros = require('../core/Ros');
  *  * 'result' - The result returned from the action server.
  *
  */
-class ActionClient extends EventEmitter {
+export default class ActionClient extends EventEmitter {
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -148,5 +148,3 @@ class ActionClient extends EventEmitter {
     }
   }
 }
-
-module.exports = ActionClient;

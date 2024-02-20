@@ -1,3 +1,4 @@
+
 'use strict';
 
 module.exports = function(grunt) {
@@ -18,7 +19,11 @@ module.exports = function(grunt) {
     browserify: {
       dist: {
         src: ['./tsbuild/RosLib.js'],
-        dest: './build/roslib.js'
+        dest: './build/roslib.js',
+        options: {
+          plugin: ['esmify'],
+          ignore: ['ws']
+        }
       }
     },
     uglify: {

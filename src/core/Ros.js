@@ -3,19 +3,20 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-var WebSocket = require('ws');
-var socketAdapter = require('./SocketAdapter.js');
+import socketAdapter from './SocketAdapter.js';
 
-var Service = require('./Service');
-var ServiceRequest = require('./ServiceRequest');
-var ServiceResponse = require('./ServiceResponse');
+import Service from './Service.js';
+import ServiceRequest from './ServiceRequest.js';
+import ServiceResponse from './ServiceResponse.js';
 
-var assign = require('object-assign');
-const Topic = require('./Topic');
-const Param = require('./Param');
-const { TFClient } = require('../tf');
-const { ActionClient, SimpleActionServer } = require('../actionlib');
-var EventEmitter = require('eventemitter3').EventEmitter;
+import assign from 'object-assign';
+import Topic from './Topic.js';
+import Param from './Param.js';
+import TFClient from '../tf/TFClient.js';
+import ActionClient from '../actionlib/ActionClient.js';
+import SimpleActionServer from '../actionlib/SimpleActionServer.js';
+import { EventEmitter } from 'eventemitter3';
+import { WebSocket } from 'ws';
 
 /**
  * Manages connection to the server and all interactions with ROS.
@@ -27,7 +28,7 @@ var EventEmitter = require('eventemitter3').EventEmitter;
  *  * &#60;topicName&#62; - A message came from rosbridge with the given topic name.
  *  * &#60;serviceID&#62; - A service response came from rosbridge with the given ID.
  */
-class Ros extends EventEmitter {
+export default class Ros extends EventEmitter {
   /**
    * @param {Object} [options]
    * @param {string} [options.url] - The WebSocket URL for rosbridge. Can be specified later with `connect`.
@@ -73,7 +74,8 @@ class Ros extends EventEmitter {
       );
     } else if (this.transportLibrary === 'websocket') {
       if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
-        var sock = new WebSocket(url);
+        // Detect if in browser vs in NodeJS
+        var sock = typeof window !== 'undefined' ? new window.WebSocket(url) : new WebSocket(url);
         sock.binaryType = 'arraybuffer';
         this.socket = assign(sock, socketAdapter(this));
       }
@@ -812,5 +814,3 @@ class Ros extends EventEmitter {
     return new SimpleActionServer({ ros: this, ...options });
   }
 }
-
-module.exports = Ros;

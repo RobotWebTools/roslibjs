@@ -1,5 +1,5 @@
 import { describe, it, expect, afterAll } from 'vitest';
-var ROSLIB = require('../..');
+import * as ROSLIB from '../../src/RosLib.js';
 
 describe('Topics Example', function() {
 
@@ -97,3 +97,4 @@ describe('Topics Example', function() {
         example2.unsubscribe();
     });
 }, 1000);
+

@@ -5,10 +5,9 @@
   "version": "1.4.1",
   "license": "BSD-2-Clause",
   "main": "./src/RosLib.js",
+  "type": "module",
   "browser": {
     "canvas": "./src/util/shim/canvas.js",
-    "ws": "./src/util/shim/WebSocket.js",
-    "@xmldom/xmldom": "./src/util/shim/@xmldom/xmldom.js",
     "./src/util/decompressPng.js": "./src/util/shim/decompressPng.js"
   },
   "devDependencies": {

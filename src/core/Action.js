@@ -3,14 +3,14 @@
  * @author Sebastian Castro - sebastian.castro@picknik.ai
  */
 
-var EventEmitter = require('eventemitter3').EventEmitter;
-var Ros = require('../core/Ros');
+import { EventEmitter } from 'eventemitter3';
+import Ros from '../core/Ros.js';
 
 /**
  * A ROS 2 action client.
  * @template TGoal, TFeedback, TResult
  */
-class Action extends EventEmitter {
+export default class Action extends EventEmitter {
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -55,17 +55,24 @@ class Action extends EventEmitter {
       return;
     }
 
-    var actionGoalId = 'send_action_goal:' + this.name + ':' + (++this.ros.idCounter);
+    var actionGoalId =
+      'send_action_goal:' + this.name + ':' + ++this.ros.idCounter;
 
     if (resultCallback || failedCallback) {
-      this.ros.on(actionGoalId, function(message) {
+      this.ros.on(actionGoalId, function (message) {
         if (message.result !== undefined && message.result === false) {
           if (typeof failedCallback === 'function') {
             failedCallback(message.values);
           }
-        } else if (message.op === 'action_feedback' && typeof feedbackCallback === 'function') {
+        } else if (
+          message.op === 'action_feedback' &&
+          typeof feedbackCallback === 'function'
+        ) {
           feedbackCallback(message.values);
-        } else if (message.op === 'action_result' && typeof resultCallback === 'function') {
+        } else if (
+          message.op === 'action_result' &&
+          typeof resultCallback === 'function'
+        ) {
           resultCallback(message.values);
         }
       });
@@ -86,14 +93,14 @@ class Action extends EventEmitter {
 
   /**
    * Cancels an action goal.
-   * 
+   *
    * @param {string} id - The ID of the action goal to cancel.
    */
   cancelGoal(id) {
     var call = {
       op: 'cancel_action_goal',
       id: id,
-      action: this.name,
+      action: this.name
     };
     this.ros.callOnConnection(call);
   }
@@ -148,26 +155,28 @@ class Action extends EventEmitter {
    * Helper function that executes an action by calling the provided
    * action callback with the auto-generated ID as a user-accessible input.
    * Should not be called manually.
-   * 
+   *
    * @param {Object} rosbridgeRequest - The rosbridge request containing the action goal to send and its ID.
    * @param {string} rosbridgeRequest.id - The ID of the action goal.
    * @param {TGoal} rosbridgeRequest.args - The arguments of the action goal.
    */
   _executeAction(rosbridgeRequest) {
-    var id  = rosbridgeRequest.id;
+    var id = rosbridgeRequest.id;
 
     // If a cancellation callback exists, call it when a cancellation event is emitted.
     if (typeof id === 'string') {
       this.ros.on(id, (message) => {
-        if (message.op === 'cancel_action_goal' && typeof this._cancelCallback === 'function') {
+        if (
+          message.op === 'cancel_action_goal' &&
+          typeof this._cancelCallback === 'function'
+        ) {
           this._cancelCallback(id);
         }
       });
     }
 
     // Call the action goal execution function provided.
-    if (typeof this._actionCallback === 'function')
-    {
+    if (typeof this._actionCallback === 'function') {
       this._actionCallback(rosbridgeRequest.args, id);
     }
   }
@@ -183,7 +192,7 @@ class Action extends EventEmitter {
       op: 'action_feedback',
       id: id,
       action: this.name,
-      values: feedback,
+      values: feedback
     };
     this.ros.callOnConnection(call);
   }
@@ -200,7 +209,7 @@ class Action extends EventEmitter {
       id: id,
       action: this.name,
       values: result,
-      result: true,
+      result: true
     };
     this.ros.callOnConnection(call);
   }
@@ -215,10 +224,8 @@ class Action extends EventEmitter {
       op: 'action_result',
       id: id,
       action: this.name,
-      result: false,
+      result: false
     };
     this.ros.callOnConnection(call);
   }
 }
-
-module.exports = Action;

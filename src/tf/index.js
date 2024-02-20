@@ -1,3 +1,1 @@
-module.exports = {
-  TFClient: require('./TFClient')
-};
+export { default as TFClient } from './TFClient.js';

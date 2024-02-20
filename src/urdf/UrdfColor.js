@@ -7,7 +7,7 @@
 /**
  * A Color element in a URDF.
  */
-class UrdfColor {
+export default class UrdfColor {
   /**
    * @param {Object} options
    * @param {Element} options.xml - The XML element to parse.
@@ -22,5 +22,3 @@ class UrdfColor {
     this.a = parseFloat(rgba[3]);
   }
 }
-
-module.exports = UrdfColor;

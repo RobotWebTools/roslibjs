@@ -4,12 +4,12 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var UrdfVisual = require('./UrdfVisual');
+import UrdfVisual from './UrdfVisual.js';
 
 /**
  * A Link element in a URDF.
  */
-class UrdfLink {
+export default class UrdfLink {
   /**
    * @param {Object} options
    * @param {Element} options.xml - The XML element to parse.
@@ -28,5 +28,3 @@ class UrdfLink {
     }
   }
 }
-
-module.exports = UrdfLink;

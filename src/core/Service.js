@@ -3,16 +3,16 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-var ServiceResponse = require('./ServiceResponse');
-var ServiceRequest = require('./ServiceRequest');
-var EventEmitter = require('eventemitter3').EventEmitter;
-var Ros = require('../core/Ros');
+import ServiceResponse from './ServiceResponse.js';
+import ServiceRequest from './ServiceRequest.js';
+import Ros from './Ros.js';
+import { EventEmitter } from 'eventemitter3';
 
 /**
  * A ROS service client.
  * @template TRequest, TResponse
  */
-class Service extends EventEmitter {
+export default class Service extends EventEmitter {
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -131,5 +131,3 @@ class Service extends EventEmitter {
     this.ros.callOnConnection(call);
   }
 }
-
-module.exports = Service;

@@ -3,14 +3,14 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
-var Vector3 = require('./Vector3');
-var Quaternion = require('./Quaternion');
-var Transform = require('./Transform');
+import Vector3 from './Vector3.js';
+import Quaternion from './Quaternion.js';
+import Transform from './Transform.js';
 
 /**
  * A Pose in 3D space. Values are copied into this object.
  */
-class Pose {
+export default class Pose {
   /**
    * @param {Object} [options]
    * @param {Vector3} [options.position] - The ROSLIB.Vector3 describing the position.
@@ -71,5 +71,3 @@ class Pose {
     return inverse;
   }
 }
-
-module.exports = Pose;

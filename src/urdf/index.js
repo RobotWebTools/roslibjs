@@ -1,12 +1,11 @@
-module.exports = {
-  UrdfBox: require('./UrdfBox'),
-  UrdfColor: require('./UrdfColor'),
-  UrdfCylinder: require('./UrdfCylinder'),
-  UrdfLink: require('./UrdfLink'),
-  UrdfMaterial: require('./UrdfMaterial'),
-  UrdfMesh: require('./UrdfMesh'),
-  UrdfModel: require('./UrdfModel'),
-  UrdfSphere: require('./UrdfSphere'),
-  UrdfVisual: require('./UrdfVisual'),
-  ...require('./UrdfTypes')
-};
+export { default as UrdfBox } from './UrdfBox.js';
+export { default as UrdfColor } from './UrdfColor.js';
+export { default as UrdfCylinder } from './UrdfCylinder.js';
+export { default as UrdfLink } from './UrdfLink.js';
+export { default as UrdfMaterial } from './UrdfMaterial.js';
+export { default as UrdfMesh } from './UrdfMesh.js';
+export { default as UrdfModel } from './UrdfModel.js';
+export { default as UrdfSphere } from './UrdfSphere.js';
+export { default as UrdfVisual } from './UrdfVisual.js';
+
+export * from './UrdfTypes.js';

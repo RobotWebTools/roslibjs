@@ -3,7 +3,7 @@
  * @author Brandon Alexander - balexander@willowgarage.com
  */
 
-var assign = require('object-assign');
+import assign from 'object-assign';
 
 /**
  * A ServiceRequest is passed into the service call.
@@ -11,7 +11,7 @@ var assign = require('object-assign');
  * @constructor
  * @template T
 */
-class ServiceRequest {
+export default class ServiceRequest {
   /**
    * @param {T} [values={}] - Object matching the fields defined in the .srv definition file.
    */
@@ -19,5 +19,3 @@ class ServiceRequest {
     assign(this, values || {});
   }
 }
-
-module.exports = ServiceRequest;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-var ROSLIB = require('../..');
+import * as ROSLIB from '../../src/RosLib.js';
 
 describe('Fibonacci Example', function() {
     it('Fibonacci', () => new Promise((done) =>  {
@@ -52,3 +52,4 @@ describe('Fibonacci Example', function() {
         }, 100);
     }), 8000);
 });
+

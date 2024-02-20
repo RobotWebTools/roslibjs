@@ -3,9 +3,9 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-var EventEmitter = require('eventemitter3').EventEmitter;
-var Message = require('./Message');
-var Ros = require('../core/Ros');
+import { EventEmitter } from 'eventemitter3';
+import Message from './Message.js';
+import Ros from './Ros.js';
 
 /**
  * Publish and/or subscribe to a topic in ROS.
@@ -15,7 +15,7 @@ var Ros = require('../core/Ros');
  *  * 'message' - The message data from rosbridge.
  * @template T
  */
-class Topic extends EventEmitter {
+export default class Topic extends EventEmitter {
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -223,5 +223,3 @@ class Topic extends EventEmitter {
     this.ros.callOnConnection(call);
   }
 }
-
-module.exports = Topic;
