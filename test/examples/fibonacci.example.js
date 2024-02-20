@@ -50,5 +50,5 @@ describe('Fibonacci Example', function() {
         setTimeout(function(){
           goal.send();
         }, 100);
-    }, 8000));
+    }), 8000);
 });

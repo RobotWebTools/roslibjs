@@ -52,5 +52,5 @@ describe('Example topics are live', function() {
               done();
           });
         }, 15000);
-    }, 20000));
+    }), 20000);
 });
