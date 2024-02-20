@@ -4,13 +4,13 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var Vector3 = require('../math/Vector3');
-var UrdfTypes = require('./UrdfTypes');
+import Vector3 from '../math/Vector3.js';
+import * as UrdfTypes from './UrdfTypes.js';
 
 /**
  * A Mesh element in a URDF.
  */
-class UrdfMesh {
+export default class UrdfMesh {
   /**
    * @param {Object} options
    * @param {Element} options.xml - The XML element to parse.
@@ -34,5 +34,3 @@ class UrdfMesh {
     }
   }
 }
-
-module.exports = UrdfMesh;

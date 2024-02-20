@@ -3,14 +3,14 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-var Service = require('./Service');
-var ServiceRequest = require('./ServiceRequest');
-var Ros = require('../core/Ros');
+import Service from './Service.js';
+import ServiceRequest from './ServiceRequest.js';
+import Ros from '../core/Ros.js';
 
 /**
  * A ROS parameter.
  */
-class Param {
+export default class Param {
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -103,5 +103,3 @@ class Param {
     paramClient.callService(request, callback, failedCallback);
   }
 }
-
-module.exports = Param;

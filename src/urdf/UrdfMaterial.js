@@ -4,12 +4,12 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var UrdfColor = require('./UrdfColor');
+import UrdfColor from './UrdfColor.js';
 
 /**
  * A Material element in a URDF.
  */
-class UrdfMaterial {
+export default class UrdfMaterial {
   /**
    * @param {Object} options
    * @param {Element} options.xml - The XML element to parse.
@@ -43,6 +43,4 @@ class UrdfMaterial {
   }
 }
 
-var assign = require('object-assign');
-
-module.exports = UrdfMaterial;
+import assign from 'object-assign';

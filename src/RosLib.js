@@ -3,25 +3,26 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-/**
- * If you use roslib in a browser, all the classes will be exported to a global variable called ROSLIB.
- *
- * If you use nodejs, this is the variable you get when you require('roslib').
- */
-var ROSLIB = {
-  /**
-   * @default
-   * @description Library version
-   */
-  REVISION: '1.4.1',
-  ...require('./core'),
-  ...require('./actionlib'),
-  ...require('./math'),
-  ...require('./tf'),
-  ...require('./urdf')
-};
+/** @description Library version */
+export const REVISION = '1.4.1';
+export * from './core/index.js';
+export * from './actionlib/index.js';
+export * from './math/index.js';
+export * from './tf/index.js';
+export * from './urdf/index.js';
 
-module.exports = ROSLIB;
+import * as Core from './core/index.js';
+import * as ActionLib from './actionlib/index.js';
+import * as Math from './math/index.js';
+import * as Tf from './tf/index.js';
+import * as Urdf from './urdf/index.js';
 
 // Add to global namespace for in-browser support (i.e. CDN)
-global.ROSLIB = ROSLIB;
+global.ROSLIB = {
+  REVISION,
+  ...Core,
+  ...ActionLib,
+  ...Math,
+  ...Tf,
+  ...Urdf
+};

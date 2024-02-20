@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Connecting to ROS
-var ROSLIB = require('roslib');
+import ROSLIB from 'roslib';
 
 var ros = new ROSLIB.Ros({
   url: 'ws://localhost:9090'

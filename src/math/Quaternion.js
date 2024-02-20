@@ -6,7 +6,7 @@
 /**
  * A Quaternion.
  */
-class Quaternion {
+export default class Quaternion {
   /**
    * @param {Object} [options]
    * @param {number|null} [options.x=0] - The x value.
@@ -88,5 +88,3 @@ class Quaternion {
     return new Quaternion(this);
   }
 }
-
-module.exports = Quaternion;

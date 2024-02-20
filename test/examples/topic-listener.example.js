@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-var ROSLIB = require('../..');
+import * as ROSLIB from '../../src/RosLib.js';
 
 var ros = new ROSLIB.Ros({
     url: 'ws://localhost:9090'

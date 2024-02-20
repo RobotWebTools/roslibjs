@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-var ROSLIB = require('..');
+import * as ROSLIB from '../src/RosLib.js';
 
-var DOMParser = require('@xmldom/xmldom').DOMParser;
+import { DOMParser } from '@xmldom/xmldom';
 // See https://developer.mozilla.org/docs/XPathResult#Constants
 var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
 

@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = function(grunt) {
 
   // Time how long tasks take. Can help when optimizing build times
@@ -18,7 +16,11 @@ module.exports = function(grunt) {
     browserify: {
       dist: {
         src: ['./tsbuild/RosLib.js'],
-        dest: './build/roslib.js'
+        dest: './build/roslib.js',
+        options: {
+          plugin: ['esmify'],
+          ignore: ['ws']
+        }
       }
     },
     uglify: {

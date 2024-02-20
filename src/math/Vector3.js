@@ -3,12 +3,12 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
-var Quaternion = require('./Quaternion');
+import Quaternion from './Quaternion.js';
 
 /**
  * A 3D vector.
  */
-class Vector3 {
+export default class Vector3 {
   /**
    * @param {Object} [options]
    * @param {number} [options.x=0] - The x value.
@@ -64,5 +64,3 @@ class Vector3 {
     return new Vector3(this);
   }
 }
-
-module.exports = Vector3;

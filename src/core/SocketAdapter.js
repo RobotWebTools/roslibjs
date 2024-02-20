@@ -6,11 +6,10 @@
  * in the context of their parent object, unless bound
  * @fileOverview
  */
-'use strict';
 
-var decompressPng = require('../util/decompressPng');
-var CBOR = require('cbor-js');
-var typedArrayTagger = require('../util/cborTypedArrayTags');
+import decompressPng from '../util/decompressPng.js';
+import CBOR from 'cbor-js';
+import typedArrayTagger from '../util/cborTypedArrayTags.js';
 var BSON = null;
 // @ts-expect-error -- Workarounds for not including BSON in bundle. need to revisit
 if (typeof bson !== 'undefined') {
@@ -26,7 +25,7 @@ if (typeof bson !== 'undefined') {
  * @namespace SocketAdapter
  * @private
  */
-function SocketAdapter(client) {
+export default function SocketAdapter(client) {
   var decoder = null;
   if (client.transportOptions.decoder) {
     decoder = client.transportOptions.decoder;
@@ -137,5 +136,3 @@ function SocketAdapter(client) {
     }
   };
 }
-
-module.exports = SocketAdapter;

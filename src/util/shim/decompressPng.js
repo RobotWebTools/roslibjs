@@ -3,10 +3,8 @@
  * @author Graeme Yeates - github.com/megawac
  */
 
-'use strict';
-
 // @ts-expect-error -- this is for optionally polyfilling canvas
-var Canvas = require('canvas');
+import Canvas from 'canvas';
 var Image = Canvas.Image || window.Image;
 
 /**
@@ -22,7 +20,7 @@ var Image = Canvas.Image || window.Image;
  * @param data - An object containing the PNG data.
  * @param {decompressPngCallback} callback - Function with the following params:
  */
-function decompressPng(data, callback) {
+export default function decompressPng(data, callback) {
   // Uncompresses the data before sending it through (use image/canvas to do so).
   var image = new Image();
   // When the image loads, extracts the raw data (JSON message).
@@ -60,5 +58,3 @@ function decompressPng(data, callback) {
   // Sends the image data to load.
   image.src = 'data:image/png;base64,' + data;
 }
-
-module.exports = decompressPng;

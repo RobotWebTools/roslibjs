@@ -4,12 +4,12 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-var UrdfTypes = require('./UrdfTypes');
+import * as UrdfTypes from './UrdfTypes.js';
 
 /**
  * A Cylinder element in a URDF.
  */
-class UrdfCylinder {
+export default class UrdfCylinder {
   /**
    * @param {Object} options
    * @param {Element} options.xml - The XML element to parse.
@@ -22,5 +22,3 @@ class UrdfCylinder {
     this.radius = parseFloat(options.xml.getAttribute('radius'));
   }
 }
-
-module.exports = UrdfCylinder;
