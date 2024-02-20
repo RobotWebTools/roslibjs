@@ -1,12 +1,12 @@
-const globals = require("globals");
+const globals = require('globals');
 
 module.exports = [
   {
     languageOptions: {
-      "globals": {
+      'globals': {
         ...globals.browser,
         ...globals.node,
-        "bson": true
+        'bson': true
       },
     }
   },

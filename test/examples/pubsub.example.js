@@ -28,18 +28,18 @@ describe('Topics Example', function() {
         var topic1msg = messages1[0],
             topic2msg = {};
         example.subscribe(function(message) {
-            if (message.data === topic1msg.data) return;
+            if (message.data === topic1msg.data) {return;}
             topic1msg = messages1[0];
             expect(message).to.be.eql(messages2.shift());
-            if (messages1.length) example.publish(topic1msg);
-            else done();
+            if (messages1.length) {example.publish(topic1msg);}
+            else {done();}
         });
         example2.subscribe(function(message) {
-            if (message.data === topic2msg.data) return;
+            if (message.data === topic2msg.data) {return;}
             topic2msg = messages2[0];
             expect(message).to.be.eql(messages1.shift());
-            if (messages2.length) example2.publish(topic2msg);
-            else done();
+            if (messages2.length) {example2.publish(topic2msg);}
+            else {done();}
         });
         example.publish(topic1msg);
     }));

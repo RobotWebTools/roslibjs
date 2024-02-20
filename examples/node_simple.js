@@ -41,5 +41,5 @@ angular : {
 }
 });
 
-console.log("Publishing cmd_vel");
+console.log('Publishing cmd_vel');
 cmdVel.publish(twist);
