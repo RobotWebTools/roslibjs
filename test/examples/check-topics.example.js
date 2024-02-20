@@ -9,7 +9,7 @@ var expectedTopics = [
     '/fibonacci/feedback', '/fibonacci/status', '/fibonacci/result'
 ];
 
-describe('Example topics are live', () => new Promise((done) =>  {
+describe('Example topics are live', function() {
     var ros = new ROSLIB.Ros({
         url: 'ws://localhost:9090'
     });
@@ -53,4 +53,4 @@ describe('Example topics are live', () => new Promise((done) =>  {
           });
         }, 15000);
     }, 20000));
-}));
+});
