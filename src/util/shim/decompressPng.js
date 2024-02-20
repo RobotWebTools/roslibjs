@@ -3,8 +3,6 @@
  * @author Graeme Yeates - github.com/megawac
  */
 
-'use strict';
-
 // @ts-expect-error -- this is for optionally polyfilling canvas
 import Canvas from 'canvas';
 var Image = Canvas.Image || window.Image;

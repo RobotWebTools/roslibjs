@@ -6,7 +6,6 @@
  * in the context of their parent object, unless bound
  * @fileOverview
  */
-'use strict';
 
 import decompressPng from '../util/decompressPng.js';
 import CBOR from 'cbor-js';

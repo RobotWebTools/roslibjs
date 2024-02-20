@@ -3,8 +3,6 @@
  * @author Ramon Wijnands - rayman747@hotmail.com
  */
 
-'use strict';
-
 import pngparse from 'pngparse';
 
 /**
