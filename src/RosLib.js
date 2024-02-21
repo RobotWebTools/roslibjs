@@ -18,7 +18,7 @@ import * as Tf from './tf/index.js';
 import * as Urdf from './urdf/index.js';
 
 // Add to global namespace for in-browser support (i.e. CDN)
-global.ROSLIB = {
+globalThis.ROSLIB = {
   REVISION,
   ...Core,
   ...ActionLib,

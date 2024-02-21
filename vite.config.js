@@ -27,7 +27,7 @@ export default defineConfig({
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
-      external: ['ws', 'eventemitter3', 'src/util/decompressPng.js'],
+      external: ['eventemitter3', 'ws', 'src/util/decompressPng.js'],
       output: {
         globals: { eventemitter3: 'EventEmitter' }
       }
