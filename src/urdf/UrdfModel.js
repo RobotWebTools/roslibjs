@@ -9,9 +9,6 @@ import UrdfLink from './UrdfLink.js';
 import UrdfJoint from './UrdfJoint.js';
 import { DOMParser } from '@xmldom/xmldom';
 
-// See https://developer.mozilla.org/docs/XPathResult#Constants
-var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
-
 /**
  * A URDF Model can be used to parse a given URDF into the appropriate elements.
  */

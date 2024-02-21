@@ -151,7 +151,7 @@ export default class SimpleActionServer extends EventEmitter {
     });
 
     // publish status at pseudo-fixed rate; required for clients to know they've connected
-    var statusInterval = setInterval(function () {
+    setInterval(function () {
       var currentTime = new Date();
       var secs = Math.floor(currentTime.getTime() / 1000);
       var nsecs = Math.round(
