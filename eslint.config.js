@@ -16,7 +16,7 @@ export default [
     }
   },
   {
-    ignores: ['build/**/*.js', 'tsbuild/**/*.js']
+    ignores: ['dist']
   },
   {
     rules: {
