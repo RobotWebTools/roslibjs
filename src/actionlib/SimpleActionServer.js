@@ -69,6 +69,7 @@ export default class SimpleActionServer extends EventEmitter {
         stamp: { secs: 0, nsecs: 100 },
         frame_id: ''
       },
+      /** @type {{goal_id: any, status: number}[]} */
       status_list: []
     };
 
@@ -82,7 +83,6 @@ export default class SimpleActionServer extends EventEmitter {
         // needs to happen AFTER rest is set up
         that.emit('cancel');
       } else {
-        // @ts-ignore Don't know how to fix this
         that.statusMessage.status_list = [{ goal_id: goalMessage.goal_id, status: 1 }];
         that.currentGoal = goalMessage;
         that.emit('goal', goalMessage.goal);
