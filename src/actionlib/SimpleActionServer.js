@@ -65,13 +65,13 @@ export default class SimpleActionServer extends EventEmitter {
     });
 
     // Track the goals and their status in order to publish status...
-    this.statusMessage = new Message({
+    this.statusMessage = {
       header: {
         stamp: { secs: 0, nsecs: 100 },
         frame_id: ''
       },
       status_list: []
-    });
+    };
 
     // needed for handling preemption prompted by a new goal being received
     this.currentGoal = null; // currently tracked goal
@@ -170,10 +170,10 @@ export default class SimpleActionServer extends EventEmitter {
    * @param {Object} result - The result to return to the client.
    */
   setSucceeded(result) {
-    var resultMessage = new Message({
+    var resultMessage = {
       status: { goal_id: this.currentGoal.goal_id, status: 3 },
       result: result
-    });
+    };
     this.resultPublisher.publish(resultMessage);
 
     // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
@@ -192,10 +192,10 @@ export default class SimpleActionServer extends EventEmitter {
    * @param {Object} result - The result to return to the client.
    */
   setAborted(result) {
-    var resultMessage = new Message({
+    var resultMessage = {
       status: { goal_id: this.currentGoal.goal_id, status: 4 },
       result: result
-    });
+    };
     this.resultPublisher.publish(resultMessage);
 
     // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
@@ -214,10 +214,10 @@ export default class SimpleActionServer extends EventEmitter {
    * @param {Object} feedback - The feedback to send to the client.
    */
   sendFeedback(feedback) {
-    var feedbackMessage = new Message({
+    var feedbackMessage = {
       status: { goal_id: this.currentGoal.goal_id, status: 1 },
       feedback: feedback
-    });
+    };
     this.feedbackPublisher.publish(feedbackMessage);
   }
   /**
@@ -226,9 +226,9 @@ export default class SimpleActionServer extends EventEmitter {
   setPreempted() {
     // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
     this.statusMessage.status_list = [];
-    var resultMessage = new Message({
+    var resultMessage = {
       status: { goal_id: this.currentGoal.goal_id, status: 2 }
-    });
+    };
     this.resultPublisher.publish(resultMessage);
 
     if (this.nextGoal) {
