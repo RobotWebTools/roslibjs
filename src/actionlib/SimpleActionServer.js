@@ -4,7 +4,6 @@
  */
 
 import Topic from '../core/Topic.js';
-import Message from '../core/Message.js';
 import Ros from '../core/Ros.js';
 import { EventEmitter } from 'eventemitter3';
 
@@ -83,10 +82,8 @@ export default class SimpleActionServer extends EventEmitter {
         // needs to happen AFTER rest is set up
         that.emit('cancel');
       } else {
-        // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
-        that.statusMessage.status_list = [
-          { goal_id: goalMessage.goal_id, status: 1 }
-        ];
+        // @ts-ignore Don't know how to fix this
+        that.statusMessage.status_list = [{ goal_id: goalMessage.goal_id, status: 1 }];
         that.currentGoal = goalMessage;
         that.emit('goal', goalMessage.goal);
       }
@@ -157,9 +154,7 @@ export default class SimpleActionServer extends EventEmitter {
       var nsecs = Math.round(
         1000000000 * (currentTime.getTime() / 1000 - secs)
       );
-      // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
       that.statusMessage.header.stamp.secs = secs;
-      // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
       that.statusMessage.header.stamp.nsecs = nsecs;
       statusPublisher.publish(that.statusMessage);
     }, 500); // publish every 500ms
@@ -176,7 +171,6 @@ export default class SimpleActionServer extends EventEmitter {
     };
     this.resultPublisher.publish(resultMessage);
 
-    // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
     this.statusMessage.status_list = [];
     if (this.nextGoal) {
       this.currentGoal = this.nextGoal;
@@ -198,7 +192,6 @@ export default class SimpleActionServer extends EventEmitter {
     };
     this.resultPublisher.publish(resultMessage);
 
-    // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
     this.statusMessage.status_list = [];
     if (this.nextGoal) {
       this.currentGoal = this.nextGoal;
@@ -224,7 +217,6 @@ export default class SimpleActionServer extends EventEmitter {
    * Handle case where client requests preemption.
    */
   setPreempted() {
-    // @ts-expect-error -- we need to design a way to handle arbitrary fields in Message types.
     this.statusMessage.status_list = [];
     var resultMessage = {
       status: { goal_id: this.currentGoal.goal_id, status: 2 }
