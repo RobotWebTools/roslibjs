@@ -4,7 +4,6 @@
  */
 
 import { EventEmitter } from 'eventemitter3';
-import Message from './Message.js';
 import Ros from './Ros.js';
 
 /**
@@ -90,7 +89,7 @@ export default class Topic extends EventEmitter {
     }
 
     this._messageCallback = function (data) {
-      that.emit('message', new Message(data));
+      that.emit('message', data);
     };
   }
   /**
@@ -205,7 +204,7 @@ export default class Topic extends EventEmitter {
   /**
    * Publish the message.
    *
-   * @param {T} message - A ROSLIB.Message object.
+   * @param {T} message - The message to publish.
    */
   publish(message) {
     if (!this.isAdvertised) {
