@@ -3,8 +3,6 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-import ServiceResponse from './ServiceResponse.js';
-import ServiceRequest from './ServiceRequest.js';
 import Ros from './Ros.js';
 import { EventEmitter } from 'eventemitter3';
 
@@ -40,7 +38,7 @@ export default class Service extends EventEmitter {
    * Call the service. Returns the service response in the
    * callback. Does nothing if this service is currently advertised.
    *
-   * @param {TRequest} request - The ROSLIB.ServiceRequest to send.
+   * @param {TRequest} request - The service request to send.
    * @param {callServiceCallback} [callback] - Function with the following params:
    * @param {callServiceFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
@@ -59,8 +57,7 @@ export default class Service extends EventEmitter {
             failedCallback(message.values);
           }
         } else if (typeof callback === 'function') {
-          // @ts-expect-error -- can't figure out how to get ServiceResponse to play nice in typescript here
-          callback(new ServiceResponse(message.values));
+          callback(message.values);
         }
       });
     }
@@ -76,7 +73,7 @@ export default class Service extends EventEmitter {
   }
   /**
    * @callback advertiseCallback
-   * @param {ServiceRequest<TRequest>} request - The service request.
+   * @param {TRequest} request - The service request.
    * @param {Object} response - An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
    *     It should return true if the service has finished successfully,
    *     i.e., without any fatal errors.
@@ -120,7 +117,7 @@ export default class Service extends EventEmitter {
     var call = {
       op: 'service_response',
       service: this.name,
-      values: new ServiceResponse(response),
+      values: response,
       result: success
     };
 

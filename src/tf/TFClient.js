@@ -7,7 +7,6 @@ import ActionClient from '../actionlib/ActionClient.js';
 import Goal from '../actionlib/Goal.js';
 
 import Service from '../core/Service.js';
-import ServiceRequest from '../core/ServiceRequest.js';
 import Topic from '../core/Topic.js';
 
 import Transform from '../math/Transform.js';
@@ -131,9 +130,7 @@ export default class TFClient extends EventEmitter {
       // The service interface has the same parameters as the action,
       // plus the timeout
       goalMessage.timeout = this.topicTimeout;
-      var request = new ServiceRequest(goalMessage);
-
-      this.serviceClient.callService(request, this.processResponse.bind(this));
+      this.serviceClient.callService(goalMessage, this.processResponse.bind(this));
     }
 
     this.republisherUpdateRequested = false;

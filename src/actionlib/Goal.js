@@ -35,7 +35,7 @@ export default class Goal extends EventEmitter {
     // Create a random ID
     this.goalID = 'goal_' + Math.random() + '_' + date.getTime();
     // Fill in the goal message
-    this.goalMessage = new Message({
+    this.goalMessage = {
       goal_id: {
         stamp: {
           secs: 0,
@@ -44,7 +44,7 @@ export default class Goal extends EventEmitter {
         id: this.goalID
       },
       goal: this.goalMessage
-    });
+    };
 
     this.on('status', function (status) {
       that.status = status;
@@ -82,9 +82,9 @@ export default class Goal extends EventEmitter {
    * Cancel the current goal.
    */
   cancel() {
-    var cancelMessage = new Message({
+    var cancelMessage = {
       id: this.goalID
-    });
+    };
     this.actionClient.cancelTopic.publish(cancelMessage);
   }
 }

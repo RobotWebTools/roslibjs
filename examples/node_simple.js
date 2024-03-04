@@ -28,7 +28,7 @@ var cmdVel = new ROSLIB.Topic({
   messageType: 'geometry_msgs/Twist'
 });
 
-var twist = new ROSLIB.Message({
+var twist = {
 linear: {
   x: 0.1,
   y: 0.2,
@@ -39,7 +39,7 @@ angular: {
   y: -0.2,
   z: -0.3
 }
-});
+};
 
 console.log('Publishing cmd_vel');
 cmdVel.publish(twist);

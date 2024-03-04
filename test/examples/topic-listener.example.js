@@ -41,7 +41,6 @@ describe('Topics Example', function() {
         var expected = messages.slice();
 
         topic.subscribe(function(message) {
-            expect(message).to.be.instanceof(ROSLIB.Message);
             expect(message).to.be.eql(expected.shift());
         });
 

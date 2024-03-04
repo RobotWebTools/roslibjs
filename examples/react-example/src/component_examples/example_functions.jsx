@@ -46,11 +46,11 @@ function SendMessage() {
       messageType: 'geometry_msgs/Pose2D'
     })
 
-    const data = new ROSLIB.Message({
-            x: linear.x,
-            y: linear.y,
-            theta: angular.z
-    })
+    const data = {
+      x: linear.x,
+      y: linear.y,
+      theta: angular.z
+    }
 
     // publishes to the queue
     console.log('msg', data)
