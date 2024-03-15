@@ -74,9 +74,8 @@ export default class Service extends EventEmitter {
   /**
    * @callback advertiseCallback
    * @param {TRequest} request - The service request.
-   * @param {Object} response - An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
-   *     It should return true if the service has finished successfully,
-   *     i.e., without any fatal errors.
+   * @param {Partial<TResponse>} response - An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
+   * @returns {boolean} true if the service has finished successfully, i.e., without any fatal errors.
    */
   /**
    * Advertise the service. This turns the Service object from a client
