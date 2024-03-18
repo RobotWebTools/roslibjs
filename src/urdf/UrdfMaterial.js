@@ -39,8 +39,6 @@ export default class UrdfMaterial {
     return this.color === null && this.textureFilename === null;
   }
   assign(obj) {
-    return assign(this, obj);
+    return Object.assign(this, obj);
   }
 }
-
-import assign from 'object-assign';
