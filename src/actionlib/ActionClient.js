@@ -128,7 +128,7 @@ export default class ActionClient extends EventEmitter {
    * Cancel all goals associated with this ActionClient.
    */
   cancel() {
-    var cancelMessage = new Message();
+    var cancelMessage = {};
     this.cancelTopic.publish(cancelMessage);
   }
   /**

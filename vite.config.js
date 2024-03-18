@@ -35,7 +35,7 @@ export default defineConfig({
   },
   test: {
     include: [
-      'src/**\/*.{test,spec}.?(c|m)[jt]s?(x)',
+      '{src,test}/**\/*.{test,spec}.?(c|m)[jt]s?(x)',
       './test/examples/*.js',
     ],
     exclude: ['dist'],
