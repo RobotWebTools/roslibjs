@@ -5,7 +5,6 @@
 
 import socketAdapter from './SocketAdapter.js';
 
-import assign from 'object-assign';
 import Topic from './Topic.js';
 import Service from './Service.js';
 import Param from './Param.js';
@@ -64,7 +63,7 @@ export default class Ros extends EventEmitter {
    */
   connect(url) {
     if (this.transportLibrary.constructor.name === 'RTCPeerConnection') {
-      this.socket = assign(
+      this.socket = Object.assign(
         // @ts-expect-error -- this is kinda wild. `this.transportLibrary` can either be a string or an RTCDataChannel. This needs fixing.
         this.transportLibrary.createDataChannel(url, this.transportOptions),
         socketAdapter(this)
@@ -74,7 +73,7 @@ export default class Ros extends EventEmitter {
         // Detect if in browser vs in NodeJS
         var sock = typeof window !== 'undefined' ? new window.WebSocket(url) : new WebSocket(url);
         sock.binaryType = 'arraybuffer';
-        this.socket = assign(sock, socketAdapter(this));
+        this.socket = Object.assign(sock, socketAdapter(this));
       }
     } else {
       throw 'Unknown transportLibrary: ' + this.transportLibrary.toString();

@@ -20,6 +20,7 @@
     "@testing-library/react": "^14.2.1",
     "@types/node": "^20.11.19",
     "eslint": "^8.56.0",
+    "globals": "^14.0.0",
     "jsdoc": "^4.0.2",
     "jsdom": "^24.0.0",
     "typescript": "^5.2.2",
@@ -32,8 +33,6 @@
     "@xmldom/xmldom": "^0.8.0",
     "cbor-js": "^0.1.0",
     "eventemitter3": "^5.0.1",
-    "globals": "^14.0.0",
-    "object-assign": "^4.0.0",
     "pngparse": "^2.0.0",
     "ws": "^8.0.0"
   },
