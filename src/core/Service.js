@@ -126,4 +126,37 @@ export default class Service extends EventEmitter {
 
     this.ros.callOnConnection(call);
   }
+
+  /**
+   * An alternate form of Service advertisement that supports a modern Promise-based interface for use with async/await.
+   * @param {(request: TRequest) => Promise<TResponse>} callback An asynchronous callback processing the request and returning a response.
+   */
+  advertiseAsync(callback) {
+    if (this.isAdvertised) {
+      throw new Error('Cannot advertise the same Service twice!');
+    }
+    this.ros.on(this.name, async (rosbridgeRequest) => {
+      /** @type {{op: string, service: string, values?: TResponse, result: boolean, id?: string}} */
+      let rosbridgeResponse = {
+        op: 'service_response',
+        service: this.name,
+        result: false
+      }
+      try {
+        rosbridgeResponse.values = await callback(rosbridgeRequest.args);
+        rosbridgeResponse.result = true;
+      } finally {
+        if (rosbridgeRequest.id) {
+          rosbridgeResponse.id = rosbridgeRequest.id;
+        }
+        this.ros.callOnConnection(rosbridgeResponse);
+      }
+    });
+    this.ros.callOnConnection({
+      op: 'advertise_service',
+      type: this.serviceType,
+      service: this.name
+    });
+    this.isAdvertised = true;
+  }
 }
