@@ -11,13 +11,13 @@ import * as UrdfTypes from './UrdfTypes.js';
  * A Mesh element in a URDF.
  */
 export default class UrdfMesh {
+  /** @type {Vector3 | null} */
+  scale = null;
   /**
    * @param {Object} options
    * @param {Element} options.xml - The XML element to parse.
    */
   constructor(options) {
-    this.scale = null;
-
     this.type = UrdfTypes.URDF_MESH;
     this.filename = options.xml.getAttribute('filename');
 

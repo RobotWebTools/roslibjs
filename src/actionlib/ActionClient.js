@@ -19,6 +19,9 @@ import { EventEmitter } from 'eventemitter3';
  *
  */
 export default class ActionClient extends EventEmitter {
+  goals = {};
+  /** flag to check if a status has been received */
+  receivedStatus = false
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -31,7 +34,6 @@ export default class ActionClient extends EventEmitter {
    */
   constructor(options) {
     super();
-    var that = this;
     this.ros = options.ros;
     this.serverName = options.serverName;
     this.actionName = options.actionName;
@@ -39,10 +41,6 @@ export default class ActionClient extends EventEmitter {
     this.omitFeedback = options.omitFeedback;
     this.omitStatus = options.omitStatus;
     this.omitResult = options.omitResult;
-    this.goals = {};
-
-    // flag to check if a status has been received
-    var receivedStatus = false;
 
     // create the topics associated with actionlib
     this.feedbackListener = new Topic({
@@ -81,10 +79,10 @@ export default class ActionClient extends EventEmitter {
 
     // subscribe to the status topic
     if (!this.omitStatus) {
-      this.statusListener.subscribe(function (statusMessage) {
-        receivedStatus = true;
-        statusMessage.status_list.forEach(function (status) {
-          var goal = that.goals[status.goal_id.id];
+      this.statusListener.subscribe((statusMessage) => {
+        this.receivedStatus = true;
+        statusMessage.status_list.forEach((status) => {
+          var goal = this.goals[status.goal_id.id];
           if (goal) {
             goal.emit('status', status);
           }
@@ -94,8 +92,8 @@ export default class ActionClient extends EventEmitter {
 
     // subscribe the the feedback topic
     if (!this.omitFeedback) {
-      this.feedbackListener.subscribe(function (feedbackMessage) {
-        var goal = that.goals[feedbackMessage.status.goal_id.id];
+      this.feedbackListener.subscribe((feedbackMessage) => {
+        var goal = this.goals[feedbackMessage.status.goal_id.id];
         if (goal) {
           goal.emit('status', feedbackMessage.status);
           goal.emit('feedback', feedbackMessage.feedback);
@@ -105,8 +103,8 @@ export default class ActionClient extends EventEmitter {
 
     // subscribe to the result topic
     if (!this.omitResult) {
-      this.resultListener.subscribe(function (resultMessage) {
-        var goal = that.goals[resultMessage.status.goal_id.id];
+      this.resultListener.subscribe((resultMessage) => {
+        var goal = this.goals[resultMessage.status.goal_id.id];
 
         if (goal) {
           goal.emit('status', resultMessage.status);
@@ -117,9 +115,9 @@ export default class ActionClient extends EventEmitter {
 
     // If timeout specified, emit a 'timeout' event if the action server does not respond
     if (this.timeout) {
-      setTimeout(function () {
-        if (!receivedStatus) {
-          that.emit('timeout');
+      setTimeout(() => {
+        if (!this.receivedStatus) {
+          this.emit('timeout');
         }
       }, this.timeout);
     }

@@ -18,6 +18,15 @@ import { EventEmitter } from 'eventemitter3';
  * A TF Client that listens to TFs from tf2_web_republisher.
  */
 export default class TFClient extends EventEmitter {
+  /** @type {Goal|false} */
+  currentGoal = false;
+  /** @type {Topic|false} */
+  currentTopic = false;
+  frameInfos = {};
+  republisherUpdateRequested = false;
+  /** @type {((tf: any) => any) | undefined} */
+  _subscribeCB = undefined;
+  _isDisposed = false;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -49,15 +58,6 @@ export default class TFClient extends EventEmitter {
     this.serverName = options.serverName || '/tf2_web_republisher';
     this.repubServiceName = options.repubServiceName || '/republish_tfs';
 
-    /** @type {Goal|false} */
-    this.currentGoal = false;
-    /** @type {Topic|false} */
-    this.currentTopic = false;
-    this.frameInfos = {};
-    this.republisherUpdateRequested = false;
-    this._subscribeCB = undefined;
-    this._isDisposed = false;
-
     // Create an Action Client
     this.actionClient = new ActionClient({
       ros: options.ros,
@@ -81,19 +81,18 @@ export default class TFClient extends EventEmitter {
    * @param {Object} tf - The TF message from the server.
    */
   processTFArray(tf) {
-    var that = this;
-    tf.transforms.forEach(function (transform) {
+    tf.transforms.forEach((transform) => {
       var frameID = transform.child_frame_id;
       if (frameID[0] === '/') {
         frameID = frameID.substring(1);
       }
-      var info = that.frameInfos[frameID];
+      var info = this.frameInfos[frameID];
       if (info) {
         info.transform = new Transform({
           translation: transform.transform.translation,
           rotation: transform.transform.rotation
         });
-        info.cbs.forEach(function (cb) {
+        info.cbs.forEach((cb) => {
           cb(info.transform);
         });
       }

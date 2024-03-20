@@ -15,6 +15,11 @@ import Ros from './Ros.js';
  * @template T
  */
 export default class Topic extends EventEmitter {
+  /** @type {boolean | undefined} */
+  waitForReconnect = undefined;
+  /** @type {(() => void) | undefined} */
+  reconnectFunc = undefined;
+  isAdvertised = false;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -32,7 +37,6 @@ export default class Topic extends EventEmitter {
     this.ros = options.ros;
     this.name = options.name;
     this.messageType = options.messageType;
-    this.isAdvertised = false;
     this.compression = options.compression || 'none';
     this.throttle_rate = options.throttle_rate || 0;
     this.latch = options.latch || false;
@@ -42,8 +46,6 @@ export default class Topic extends EventEmitter {
       options.reconnect_on_close !== undefined
         ? options.reconnect_on_close
         : true;
-    this.waitForReconnect = undefined;
-    this.reconnectFunc = undefined;
 
     // Check for valid compression types
     if (
@@ -67,31 +69,30 @@ export default class Topic extends EventEmitter {
       this.throttle_rate = 0;
     }
 
-    var that = this;
     if (this.reconnect_on_close) {
-      this.callForSubscribeAndAdvertise = function (message) {
-        that.ros.callOnConnection(message);
+      this.callForSubscribeAndAdvertise = (message) => {
+        this.ros.callOnConnection(message);
 
-        that.waitForReconnect = false;
-        that.reconnectFunc = function () {
-          if (!that.waitForReconnect) {
-            that.waitForReconnect = true;
-            that.ros.callOnConnection(message);
-            that.ros.once('connection', function () {
-              that.waitForReconnect = false;
+        this.waitForReconnect = false;
+        this.reconnectFunc = () => {
+          if (!this.waitForReconnect) {
+            this.waitForReconnect = true;
+            this.ros.callOnConnection(message);
+            this.ros.once('connection', () => {
+              this.waitForReconnect = false;
             });
           }
         };
-        that.ros.on('close', that.reconnectFunc);
+        this.ros.on('close', this.reconnectFunc);
       };
     } else {
       this.callForSubscribeAndAdvertise = this.ros.callOnConnection;
     }
-
-    this._messageCallback = function (data) {
-      that.emit('message', data);
-    };
   }
+
+  _messageCallback(data) {
+    this.emit('message', data);
+  };
   /**
    * @callback subscribeCallback
    * @param {T} message - The published message.
@@ -177,9 +178,8 @@ export default class Topic extends EventEmitter {
     this.isAdvertised = true;
 
     if (!this.reconnect_on_close) {
-      var that = this;
-      this.ros.on('close', function () {
-        that.isAdvertised = false;
+      this.ros.on('close', () => {
+        this.isAdvertised = false;
       });
     }
   }

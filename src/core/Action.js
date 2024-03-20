@@ -11,6 +11,26 @@ import Ros from '../core/Ros.js';
  * @template TGoal, TFeedback, TResult
  */
 export default class Action extends EventEmitter {
+  isAdvertised = false;
+  /**
+   * @callback advertiseActionCallback
+   * @param {TGoal} goal - The action goal.
+   * @param {string} id - The ID of the action goal to execute.
+   */
+  /**
+   * @private
+   * @type {advertiseActionCallback | null}
+   */
+  _actionCallback = null;
+  /**
+   * @callback advertiseCancelCallback
+   * @param {string} id - The ID of the action goal to cancel.
+   */
+  /**
+   * @private
+   * @type {advertiseCancelCallback | null}
+   */
+  _cancelCallback = null;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -22,10 +42,6 @@ export default class Action extends EventEmitter {
     this.ros = options.ros;
     this.name = options.name;
     this.actionType = options.actionType;
-    this.isAdvertised = false;
-
-    this._actionCallback = null;
-    this._cancelCallback = null;
   }
 
   /**
@@ -105,15 +121,6 @@ export default class Action extends EventEmitter {
     this.ros.callOnConnection(call);
   }
 
-  /**
-   * @callback advertiseActionCallback
-   * @param {TGoal} goal - The action goal.
-   * @param {string} id - The ID of the action goal to execute.
-   */
-  /**
-   * @callback advertiseCancelCallback
-   * @param {string} id - The ID of the action goal to cancel.
-   */
   /**
    * Advertise the action. This turns the Action object from a client
    * into a server. The callback will be called with every goal sent to this action.

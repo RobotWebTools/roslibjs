@@ -12,7 +12,6 @@ import TFClient from '../tf/TFClient.js';
 import ActionClient from '../actionlib/ActionClient.js';
 import SimpleActionServer from '../actionlib/SimpleActionServer.js';
 import { EventEmitter } from 'eventemitter3';
-import { WebSocket } from 'ws';
 
 /**
  * Manages connection to the server and all interactions with ROS.
@@ -25,6 +24,11 @@ import { WebSocket } from 'ws';
  *  * &#60;serviceID&#62; - A service response came from rosbridge with the given ID.
  */
 export default class Ros extends EventEmitter {
+  /** @type {WebSocket | import("ws").WebSocket | null} */
+  socket = null;
+  idCounter = 0;
+  isConnected = false;
+  groovyCompatibility = true;
   /**
    * @param {Object} [options]
    * @param {string} [options.url] - The WebSocket URL for rosbridge. Can be specified later with `connect`.
@@ -35,21 +39,9 @@ export default class Ros extends EventEmitter {
   constructor(options) {
     super();
     options = options || {};
-    var that = this;
-    this.socket = null;
-    this.idCounter = 0;
-    this.isConnected = false;
     this.transportLibrary = options.transportLibrary || 'websocket';
     this.transportOptions = options.transportOptions || {};
-    this._sendFunc = function (msg) {
-      that.sendEncodedMessage(msg);
-    };
-
-    if (typeof options.groovyCompatibility === 'undefined') {
-      this.groovyCompatibility = true;
-    } else {
-      this.groovyCompatibility = options.groovyCompatibility;
-    }
+    this.groovyCompatibility = options.groovyCompatibility ?? true;
 
     // begin by checking if a URL was given
     if (options.url) {
@@ -71,6 +63,16 @@ export default class Ros extends EventEmitter {
     } else if (this.transportLibrary === 'websocket') {
       if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
         // Detect if in browser vs in NodeJS
+        if (typeof window !== undefined) {
+          this.socket = new WebSocket(url);
+          this.socket.binaryType = 'arraybuffer';
+        } else {
+          // if in Node.js, import ws to replace browser WebSocket API
+          import('ws').then((ws) => {
+            this.socket = new ws.WebSocket(url);
+            this.socket.binaryType = 'arraybuffer'
+          })
+        }
         var sock = typeof window !== 'undefined' ? new window.WebSocket(url) : new WebSocket(url);
         sock.binaryType = 'arraybuffer';
         this.socket = Object.assign(sock, socketAdapter(this));
@@ -121,10 +123,14 @@ export default class Ros extends EventEmitter {
   sendEncodedMessage(messageEncoded) {
     if (!this.isConnected) {
       this.once('connection', () => {
-        this.socket.send(messageEncoded);
+        if (this.socket !== null) {
+          this.socket.send(messageEncoded);
+        }
       });
     } else {
-      this.socket.send(messageEncoded);
+      if (this.socket !== null) {
+        this.socket.send(messageEncoded);
+      }
     }
   }
   /**
@@ -135,9 +141,9 @@ export default class Ros extends EventEmitter {
    */
   callOnConnection(message) {
     if (this.transportOptions.encoder) {
-      this.transportOptions.encoder(message, this._sendFunc);
+      this.transportOptions.encoder(message, this.sendEncodedMessage);
     } else {
-      this._sendFunc(JSON.stringify(message));
+      this.sendEncodedMessage(JSON.stringify(message));
     }
   }
   /**
@@ -705,9 +711,7 @@ export default class Ros extends EventEmitter {
    * @param {Object[]} defs - Array of type_def dictionary.
    */
   decodeTypeDefs(defs) {
-    var that = this;
-
-    var decodeTypeDefsRec = function (theType, hints) {
+    var decodeTypeDefsRec = (theType, hints) => {
       // calls itself recursively to resolve type definition using hints.
       var typeDefDict = {};
       for (var i = 0; i < theType.fieldnames.length; i++) {
@@ -738,7 +742,7 @@ export default class Ros extends EventEmitter {
               typeDefDict[fieldName] = [subResult];
             }
           } else {
-            that.emit(
+            this.emit(
               'error',
               'Cannot find ' + fieldType + ' in decodeTypeDefs'
             );
