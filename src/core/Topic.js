@@ -90,7 +90,7 @@ export default class Topic extends EventEmitter {
     }
   }
 
-  _messageCallback(data) {
+  _messageCallback = (data) => {
     this.emit('message', data);
   };
   /**
