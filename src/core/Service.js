@@ -17,6 +17,7 @@ export default class Service extends EventEmitter {
      * @type {((rosbridgeRequest) => any) | null}
      */
   _serviceCallback = null;
+  isAdvertised = false;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -28,7 +29,6 @@ export default class Service extends EventEmitter {
     this.ros = options.ros;
     this.name = options.name;
     this.serviceType = options.serviceType;
-    this.isAdvertised = false;
   }
   /**
    * @callback callServiceCallback
