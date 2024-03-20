@@ -12,6 +12,12 @@ import { EventEmitter } from 'eventemitter3';
  */
 export default class Service extends EventEmitter {
   /**
+     * Stores a reference to the most recent service callback advertised so it can be removed from the EventEmitter during un-advertisement
+     * @private
+     * @type {((rosbridgeRequest) => any) | null}
+     */
+  _serviceCallback = null;
+  /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} options.name - The service name, like '/add_two_ints'.
@@ -23,12 +29,6 @@ export default class Service extends EventEmitter {
     this.name = options.name;
     this.serviceType = options.serviceType;
     this.isAdvertised = false;
-
-    /**
-     * Stores a reference to the most recent service callback advertised so it can be removed from the EventEmitter during un-advertisement
-     * @type {((rosbridgeRequest) => any) | null}
-     */
-    this._serviceCallback = null;
   }
   /**
    * @callback callServiceCallback
