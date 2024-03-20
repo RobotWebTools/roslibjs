@@ -29,7 +29,7 @@ export default defineConfig({
       // into your library
       external: ['eventemitter3', 'ws', 'src/util/decompressPng.js'],
       output: {
-        globals: { eventemitter3: 'EventEmitter' }
+        globals: { eventemitter3: 'EventEmitter3' }
       }
     },
   },
