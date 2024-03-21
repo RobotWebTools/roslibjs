@@ -27,7 +27,6 @@ export default class ActionListener extends EventEmitter {
    */
   constructor(options) {
     super();
-    var that = this;
     this.ros = options.ros;
     this.serverName = options.serverName;
     this.actionName = options.actionName;
@@ -57,25 +56,25 @@ export default class ActionListener extends EventEmitter {
       messageType: this.actionName + 'Result'
     });
 
-    goalListener.subscribe(function (goalMessage) {
-      that.emit('goal', goalMessage);
+    goalListener.subscribe((goalMessage) => {
+      this.emit('goal', goalMessage);
     });
 
-    statusListener.subscribe(function (statusMessage) {
-      statusMessage.status_list.forEach(function (status) {
-        that.emit('status', status);
+    statusListener.subscribe((statusMessage) => {
+      statusMessage.status_list.forEach((status) => {
+        this.emit('status', status);
       });
     });
 
-    feedbackListener.subscribe(function (feedbackMessage) {
-      that.emit('status', feedbackMessage.status);
-      that.emit('feedback', feedbackMessage.feedback);
+    feedbackListener.subscribe((feedbackMessage) => {
+      this.emit('status', feedbackMessage.status);
+      this.emit('feedback', feedbackMessage.feedback);
     });
 
     // subscribe to the result topic
-    resultListener.subscribe(function (resultMessage) {
-      that.emit('status', resultMessage.status);
-      that.emit('result', resultMessage.result);
+    resultListener.subscribe((resultMessage) => {
+      this.emit('status', resultMessage.status);
+      this.emit('result', resultMessage.result);
     });
   }
 }

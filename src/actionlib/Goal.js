@@ -14,6 +14,12 @@ import ActionClient from './ActionClient.js';
  *  * 'timeout' - If a timeout occurred while sending a goal.
  */
 export default class Goal extends EventEmitter {
+  isFinished = false;
+  status = undefined;
+  result = undefined;
+  feedback = undefined;
+  // Create a random ID
+  goalID = 'goal_' + Math.random() + '_' + new Date().getTime();
   /**
    * @param {Object} options
    * @param {ActionClient} options.actionClient - The ROSLIB.ActionClient to use with this goal.
@@ -21,19 +27,8 @@ export default class Goal extends EventEmitter {
    */
   constructor(options) {
     super();
-    var that = this;
     this.actionClient = options.actionClient;
-    this.goalMessage = options.goalMessage;
-    this.isFinished = false;
-    this.status = undefined;
-    this.result = undefined;
-    this.feedback = undefined;
 
-    // Used to create random IDs
-    var date = new Date();
-
-    // Create a random ID
-    this.goalID = 'goal_' + Math.random() + '_' + date.getTime();
     // Fill in the goal message
     this.goalMessage = {
       goal_id: {
@@ -43,20 +38,20 @@ export default class Goal extends EventEmitter {
         },
         id: this.goalID
       },
-      goal: this.goalMessage
+      goal: options.goalMessage
     };
 
-    this.on('status', function (status) {
-      that.status = status;
+    this.on('status', (status) => {
+      this.status = status;
     });
 
-    this.on('result', function (result) {
-      that.isFinished = true;
-      that.result = result;
+    this.on('result', (result) => {
+      this.isFinished = true;
+      this.result = result;
     });
 
-    this.on('feedback', function (feedback) {
-      that.feedback = feedback;
+    this.on('feedback', (feedback) => {
+      this.feedback = feedback;
     });
 
     // Add the goal
@@ -68,12 +63,11 @@ export default class Goal extends EventEmitter {
    * @param {number} [timeout] - A timeout length for the goal's result.
    */
   send(timeout) {
-    var that = this;
-    that.actionClient.goalTopic.publish(that.goalMessage);
+    this.actionClient.goalTopic.publish(this.goalMessage);
     if (timeout) {
-      setTimeout(function () {
-        if (!that.isFinished) {
-          that.emit('timeout');
+      setTimeout(() => {
+        if (!this.isFinished) {
+          this.emit('timeout');
         }
       }, timeout);
     }

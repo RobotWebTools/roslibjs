@@ -14,11 +14,12 @@ export default class UrdfColor {
    */
   constructor(options) {
     // Parse the xml string
-    // @ts-expect-error -- possibly null
-    var rgba = options.xml.getAttribute('rgba').split(' ');
-    this.r = parseFloat(rgba[0]);
-    this.g = parseFloat(rgba[1]);
-    this.b = parseFloat(rgba[2]);
-    this.a = parseFloat(rgba[3]);
+    var rgba = options.xml.getAttribute('rgba')?.split(' ');
+    if (rgba) {
+      this.r = parseFloat(rgba[0]);
+      this.g = parseFloat(rgba[1]);
+      this.b = parseFloat(rgba[2]);
+      this.a = parseFloat(rgba[3]);
+    }
   }
 }

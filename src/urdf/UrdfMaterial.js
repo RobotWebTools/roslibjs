@@ -10,13 +10,15 @@ import UrdfColor from './UrdfColor.js';
  * A Material element in a URDF.
  */
 export default class UrdfMaterial {
+  /** @type {string | null} */
+  textureFilename = null;
+  /** @type {UrdfColor | null} */
+  color = null;
   /**
    * @param {Object} options
    * @param {Element} options.xml - The XML element to parse.
    */
   constructor(options) {
-    this.textureFilename = null;
-    this.color = null;
 
     this.name = options.xml.getAttribute('name');
 

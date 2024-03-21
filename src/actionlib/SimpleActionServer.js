@@ -15,6 +15,11 @@ import { EventEmitter } from 'eventemitter3';
  *  * 'cancel' - Action client has canceled the request.
  */
 export default class SimpleActionServer extends EventEmitter {
+  // needed for handling preemption prompted by a new goal being received
+  /** @type {{goal_id: {id: any, stamp: any}, goal: any} | null} */
+  currentGoal = null; // currently tracked goal
+  /** @type {{goal_id: {id: any, stamp: any}, goal: any} | null} */
+  nextGoal = null; // the one this'll be preempting
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -23,7 +28,6 @@ export default class SimpleActionServer extends EventEmitter {
    */
   constructor(options) {
     super();
-    var that = this;
     this.ros = options.ros;
     this.serverName = options.serverName;
     this.actionName = options.actionName;
@@ -73,19 +77,15 @@ export default class SimpleActionServer extends EventEmitter {
       status_list: []
     };
 
-    // needed for handling preemption prompted by a new goal being received
-    this.currentGoal = null; // currently tracked goal
-    this.nextGoal = null; // the one that'll be preempting
-
-    goalListener.subscribe(function (goalMessage) {
-      if (that.currentGoal) {
-        that.nextGoal = goalMessage;
+    goalListener.subscribe((goalMessage) => {
+      if (this.currentGoal) {
+        this.nextGoal = goalMessage;
         // needs to happen AFTER rest is set up
-        that.emit('cancel');
+        this.emit('cancel');
       } else {
-        that.statusMessage.status_list = [{ goal_id: goalMessage.goal_id, status: 1 }];
-        that.currentGoal = goalMessage;
-        that.emit('goal', goalMessage.goal);
+        this.statusMessage.status_list = [{ goal_id: goalMessage.goal_id, status: 1 }];
+        this.currentGoal = goalMessage;
+        this.emit('goal', goalMessage.goal);
       }
     });
 
@@ -107,56 +107,56 @@ export default class SimpleActionServer extends EventEmitter {
     // not sure if the callbacks can ever wind up with a scenario
     // where we've been preempted by a next goal, it hasn't finished
     // processing, and then we get a cancel message
-    cancelListener.subscribe(function (cancelMessage) {
+    cancelListener.subscribe((cancelMessage) => {
       // cancel ALL goals if both empty
       if (
         cancelMessage.stamp.secs === 0 &&
         cancelMessage.stamp.secs === 0 &&
         cancelMessage.id === ''
       ) {
-        that.nextGoal = null;
-        if (that.currentGoal) {
-          that.emit('cancel');
+        this.nextGoal = null;
+        if (this.currentGoal) {
+          this.emit('cancel');
         }
       } else {
         // treat id and stamp independently
         if (
-          that.currentGoal &&
-          cancelMessage.id === that.currentGoal.goal_id.id
+          this.currentGoal &&
+          cancelMessage.id === this.currentGoal.goal_id.id
         ) {
-          that.emit('cancel');
+          this.emit('cancel');
         } else if (
-          that.nextGoal &&
-          cancelMessage.id === that.nextGoal.goal_id.id
+          this.nextGoal &&
+          cancelMessage.id === this.nextGoal.goal_id.id
         ) {
-          that.nextGoal = null;
+          this.nextGoal = null;
         }
 
         if (
-          that.nextGoal &&
-          isEarlier(that.nextGoal.goal_id.stamp, cancelMessage.stamp)
+          this.nextGoal &&
+          isEarlier(this.nextGoal.goal_id.stamp, cancelMessage.stamp)
         ) {
-          that.nextGoal = null;
+          this.nextGoal = null;
         }
         if (
-          that.currentGoal &&
-          isEarlier(that.currentGoal.goal_id.stamp, cancelMessage.stamp)
+          this.currentGoal &&
+          isEarlier(this.currentGoal.goal_id.stamp, cancelMessage.stamp)
         ) {
-          that.emit('cancel');
+          this.emit('cancel');
         }
       }
     });
 
     // publish status at pseudo-fixed rate; required for clients to know they've connected
-    var statusInterval = setInterval(function () {
+    setInterval(() => {
       var currentTime = new Date();
       var secs = Math.floor(currentTime.getTime() / 1000);
       var nsecs = Math.round(
         1000000000 * (currentTime.getTime() / 1000 - secs)
       );
-      that.statusMessage.header.stamp.secs = secs;
-      that.statusMessage.header.stamp.nsecs = nsecs;
-      statusPublisher.publish(that.statusMessage);
+      this.statusMessage.header.stamp.secs = secs;
+      this.statusMessage.header.stamp.nsecs = nsecs;
+      statusPublisher.publish(this.statusMessage);
     }, 500); // publish every 500ms
   }
   /**
@@ -165,19 +165,21 @@ export default class SimpleActionServer extends EventEmitter {
    * @param {Object} result - The result to return to the client.
    */
   setSucceeded(result) {
-    var resultMessage = {
-      status: { goal_id: this.currentGoal.goal_id, status: 3 },
-      result: result
-    };
-    this.resultPublisher.publish(resultMessage);
-
-    this.statusMessage.status_list = [];
-    if (this.nextGoal) {
-      this.currentGoal = this.nextGoal;
-      this.nextGoal = null;
-      this.emit('goal', this.currentGoal.goal);
-    } else {
-      this.currentGoal = null;
+    if (this.currentGoal !== null) {
+      var resultMessage = {
+        status: { goal_id: this.currentGoal.goal_id, status: 3 },
+        result: result
+      };
+      this.resultPublisher.publish(resultMessage);
+  
+      this.statusMessage.status_list = [];
+      if (this.nextGoal) {
+        this.currentGoal = this.nextGoal;
+        this.nextGoal = null;
+        this.emit('goal', this.currentGoal.goal);
+      } else {
+        this.currentGoal = null;
+      }
     }
   }
   /**
@@ -186,19 +188,21 @@ export default class SimpleActionServer extends EventEmitter {
    * @param {Object} result - The result to return to the client.
    */
   setAborted(result) {
-    var resultMessage = {
-      status: { goal_id: this.currentGoal.goal_id, status: 4 },
-      result: result
-    };
-    this.resultPublisher.publish(resultMessage);
-
-    this.statusMessage.status_list = [];
-    if (this.nextGoal) {
-      this.currentGoal = this.nextGoal;
-      this.nextGoal = null;
-      this.emit('goal', this.currentGoal.goal);
-    } else {
-      this.currentGoal = null;
+    if (this.currentGoal !== null) {
+      var resultMessage = {
+        status: { goal_id: this.currentGoal.goal_id, status: 4 },
+        result: result
+      };
+      this.resultPublisher.publish(resultMessage);
+  
+      this.statusMessage.status_list = [];
+      if (this.nextGoal) {
+        this.currentGoal = this.nextGoal;
+        this.nextGoal = null;
+        this.emit('goal', this.currentGoal.goal);
+      } else {
+        this.currentGoal = null;
+      }
     }
   }
   /**
@@ -207,28 +211,32 @@ export default class SimpleActionServer extends EventEmitter {
    * @param {Object} feedback - The feedback to send to the client.
    */
   sendFeedback(feedback) {
-    var feedbackMessage = {
-      status: { goal_id: this.currentGoal.goal_id, status: 1 },
-      feedback: feedback
-    };
-    this.feedbackPublisher.publish(feedbackMessage);
+    if (this.currentGoal !== null) {
+      var feedbackMessage = {
+        status: { goal_id: this.currentGoal.goal_id, status: 1 },
+        feedback: feedback
+      };
+      this.feedbackPublisher.publish(feedbackMessage);
+    }
   }
   /**
    * Handle case where client requests preemption.
    */
   setPreempted() {
-    this.statusMessage.status_list = [];
-    var resultMessage = {
-      status: { goal_id: this.currentGoal.goal_id, status: 2 }
-    };
-    this.resultPublisher.publish(resultMessage);
-
-    if (this.nextGoal) {
-      this.currentGoal = this.nextGoal;
-      this.nextGoal = null;
-      this.emit('goal', this.currentGoal.goal);
-    } else {
-      this.currentGoal = null;
+    if (this.currentGoal !== null) { 
+      this.statusMessage.status_list = [];
+      var resultMessage = {
+        status: { goal_id: this.currentGoal.goal_id, status: 2 }
+      };
+      this.resultPublisher.publish(resultMessage);
+  
+      if (this.nextGoal) {
+        this.currentGoal = this.nextGoal;
+        this.nextGoal = null;
+        this.emit('goal', this.currentGoal.goal);
+      } else {
+        this.currentGoal = null;
+      }
     }
   }
 }

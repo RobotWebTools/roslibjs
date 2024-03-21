@@ -18,16 +18,18 @@ import UrdfSphere from './UrdfSphere.js';
  * A Visual element in a URDF.
  */
 export default class UrdfVisual {
+  /** @type {Pose | null} */
+  origin = null;
+  /** @type {UrdfMesh | UrdfSphere | UrdfBox | UrdfCylinder | null} */
+  geometry = null;
+  /** @type {UrdfMaterial | null} */
+  material = null;
   /**
    * @param {Object} options
    * @param {Element} options.xml - The XML element to parse.
    */
   constructor(options) {
     var xml = options.xml;
-    this.origin = null;
-    this.geometry = null;
-    this.material = null;
-
     this.name = options.xml.getAttribute('name');
 
     // Origin

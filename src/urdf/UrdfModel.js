@@ -16,6 +16,9 @@ var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
  * A URDF Model can be used to parse a given URDF into the appropriate elements.
  */
 export default class UrdfModel {
+  materials = {};
+  links = {};
+  joints = {};
   /**
    * @param {Object} options
    * @param {Element} [options.xml] - The XML element to parse.
@@ -24,9 +27,6 @@ export default class UrdfModel {
   constructor(options) {
     var xmlDoc = options.xml;
     var string = options.string;
-    this.materials = {};
-    this.links = {};
-    this.joints = {};
 
     // Check if we are using a string or an XML element
     if (string) {
