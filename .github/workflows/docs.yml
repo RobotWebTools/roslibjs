@@ -19,7 +19,7 @@ jobs:
       - name: Generate docs
         run: npm run doc
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.RWT_BOT_PAT }}
           publish_dir: doc
