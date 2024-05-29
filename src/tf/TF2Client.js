@@ -4,9 +4,6 @@
  */
 
 import Action from '../core/Action.js';
-// import Goal from '../actionlib/Goal.js';
-// import Topic from '../core/Topic.js';
-
 import Transform from '../math/Transform.js';
 
 import Ros from '../core/Ros.js';
@@ -39,15 +36,12 @@ export default class TF2Client extends EventEmitter {
         this.updateDelay = options.updateDelay || 50;
         var seconds = options.topicTimeout || 2.0;
         var secs = Math.floor(seconds);
-        var nsecs = Math.floor((seconds - secs) * 1000000000);
+        var nsecs = Math.floor((seconds - secs) * 1E9);
         this.topicTimeout = {
             secs: secs,
             nsecs: nsecs
         };
         this.serverName = options.serverName || '/tf2_web_republisher';
-        // this.repubServiceName = options.repubServiceName || '/republish_tfs';
-
-        // this.currentGoal = {};
         this.goal_id = '';
         this.frameInfos = {};
         this.republisherUpdateRequested = false;
@@ -184,8 +178,5 @@ export default class TF2Client extends EventEmitter {
      */
     dispose() {
         this._isDisposed = true;
-        // if (this.currentTopic) {
-        //     this.currentTopic.unsubscribe(this._subscribeCB);
-        // }
     }
 }
