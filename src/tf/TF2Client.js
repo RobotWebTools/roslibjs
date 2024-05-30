@@ -1,7 +1,3 @@
-/**
- * @fileOverview
- * @author David Gossow - dgossow@willowgarage.com
- */
 
 import Action from '../core/Action.js';
 import Transform from '../math/Transform.js';
