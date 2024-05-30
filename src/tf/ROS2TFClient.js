@@ -8,7 +8,7 @@ import {EventEmitter} from 'eventemitter3';
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
  */
-export default class TF2Client extends EventEmitter {
+export default class ROS2TFClient extends EventEmitter {
     /**
      * @param {Object} options
      * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -30,9 +30,9 @@ export default class TF2Client extends EventEmitter {
         this.transThres = options.transThres || 0.01;
         this.rate = options.rate || 10.0;
         this.updateDelay = options.updateDelay || 50;
-        var seconds = options.topicTimeout || 2.0;
-        var secs = Math.floor(seconds);
-        var nsecs = Math.floor((seconds - secs) * 1E9);
+        const seconds = options.topicTimeout || 2.0;
+        const secs = Math.floor(seconds);
+        const nsecs = Math.floor((seconds - secs) * 1E9);
         this.topicTimeout = {
             secs: secs,
             nsecs: nsecs
@@ -60,13 +60,13 @@ export default class TF2Client extends EventEmitter {
      * @param {Object} tf - The TF message from the server.
      */
     processTFArray(tf) {
-        var that = this;
+        let that = this;
         tf.transforms.forEach(function (transform) {
-            var frameID = transform.child_frame_id;
+            let frameID = transform.child_frame_id;
             if (frameID[0] === '/') {
                 frameID = frameID.substring(1);
             }
-            var info = that.frameInfos[frameID];
+            const info = that.frameInfos[frameID];
             if (info) {
                 info.transform = new Transform({
                     translation: transform.transform.translation,
@@ -84,7 +84,7 @@ export default class TF2Client extends EventEmitter {
      * based on the current list of TFs.
      */
     updateGoal() {
-        var goalMessage = {
+        const goalMessage = {
             source_frames: Object.keys(this.frameInfos),
             target_frame: this.fixedFrame,
             angular_thres: this.angularThres,
@@ -97,14 +97,11 @@ export default class TF2Client extends EventEmitter {
         }
         this.currentGoal = goalMessage;
 
-        // this.currentGoal.on('feedback', this.processTFArray.bind(this));
         const id = this.actionClient.sendGoal(goalMessage,
             (result) => {
-                console.log('Result for action goal on :');
             },
             (feedback) => {
                 this.processTFArray(feedback)
-                console.log('Feedback for action on : ');
             },
         );
         if (typeof id === 'string') {
@@ -158,7 +155,7 @@ export default class TF2Client extends EventEmitter {
         if (frameID[0] === '/') {
             frameID = frameID.substring(1);
         }
-        var info = this.frameInfos[frameID];
+        const info = this.frameInfos[frameID];
         for (var cbs = (info && info.cbs) || [], idx = cbs.length; idx--;) {
             if (cbs[idx] === callback) {
                 cbs.splice(idx, 1);
