@@ -16,7 +16,9 @@ Install roslibjs with any NPM-compatible package manager via, for example,
 
 ```bash
 npm install roslib
-```
+``` 
+
+The build output `node_modules/roslib/build/roslib.js` or `node_modules/roslib/build/roslib.min.js` can then be included in your project. 
 
 ~Pre-built files can be found in either [roslib.js](build/roslib.js) or [roslib.min.js](build/roslib.min.js).~
 
