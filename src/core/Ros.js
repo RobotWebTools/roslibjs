@@ -61,7 +61,8 @@ export default class Ros extends EventEmitter {
         socketAdapter(this)
       );
     } else if (this.transportLibrary === 'websocket') {
-      if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
+      // Use value of `WebSocket.CLOSED`, 3 to avoid invalid reference for NodeJS instances https://websockets.spec.whatwg.org/#dom-websocket-closed
+      if (!this.socket || this.socket.readyState === 3) {
         // Detect if in browser vs in NodeJS
         if (typeof window !== 'undefined') {
           const sock = new WebSocket(url);
