@@ -61,20 +61,22 @@ export default class Ros extends EventEmitter {
         socketAdapter(this)
       );
     } else if (this.transportLibrary === 'websocket') {
-      if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
-        // Detect if in browser vs in NodeJS
-        if (typeof window !== 'undefined') {
+      // Detect if in browser vs in NodeJS
+      if (typeof window !== 'undefined') {
+        if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
           const sock = new WebSocket(url);
           sock.binaryType = 'arraybuffer';
           this.socket = Object.assign(sock, socketAdapter(this));
-        } else {
-          // if in Node.js, import ws to replace browser WebSocket API
-          import('ws').then((ws) => {
+        }
+      } else {
+        // if in Node.js, import ws to replace browser WebSocket API
+        import('ws').then((ws) => {
+          if (!this.socket || this.socket.readyState === ws.WebSocket.CLOSED) {
             const sock = new ws.WebSocket(url);
             sock.binaryType = 'arraybuffer'
             this.socket = Object.assign(sock, socketAdapter(this));
-          })
-        }
+          }
+        })
       }
     } else {
       throw 'Unknown transportLibrary: ' + this.transportLibrary.toString();
