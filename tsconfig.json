@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
-    "module": "Node16" /* Specify what module code is generated. */,
+    "module": "nodenext" /* Specify what module code is generated. */,
     "rootDir": "./src" /* Specify the root folder within your source files. */,
     "allowJs": true /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */,
     "checkJs": true /* Enable error reporting in type-checked JavaScript files. */,
@@ -13,7 +13,7 @@
     "strict": true /* Enable all strict type-checking options. */,
     "noImplicitAny": false /* Enable error reporting for expressions and declarations with an implied 'any' type. */,
     "skipLibCheck": true, /* Skip type checking all .d.ts files. */
-    "moduleResolution": "Node16",
+    "moduleResolution": "nodenext",
     "types": ["@types/node"]
   },
   "include": ["src"]

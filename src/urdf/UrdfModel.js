@@ -7,7 +7,7 @@
 import UrdfMaterial from './UrdfMaterial.js';
 import UrdfLink from './UrdfLink.js';
 import UrdfJoint from './UrdfJoint.js';
-import { DOMParser } from '@xmldom/xmldom';
+import { DOMParser, MIME_TYPE } from '@xmldom/xmldom';
 
 // See https://developer.mozilla.org/docs/XPathResult#Constants
 var XPATH_FIRST_ORDERED_NODE_TYPE = 9;
@@ -32,7 +32,7 @@ export default class UrdfModel {
     if (string) {
       // Parse the string
       var parser = new DOMParser();
-      xmlDoc = parser.parseFromString(string, 'text/xml').documentElement;
+      xmlDoc = parser.parseFromString(string, MIME_TYPE.XML_TEXT).documentElement;
     }
     if (!xmlDoc) {
       throw new Error('No URDF document parsed!');
