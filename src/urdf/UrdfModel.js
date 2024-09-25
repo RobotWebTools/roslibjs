@@ -21,7 +21,7 @@ export default class UrdfModel {
   joints = {};
   /**
    * @param {Object} options
-   * @param {Element} [options.xml] - The XML element to parse.
+   * @param {Element | null} [options.xml] - The XML element to parse.
    * @param {string} [options.string] - The XML element to parse as a string.
    */
   constructor(options) {
