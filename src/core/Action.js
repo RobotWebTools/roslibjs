@@ -216,6 +216,25 @@ export default class Action extends EventEmitter {
       id: id,
       action: this.name,
       values: result,
+      status: 4,  // Corresponds to GoalStatus.STATUS_SUCCEEDED
+      result: true
+    };
+    this.ros.callOnConnection(call);
+  }
+
+  /**
+   * Helper function to set an action as canceled.
+   *
+   * @param {string} id - The action goal ID.
+   * @param {TResult} result - The result to set.
+   */
+  setCanceled(id, result) {
+    var call = {
+      op: 'action_result',
+      id: id,
+      action: this.name,
+      values: result,
+      status: 5,  // Corresponds to GoalStatus.STATUS_CANCELED
       result: true
     };
     this.ros.callOnConnection(call);
@@ -231,6 +250,7 @@ export default class Action extends EventEmitter {
       op: 'action_result',
       id: id,
       action: this.name,
+      status: 6,  // Corresponds to GoalStatus.STATUS_ABORTED
       result: false
     };
     this.ros.callOnConnection(call);

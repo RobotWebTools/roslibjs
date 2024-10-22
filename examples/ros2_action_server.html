@@ -51,8 +51,10 @@
     console.log('Sending result: ' + fibonacciSequence);
     fibonacciServer.setSucceeded(id, { sequence: fibonacciSequence });
   };
+
   var cancelCallback = function(id) {
     console.log('Canceled action with goal ID ' + id);
+    fibonacciServer.setCanceled(id, { sequence: []})
   };
 
   fibonacciServer.advertise(actionCallback, cancelCallback);
