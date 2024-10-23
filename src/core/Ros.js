@@ -283,6 +283,46 @@ export default class Ros extends EventEmitter {
     }
   }
   /**
+   * @callback getPublishersCallback
+   * @param {string[]} publishers - Array of publisher names.
+   */
+  /**
+   * @callback getPublishersFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
+   * Retrieve a list of active publishers in ROS.
+   *
+   * @param {string} topic - The topic to find publishers for.
+   * @param {getPublishersCallback} callback - Function with the following params:
+   * @param {getPublishersFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   */
+  getPublishers(topic, callback, failedCallback) {
+    var publishersClient = new Service({
+      ros: this,
+      name: '/rosapi/publishers',
+      serviceType: 'rosapi/Publishers'
+    });
+  
+    var request = {
+      topic: topic
+    };
+    if (typeof failedCallback === 'function'){
+      publishersClient.callService(request,
+        function(result) {
+          callback(result.publishers);
+        },
+        function(message){
+          failedCallback(message);
+        }
+      );
+    } else {
+      publishersClient.callService(request, function(result) {
+        callback(result.publishers);
+      });
+    }
+  }
+  /**
    * @callback getServicesCallback
    * @param {string[]} services - Array of service names.
    */
