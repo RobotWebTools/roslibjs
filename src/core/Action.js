@@ -7,6 +7,21 @@ import { EventEmitter } from 'eventemitter3';
 import Ros from '../core/Ros.js';
 
 /**
+ * An "enumeration" for goal statuses.
+ * This is directly based on the action_msgs/GoalStatus ROS message:
+ * https://docs.ros2.org/latest/api/action_msgs/msg/GoalStatus.html
+ */
+const GoalStatus = Object.freeze({
+  STATUS_UNKNOWN: 0,
+  STATUS_ACCEPTED: 1,
+  STATUS_EXECUTING: 2,
+  STATUS_CANCELING: 3,
+  STATUS_SUCCEEDED: 4,
+  STATUS_CANCELED: 5,
+  STATUS_ABORTED: 6
+});
+
+/**
  * A ROS 2 action client.
  * @template TGoal, TFeedback, TResult
  */
@@ -216,7 +231,7 @@ export default class Action extends EventEmitter {
       id: id,
       action: this.name,
       values: result,
-      status: 4,  // Corresponds to GoalStatus.STATUS_SUCCEEDED
+      status: GoalStatus.STATUS_SUCCEEDED,
       result: true
     };
     this.ros.callOnConnection(call);
@@ -234,7 +249,7 @@ export default class Action extends EventEmitter {
       id: id,
       action: this.name,
       values: result,
-      status: 5,  // Corresponds to GoalStatus.STATUS_CANCELED
+      status: GoalStatus.STATUS_CANCELED,
       result: true
     };
     this.ros.callOnConnection(call);
@@ -250,7 +265,7 @@ export default class Action extends EventEmitter {
       op: 'action_result',
       id: id,
       action: this.name,
-      status: 6,  // Corresponds to GoalStatus.STATUS_ABORTED
+      status: GoalStatus.STATUS_ABORTED,
       result: false
     };
     this.ros.callOnConnection(call);
