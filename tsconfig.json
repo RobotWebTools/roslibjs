@@ -5,6 +5,7 @@
     "rootDir": "./src" /* Specify the root folder within your source files. */,
     "allowJs": true /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */,
     "checkJs": true /* Enable error reporting in type-checked JavaScript files. */,
+    "allowImportingTsExtensions": true /* Enable importing TypeScript files. */,
     "declaration": true /* Generate .d.ts files from TypeScript and JavaScript files in your project. */,
     "outDir": "./tsbuild" /* Specify an output folder for all emitted files. */,
     "declarationDir": "./build" /* Specify the output directory for generated declaration files. */,
