@@ -1,12 +1,10 @@
 {
   "compilerOptions": {
     "target": "es5" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
-    "module": "nodenext" /* Specify what module code is generated. */,
+    "module": "esnext" /* Specify what module code is generated. */,
     "rootDir": "./src" /* Specify the root folder within your source files. */,
     "allowJs": true /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */,
     "checkJs": true /* Enable error reporting in type-checked JavaScript files. */,
-    "allowImportingTsExtensions": true /* Enable importing TypeScript files. */,
-    "emitDeclarationOnly": true /* Needed to allow importing TypeScript files. */,
     "declaration": true /* Generate .d.ts files from TypeScript and JavaScript files in your project. */,
     "outDir": "./tsbuild" /* Specify an output folder for all emitted files. */,
     "declarationDir": "./build" /* Specify the output directory for generated declaration files. */,
@@ -15,7 +13,7 @@
     "strict": true /* Enable all strict type-checking options. */,
     "noImplicitAny": false /* Enable error reporting for expressions and declarations with an implied 'any' type. */,
     "skipLibCheck": true, /* Skip type checking all .d.ts files. */
-    "moduleResolution": "nodenext",
+    "moduleResolution": "bundler",
     "types": ["@types/node"]
   },
   "include": ["src"]
