@@ -45,8 +45,10 @@ export default class Service extends EventEmitter {
    * @param {TRequest} request - The service request to send.
    * @param {callServiceCallback} [callback] - Function with the following params:
    * @param {callServiceFailedCallback} [failedCallback] - The callback function when the service call failed with params:
-   */
-  callService(request, callback, failedCallback) {
+   * @param {number} [timeout] - Optional timeout, in seconds, for the service call. A non-positive value means no timeout.
+   *                             If not provided, the rosbridge server will use its default value.
+  */
+  callService(request, callback, failedCallback, timeout) {
     if (this.isAdvertised) {
       return;
     }
@@ -73,6 +75,11 @@ export default class Service extends EventEmitter {
       type: this.serviceType,
       args: request
     };
+
+    if (timeout !== undefined) {
+      call.timeout = timeout;
+    }
+
     this.ros.callOnConnection(call);
   }
   /**
