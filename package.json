@@ -23,7 +23,7 @@
     "eslint": "^9.0.0",
     "globals": "^15.0.0",
     "jsdoc": "^4.0.2",
-    "jsdom": "^25.0.0",
+    "jsdom": "^26.0.0",
     "typescript": "^5.2.2",
     "vite": "^6.0.1",
     "vite-plugin-checker": "^0.8.0",
