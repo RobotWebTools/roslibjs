@@ -73,12 +73,9 @@ export default class Service extends EventEmitter {
       id: serviceCallId,
       service: this.name,
       type: this.serviceType,
-      args: request
+      args: request,
+      timeout: timeout
     };
-
-    if (timeout !== undefined) {
-      call.timeout = timeout;
-    }
 
     this.ros.callOnConnection(call);
   }
