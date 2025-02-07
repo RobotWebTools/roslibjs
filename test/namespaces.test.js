@@ -3,7 +3,7 @@ import { Ros } from '../';
 
 describe('Namespaces', () => {
 
-    it("Can retrieve a list of topics using a namespace using a trailing slash", async () => {
+    it('Can retrieve a list of topics using a namespace using a trailing slash', async () => {
 
         const ros = new Ros({
             url: 'ws://localhost:9091',
@@ -20,7 +20,7 @@ describe('Namespaces', () => {
 
     });
 
-    it("Can retrieve a list of topics using a namespace with a leading slash", async () => {
+    it('Can retrieve a list of topics using a namespace with a leading slash', async () => {
 
         const ros = new Ros({
             url: 'ws://localhost:9091',
@@ -35,7 +35,7 @@ describe('Namespaces', () => {
         expect(topics).not.hasLength(0);
     });
 
-    it("Can retrieve a list of topics using a namespace with a leading and no trailing slash", async () => {
+    it('Can retrieve a list of topics using a namespace with a leading and no trailing slash', async () => {
 
         const ros = new Ros({
             url: 'ws://localhost:9091',
@@ -50,7 +50,7 @@ describe('Namespaces', () => {
         expect(topics).not.hasLength(0);
     })
 
-    it("Can retrieve a list of topics using a nested namespace", async () => {
+    it('Can retrieve a list of topics using a nested namespace', async () => {
 
         const ros = new Ros({
             url: 'ws://localhost:9092',
@@ -65,7 +65,7 @@ describe('Namespaces', () => {
         expect(topics).not.hasLength(0);
     });
 
-    it("Can retrieve a list of topics using a nested namespace with a leading slash", async () => {
+    it('Can retrieve a list of topics using a nested namespace with a leading slash', async () => {
 
         const ros = new Ros({
             url: 'ws://localhost:9092',
@@ -80,7 +80,7 @@ describe('Namespaces', () => {
         expect(topics).not.hasLength(0);
     });
 
-    it("Can retrieve a list of topics using a nested namespace with a leading and no trailing slash", async () => {
+    it('Can retrieve a list of topics using a nested namespace with a leading and no trailing slash', async () => {
 
         const ros = new Ros({
             url: 'ws://localhost:9092',
@@ -96,7 +96,7 @@ describe('Namespaces', () => {
     });
 
 
-    it("Can retrieve a list of topics using an empty namespaces", async () => {
+    it('Can retrieve a list of topics using an empty namespaces', async () => {
 
         const ros = new Ros({
             url: 'ws://localhost:9090',
@@ -111,7 +111,7 @@ describe('Namespaces', () => {
         expect(topics).not.hasLength(0);
     })
 
-    it("Can retrieve a list of topics using an empty namespace, not set in constructor", async () => {
+    it('Can retrieve a list of topics using an empty namespace, not set in constructor', async () => {
 
         const ros = new Ros({
             url: 'ws://localhost:9090'
