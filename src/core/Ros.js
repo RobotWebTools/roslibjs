@@ -46,9 +46,9 @@ export default class Ros extends EventEmitter {
     this.groovyCompatibility = options.groovyCompatibility ?? true;
     this.namespace = options.namespace || '';
 
-    // Normalize namespace format: no leading slash, with trailing slash
+    // Normalize namespace format: with trailing slash
     if (this.namespace) {
-      this.namespace = this.namespace.replace(/^\//, '').replace(/\/?$/, '/');
+      this.namespace = this.namespace.replace(/\/?$/, '/');
     }
 
     // begin by checking if a URL was given
