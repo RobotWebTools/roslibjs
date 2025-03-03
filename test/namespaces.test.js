@@ -14,8 +14,8 @@ describe('Namespaces', () => {
             ros.getTopics(resolve, reject);
         });
 
-        // we expect the topics array to not be empty
-        expect(topics).be.an('array');
+        // we expect the topics object to not be empty
+        expect(topics).be.an('object');
         expect(topics).not.hasLength(0);
 
     });
@@ -31,7 +31,7 @@ describe('Namespaces', () => {
             ros.getTopics(resolve, reject);
         });
 
-        expect(topics).be.an('array');
+        expect(topics).be.an('object');
         expect(topics).not.hasLength(0);
     });
 
@@ -46,7 +46,7 @@ describe('Namespaces', () => {
             ros.getTopics(resolve, reject);
         });
 
-        expect(topics).be.an('array');
+        expect(topics).be.an('object');
         expect(topics).not.hasLength(0);
     })
 
@@ -61,7 +61,7 @@ describe('Namespaces', () => {
             ros.getTopics(resolve, reject);
         });
 
-        expect(topics).be.an('array');
+        expect(topics).be.an('object');
         expect(topics).not.hasLength(0);
     });
 
@@ -76,7 +76,7 @@ describe('Namespaces', () => {
             ros.getTopics(resolve, reject);
         });
 
-        expect(topics).be.an('array');
+        expect(topics).be.an('object');
         expect(topics).not.hasLength(0);
     });
 
@@ -91,7 +91,7 @@ describe('Namespaces', () => {
             ros.getTopics(resolve, reject);
         });
 
-        expect(topics).be.an('array');
+        expect(topics).be.an('object');
         expect(topics).not.hasLength(0);
     });
 
@@ -107,7 +107,7 @@ describe('Namespaces', () => {
             ros.getTopics(resolve, reject);
         });
 
-        expect(topics).be.an('array');
+        expect(topics).be.an('object');
         expect(topics).not.hasLength(0);
     })
 
@@ -121,7 +121,7 @@ describe('Namespaces', () => {
             ros.getTopics(resolve, reject);
         });
 
-        expect(topics).be.an('array');
+        expect(topics).be.an('object');
         expect(topics).not.hasLength(0);
     })
 
