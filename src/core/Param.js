@@ -75,7 +75,7 @@ export default class Param {
 
     var request = {
       name: this.name,
-      value: JSON.stringify(value)
+      value: `\"${JSON.stringify(value)}\"`
     };
 
     paramClient.callService(request, callback, failedCallback);
