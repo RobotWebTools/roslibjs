@@ -32,7 +32,12 @@ export default class UrdfModel {
     if (string) {
       // Parse the string
       var parser = new DOMParser();
-      xmlDoc = parser.parseFromString(string, MIME_TYPE.XML_TEXT).documentElement;
+      var parsedDoc = parser.parseFromString(string, MIME_TYPE.XML_TEXT);
+      if (parsedDoc && parsedDoc.documentElement) {
+        xmlDoc = parsedDoc.documentElement;
+      } else {
+        throw new Error('Failed to parse URDF string');
+      }
     }
     if (!xmlDoc) {
       throw new Error('No URDF document parsed!');
