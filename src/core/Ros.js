@@ -62,7 +62,7 @@ export default class Ros extends EventEmitter {
       );
     } else if (this.transportLibrary === 'websocket') {
       const inBrowser = typeof window !== 'undefined';
-      const inDeno = typeof Deno !== 'undefined';
+      const inDeno = typeof globalThis.Deno !== 'undefined';
       // Detect if in browser/Deno vs in NodeJS
       if (inBrowser || inDeno) {
         if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
