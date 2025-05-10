@@ -152,7 +152,7 @@ Ros.prototype.sendEncodedMessage = function(messageEncoded) {
  * @param {Object} message - The message to be sent.
  */
 Ros.prototype.callOnConnection = function(message) {
-  if (this.transportOptions.encoder) {
+  if (this.transportOptions && this.transportOptions.encoder) {
     this.transportOptions.encoder(message, this._sendFunc);
   } else {
     this._sendFunc(JSON.stringify(message));
