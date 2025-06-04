@@ -62,7 +62,7 @@ export default class Ros extends EventEmitter {
       );
     } else if (this.transportLibrary === 'websocket') {
       // browsers, Deno, and Bun support WebSockets natively
-      if (typeof WebSocket == "function") {
+      if (typeof WebSocket === 'function') {
         if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
           const sock = new WebSocket(url);
           sock.binaryType = 'arraybuffer';
