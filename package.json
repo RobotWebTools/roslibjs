@@ -18,7 +18,7 @@
   "type": "module",
   "devDependencies": {
     "@testing-library/react": "^16.0.0",
-    "@types/node": "^22.0.0",
+    "@types/node": "^24.0.1",
     "@types/ws": "^8.5.10",
     "eslint": "^9.0.0",
     "globals": "^16.0.0",
