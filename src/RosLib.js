@@ -1,6 +1,6 @@
 /**
  * @fileOverview
- * @author Jeff Hykin - jeff.hykin@gmail.com
+ * @author Russell Toris - rctoris@wpi.edu
  */
 
 /** @description Library version */
