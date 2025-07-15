@@ -18,24 +18,24 @@
   "type": "module",
   "devDependencies": {
     "@testing-library/react": "^16.0.0",
-    "@types/node": "^24.0.10",
-    "@types/ws": "^8.18.1",
-    "eslint": "^9.30.1",
+    "@types/node": "^24.0.1",
+    "@types/ws": "^8.5.10",
+    "eslint": "^9.0.0",
     "globals": "^16.0.0",
-    "jsdoc": "^4.0.4",
+    "jsdoc": "^4.0.2",
     "jsdom": "^26.0.0",
-    "typescript": "^5.8.3",
-    "vite": "^7.0.2",
+    "typescript": "^5.2.2",
+    "vite": "^7.0.0",
     "vite-plugin-checker": "^0.10.0",
-    "vite-plugin-dts": "^4.5.4",
-    "vitest": "^3.2.4"
+    "vite-plugin-dts": "^4.0.2",
+    "vitest": "^3.0.2"
   },
   "dependencies": {
     "@xmldom/xmldom": "^0.9.8",
     "cbor-js": "^0.1.0",
     "eventemitter3": "^5.0.1",
-    "pngparse": "^2.0.1",
-    "ws": "^8.18.3"
+    "pngparse": "^2.0.0",
+    "ws": "^8.0.0"
   },
   "directories": {
     "example": "examples",
