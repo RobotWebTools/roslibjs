@@ -4,32 +4,30 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import Vector3 from '../math/Vector3.js';
-import {UrdfType} from './UrdfTypes.js';
+import { Vector3 } from '../math/index.js';
+import { UrdfAttrs, UrdfType, type UrdfDefaultOptions } from './UrdfTypes.js';
+import type { Optional, Nullable } from '../types/interface-types.js';
 
 /**
  * A Box element in a URDF.
  */
 export default class UrdfBox {
-  /** @type {Vector3 | null} */
-  dimension;
-  /**
-   * @param {Object} options
-   * @param {Element} options.xml - The XML element to parse.
-   */
-  constructor(options) {
+  type: UrdfType;
+  dimension: Nullable<Vector3> = null;
+
+  constructor({ xml }: UrdfDefaultOptions) {
     this.type = UrdfType.BOX;
 
     // Parse the xml string
-    var xyz = options.xml.getAttribute('size')?.split(' ');
-    if (xyz) {
-      this.dimension = new Vector3({
-        x: parseFloat(xyz[0]),
-        y: parseFloat(xyz[1]),
-        z: parseFloat(xyz[2])
-      });
-    } else {
-      this.dimension = null;
+    const size: Optional<string[]> = xml.getAttribute(UrdfAttrs.Size)?.split(' ');
+    if (!size || size.length !== 3) {
+      return;
     }
+
+    this.dimension = new Vector3({
+      x: parseFloat(size[0]),
+      y: parseFloat(size[1]),
+      z: parseFloat(size[2])
+    });
   }
 }
