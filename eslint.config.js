@@ -61,7 +61,8 @@ export default tseslint.config(
       quotes: [2, 'single'],
       'no-proto': 2,
       'linebreak-style': 2,
-      'key-spacing': [2, {afterColon: true}]
+      'key-spacing': [2, {afterColon: true}],
+      'eol-last': ['error', 'always'],
     },
     files: ['**/*.{js,jsx,ts,tsx,cjs}'],
   }
