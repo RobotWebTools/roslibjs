@@ -4,18 +4,18 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import {UrdfType} from './UrdfTypes.js';
+import { UrdfAttrs, type UrdfDefaultOptions, UrdfType } from './UrdfTypes.js';
 
 /**
  * A Sphere element in a URDF.
  */
 export default class UrdfSphere {
-  /**
-   * @param {Object} options
-   * @param {Element} options.xml - The XML element to parse.
-   */
-  constructor(options) {
+
+  type: UrdfType;
+  radius = NaN;
+
+  constructor({xml}: UrdfDefaultOptions) {
     this.type = UrdfType.SPHERE;
-    this.radius = parseFloat(options.xml.getAttribute('radius') || 'NaN');
+    this.radius = parseFloat(xml.getAttribute(UrdfAttrs.Radius) ?? 'NaN');
   }
 }
