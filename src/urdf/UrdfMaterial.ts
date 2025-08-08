@@ -5,31 +5,30 @@
  */
 
 import UrdfColor from './UrdfColor.js';
+import { UrdfAttrs, type UrdfDefaultOptions } from './UrdfTypes.js';
+import type { Nullable } from '../types/interface-types.js';
 
 /**
  * A Material element in a URDF.
  */
 export default class UrdfMaterial {
-  /** @type {string | null} */
-  textureFilename = null;
-  /** @type {UrdfColor | null} */
-  color = null;
-  /**
-   * @param {Object} options
-   * @param {Element} options.xml - The XML element to parse.
-   */
-  constructor(options) {
 
-    this.name = options.xml.getAttribute('name');
+  name: string;
+  textureFilename: Nullable<string> = null;
+  color: Nullable<UrdfColor> = null;
+
+  constructor({ xml }: UrdfDefaultOptions) {
+
+    this.name = xml.getAttribute(UrdfAttrs.Name) ?? 'unknown_name';
 
     // Texture
-    var textures = options.xml.getElementsByTagName('texture');
+    const textures = xml.getElementsByTagName(UrdfAttrs.Texture);
     if (textures.length > 0) {
-      this.textureFilename = textures[0].getAttribute('filename');
+      this.textureFilename = textures[0].getAttribute(UrdfAttrs.Filename);
     }
 
     // Color
-    var colors = options.xml.getElementsByTagName('color');
+    const colors = xml.getElementsByTagName(UrdfAttrs.Color);
     if (colors.length > 0) {
       // Parse the RBGA string
       this.color = new UrdfColor({
@@ -37,10 +36,12 @@ export default class UrdfMaterial {
       });
     }
   }
+
   isLink() {
     return this.color === null && this.textureFilename === null;
   }
-  assign(obj) {
+
+  assign(obj: UrdfMaterial): this & UrdfMaterial {
     return Object.assign(this, obj);
   }
 }
