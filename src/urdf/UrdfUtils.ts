@@ -52,3 +52,8 @@ export function parseUrdfOrigin(originElement: Element): Pose {
     orientation: orientation
   });
 }
+
+export function isElement(node: Node): node is Element {
+  // Node.ELEMENT_TYPE = 1
+  return node.nodeType === 1;
+}

@@ -5,132 +5,76 @@
  */
 
 import Pose from '../math/Pose.js';
-import Vector3 from '../math/Vector3.js';
-import Quaternion from '../math/Quaternion.js';
-
 import UrdfCylinder from './UrdfCylinder.js';
 import UrdfBox from './UrdfBox.js';
 import UrdfMaterial from './UrdfMaterial.js';
 import UrdfMesh from './UrdfMesh.js';
 import UrdfSphere from './UrdfSphere.js';
+import { UrdfAttrs, type UrdfDefaultOptions } from './UrdfTypes.js';
+import { isElement, parseUrdfOrigin } from './UrdfUtils.js';
+
+export type UrdfGeometryLike = UrdfMesh | UrdfSphere | UrdfBox | UrdfCylinder;
+
+function parseUrdfGeometry(geometryElem: Element): UrdfGeometryLike | null {
+
+  let childShape: Element | null = null;
+  for (const childNode of geometryElem.childNodes) {
+    if (isElement(childNode)) {
+      // Safe type check after checking nodeType
+      childShape = childNode;
+      break;
+    }
+  }
+
+  if (!childShape) {
+    return null;
+  }
+
+  const options: UrdfDefaultOptions = {
+    xml: childShape
+  }
+
+  switch (childShape.nodeName) {
+    case 'sphere':
+      return new UrdfSphere(options);
+    case 'box':
+      return new UrdfBox(options);
+    case 'cylinder':
+      return new UrdfCylinder(options);
+    case 'mesh':
+      return new UrdfMesh(options);
+    default:
+      console.warn(`Unknown geometry type ${childShape.nodeName}`);
+      return null
+  }
+}
 
 /**
  * A Visual element in a URDF.
  */
 export default class UrdfVisual {
-  /** @type {Pose | null} */
-  origin = null;
-  /** @type {UrdfMesh | UrdfSphere | UrdfBox | UrdfCylinder | null} */
-  geometry = null;
-  /** @type {UrdfMaterial | null} */
-  material = null;
-  /**
-   * @param {Object} options
-   * @param {Element} options.xml - The XML element to parse.
-   */
-  constructor(options) {
-    var xml = options.xml;
-    this.name = options.xml.getAttribute('name');
+  name: string | null;
+  origin: Pose | null = new Pose();
+  geometry: UrdfGeometryLike | null = null;
+  material: UrdfMaterial | null = null;
+
+  constructor({ xml }: UrdfDefaultOptions) {
+    this.name = xml.getAttribute(UrdfAttrs.Name);
 
     // Origin
-    var origins = xml.getElementsByTagName('origin');
-    if (origins.length === 0) {
-      // use the identity as the default
-      this.origin = new Pose();
-    } else {
-      // Check the XYZ
-      var xyzValue = origins[0].getAttribute('xyz');
-      var position = new Vector3();
-      if (xyzValue) {
-        var xyz = xyzValue.split(' ');
-        position = new Vector3({
-          x: parseFloat(xyz[0]),
-          y: parseFloat(xyz[1]),
-          z: parseFloat(xyz[2])
-        });
-      }
-
-      // Check the RPY
-      var rpyValue = origins[0].getAttribute('rpy');
-      var orientation = new Quaternion();
-      if (rpyValue) {
-        var rpy = rpyValue.split(' ');
-        // Convert from RPY
-        var roll = parseFloat(rpy[0]);
-        var pitch = parseFloat(rpy[1]);
-        var yaw = parseFloat(rpy[2]);
-        var phi = roll / 2.0;
-        var the = pitch / 2.0;
-        var psi = yaw / 2.0;
-        var x =
-          Math.sin(phi) * Math.cos(the) * Math.cos(psi) -
-          Math.cos(phi) * Math.sin(the) * Math.sin(psi);
-        var y =
-          Math.cos(phi) * Math.sin(the) * Math.cos(psi) +
-          Math.sin(phi) * Math.cos(the) * Math.sin(psi);
-        var z =
-          Math.cos(phi) * Math.cos(the) * Math.sin(psi) -
-          Math.sin(phi) * Math.sin(the) * Math.cos(psi);
-        var w =
-          Math.cos(phi) * Math.cos(the) * Math.cos(psi) +
-          Math.sin(phi) * Math.sin(the) * Math.sin(psi);
-
-        orientation = new Quaternion({
-          x: x,
-          y: y,
-          z: z,
-          w: w
-        });
-        orientation.normalize();
-      }
-      this.origin = new Pose({
-        position: position,
-        orientation: orientation
-      });
+    const origins = xml.getElementsByTagName(UrdfAttrs.Origin);
+    if (origins.length > 0) {
+      this.origin = parseUrdfOrigin(origins[0]);
     }
 
     // Geometry
-    var geoms = xml.getElementsByTagName('geometry');
+    const geoms = xml.getElementsByTagName(UrdfAttrs.Geometry);
     if (geoms.length > 0) {
-      var geom = geoms[0];
-      var shape = null;
-      // Check for the shape
-      for (var i = 0; i < geom.childNodes.length; i++) {
-        /** @type {Element} */
-        // @ts-expect-error -- unknown why this doesn't work properly.
-        var node = geom.childNodes[i];
-        if (node.nodeType === 1) {
-          shape = node;
-          break;
-        }
-      }
-      if (shape) {
-        // Check the type
-        var type = shape.nodeName;
-        if (type === 'sphere') {
-          this.geometry = new UrdfSphere({
-            xml: shape
-          });
-        } else if (type === 'box') {
-          this.geometry = new UrdfBox({
-            xml: shape
-          });
-        } else if (type === 'cylinder') {
-          this.geometry = new UrdfCylinder({
-            xml: shape
-          });
-        } else if (type === 'mesh') {
-          this.geometry = new UrdfMesh({
-            xml: shape
-          });
-        } else {
-          console.warn('Unknown geometry type ' + type);
-        }
-      }
+      this.geometry = parseUrdfGeometry(geoms[0]);
     }
 
     // Material
-    var materials = xml.getElementsByTagName('material');
+    const materials = xml.getElementsByTagName(UrdfAttrs.Material);
     if (materials.length > 0) {
       this.material = new UrdfMaterial({
         xml: materials[0]
