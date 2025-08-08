@@ -159,6 +159,7 @@ export default class TFClient extends EventEmitter {
       messageType: 'tf2_web_republisher/TFArray'
     });
     this._subscribeCB = this.processTFArray.bind(this);
+    // @ts-expect-error Function was bound above
     this.currentTopic.subscribe(this._subscribeCB);
   }
   /**
