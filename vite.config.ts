@@ -1,15 +1,18 @@
 import { resolve } from 'path'
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import dts from 'vite-plugin-dts';
 import checker from 'vite-plugin-checker';
 
 export default defineConfig({
   plugins: [
     dts({
+      tsconfigPath: 'tsconfig.build.json',
       insertTypesEntry: true
     }),
     checker({
-      typescript: true,
+      typescript: {
+        tsconfigPath: './tsconfig.build.json',
+      },
       eslint: {
         lintCommand: 'eslint .',
         useFlatConfig: true
@@ -19,7 +22,7 @@ export default defineConfig({
   build: {
     lib: {
       // Could also be a dictionary or array of multiple entry points
-      entry: resolve(__dirname, 'src/RosLib.js'),
+      entry: resolve(__dirname, 'src/RosLib.ts'),
       name: 'ROSLIB',
       // the proper extensions will be added
       fileName: 'RosLib',
@@ -35,13 +38,18 @@ export default defineConfig({
   },
   test: {
     include: [
-      '{src,test}/**\/*.{test,spec}.?(c|m)[jt]s?(x)',
+      '{src,test}/**/*.{test,spec}.?(c|m)[jt]s?(x)',
       './test/examples/*.js',
     ],
     exclude: ['dist'],
-    environmentMatchGlobs: [
-      // React example requires DOM emulation
-      ['examples/react-example/**', 'jsdom']
+    projects: [
+      {
+        extends: true,
+        test: {
+          environment: 'jsdom',
+          name: 'jsdom',
+        },
+      },
     ]
   }
 })
