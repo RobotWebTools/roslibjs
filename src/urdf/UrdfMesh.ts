@@ -4,33 +4,36 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import Vector3 from '../math/Vector3.js';
-import {UrdfType} from './UrdfTypes.js';
+import { Vector3 } from '../math/index.js';
+import { UrdfAttrs, type UrdfDefaultOptions, UrdfType } from './UrdfTypes.js';
+import type { Nullable, Optional } from '../types/interface-types.js';
 
 /**
  * A Mesh element in a URDF.
  */
 export default class UrdfMesh {
-  /** @type {Vector3 | null} */
-  scale = null;
+  type: UrdfType;
+  scale: Nullable<Vector3> = null;
+  filename: Nullable<string>;
+
   /**
    * @param {Object} options
    * @param {Element} options.xml - The XML element to parse.
    */
-  constructor(options) {
+  constructor({xml}: UrdfDefaultOptions) {
     this.type = UrdfType.MESH;
-    this.filename = options.xml.getAttribute('filename');
+    this.filename = xml.getAttribute(UrdfAttrs.Filename);
 
     // Check for a scale
-    var scale = options.xml.getAttribute('scale');
-    if (scale) {
-      // Get the XYZ
-      var xyz = scale.split(' ');
-      this.scale = new Vector3({
-        x: parseFloat(xyz[0]),
-        y: parseFloat(xyz[1]),
-        z: parseFloat(xyz[2])
-      });
+    const scale: Optional<string[]> = xml.getAttribute(UrdfAttrs.Scale)?.split(' ');
+    if (!scale || scale.length !== 3) {
+      return;
     }
+
+    this.scale = new Vector3({
+      x: parseFloat(scale[0]),
+      y: parseFloat(scale[1]),
+      z: parseFloat(scale[2])
+    });
   }
 }
