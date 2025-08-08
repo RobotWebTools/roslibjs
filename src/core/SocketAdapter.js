@@ -7,8 +7,7 @@
  * @fileOverview
  */
 
-import CBOR from 'cbor-js';
-import typedArrayTagger from '../util/cborTypedArrayTags.js';
+import {decode} from 'cbor2';
 var BSON = null;
 // @ts-expect-error -- Workarounds for not including BSON in bundle. need to revisit
 if (typeof bson !== 'undefined') {
@@ -132,7 +131,7 @@ export default function SocketAdapter(client) {
           handlePng(message, handleMessage);
         });
       } else if (data.data instanceof ArrayBuffer) {
-        var decoded = CBOR.decode(data.data, typedArrayTagger);
+        var decoded = decode(data.data);
         handleMessage(decoded);
       } else {
         var message = JSON.parse(typeof data === 'string' ? data : data.data);
