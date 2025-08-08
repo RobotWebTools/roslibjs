@@ -5,7 +5,7 @@
  */
 
 import Vector3 from '../math/Vector3.js';
-import * as UrdfTypes from './UrdfTypes.js';
+import {UrdfType} from './UrdfTypes.js';
 
 /**
  * A Mesh element in a URDF.
@@ -18,7 +18,7 @@ export default class UrdfMesh {
    * @param {Element} options.xml - The XML element to parse.
    */
   constructor(options) {
-    this.type = UrdfTypes.URDF_MESH;
+    this.type = UrdfType.MESH;
     this.filename = options.xml.getAttribute('filename');
 
     // Check for a scale

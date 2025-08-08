@@ -8,4 +8,4 @@ export { default as UrdfModel } from './UrdfModel.js';
 export { default as UrdfSphere } from './UrdfSphere.js';
 export { default as UrdfVisual } from './UrdfVisual.js';
 
-export * from './UrdfTypes.js';
+export {UrdfType} from './UrdfTypes.js';

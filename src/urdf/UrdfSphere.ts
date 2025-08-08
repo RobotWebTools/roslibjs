@@ -4,7 +4,7 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import * as UrdfTypes from './UrdfTypes.js';
+import {UrdfType} from './UrdfTypes.js';
 
 /**
  * A Sphere element in a URDF.
@@ -15,7 +15,7 @@ export default class UrdfSphere {
    * @param {Element} options.xml - The XML element to parse.
    */
   constructor(options) {
-    this.type = UrdfTypes.URDF_SPHERE;
+    this.type = UrdfType.SPHERE;
     this.radius = parseFloat(options.xml.getAttribute('radius') || 'NaN');
   }
 }

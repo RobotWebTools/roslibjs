@@ -5,7 +5,7 @@
  */
 
 import Vector3 from '../math/Vector3.js';
-import * as UrdfTypes from './UrdfTypes.js';
+import {UrdfType} from './UrdfTypes.js';
 
 /**
  * A Box element in a URDF.
@@ -18,7 +18,7 @@ export default class UrdfBox {
    * @param {Element} options.xml - The XML element to parse.
    */
   constructor(options) {
-    this.type = UrdfTypes.URDF_BOX;
+    this.type = UrdfType.BOX;
 
     // Parse the xml string
     var xyz = options.xml.getAttribute('size')?.split(' ');
