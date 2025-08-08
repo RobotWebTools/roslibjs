@@ -17,6 +17,7 @@
     "tsBuildInfoFile": "./node_modules/.cache/typescript/tsbuildinfo" /* Specify the folder for .tsbuildinfo incremental compilation files. */,
     "declaration": true /* Generate .d.ts files from TypeScript and JavaScript files in your project. */,
     "skipLibCheck": true, /* Skip type checking all .d.ts files. */
+    "allowImportingTsExtensions": true,
 
     /* Module Options */
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
