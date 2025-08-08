@@ -1,7 +1,6 @@
 {
   "extends": "./tsconfig.build.json",
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
     "noEmit": true
   },
   "include": [
