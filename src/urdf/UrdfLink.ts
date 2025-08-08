@@ -5,24 +5,24 @@
  */
 
 import UrdfVisual from './UrdfVisual.js';
+import { UrdfAttrs, type UrdfDefaultOptions } from './UrdfTypes.js';
 
 /**
  * A Link element in a URDF.
  */
 export default class UrdfLink {
-  /**
-   * @param {Object} options
-   * @param {Element} options.xml - The XML element to parse.
-   */
-  constructor(options) {
-    this.name = options.xml.getAttribute('name');
-    this.visuals = [];
-    var visuals = options.xml.getElementsByTagName('visual');
 
-    for (var i = 0; i < visuals.length; i++) {
+  name: string;
+  visuals: UrdfVisual[] = [];
+
+  constructor({ xml }: UrdfDefaultOptions) {
+    this.name = xml.getAttribute(UrdfAttrs.Name) ?? 'unknown_name';
+    const visuals = xml.getElementsByTagName(UrdfAttrs.Visuals);
+
+    for (const visual of visuals) {
       this.visuals.push(
         new UrdfVisual({
-          xml: visuals[i]
+          xml: visual
         })
       );
     }

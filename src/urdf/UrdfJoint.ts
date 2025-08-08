@@ -3,93 +3,49 @@
  * @author David V. Lu!! - davidvlu@gmail.com
  */
 
-import Pose from '../math/Pose.js';
-import Vector3 from '../math/Vector3.js';
-import Quaternion from '../math/Quaternion.js';
+import { UrdfAttrs, type UrdfDefaultOptions } from './UrdfTypes.js';
+import { Pose } from '../math/index.js';
+import { parseUrdfOrigin } from './UrdfUtils.js';
+import type { Nullable } from '../types/interface-types.js';
 
 /**
  * A Joint element in a URDF.
  */
 export default class UrdfJoint {
-  /**
-   * @param {Object} options
-   * @param {Element} options.xml - The XML element to parse.
-   */
-  constructor(options) {
-    this.name = options.xml.getAttribute('name');
-    this.type = options.xml.getAttribute('type');
 
-    var parents = options.xml.getElementsByTagName('parent');
+  name: string;
+  type: Nullable<string>;
+  parent: Nullable<string> = null;
+  child: Nullable<string> = null;
+  minval = NaN;
+  maxval = NaN;
+  origin: Pose = new Pose();
+
+
+  constructor({xml}: UrdfDefaultOptions) {
+    this.name = xml.getAttribute(UrdfAttrs.Name) ?? 'unknown_name';
+    this.type = xml.getAttribute(UrdfAttrs.Type);
+
+    const parents = xml.getElementsByTagName(UrdfAttrs.Parent);
     if (parents.length > 0) {
-      this.parent = parents[0].getAttribute('link');
+      this.parent = parents[0].getAttribute(UrdfAttrs.Link);
     }
 
-    var children = options.xml.getElementsByTagName('child');
+    const children = xml.getElementsByTagName(UrdfAttrs.Child);
     if (children.length > 0) {
-      this.child = children[0].getAttribute('link');
+      this.child = children[0].getAttribute(UrdfAttrs.Link);
     }
 
-    var limits = options.xml.getElementsByTagName('limit');
+    const limits = xml.getElementsByTagName(UrdfAttrs.Limit);
     if (limits.length > 0) {
-      this.minval = parseFloat(limits[0].getAttribute('lower') || 'NaN');
-      this.maxval = parseFloat(limits[0].getAttribute('upper') || 'NaN');
+      this.minval = parseFloat(limits[0].getAttribute(UrdfAttrs.Lower) ?? 'NaN');
+      this.maxval = parseFloat(limits[0].getAttribute(UrdfAttrs.Upper) ?? 'NaN');
     }
 
     // Origin
-    var origins = options.xml.getElementsByTagName('origin');
-    if (origins.length === 0) {
-      // use the identity as the default
-      this.origin = new Pose();
-    } else {
-      // Check the XYZ
-      var xyzValue = origins[0].getAttribute('xyz');
-      var position = new Vector3();
-      if (xyzValue) {
-        var xyz = xyzValue.split(' ');
-        position = new Vector3({
-          x: parseFloat(xyz[0]),
-          y: parseFloat(xyz[1]),
-          z: parseFloat(xyz[2])
-        });
-      }
-
-      // Check the RPY
-      var rpyValue = origins[0].getAttribute('rpy');
-      var orientation = new Quaternion();
-      if (rpyValue) {
-        var rpy = rpyValue.split(' ');
-        // Convert from RPY
-        var roll = parseFloat(rpy[0]);
-        var pitch = parseFloat(rpy[1]);
-        var yaw = parseFloat(rpy[2]);
-        var phi = roll / 2.0;
-        var the = pitch / 2.0;
-        var psi = yaw / 2.0;
-        var x =
-          Math.sin(phi) * Math.cos(the) * Math.cos(psi) -
-          Math.cos(phi) * Math.sin(the) * Math.sin(psi);
-        var y =
-          Math.cos(phi) * Math.sin(the) * Math.cos(psi) +
-          Math.sin(phi) * Math.cos(the) * Math.sin(psi);
-        var z =
-          Math.cos(phi) * Math.cos(the) * Math.sin(psi) -
-          Math.sin(phi) * Math.sin(the) * Math.cos(psi);
-        var w =
-          Math.cos(phi) * Math.cos(the) * Math.cos(psi) +
-          Math.sin(phi) * Math.sin(the) * Math.sin(psi);
-
-        orientation = new Quaternion({
-          x: x,
-          y: y,
-          z: z,
-          w: w
-        });
-        orientation.normalize();
-      }
-      this.origin = new Pose({
-        position: position,
-        orientation: orientation
-      });
+    const origins = xml.getElementsByTagName(UrdfAttrs.Origin);
+    if (origins.length > 0) {
+      this.origin = parseUrdfOrigin(origins[0]);
     }
   }
 }

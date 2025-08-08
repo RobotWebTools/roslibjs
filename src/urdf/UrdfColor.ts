@@ -4,22 +4,41 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
+import { UrdfAttrs, type UrdfDefaultOptions } from './UrdfTypes.js';
+import type { Optional } from '../types/interface-types.js';
+
 /**
  * A Color element in a URDF.
  */
 export default class UrdfColor {
+
   /**
-   * @param {Object} options
-   * @param {Element} options.xml - The XML element to parse.
+   * Color Red, [0, 1]
    */
-  constructor(options) {
+  r = 0.0;
+  /**
+   * Color Green, [0, 1]
+   */
+  g = 0.0;
+  /**
+   * Color Blue, [0, 1]
+   */
+  b = 0.0;
+  /**
+   * Alpha/Opacity, [0, 1]
+   */
+  a = 1.0;
+
+  constructor({ xml }: UrdfDefaultOptions) {
     // Parse the xml string
-    var rgba = options.xml.getAttribute('rgba')?.split(' ');
-    if (rgba) {
-      this.r = parseFloat(rgba[0]);
-      this.g = parseFloat(rgba[1]);
-      this.b = parseFloat(rgba[2]);
-      this.a = parseFloat(rgba[3]);
+    const rgba: Optional<string[]> = xml.getAttribute(UrdfAttrs.Rgba)?.split(' ');
+    if (!rgba || rgba.length !== 4) {
+      return;
     }
+
+    this.r = parseFloat(rgba[0]);
+    this.g = parseFloat(rgba[1]);
+    this.b = parseFloat(rgba[2]);
+    this.a = parseFloat(rgba[3]);
   }
 }

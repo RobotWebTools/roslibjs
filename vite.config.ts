@@ -5,19 +5,19 @@ import checker from 'vite-plugin-checker';
 
 export default defineConfig({
   plugins: [
-    // dts({
-    //   tsconfigPath: 'tsconfig.build.json',
-    //   insertTypesEntry: true
-    // }),
-    // checker({
-    //   typescript: {
-    //     tsconfigPath: './tsconfig.build.json',
-    //   },
-    //   eslint: {
-    //     lintCommand: 'eslint .',
-    //     useFlatConfig: true
-    //   }
-    // })
+    dts({
+      tsconfigPath: 'tsconfig.build.json',
+      insertTypesEntry: true
+    }),
+    checker({
+      typescript: {
+        tsconfigPath: './tsconfig.build.json',
+      },
+      eslint: {
+        lintCommand: 'eslint .',
+        useFlatConfig: true
+      }
+    })
   ],
   build: {
     lib: {
