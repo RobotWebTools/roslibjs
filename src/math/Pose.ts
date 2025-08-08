@@ -2,67 +2,78 @@
  * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
  */
+import Vector3, { type IVector3 } from './Vector3.js';
+import Quaternion, { type IQuaternion } from './Quaternion.js';
+import { type ITransform } from './Transform.js';
+import { PartialNullable } from '../types/interface-types.js';
 
-import Vector3 from './Vector3.js';
-import Quaternion from './Quaternion.js';
-import Transform from './Transform.js';
+export interface IPose {
+  /**
+   * The ROSLIB.Vector3 describing the position.
+   */
+  position: IVector3;
+  /**
+   * The ROSLIB.Quaternion describing the orientation.
+   */
+  orientation: IQuaternion;
+}
 
 /**
  * A Pose in 3D space. Values are copied into this object.
  */
-export default class Pose {
-  /**
-   * @param {Object} [options]
-   * @param {Vector3} [options.position] - The ROSLIB.Vector3 describing the position.
-   * @param {Quaternion} [options.orientation] - The ROSLIB.Quaternion describing the orientation.
-   */
-  constructor(options) {
-    options = options || {};
-    // copy the values into this object if they exist
-    options = options || {};
-    this.position = new Vector3(options.position);
-    this.orientation = new Quaternion(options.orientation);
+export default class Pose implements IPose {
+
+  position: Vector3;
+  orientation: Quaternion;
+
+  constructor(options?: PartialNullable<IPose>) {
+    this.position = new Vector3(options?.position);
+    this.orientation = new Quaternion(options?.orientation);
   }
+
   /**
    * Apply a transform against this pose.
    *
-   * @param {Transform} tf - The transform to be applied.
+   * @param {ITransform} tf - The transform to be applied.
    */
-  applyTransform(tf) {
+  applyTransform(tf: ITransform) {
     this.position.multiplyQuaternion(tf.rotation);
     this.position.add(tf.translation);
-    var tmp = tf.rotation.clone();
+    const tmp = new Quaternion(tf.rotation);
     tmp.multiply(this.orientation);
     this.orientation = tmp;
   }
+
   /**
    * Clone a copy of this pose.
    *
    * @returns {Pose} The cloned pose.
    */
-  clone() {
+  clone(): Pose {
     return new Pose(this);
   }
+
   /**
    * Multiply this pose with another pose without altering this pose.
    *
    * @returns {Pose} The result of the multiplication.
    */
-  multiply(pose) {
-    var p = pose.clone();
+  multiply(pose: Pose): Pose {
+    const p = pose.clone();
     p.applyTransform({
       rotation: this.orientation,
       translation: this.position
     });
     return p;
   }
+
   /**
    * Compute the inverse of this pose.
    *
    * @returns {Pose} The inverse of the pose.
    */
-  getInverse() {
-    var inverse = this.clone();
+  getInverse(): Pose {
+    const inverse = this.clone();
     inverse.orientation.invert();
     inverse.position.multiplyQuaternion(inverse.orientation);
     inverse.position.x *= -1;
