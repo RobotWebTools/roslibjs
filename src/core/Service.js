@@ -137,7 +137,7 @@ export default class Service extends EventEmitter {
       });
       this.isAdvertised = true;
     }).catch(err => {
-      console.error(`Error advertising service ${this.name}:`, err);
+      this.emit('error', err);
       throw err;
     });
     
@@ -156,21 +156,23 @@ export default class Service extends EventEmitter {
     this._pendingUnadvertise = true;
     
     try {
-      // Remove the registered callback first to stop processing new requests
+      // Mark as not advertised first to prevent new service calls
+      // This ensures callService() will not be blocked while we're unadvertising
+      this.isAdvertised = false;
+      
+      // Remove the registered callback to stop processing new requests
       if (this._serviceCallback) {
         this.ros.off(this.name, this._serviceCallback);
         this._serviceCallback = null;
       }
       
       // Send the unadvertise message to the server
+      // Note: This is fire-and-forget, but the operation queue ensures
+      // no new advertise can start until this completes
       this.ros.callOnConnection({
         op: 'unadvertise_service',
         service: this.name
       });
-      
-      // Mark as not advertised immediately after sending the message
-      // The queue serialization ensures no race conditions
-      this.isAdvertised = false;
     } finally {
       this._pendingUnadvertise = false;
     }
@@ -181,7 +183,7 @@ export default class Service extends EventEmitter {
     this._operationQueue = this._operationQueue.then(async () => {
       await this._doUnadvertise();
     }).catch(err => {
-      console.error(`Error unadvertising service ${this.name}:`, err);
+      this.emit('error', err);
       throw err;
     });
     
@@ -225,7 +227,7 @@ export default class Service extends EventEmitter {
       });
       this.isAdvertised = true;
     }).catch(err => {
-      console.error(`Error advertising async service ${this.name}:`, err);
+      this.emit('error', err);
       throw err;
     });
     
