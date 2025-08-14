@@ -35,6 +35,8 @@ export default defineConfig({
         globals: { eventemitter3: 'EventEmitter3' }
       }
     },
+    // Keep synchronized with minimum engine specified in CI & package.json
+    target: 'node18'
   },
   test: {
     include: [
