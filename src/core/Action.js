@@ -5,7 +5,7 @@
 
 import { EventEmitter } from 'eventemitter3';
 import Ros from '../core/Ros.js';
-import { GoalStatus } from '../core/GoalStatus';
+import { GoalStatus } from '../core/GoalStatus.ts';
 
 /**
  * A ROS 2 action client.

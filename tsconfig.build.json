@@ -1,0 +1,56 @@
+{
+  "compilerOptions": {
+    /* Lib Options */
+    "target": "es6" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
+    "lib": ["es2022", "DOM", "DOM.Iterable"] /* Specify library files to be included in the compilation. */,
+    "module": "esnext" /* Specify what module code is generated. */,
+    "moduleResolution": "bundler",
+
+    /* JavaScript Support */
+    "allowJs": true /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */,
+    "checkJs": true /* Enable error reporting in type-checked JavaScript files. */,
+
+    /* Build Options */
+    "rootDir": "./src" /* Specify the root folder within your source files. */,
+    "outDir": "./dist" /* Specify an output folder for all emitted files. */,
+    "incremental": true /* Enable incremental compilation */,
+    "tsBuildInfoFile": "./node_modules/.cache/typescript/tsbuildinfo" /* Specify the folder for .tsbuildinfo incremental compilation files. */,
+    "declaration": true /* Generate .d.ts files from TypeScript and JavaScript files in your project. */,
+    "skipLibCheck": true, /* Skip type checking all .d.ts files. */
+    "allowImportingTsExtensions": true,
+
+    /* Module Options */
+    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
+    "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
+    "isolatedModules": true /* Ensure that each file can be safely transpiled without relying on other imports. */,
+
+    /* Strict Type-Checking Options */
+    /* Gradually enable more of these until we can enable strict mode. */
+    "strict": false /* Enable all strict type-checking options. */,
+    /* Rules enabled so far */
+    "allowUnreachableCode": false /* Disable error reporting for unreachable code. */,
+    "allowUnusedLabels": false /* Disable error reporting for unused labels. */,
+    "alwaysStrict": true /* Ensure 'use strict' is always emitted. */,
+    "noFallthroughCasesInSwitch": true /* Enable error reporting for fallthrough cases in switch statements */,
+    "strictNullChecks": true /* When type checking, take into account `null` and `undefined`. */,
+
+    /* Rules to be enabled */
+    "exactOptionalPropertyTypes": false /* Differentiate between undefined and not present when type checking */,
+    "noImplicitAny": false /* Enable error reporting for expressions and declarations with an implied 'any' type. */,
+    "noImplicitOverride": false /* Ensure overriding members in derived classes are marked with an override modifier. */,
+    "noImplicitReturns": false /* Enable error reporting for codepaths that do not explicitly return in a function. */,
+    "noImplicitThis": false /* Enable error reporting when `this` is given the type `any`. */,
+    "noPropertyAccessFromIndexSignature": false /* Enforces using indexed accessors for keys declared using an indexed type */,
+    "noUncheckedIndexedAccess": false /* Add `undefined` to a type when accessed using an index. */,
+    "noUnusedLocals": false /* Enable error reporting when a local variable isn't read. */,
+    "noUnusedParameters": false /* Raise an error when a function parameter isn't read */,
+    "strictBindCallApply": false /* Check that the arguments for `bind`, `call`, and `apply` methods match the original function. */,
+    "strictBuiltinIteratorReturn": false /* Built-in iterators are instantiated with a 'TReturn' type of 'undefined' instead of 'any'. */,
+    "strictFunctionTypes": false /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */,
+    "strictPropertyInitialization": false /* Check for class properties that are declared but not set in the constructor. */,
+    "useUnknownInCatchVariables": false /* Default catch clause variables as `unknown` instead of `any`. */,
+
+    "types": ["@types/node"]
+  },
+  "include": ["./src"],
+}
