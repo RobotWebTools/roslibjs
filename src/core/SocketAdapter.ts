@@ -7,13 +7,37 @@
  * @fileOverview
  */
 
-import {decode} from 'cbor2';
-var BSON = null;
-// @ts-expect-error -- Workarounds for not including BSON in bundle. need to revisit
+import type { MessageEvent as NodeSocketMessageEvent, ErrorEvent as NodeSocketErrorEvent, CloseEvent as NodeSocketCloseEvent, Event as NodeSocketEvent } from 'ws';
+import { decode } from 'cbor2';
+import type Ros from './Ros.js';
+import { isBridgeProtoOp } from '../types/ProtocolTypes.ts';
+import { MessageCallback } from '../types/CallbackTypes.ts';
+import { Nullable } from '../types/interface-types.ts';
+
+export type SocketOpenEvent = Event | NodeSocketEvent;
+export type SocketCloseEvent = CloseEvent | Event | NodeSocketCloseEvent;
+export type SocketErrorEvent = RTCErrorEvent | Event | NodeSocketErrorEvent;
+export type SocketMessageEvent = MessageEvent<unknown> | NodeSocketMessageEvent;
+
+export interface ISocketAdapter {
+  onopen: (event: SocketOpenEvent) => void;
+  onclose: (event: SocketCloseEvent) => void;
+  onerror: (event: SocketErrorEvent) => void;
+  onmessage: (event: SocketMessageEvent) => void;
+}
+
+// This is very weird, but BSON is never bundled by us, so let's define a type for it.
+let BSON: Nullable<{ deserialize(data: Uint8Array): unknown }> = null;
 if (typeof bson !== 'undefined') {
-  // @ts-expect-error -- Workarounds for not including BSON in bundle. need to revisit
   BSON = bson().BSON;
 }
+
+/**
+ * FIXME: Need Answers:
+ * 1. onopen emits 'connection' event with an object, the typedoc says it's a function, but no examples use it. What is this type?
+ * 2. onclose emits 'close' event with an object, the typedoc says it's a function, but no examples use it. What is this type?
+ * 3. onerror emits 'error' event with an object, the typedoc says it's a function, but every example uses it like a string. What is this type?
+ */
 
 /**
  * Event listeners for a WebSocket or TCP socket to a JavaScript
@@ -23,13 +47,20 @@ if (typeof bson !== 'undefined') {
  * @namespace SocketAdapter
  * @private
  */
-export default function SocketAdapter(client) {
-  var decoder = null;
+export default function SocketAdapter(client: Ros): ISocketAdapter {
+  let decoder: Nullable<((raw: unknown, outputFunc: (message: object) => void) => void)> = null;
+  // FIXME: Ros Client types not ready yet
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   if (client.transportOptions.decoder) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     decoder = client.transportOptions.decoder;
   }
 
-  function handleMessage(message) {
+  function handleMessage(message: unknown) {
+    if (!isBridgeProtoOp(message)) {
+      return;
+    }
+
     if (message.op === 'publish') {
       client.emit(message.topic, message.msg);
     } else if (message.op === 'service_response') {
@@ -46,36 +77,40 @@ export default function SocketAdapter(client) {
       client.emit(message.id, message);
     } else if (message.op === 'status') {
       if (message.id) {
-        client.emit('status:' + message.id, message);
+        client.emit(`status:${message.id}`, message);
       } else {
         client.emit('status', message);
       }
     }
   }
 
-  function handlePng(message, callback) {
-    if (message.op === 'png') {
-      // If in Node.js..
+  function handlePng(message: unknown, decodedCallback: MessageCallback<unknown>) {
+    if (isBridgeProtoOp(message) && message.op === 'png') {
+      // If in Node.js...
       if (typeof window === 'undefined') {
-        import('../util/decompressPng.js').then(({ default: decompressPng }) => decompressPng(message.data, callback));
+        void import('../util/decompressPng.js').then(({ default: decompressPng }) => {
+          decompressPng(message.data, decodedCallback);
+        });
       } else {
-        // if in browser..
-        import('../util/shim/decompressPng.js').then(({default: decompressPng}) => decompressPng(message.data, callback));
+        // if in browser...
+        void import('../util/shim/decompressPng.js').then(({ default: decompressPng }) => {
+          decompressPng(message.data, decodedCallback);
+        });
       }
     } else {
-      callback(message);
+      decodedCallback(message);
     }
   }
 
-  function decodeBSON(data, callback) {
+  function decodeBSON(data: Blob, callback: MessageCallback<unknown>) {
     if (!BSON) {
-      throw 'Cannot process BSON encoded message without BSON header.';
+      throw new Error('Cannot process BSON encoded message without BSON header.');
     }
-    var reader = new FileReader();
-    reader.onload = function () {
+    const reader = new FileReader();
+    reader.onload = function (this: FileReader) {
       // @ts-expect-error -- this doesn't seem right, but don't want to break current type coercion assumption
-      var uint8Array = new Uint8Array(this.result);
-      var msg = BSON.deserialize(uint8Array);
+      const uint8Array = new Uint8Array(this.result);
+      const msg = BSON.deserialize(uint8Array);
       callback(msg);
     };
     reader.readAsArrayBuffer(data);
@@ -85,10 +120,10 @@ export default function SocketAdapter(client) {
     /**
      * Emit a 'connection' event on WebSocket connection.
      *
-     * @param {function} event - The argument to emit with the event.
+     * @param event - The argument to emit with the event.
      * @memberof SocketAdapter
      */
-    onopen: function onOpen(event) {
+    onopen: function onOpen(event: SocketOpenEvent) {
       client.isConnected = true;
       client.emit('connection', event);
     },
@@ -96,10 +131,10 @@ export default function SocketAdapter(client) {
     /**
      * Emit a 'close' event on WebSocket disconnection.
      *
-     * @param {function} event - The argument to emit with the event.
+     * @param event - The argument to emit with the event.
      * @memberof SocketAdapter
      */
-    onclose: function onClose(event) {
+    onclose: function onClose(event: SocketCloseEvent) {
       client.isConnected = false;
       client.emit('close', event);
     },
@@ -107,10 +142,10 @@ export default function SocketAdapter(client) {
     /**
      * Emit an 'error' event whenever there was an error.
      *
-     * @param {function} event - The argument to emit with the event.
+     * @param event - The argument to emit with the event.
      * @memberof SocketAdapter
      */
-    onerror: function onError(event) {
+    onerror: function onError(event: SocketErrorEvent) {
       client.emit('error', event);
     },
 
@@ -121,22 +156,40 @@ export default function SocketAdapter(client) {
      * @param {Object} data - The raw JSON message from rosbridge.
      * @memberof SocketAdapter
      */
-    onmessage: function onMessage(data) {
+    onmessage: function onMessage(data: SocketMessageEvent) {
       if (decoder) {
-        decoder(data.data, function (message) {
-          handleMessage(message);
-        });
-      } else if (typeof Blob !== 'undefined' && data.data instanceof Blob) {
+        // FIXME: Ros Client types not ready yet
+         
+        decoder(data.data, handleMessage);
+        return;
+      }
+
+      if (typeof Blob !== 'undefined' && data.data instanceof Blob) {
         decodeBSON(data.data, function (message) {
           handlePng(message, handleMessage);
         });
-      } else if (data.data instanceof ArrayBuffer) {
-        var decoded = decode(data.data);
-        handleMessage(decoded);
-      } else {
-        var message = JSON.parse(typeof data === 'string' ? data : data.data);
-        handlePng(message, handleMessage);
+        return;
       }
+
+      if (data.data instanceof ArrayBuffer || ArrayBuffer.isView(data.data)) {
+        let binary: Uint8Array;
+        if (data.data instanceof ArrayBuffer) {
+          binary = new Uint8Array(data.data);
+        } else {
+          const view = data.data;
+          binary = new Uint8Array(view.buffer, view.byteOffset, view.byteLength);
+        }
+        const decoded = decode(binary);
+        handleMessage(decoded);
+        return;
+      }
+
+      if(typeof data.data !== 'string') {
+        throw new Error('Expected incoming data to be a string at this branch');
+      }
+
+      const message: unknown = JSON.parse(data.data);
+      handlePng(message, handleMessage);
     }
   };
 }
