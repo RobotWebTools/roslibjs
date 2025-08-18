@@ -18,6 +18,9 @@ export default tseslint.config(
       parserOptions: {
         projectService: true,
       },
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 0,
     }
   },
   {
