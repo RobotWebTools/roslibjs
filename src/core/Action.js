@@ -5,7 +5,7 @@
 
 import { EventEmitter } from 'eventemitter3';
 import Ros from '../core/Ros.js';
-import { GoalStatus } from '../core/GoalStatus.ts';
+import { GoalStatus } from '../types/RosMessageTypes.js';
 
 /**
  * A ROS 2 action client.
@@ -217,7 +217,7 @@ export default class Action extends EventEmitter {
       id: id,
       action: this.name,
       values: result,
-      status: GoalStatus.STATUS_SUCCEEDED,
+      status: GoalStatus.Succeeded,
       result: true
     };
     this.ros.callOnConnection(call);
@@ -235,7 +235,7 @@ export default class Action extends EventEmitter {
       id: id,
       action: this.name,
       values: result,
-      status: GoalStatus.STATUS_CANCELED,
+      status: GoalStatus.Canceled,
       result: true
     };
     this.ros.callOnConnection(call);
@@ -251,7 +251,7 @@ export default class Action extends EventEmitter {
       op: 'action_result',
       id: id,
       action: this.name,
-      status: GoalStatus.STATUS_ABORTED,
+      status: GoalStatus.Aborted,
       result: false
     };
     this.ros.callOnConnection(call);
