@@ -1,3 +1,5 @@
+import { Element } from '@xmldom/xmldom';
+
 export enum UrdfType {
   SPHERE = 0,
   BOX = 1,
