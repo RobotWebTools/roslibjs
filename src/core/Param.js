@@ -45,6 +45,12 @@ export default class Param {
     paramClient.callService(
       request,
       function (result) {
+        if (result.successful !== undefined && result.successful === false) {
+          if (failedCallback) {
+            failedCallback(result.reason);
+          }
+          return;
+        }
         var value = JSON.parse(result.value);
         callback(value);
       },
@@ -78,7 +84,21 @@ export default class Param {
       value: JSON.stringify(value)
     };
 
-    paramClient.callService(request, callback, failedCallback);
+    paramClient.callService(
+      request,
+      function (result) {
+        if (result.successful !== undefined && result.successful === false) {
+          if (failedCallback) {
+            failedCallback(result.reason);
+          }
+          return;
+        }
+        if (callback) {
+          callback(result);
+        }
+      },
+      failedCallback
+    );
   }
   /**
    * Delete this parameter on the ROS server.
@@ -97,6 +117,20 @@ export default class Param {
       name: this.name
     };
 
-    paramClient.callService(request, callback, failedCallback);
+    paramClient.callService(
+      request,
+      function (result) {
+        if (result.successful !== undefined && result.successful === false) {
+          if (failedCallback) {
+            failedCallback(result.reason);
+          }
+          return;
+        }
+        if (callback) {
+          callback(result);
+        }
+      },
+      failedCallback
+    );
   }
 }
