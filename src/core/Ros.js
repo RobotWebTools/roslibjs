@@ -69,15 +69,15 @@ export default class Ros extends EventEmitter {
         socketAdapter(this)
       );
     } else if (this.transportLibrary === 'websocket') {
-      // Detect if in browser vs in NodeJS
-      if (typeof window !== 'undefined') {
+      // browsers, Deno, and Bun support WebSockets natively
+      if (typeof WebSocket === 'function') {
         if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
           const sock = new WebSocket(url);
           sock.binaryType = 'arraybuffer';
           this.socket = Object.assign(sock, socketAdapter(this));
         }
       } else {
-        // if in Node.js, import ws to replace browser WebSocket API
+        // if in Node.js, import ws to replace WebSocket API
         import('ws').then((ws) => {
           if (!this.socket || this.socket.readyState === ws.WebSocket.CLOSED) {
             const sock = new ws.WebSocket(url);

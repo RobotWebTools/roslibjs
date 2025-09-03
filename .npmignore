@@ -8,3 +8,4 @@ examples
 jsdoc_conf.json
 test
 tsconfig.json
+tsconfig.build.json

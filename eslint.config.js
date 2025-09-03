@@ -1,9 +1,29 @@
+// @ts-check
+
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
 import globals from 'globals';
 
-export default [
+export default tseslint.config(
+  eslint.configs.recommended,
+  {
+    // Linting rules for TS files, should be combined with the base config when migration is complete
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      ...tseslint.configs.strictTypeChecked,
+      ...tseslint.configs.stylisticTypeChecked,
+    ],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        projectService: true,
+      },
+    }
+  },
   {
     languageOptions: {
       'globals': {
+        ...globals.es2020,
         ...globals.browser,
         ...globals.node,
         'bson': true
@@ -17,6 +37,14 @@ export default [
   },
   {
     ignores: ['dist']
+  },
+  {
+    // FIXME: Recommended rules that have been turned off to maintain compatibility with the current codebase
+    rules: {
+      'no-useless-escape': 0,
+      'no-unused-vars': 0,
+      'no-prototype-builtins': 0,
+    }
   },
   {
     rules: {
@@ -33,8 +61,9 @@ export default [
       quotes: [2, 'single'],
       'no-proto': 2,
       'linebreak-style': 2,
-      'key-spacing': [2, {afterColon: true}]
+      'key-spacing': [2, {afterColon: true}],
+      'eol-last': ['error', 'always'],
     },
-    files: ['**/*.{js,jsx,cjs}']
+    files: ['**/*.{js,jsx,ts,tsx,cjs}'],
   }
-];
+);
