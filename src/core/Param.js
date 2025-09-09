@@ -31,7 +31,7 @@ export default class Param {
    * Fetch the value of the param.
    *
    * @param {getCallback} callback - The callback function.
-   * @param {getFailedCallback} [failedCallback] - The callback function when the service call failed.
+   * @param {getFailedCallback} [failedCallback] - The callback function when the service call failed or the parameter retrieval was unsuccessful.
    */
   get(callback, failedCallback) {
     var paramClient = new Service({
@@ -68,7 +68,7 @@ export default class Param {
    *
    * @param {Object} value - The value to set param to.
    * @param {setParamCallback} [callback] - The callback function.
-   * @param {setParamFailedCallback} [failedCallback] - The callback function when the service call failed.
+   * @param {setParamFailedCallback} [failedCallback] - The callback function when the service call failed or the parameter setting was unsuccessful.
    */
   set(value, callback, failedCallback) {
     var paramClient = new Service({
@@ -98,7 +98,7 @@ export default class Param {
    * Delete this parameter on the ROS server.
    *
    * @param {setParamCallback} callback - The callback function.
-   * @param {setParamFailedCallback} [failedCallback] - The callback function when the service call failed.
+   * @param {setParamFailedCallback} [failedCallback] - The callback function when the service call failed or the parameter deletion was unsuccessful.
    */
   delete(callback, failedCallback) {
     var paramClient = new Service({
