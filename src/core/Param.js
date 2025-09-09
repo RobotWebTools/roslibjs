@@ -40,19 +40,17 @@ export default class Param {
       serviceType: 'rosapi/GetParam'
     });
 
-    var request = {name: this.name};
+    var request = { name: this.name };
 
     paramClient.callService(
       request,
       function (result) {
-        if (result.successful !== undefined && result.successful === false) {
-          if (failedCallback) {
-            failedCallback(result.reason);
-          }
-          return;
+        if (result.successful === false && failedCallback) {
+          failedCallback(result.reason);
+        } else {
+          var value = JSON.parse(result.value);
+          callback(value);
         }
-        var value = JSON.parse(result.value);
-        callback(value);
       },
       failedCallback
     );
@@ -87,13 +85,9 @@ export default class Param {
     paramClient.callService(
       request,
       function (result) {
-        if (result.successful !== undefined && result.successful === false) {
-          if (failedCallback) {
-            failedCallback(result.reason);
-          }
-          return;
-        }
-        if (callback) {
+        if (result.successful === false && failedCallback) {
+          failedCallback(result.reason);
+        } else if (callback) {
           callback(result);
         }
       },
@@ -120,13 +114,9 @@ export default class Param {
     paramClient.callService(
       request,
       function (result) {
-        if (result.successful !== undefined && result.successful === false) {
-          if (failedCallback) {
-            failedCallback(result.reason);
-          }
-          return;
-        }
-        if (callback) {
+        if (result.successful === false && failedCallback) {
+          failedCallback(result.reason);
+        } else if (callback) {
           callback(result);
         }
       },
