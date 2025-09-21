@@ -24,6 +24,51 @@ As we are updating to v2, we don't provide pre-built files anymore in the repo.
 
 Alternatively, you can use the v1 release via the [JsDelivr](https://www.jsdelivr.com/) CDN: ([full](https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.js)) | ([min](https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js))
 
+
+
+## Quick Start Example
+
+Here’s a minimal example to connect to a ROS master using `roslibjs`:
+
+``` js
+import ROSLIB from 'roslib';
+
+// Connect to ROS bridge server
+const ros = new ROSLIB.Ros({
+  url: 'ws://localhost:9090'
+});
+
+// Connection events
+ros.on('connection', () => {
+  console.log('Connected to websocket server.');
+});
+
+ros.on('error', (error) => {
+  console.log('Error connecting to websocket server:', error);
+});
+
+ros.on('close', () => {
+  console.log('Connection to websocket server closed.');
+});
+
+// Create a topic object
+const cmdVel = new ROSLIB.Topic({
+  ros: ros,
+  name: '/cmd_vel',
+  messageType: 'geometry_msgs/Twist'
+});
+
+// Publish a message
+const twist = new ROSLIB.Message({
+  linear: { x: 0.1, y: 0.0, z: 0.0 },
+  angular: { x: 0.0, y: 0.0, z: 0.1 }
+});
+cmdVel.publish(twist);
+
+
+
+
+
 ## Troubleshooting
 
 1. Check that connection is established. You can listen to error and
