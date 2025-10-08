@@ -36,7 +36,7 @@ export default class Action extends EventEmitter {
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} options.name - The action name, like '/fibonacci'.
-   * @param {string} options.actionType - The action type, like 'action_tutorials_interfaces/Fibonacci'.
+   * @param {string} options.actionType - The action type, like 'example_interfaces/Fibonacci'.
    */
   constructor(options) {
     super();
