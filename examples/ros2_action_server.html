@@ -23,7 +23,7 @@
   var fibonacciServer = new ROSLIB.Action({
     ros : ros,
     name : '/fibonacci',
-    actionType : 'action_tutorials_interfaces/Fibonacci'
+    actionType : 'example_interfaces/Fibonacci'
   });
 
   var actionCallback = function(goal, id) {
@@ -70,7 +70,7 @@
     <li><tt>refresh this page</tt></li>
     <li><tt>ros2 run action_tutorials_py fibonacci_action_client</tt>
         <br>or<br>
-        <tt>ros2 action send_goal --feedback /fibonacci action_tutorials_interfaces/action/Fibonacci order:\ 20\ </tt>
+        <tt>ros2 action send_goal --feedback /fibonacci example_interfaces/action/Fibonacci order:\ 20\ </tt>
     </li>
   </ol>
 </body>
