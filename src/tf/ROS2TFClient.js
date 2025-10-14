@@ -48,7 +48,7 @@ export default class ROS2TFClient extends EventEmitter {
         this.actionClient = new Action({
             ros: options.ros,
             name: this.serverName,
-            actionType: 'tf2_web_republisher_interfaces/action/TFSubscription',
+            actionType: 'tf2_web_republisher_interfaces/TFSubscription',
         });
 
     }
