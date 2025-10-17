@@ -26,7 +26,7 @@ export default class UrdfMesh {
 
     // Check for a scale
     const scale: Optional<string[]> = xml.getAttribute(UrdfAttrs.Scale)?.split(' ');
-    if (!scale || scale.length !== 3) {
+    if (scale?.length !== 3) {
       return;
     }
 
