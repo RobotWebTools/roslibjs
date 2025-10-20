@@ -3,7 +3,7 @@
 if command -v rosrun 2>/dev/null
 then
     echo "Shutting everything down"
-    pgrep -f "[r]os" | xargs kill -9
+    pgrep -f "ros" | xargs kill -9 2>/dev/null
     sleep 1
 
     echo "Starting roscore and various examples in background processes"

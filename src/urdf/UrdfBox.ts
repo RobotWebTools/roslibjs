@@ -20,7 +20,7 @@ export default class UrdfBox {
 
     // Parse the xml string
     const size: Optional<string[]> = xml.getAttribute(UrdfAttrs.Size)?.split(' ');
-    if (!size || size.length !== 3) {
+    if (size?.length !== 3) {
       return;
     }
 
