@@ -19,6 +19,16 @@ export default class Service extends EventEmitter {
   _serviceCallback = null;
   isAdvertised = false;
   /**
+   * Queue for serializing advertise/unadvertise operations to prevent race conditions
+   * @private
+   */
+  _operationQueue = Promise.resolve();
+  /**
+   * Track if an unadvertise operation is pending to prevent double operations
+   * @private
+   */
+  _pendingUnadvertise = false;
+  /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} options.name - The service name, like '/add_two_ints'.
@@ -45,8 +55,10 @@ export default class Service extends EventEmitter {
    * @param {TRequest} request - The service request to send.
    * @param {callServiceCallback} [callback] - Function with the following params:
    * @param {callServiceFailedCallback} [failedCallback] - The callback function when the service call failed with params:
-   */
-  callService(request, callback, failedCallback) {
+   * @param {number} [timeout] - Optional timeout, in seconds, for the service call. A non-positive value means no timeout.
+   *                             If not provided, the rosbridge server will use its default value.
+  */
+  callService(request, callback, failedCallback, timeout) {
     if (this.isAdvertised) {
       return;
     }
@@ -71,8 +83,10 @@ export default class Service extends EventEmitter {
       id: serviceCallId,
       service: this.name,
       type: this.serviceType,
-      args: request
+      args: request,
+      timeout: timeout
     };
+
     this.ros.callOnConnection(call);
   }
   /**
@@ -89,51 +103,91 @@ export default class Service extends EventEmitter {
    * @param {advertiseCallback} callback - This works similarly to the callback for a C++ service and should take the following params
    */
   advertise(callback) {
-    if (this.isAdvertised) {
-      throw new Error('Cannot advertise the same Service twice!');
-    }
-
-    // Store the new callback for removal during un-advertisement
-    this._serviceCallback = (rosbridgeRequest) => {
-      var response = {};
-      var success = callback(rosbridgeRequest.args, response);
-
-      var call = {
-        op: 'service_response',
-        service: this.name,
-        values: response,
-        result: success
-      };
-
-      if (rosbridgeRequest.id) {
-        call.id = rosbridgeRequest.id;
+    // Queue this operation to prevent race conditions
+    this._operationQueue = this._operationQueue.then(async () => {
+      // If already advertised, unadvertise first
+      if (this.isAdvertised) {
+        await this._doUnadvertise();
       }
 
-      this.ros.callOnConnection(call);
-    };
+      // Store the new callback for removal during un-advertisement
+      this._serviceCallback = (rosbridgeRequest) => {
+        var response = {};
+        var success = callback(rosbridgeRequest.args, response);
 
-    this.ros.on(this.name, this._serviceCallback);
-    this.ros.callOnConnection({
-      op: 'advertise_service',
-      type: this.serviceType,
-      service: this.name
+        var call = {
+          op: 'service_response',
+          service: this.name,
+          values: response,
+          result: success
+        };
+
+        if (rosbridgeRequest.id) {
+          call.id = rosbridgeRequest.id;
+        }
+
+        this.ros.callOnConnection(call);
+      };
+
+      this.ros.on(this.name, this._serviceCallback);
+      this.ros.callOnConnection({
+        op: 'advertise_service',
+        type: this.serviceType,
+        service: this.name
+      });
+      this.isAdvertised = true;
+    }).catch(err => {
+      this.emit('error', err);
+      throw err;
     });
-    this.isAdvertised = true;
+    
+    return this._operationQueue;
+  }
+
+  /**
+   * Internal method to perform unadvertisement without queueing
+   * @private
+   */
+  async _doUnadvertise() {
+    if (!this.isAdvertised || this._pendingUnadvertise) {
+      return;
+    }
+    
+    this._pendingUnadvertise = true;
+    
+    try {
+      // Mark as not advertised first to prevent new service calls
+      // This ensures callService() will not be blocked while we're unadvertising
+      this.isAdvertised = false;
+      
+      // Remove the registered callback to stop processing new requests
+      if (this._serviceCallback) {
+        this.ros.off(this.name, this._serviceCallback);
+        this._serviceCallback = null;
+      }
+      
+      // Send the unadvertise message to the server
+      // Note: This is fire-and-forget, but the operation queue ensures
+      // no new advertise can start until this completes
+      this.ros.callOnConnection({
+        op: 'unadvertise_service',
+        service: this.name
+      });
+    } finally {
+      this._pendingUnadvertise = false;
+    }
   }
 
   unadvertise() {
-    if (!this.isAdvertised) {
-      throw new Error(`Tried to un-advertise service ${this.name}, but it was not advertised!`);
-    }
-    this.ros.callOnConnection({
-      op: 'unadvertise_service',
-      service: this.name
+    // Queue this operation to prevent race conditions
+    this._operationQueue = this._operationQueue.then(async () => {
+      await this._doUnadvertise();
+    }).catch(err => {
+      this.emit('error', err);
+      throw err;
     });
-    // Remove the registered callback
-    if (this._serviceCallback) {
-      this.ros.off(this.name, this._serviceCallback);
-    }
-    this.isAdvertised = false;
+    
+    return this._operationQueue;
   }
 
   /**
@@ -141,32 +195,42 @@ export default class Service extends EventEmitter {
    * @param {(request: TRequest) => Promise<TResponse>} callback An asynchronous callback processing the request and returning a response.
    */
   advertiseAsync(callback) {
-    if (this.isAdvertised) {
-      throw new Error('Cannot advertise the same Service twice!');
-    }
-    this._serviceCallback = async (rosbridgeRequest) => {
-      /** @type {{op: string, service: string, values?: TResponse, result: boolean, id?: string}} */
-      let rosbridgeResponse = {
-        op: 'service_response',
-        service: this.name,
-        result: false
+    // Queue this operation to prevent race conditions
+    this._operationQueue = this._operationQueue.then(async () => {
+      // If already advertised, unadvertise first
+      if (this.isAdvertised) {
+        await this._doUnadvertise();
       }
-      try {
-        rosbridgeResponse.values = await callback(rosbridgeRequest.args);
-        rosbridgeResponse.result = true;
-      } finally {
-        if (rosbridgeRequest.id) {
-          rosbridgeResponse.id = rosbridgeRequest.id;
+      
+      this._serviceCallback = async (rosbridgeRequest) => {
+        /** @type {{op: string, service: string, values?: TResponse, result: boolean, id?: string}} */
+        let rosbridgeResponse = {
+          op: 'service_response',
+          service: this.name,
+          result: false
         }
-        this.ros.callOnConnection(rosbridgeResponse);
+        try {
+          rosbridgeResponse.values = await callback(rosbridgeRequest.args);
+          rosbridgeResponse.result = true;
+        } finally {
+          if (rosbridgeRequest.id) {
+            rosbridgeResponse.id = rosbridgeRequest.id;
+          }
+          this.ros.callOnConnection(rosbridgeResponse);
+        }
       }
-    }
-    this.ros.on(this.name, this._serviceCallback);
-    this.ros.callOnConnection({
-      op: 'advertise_service',
-      type: this.serviceType,
-      service: this.name
+      this.ros.on(this.name, this._serviceCallback);
+      this.ros.callOnConnection({
+        op: 'advertise_service',
+        type: this.serviceType,
+        service: this.name
+      });
+      this.isAdvertised = true;
+    }).catch(err => {
+      this.emit('error', err);
+      throw err;
     });
-    this.isAdvertised = true;
+    
+    return this._operationQueue;
   }
 }

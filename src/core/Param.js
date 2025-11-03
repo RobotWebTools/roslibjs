@@ -31,22 +31,26 @@ export default class Param {
    * Fetch the value of the param.
    *
    * @param {getCallback} callback - The callback function.
-   * @param {getFailedCallback} [failedCallback] - The callback function when the service call failed.
+   * @param {getFailedCallback} [failedCallback] - The callback function when the service call failed or the parameter retrieval was unsuccessful.
    */
   get(callback, failedCallback) {
     var paramClient = new Service({
       ros: this.ros,
-      name: '/rosapi/get_param',
+      name: 'rosapi/get_param',
       serviceType: 'rosapi/GetParam'
     });
 
-    var request = {name: this.name};
+    var request = { name: this.name };
 
     paramClient.callService(
       request,
       function (result) {
-        var value = JSON.parse(result.value);
-        callback(value);
+        if (result.successful === false && failedCallback) {
+          failedCallback(result.reason);
+        } else {
+          var value = JSON.parse(result.value);
+          callback(value);
+        }
       },
       failedCallback
     );
@@ -64,12 +68,12 @@ export default class Param {
    *
    * @param {Object} value - The value to set param to.
    * @param {setParamCallback} [callback] - The callback function.
-   * @param {setParamFailedCallback} [failedCallback] - The callback function when the service call failed.
+   * @param {setParamFailedCallback} [failedCallback] - The callback function when the service call failed or the parameter setting was unsuccessful.
    */
   set(value, callback, failedCallback) {
     var paramClient = new Service({
       ros: this.ros,
-      name: '/rosapi/set_param',
+      name: 'rosapi/set_param',
       serviceType: 'rosapi/SetParam'
     });
 
@@ -78,18 +82,28 @@ export default class Param {
       value: JSON.stringify(value)
     };
 
-    paramClient.callService(request, callback, failedCallback);
+    paramClient.callService(
+      request,
+      function (result) {
+        if (result.successful === false && failedCallback) {
+          failedCallback(result.reason);
+        } else if (callback) {
+          callback(result);
+        }
+      },
+      failedCallback
+    );
   }
   /**
    * Delete this parameter on the ROS server.
    *
    * @param {setParamCallback} callback - The callback function.
-   * @param {setParamFailedCallback} [failedCallback] - The callback function when the service call failed.
+   * @param {setParamFailedCallback} [failedCallback] - The callback function when the service call failed or the parameter deletion was unsuccessful.
    */
   delete(callback, failedCallback) {
     var paramClient = new Service({
       ros: this.ros,
-      name: '/rosapi/delete_param',
+      name: 'rosapi/delete_param',
       serviceType: 'rosapi/DeleteParam'
     });
 
@@ -97,6 +111,16 @@ export default class Param {
       name: this.name
     };
 
-    paramClient.callService(request, callback, failedCallback);
+    paramClient.callService(
+      request,
+      function (result) {
+        if (result.successful === false && failedCallback) {
+          failedCallback(result.reason);
+        } else if (callback) {
+          callback(result);
+        }
+      },
+      failedCallback
+    );
   }
 }

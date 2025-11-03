@@ -61,20 +61,22 @@ export default class Ros extends EventEmitter {
         socketAdapter(this)
       );
     } else if (this.transportLibrary === 'websocket') {
-      if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
-        // Detect if in browser vs in NodeJS
-        if (typeof window !== 'undefined') {
+      // browsers, Deno, and Bun support WebSockets natively
+      if (typeof WebSocket === 'function') {
+        if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
           const sock = new WebSocket(url);
           sock.binaryType = 'arraybuffer';
           this.socket = Object.assign(sock, socketAdapter(this));
-        } else {
-          // if in Node.js, import ws to replace browser WebSocket API
-          import('ws').then((ws) => {
+        }
+      } else {
+        // if in Node.js, import ws to replace WebSocket API
+        import('ws').then((ws) => {
+          if (!this.socket || this.socket.readyState === ws.WebSocket.CLOSED) {
             const sock = new ws.WebSocket(url);
             sock.binaryType = 'arraybuffer'
             this.socket = Object.assign(sock, socketAdapter(this));
-          })
-        }
+          }
+        })
       }
     } else {
       throw 'Unknown transportLibrary: ' + this.transportLibrary.toString();
@@ -178,7 +180,7 @@ export default class Ros extends EventEmitter {
     /** @satisfies {Service<any, any>} */
     var getActionServers = new Service({
       ros: this,
-      name: '/rosapi/action_servers',
+      name: 'rosapi/action_servers',
       serviceType: 'rosapi/GetActionServers'
     });
 
@@ -218,7 +220,7 @@ export default class Ros extends EventEmitter {
   getTopics(callback, failedCallback) {
     var topicsClient = new Service({
       ros: this,
-      name: '/rosapi/topics',
+      name: 'rosapi/topics',
       serviceType: 'rosapi/Topics'
     });
 
@@ -257,7 +259,7 @@ export default class Ros extends EventEmitter {
   getTopicsForType(topicType, callback, failedCallback) {
     var topicsForTypeClient = new Service({
       ros: this,
-      name: '/rosapi/topics_for_type',
+      name: 'rosapi/topics_for_type',
       serviceType: 'rosapi/TopicsForType'
     });
 
@@ -298,7 +300,7 @@ export default class Ros extends EventEmitter {
   getServices(callback, failedCallback) {
     var servicesClient = new Service({
       ros: this,
-      name: '/rosapi/services',
+      name: 'rosapi/services',
       serviceType: 'rosapi/Services'
     });
 
@@ -337,7 +339,7 @@ export default class Ros extends EventEmitter {
   getServicesForType(serviceType, callback, failedCallback) {
     var servicesForTypeClient = new Service({
       ros: this,
-      name: '/rosapi/services_for_type',
+      name: 'rosapi/services_for_type',
       serviceType: 'rosapi/ServicesForType'
     });
 
@@ -379,7 +381,7 @@ export default class Ros extends EventEmitter {
   getServiceRequestDetails(type, callback, failedCallback) {
     var serviceTypeClient = new Service({
       ros: this,
-      name: '/rosapi/service_request_details',
+      name: 'rosapi/service_request_details',
       serviceType: 'rosapi/ServiceRequestDetails'
     });
     var request = {
@@ -421,7 +423,7 @@ export default class Ros extends EventEmitter {
     /** @satisfies {Service<{},{typedefs: string[]}>} */
     var serviceTypeClient = new Service({
       ros: this,
-      name: '/rosapi/service_response_details',
+      name: 'rosapi/service_response_details',
       serviceType: 'rosapi/ServiceResponseDetails'
     });
     var request = {
@@ -461,7 +463,7 @@ export default class Ros extends EventEmitter {
   getNodes(callback, failedCallback) {
     var nodesClient = new Service({
       ros: this,
-      name: '/rosapi/nodes',
+      name: 'rosapi/nodes',
       serviceType: 'rosapi/Nodes'
     });
 
@@ -521,7 +523,7 @@ export default class Ros extends EventEmitter {
   getNodeDetails(node, callback, failedCallback) {
     var nodesClient = new Service({
       ros: this,
-      name: '/rosapi/node_details',
+      name: 'rosapi/node_details',
       serviceType: 'rosapi/NodeDetails'
     });
 
@@ -562,7 +564,7 @@ export default class Ros extends EventEmitter {
   getParams(callback, failedCallback) {
     var paramsClient = new Service({
       ros: this,
-      name: '/rosapi/get_param_names',
+      name: 'rosapi/get_param_names',
       serviceType: 'rosapi/GetParamNames'
     });
     var request = {};
@@ -600,7 +602,7 @@ export default class Ros extends EventEmitter {
   getTopicType(topic, callback, failedCallback) {
     var topicTypeClient = new Service({
       ros: this,
-      name: '/rosapi/topic_type',
+      name: 'rosapi/topic_type',
       serviceType: 'rosapi/TopicType'
     });
     var request = {
@@ -641,7 +643,7 @@ export default class Ros extends EventEmitter {
   getServiceType(service, callback, failedCallback) {
     var serviceTypeClient = new Service({
       ros: this,
-      name: '/rosapi/service_type',
+      name: 'rosapi/service_type',
       serviceType: 'rosapi/ServiceType'
     });
     var request = {
@@ -682,7 +684,7 @@ export default class Ros extends EventEmitter {
   getMessageDetails(message, callback, failedCallback) {
     var messageDetailClient = new Service({
       ros: this,
-      name: '/rosapi/message_details',
+      name: 'rosapi/message_details',
       serviceType: 'rosapi/MessageDetails'
     });
     var request = {
@@ -774,7 +776,7 @@ export default class Ros extends EventEmitter {
   getTopicsAndRawTypes(callback, failedCallback) {
     var topicsAndRawTypesClient = new Service({
       ros: this,
-      name: '/rosapi/topics_and_raw_types',
+      name: 'rosapi/topics_and_raw_types',
       serviceType: 'rosapi/TopicsAndRawTypes'
     });
 

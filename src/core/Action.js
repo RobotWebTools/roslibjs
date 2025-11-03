@@ -5,6 +5,7 @@
 
 import { EventEmitter } from 'eventemitter3';
 import Ros from '../core/Ros.js';
+import { GoalStatus } from '../core/GoalStatus.ts';
 
 /**
  * A ROS 2 action client.
@@ -35,7 +36,7 @@ export default class Action extends EventEmitter {
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} options.name - The action name, like '/fibonacci'.
-   * @param {string} options.actionType - The action type, like 'action_tutorials_interfaces/Fibonacci'.
+   * @param {string} options.actionType - The action type, like 'example_interfaces/Fibonacci'.
    */
   constructor(options) {
     super();
@@ -216,6 +217,25 @@ export default class Action extends EventEmitter {
       id: id,
       action: this.name,
       values: result,
+      status: GoalStatus.STATUS_SUCCEEDED,
+      result: true
+    };
+    this.ros.callOnConnection(call);
+  }
+
+  /**
+   * Helper function to set an action as canceled.
+   *
+   * @param {string} id - The action goal ID.
+   * @param {TResult} result - The result to set.
+   */
+  setCanceled(id, result) {
+    var call = {
+      op: 'action_result',
+      id: id,
+      action: this.name,
+      values: result,
+      status: GoalStatus.STATUS_CANCELED,
       result: true
     };
     this.ros.callOnConnection(call);
@@ -231,6 +251,7 @@ export default class Action extends EventEmitter {
       op: 'action_result',
       id: id,
       action: this.name,
+      status: GoalStatus.STATUS_ABORTED,
       result: false
     };
     this.ros.callOnConnection(call);
