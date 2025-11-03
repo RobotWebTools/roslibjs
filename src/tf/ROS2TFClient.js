@@ -3,7 +3,7 @@ import Action from '../core/Action.js';
 import Transform from '../math/Transform.js';
 
 import Ros from '../core/Ros.js';
-import {EventEmitter} from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
@@ -38,9 +38,11 @@ export default class ROS2TFClient extends EventEmitter {
       nsecs: nsecs
     };
     this.serverName = options.serverName || '/tf2_web_republisher';
-    this.goal_id = '';
+    /** @type {Record<string, any>} */
     this.frameInfos = {};
+    this.goal_id = '';
     this.republisherUpdateRequested = false;
+    /** @type {any} */
     this._subscribeCB = undefined;
     this._isDisposed = false;
 
@@ -59,9 +61,9 @@ export default class ROS2TFClient extends EventEmitter {
      *
      * @param {Object} tf - The TF message from the server.
      */
-  processTFArray(tf) {
+  processTFArray(/** @type {any} */ tf) {
     let that = this;
-    tf.transforms.forEach(function (transform) {
+    tf.transforms.forEach(function (/** @type {any} */ transform) {
       let frameID = transform.child_frame_id;
       if (frameID[0] === '/') {
         frameID = frameID.substring(1);
@@ -72,7 +74,7 @@ export default class ROS2TFClient extends EventEmitter {
           translation: transform.transform.translation,
           rotation: transform.transform.rotation
         });
-        info.cbs.forEach(function (cb) {
+        info.cbs.forEach(function (/** @type {any} */ cb) {
           cb(info.transform);
         });
       }

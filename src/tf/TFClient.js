@@ -20,8 +20,9 @@ import { EventEmitter } from 'eventemitter3';
 export default class TFClient extends EventEmitter {
   /** @type {Goal|false} */
   currentGoal = false;
-  /** @type {Topic|false} */
+  /** @type {Topic<any>|false} */
   currentTopic = false;
+  /** @type {Record<string, any>} */
   frameInfos = {};
   republisherUpdateRequested = false;
   /** @type {((tf: any) => any) | undefined} */
@@ -80,8 +81,8 @@ export default class TFClient extends EventEmitter {
    *
    * @param {Object} tf - The TF message from the server.
    */
-  processTFArray(tf) {
-    tf.transforms.forEach((transform) => {
+  processTFArray(/** @type {any} */ tf) {
+    tf.transforms.forEach((/** @type {any} */ transform) => {
       var frameID = transform.child_frame_id;
       if (frameID[0] === '/') {
         frameID = frameID.substring(1);
@@ -92,7 +93,7 @@ export default class TFClient extends EventEmitter {
           translation: transform.transform.translation,
           rotation: transform.transform.rotation
         });
-        info.cbs.forEach((cb) => {
+        info.cbs.forEach((/** @type {any} */ cb) => {
           cb(info.transform);
         });
       }
@@ -128,7 +129,7 @@ export default class TFClient extends EventEmitter {
       // otherwise, use the service interface
       // The service interface has the same parameters as the action,
       // plus the timeout
-      goalMessage.timeout = this.topicTimeout;
+      /** @type {any} */ (goalMessage).timeout = this.topicTimeout;
       this.serviceClient.callService(goalMessage, this.processResponse.bind(this));
     }
 
@@ -155,7 +156,7 @@ export default class TFClient extends EventEmitter {
 
     this.currentTopic = new Topic({
       ros: this.ros,
-      name: response.topic_name,
+      name: /** @type {any} */ (response).topic_name,
       messageType: 'tf2_web_republisher/TFArray'
     });
     this._subscribeCB = this.processTFArray.bind(this);
@@ -206,7 +207,7 @@ export default class TFClient extends EventEmitter {
       frameID = frameID.substring(1);
     }
     var info = this.frameInfos[frameID];
-    for (var cbs = (info && info.cbs) || [], idx = cbs.length; idx--; ) {
+    for (var cbs = (info && info.cbs) || [], idx = cbs.length; idx--;) {
       if (cbs[idx] === callback) {
         cbs.splice(idx, 1);
       }

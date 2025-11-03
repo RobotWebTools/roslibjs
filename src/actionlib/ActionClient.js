@@ -19,6 +19,7 @@ import { EventEmitter } from 'eventemitter3';
  *
  */
 export default class ActionClient extends EventEmitter {
+  /** @type {Record<string, any>} */
   goals = {};
   /** flag to check if a status has been received */
   receivedStatus = false
@@ -31,6 +32,9 @@ export default class ActionClient extends EventEmitter {
    * @param {boolean} [options.omitFeedback] - The flag to indicate whether to omit the feedback channel or not.
    * @param {boolean} [options.omitStatus] - The flag to indicate whether to omit the status channel or not.
    * @param {boolean} [options.omitResult] - The flag to indicate whether to omit the result channel or not.
+   */
+  /**
+   * @param {any} options
    */
   constructor(options) {
     super();
@@ -81,7 +85,7 @@ export default class ActionClient extends EventEmitter {
     if (!this.omitStatus) {
       this.statusListener.subscribe((statusMessage) => {
         this.receivedStatus = true;
-        statusMessage.status_list.forEach((status) => {
+        statusMessage.status_list.forEach((/** @type {any} */ status) => {
           var goal = this.goals[status.goal_id.id];
           if (goal) {
             goal.emit('status', status);

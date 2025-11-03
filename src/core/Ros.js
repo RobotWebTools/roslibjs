@@ -40,6 +40,7 @@ export default class Ros extends EventEmitter {
     super();
     options = options || {};
     this.transportLibrary = options.transportLibrary || 'websocket';
+    /** @type {any} */
     this.transportOptions = options.transportOptions || {};
     this.groovyCompatibility = options.groovyCompatibility ?? true;
 
@@ -125,12 +126,12 @@ export default class Ros extends EventEmitter {
     if (!this.isConnected) {
       this.once('connection', () => {
         if (this.socket !== null) {
-          this.socket.send(messageEncoded);
+          this.socket.send(/** @type {any} */(messageEncoded));
         }
       });
     } else {
       if (this.socket !== null) {
-        this.socket.send(messageEncoded);
+        this.socket.send(/** @type {any} */(messageEncoded));
       }
     }
   }
@@ -713,8 +714,9 @@ export default class Ros extends EventEmitter {
    * @param {Object[]} defs - Array of type_def dictionary.
    */
   decodeTypeDefs(defs) {
-    var decodeTypeDefsRec = (theType, hints) => {
+    var decodeTypeDefsRec = (/** @type {any} */ theType, /** @type {any} */ hints) => {
       // calls itself recursively to resolve type definition using hints.
+      /** @type {Record<string, any>} */
       var typeDefDict = {};
       for (var i = 0; i < theType.fieldnames.length; i++) {
         var arrayLen = theType.fieldarraylen[i];
@@ -797,22 +799,22 @@ export default class Ros extends EventEmitter {
       });
     }
   }
-  Topic(options) {
+  Topic(/** @type {any} */ options) {
     return new Topic({ ros: this, ...options });
   }
-  Param(options) {
+  Param(/** @type {any} */ options) {
     return new Param({ ros: this, ...options });
   }
-  Service(options) {
+  Service(/** @type {any} */ options) {
     return new Service({ ros: this, ...options });
   }
-  TFClient(options) {
+  TFClient(/** @type {any} */ options) {
     return new TFClient({ ros: this, ...options });
   }
-  ActionClient(options) {
+  ActionClient(/** @type {any} */ options) {
     return new ActionClient({ ros: this, ...options });
   }
-  SimpleActionServer(options) {
+  SimpleActionServer(/** @type {any} */ options) {
     return new SimpleActionServer({ ros: this, ...options });
   }
 }

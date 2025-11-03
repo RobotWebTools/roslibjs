@@ -61,7 +61,7 @@ export default class ActionListener extends EventEmitter {
     });
 
     statusListener.subscribe((statusMessage) => {
-      statusMessage.status_list.forEach((status) => {
+      statusMessage.status_list.forEach((/** @type {any} */ status) => {
         this.emit('status', status);
       });
     });

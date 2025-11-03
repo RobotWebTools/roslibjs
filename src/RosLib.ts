@@ -8,4 +8,4 @@ export * from './index.js';
 import ROSLIB from './index.js';
 
 // same as index.js, except add to global namespace for in-browser support (i.e. CDN)
-globalThis.ROSLIB = ROSLIB;
+(globalThis as typeof globalThis & { ROSLIB: typeof ROSLIB }).ROSLIB = ROSLIB;

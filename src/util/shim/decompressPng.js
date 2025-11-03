@@ -5,7 +5,7 @@
 
 /**
  * @callback decompressPngCallback
- * @param data - The uncompressed data.
+ * @param {any} data - The uncompressed data.
  */
 /**
  * If a message was compressed as a PNG image (a compression hack since
@@ -16,7 +16,7 @@
  * @param data - An object containing the PNG data.
  * @param {decompressPngCallback} callback - Function with the following params:
  */
-export default function decompressPng(data, callback) {
+export default function decompressPng(/** @type {any} */ data, /** @type {any} */ callback) {
   // Uncompresses the data before sending it through (use image/canvas to do so).
   var image = new Image();
   // When the image loads, extracts the raw data (JSON message).

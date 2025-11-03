@@ -7,8 +7,10 @@
  * @fileOverview
  */
 
+/** @type {any} */
 import CBOR from 'cbor-js';
 import typedArrayTagger from '../util/cborTypedArrayTags.js';
+/** @type {any} */
 var BSON = null;
 // @ts-expect-error -- Workarounds for not including BSON in bundle. need to revisit
 if (typeof bson !== 'undefined') {
@@ -24,7 +26,8 @@ if (typeof bson !== 'undefined') {
  * @namespace SocketAdapter
  * @private
  */
-export default function SocketAdapter(client) {
+export default function SocketAdapter(/** @type {any} */ client) {
+  /** @type {any} */
   var decoder = null;
   if (client.transportOptions.decoder) {
     decoder = client.transportOptions.decoder;
@@ -36,7 +39,7 @@ export default function SocketAdapter(client) {
    */
   const fragmentBuffer = new Map();
 
-  function handleMessage(message) {
+  function handleMessage(/** @type {any} */ message) {
     if (message.op === 'fragment') {
       handleFragment(message);
       return;
@@ -64,7 +67,7 @@ export default function SocketAdapter(client) {
     }
   }
 
-  function handleFragment(fragment) {
+  function handleFragment(/** @type {any} */ fragment) {
     const { id, data, num, total } = fragment;
     if (!id || typeof num !== 'number' || typeof total !== 'number' || typeof data !== 'string') {
       // Invalid fragment, ignore
@@ -104,21 +107,21 @@ export default function SocketAdapter(client) {
     }
   }
 
-  function handlePng(message, callback) {
+  function handlePng(/** @type {any} */ message, /** @type {any} */ callback) {
     if (message.op === 'png') {
       // If in Node.js..
       if (typeof window === 'undefined') {
         import('../util/decompressPng.js').then(({ default: decompressPng }) => decompressPng(message.data, callback));
       } else {
         // if in browser..
-        import('../util/shim/decompressPng.js').then(({default: decompressPng}) => decompressPng(message.data, callback));
+        import('../util/shim/decompressPng.js').then(({ default: decompressPng }) => decompressPng(message.data, callback));
       }
     } else {
       callback(message);
     }
   }
 
-  function decodeBSON(data, callback) {
+  function decodeBSON(/** @type {any} */ data, /** @type {any} */ callback) {
     if (!BSON) {
       throw 'Cannot process BSON encoded message without BSON header.';
     }
@@ -172,13 +175,13 @@ export default function SocketAdapter(client) {
      * @param {Object} data - The raw JSON message from rosbridge.
      * @memberof SocketAdapter
      */
-    onmessage: function onMessage(data) {
+    onmessage: function onMessage(/** @type {any} */ data) {
       if (decoder) {
-        decoder(data.data, function (message) {
+        decoder(data.data, function (/** @type {any} */ message) {
           handleMessage(message);
         });
       } else if (typeof Blob !== 'undefined' && data.data instanceof Blob) {
-        decodeBSON(data.data, function (message) {
+        decodeBSON(data.data, function (/** @type {any} */ message) {
           handlePng(message, handleMessage);
         });
       } else if (data.data instanceof ArrayBuffer) {

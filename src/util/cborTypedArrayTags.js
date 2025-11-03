@@ -79,6 +79,7 @@ function decodeNativeArray(bytes, ArrayType) {
  *
  * Only supports little-endian tags for now.
  */
+/** @type {Record<number, any>} */
 var nativeArrayTypes = {
   64: Uint8Array,
   69: Uint16Array,
@@ -93,6 +94,7 @@ var nativeArrayTypes = {
 /**
  * We can also decode 64-bit integer arrays, since ROS has these types.
  */
+/** @type {Record<number, any>} */
 var conversionArrayTypes = {
   71: decodeUint64LE,
   79: decodeInt64LE

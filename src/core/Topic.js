@@ -59,7 +59,7 @@ export default class Topic extends EventEmitter {
       this.emit(
         'warning',
         this.compression +
-          ' compression is not supported. No compression will be used.'
+        ' compression is not supported. No compression will be used.'
       );
       this.compression = 'none';
     }
@@ -71,7 +71,7 @@ export default class Topic extends EventEmitter {
     }
 
     if (this.reconnect_on_close) {
-      this.callForSubscribeAndAdvertise = (message) => {
+      this.callForSubscribeAndAdvertise = (/** @type {any} */ message) => {
         this.ros.callOnConnection(message);
 
         this.waitForReconnect = false;
@@ -91,7 +91,7 @@ export default class Topic extends EventEmitter {
     }
   }
 
-  _messageCallback = (data) => {
+  _messageCallback = (/** @type {any} */ data) => {
     this.emit('message', data);
   };
   /**
