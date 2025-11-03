@@ -78,8 +78,8 @@ export default function SocketAdapter(client) {
     const entry = fragmentBuffer.get(id);
 
     if (!entry) {
-      // Should not happen, keeping TypeScript happy
-      return;
+      // Should not happen, signal error
+      throw new Error('Fragment buffer entry missing for id: ' + id);
     }
     // Only accept fragments within the integer part of total
     if (num < totalInt) {
