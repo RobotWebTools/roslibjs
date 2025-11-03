@@ -64,7 +64,8 @@ export default tseslint.config(
       'key-spacing': [2, {afterColon: true}],
       'eol-last': ['error', 'always'],
       // Disabled to allow namespaced ROS message types since that's how we think about message types in ROS
-      '@typescript-eslint/no-namespace': 0
+      '@typescript-eslint/no-namespace': 0,
+      indent: [2, 2],
     },
     files: ['**/*.{js,jsx,ts,tsx,cjs}'],
   }
