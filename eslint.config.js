@@ -63,6 +63,7 @@ export default tseslint.config(
       'linebreak-style': 2,
       'key-spacing': [2, {afterColon: true}],
       'eol-last': ['error', 'always'],
+      indent: [2, 2],
     },
     files: ['**/*.{js,jsx,ts,tsx,cjs}'],
   }
