@@ -42,9 +42,10 @@
   "dependencies": {
     "@xmldom/xmldom": "^0.9.8",
     "bson": "^7.0.0",
+    "buffer": "^6.0.3",
     "cbor-js": "^0.1.0",
     "eventemitter3": "^5.0.1",
-    "pngparse": "^2.0.0",
+    "fast-png": "^7.0.1",
     "uuid": "^13.0.0",
     "ws": "^8.0.0"
   },
