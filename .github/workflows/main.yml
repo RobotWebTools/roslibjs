@@ -15,7 +15,7 @@ jobs:
     name: ${{ matrix.ros_distro }} (node ${{ matrix.node_version }})
     runs-on: ubuntu-latest
     container:
-      image: ros:${{ matrix.ros_distro }}-ros-core
+      image: ros:${{ matrix.ros_distro }}-ros-base
       options: --cap-add=SYS_ADMIN
     strategy:
       fail-fast: false
@@ -30,9 +30,11 @@ jobs:
         with:
           cache: npm
           node-version: ${{ matrix.node_version }}
-      - name: Install apt dependencies
+      - name: Install dependencies
         run: |
-          apt-get install -q -y libasound2 libnss3 ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
+          apt-get update
+          rosdep update --include-eol-distros
+          rosdep install --from-paths . --ignore-src -y
       - name: Tests
         run: |
           bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && bash test/build.bash"
