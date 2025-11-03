@@ -61,54 +61,54 @@ export default class UrdfModel {
       }
 
       switch (node.tagName) {
-        case 'material': {
-          const material = new UrdfMaterial({ xml: node });
-          // Make sure this is unique
-          if (!Object.hasOwn(this.materials, material.name)) {
-            this.materials[material.name] = material;
-            break;
+      case 'material': {
+        const material = new UrdfMaterial({ xml: node });
+        // Make sure this is unique
+        if (!Object.hasOwn(this.materials, material.name)) {
+          this.materials[material.name] = material;
+          break;
+        }
+
+        if (this.materials[material.name].isLink()) {
+          this.materials[material.name].assign(material);
+        } else {
+          console.warn(`Material ${material.name} is not unique.`);
+        }
+
+        break;
+      }
+      case 'link': {
+        const link = new UrdfLink({ xml: node });
+        // Make sure this is unique
+        if (Object.hasOwn(this.links, link.name)) {
+          console.warn(`Link ${link.name} is not unique.`);
+          break;
+        }
+
+        // Check for a material
+        for (const item of link.visuals) {
+          const mat = item.material;
+          if (!mat?.name) {
+            continue;
           }
 
-          if (this.materials[material.name].isLink()) {
-            this.materials[material.name].assign(material);
+          if (Object.hasOwn(this.materials, mat.name)) {
+            item.material = this.materials[mat.name];
           } else {
-            console.warn(`Material ${material.name} is not unique.`);
+            this.materials[mat.name] = mat;
           }
-
-          break;
         }
-        case 'link': {
-          const link = new UrdfLink({ xml: node });
-          // Make sure this is unique
-          if (Object.hasOwn(this.links, link.name)) {
-            console.warn(`Link ${link.name} is not unique.`);
-            break;
-          }
 
-          // Check for a material
-          for (const item of link.visuals) {
-            const mat = item.material;
-            if (!mat?.name) {
-              continue;
-            }
+        // Add the link
+        this.links[link.name] = link;
 
-            if (Object.hasOwn(this.materials, mat.name)) {
-              item.material = this.materials[mat.name];
-            } else {
-              this.materials[mat.name] = mat;
-            }
-          }
-
-          // Add the link
-          this.links[link.name] = link;
-
-          break;
-        }
-        case 'joint': {
-          const joint = new UrdfJoint({ xml: node });
-          this.joints[joint.name] = joint;
-          break;
-        }
+        break;
+      }
+      case 'joint': {
+        const joint = new UrdfJoint({ xml: node });
+        this.joints[joint.name] = joint;
+        break;
+      }
       }
     }
   }
