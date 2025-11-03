@@ -36,17 +36,17 @@ function parseUrdfGeometry(geometryElem: Element): UrdfGeometryLike | null {
   }
 
   switch (childShape.nodeName) {
-    case 'sphere':
-      return new UrdfSphere(options);
-    case 'box':
-      return new UrdfBox(options);
-    case 'cylinder':
-      return new UrdfCylinder(options);
-    case 'mesh':
-      return new UrdfMesh(options);
-    default:
-      console.warn(`Unknown geometry type ${childShape.nodeName}`);
-      return null
+  case 'sphere':
+    return new UrdfSphere(options);
+  case 'box':
+    return new UrdfBox(options);
+  case 'cylinder':
+    return new UrdfCylinder(options);
+  case 'mesh':
+    return new UrdfMesh(options);
+  default:
+    console.warn(`Unknown geometry type ${childShape.nodeName}`);
+    return null
   }
 }
 
