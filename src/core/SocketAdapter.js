@@ -30,7 +30,17 @@ export default function SocketAdapter(client) {
     decoder = client.transportOptions.decoder;
   }
 
+  /**
+   * Buffer Map for incoming message fragments
+   * @type {Map<string, {fragments: Array<string>, received: number, total: number}>}
+   */
+  const fragmentBuffer = new Map();
+
   function handleMessage(message) {
+    if (message.op === 'fragment') {
+      handleFragment(message);
+      return;
+    }
     if (message.op === 'publish') {
       client.emit(message.topic, message.msg);
     } else if (message.op === 'service_response') {
@@ -51,6 +61,46 @@ export default function SocketAdapter(client) {
       } else {
         client.emit('status', message);
       }
+    }
+  }
+
+  function handleFragment(fragment) {
+    const { id, data, num, total } = fragment;
+    if (!id || typeof num !== 'number' || typeof total !== 'number' || typeof data !== 'string') {
+      // Invalid fragment, ignore
+      return;
+    }
+    // If total is a float, use its integer part for fragment count
+    const totalInt = Math.floor(total);
+    if (!fragmentBuffer.has(id)) {
+      fragmentBuffer.set(id, { fragments: [], received: 0, total: totalInt });
+    }
+    const entry = fragmentBuffer.get(id);
+
+    if (!entry) {
+      // Should not happen, keeping TypeScript happy
+      return;
+    }
+    // Only accept fragments within the integer part of total
+    if (num < totalInt) {
+      if (typeof entry.fragments[num] === 'undefined') {
+        entry.fragments[num] = data;
+        entry.received++;
+      }
+    }
+    // If all integer fragments received, reconstruct and process
+    if (entry.received === totalInt) {
+      const fullData = entry.fragments.join('');
+      let message;
+      try {
+        message = JSON.parse(fullData);
+      } catch (e) {
+        // Failed to parse, ignore
+        fragmentBuffer.delete(id);
+        return;
+      }
+      fragmentBuffer.delete(id);
+      handleMessage(message);
     }
   }
 
