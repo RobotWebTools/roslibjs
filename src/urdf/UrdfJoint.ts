@@ -4,7 +4,7 @@
  */
 
 import { UrdfAttrs, type UrdfDefaultOptions } from './UrdfTypes.js';
-import { Pose } from '../math/index.js';
+import { Pose, Vector3 } from '../math/index.js';
 import { parseUrdfOrigin } from './UrdfUtils.js';
 import type { Nullable } from '../types/interface-types.js';
 
@@ -20,7 +20,11 @@ export default class UrdfJoint {
   minval = NaN;
   maxval = NaN;
   origin: Pose = new Pose();
-
+  axis: Vector3 = new Vector3({
+    x: 1,
+    y: 0,
+    z: 0
+  });
 
   constructor({xml}: UrdfDefaultOptions) {
     this.name = xml.getAttribute(UrdfAttrs.Name) ?? 'unknown_name';
@@ -46,6 +50,19 @@ export default class UrdfJoint {
     const origins = xml.getElementsByTagName(UrdfAttrs.Origin);
     if (origins.length > 0) {
       this.origin = parseUrdfOrigin(origins[0]);
+    }
+
+    const axis = xml.getElementsByTagName(UrdfAttrs.Axis);
+    if (axis.length > 0) {
+      const xyzValue = axis[0].getAttribute(UrdfAttrs.Xyz)?.split(' ');
+      if (xyzValue && xyzValue.length === 3) {
+        const [x, y, z] = xyzValue.map(parseFloat);
+        this.axis = new Vector3({
+            x,
+            y,
+            z,
+          });
+      }
     }
   }
 }

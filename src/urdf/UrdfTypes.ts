@@ -30,6 +30,7 @@ export enum UrdfAttrs {
   Geometry = 'geometry',
   Material = 'material',
   Scale = 'scale',
+  Axis = 'axis',
 }
 
 export interface UrdfDefaultOptions {
