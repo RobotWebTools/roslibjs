@@ -9,6 +9,21 @@ import { EventEmitter } from 'eventemitter3';
  * A TF Client that listens to TFs from tf2_web_republisher.
  */
 export default class ROS2TFClient extends EventEmitter {
+  ros;
+  fixedFrame;
+  angularThres;
+  transThres;
+  rate;
+  updateDelay;
+  topicTimeout;
+  serverName;
+  goal_id;
+  frameInfos;
+  republisherUpdateRequested;
+  _subscribeCB;
+  _isDisposed;
+  actionClient;
+  currentGoal;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.

@@ -20,6 +20,8 @@ export default class Goal extends EventEmitter {
   feedback = undefined;
   // Create a random ID
   goalID = 'goal_' + Math.random() + '_' + new Date().getTime();
+  actionClient;
+  goalMessage;
   /**
    * @param {Object} options
    * @param {ActionClient} options.actionClient - The ROSLIB.ActionClient to use with this goal.

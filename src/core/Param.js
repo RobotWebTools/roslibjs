@@ -10,6 +10,8 @@ import Ros from '../core/Ros.js';
  * A ROS parameter.
  */
 export default class Param {
+  ros;
+  name;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.

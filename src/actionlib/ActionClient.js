@@ -21,7 +21,19 @@ import { EventEmitter } from 'eventemitter3';
 export default class ActionClient extends EventEmitter {
   goals = {};
   /** flag to check if a status has been received */
-  receivedStatus = false
+  receivedStatus = false;
+  ros;
+  serverName;
+  actionName;
+  timeout;
+  omitFeedback;
+  omitStatus;
+  omitResult;
+  feedbackListener;
+  statusListener;
+  resultListener;
+  goalTopic;
+  cancelTopic;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.

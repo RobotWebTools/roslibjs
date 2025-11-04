@@ -19,6 +19,9 @@ import { EventEmitter } from 'eventemitter3';
  *
  */
 export default class ActionListener extends EventEmitter {
+  ros;
+  serverName;
+  actionName;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.

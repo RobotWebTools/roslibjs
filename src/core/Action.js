@@ -32,6 +32,9 @@ export default class Action extends EventEmitter {
    * @type {advertiseCancelCallback | null}
    */
   _cancelCallback = null;
+  ros;
+  name;
+  actionType;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.

@@ -28,6 +28,9 @@ export default class Ros extends EventEmitter {
   socket = null;
   idCounter = 0;
   isConnected = false;
+  transportLibrary;
+  transportOptions;
+  groovyCompatibility;
   /**
    * @param {Object} [options]
    * @param {string} [options.url] - The WebSocket URL for rosbridge. Can be specified later with `connect`.

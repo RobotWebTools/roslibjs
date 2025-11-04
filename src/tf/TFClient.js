@@ -27,6 +27,18 @@ export default class TFClient extends EventEmitter {
   /** @type {((tf: any) => any) | undefined} */
   _subscribeCB = undefined;
   _isDisposed = false;
+  ros;
+  fixedFrame;
+  angularThres;
+  transThres;
+  rate;
+  updateDelay;
+  topicTimeout;
+  serverName;
+  repubServiceName;
+  actionClient;
+  serviceClient;
+
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.

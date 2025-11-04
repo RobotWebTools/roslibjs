@@ -21,6 +21,15 @@ export default class Topic extends EventEmitter {
   /** @type {(() => void) | undefined} */
   reconnectFunc = undefined;
   isAdvertised = false;
+  ros;
+  name;
+  messageType;
+  compression;
+  throttle_rate;
+  latch;
+  queue_size;
+  queue_length;
+  reconnect_on_close;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.

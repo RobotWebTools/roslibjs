@@ -20,6 +20,15 @@ export default class SimpleActionServer extends EventEmitter {
   currentGoal = null; // currently tracked goal
   /** @type {{goal_id: {id: any, stamp: any}, goal: any} | null} */
   nextGoal = null; // the one this'll be preempting
+  ros;
+  serverName;
+  actionName;
+  feedbackPublisher;
+  resultPublisher;
+  statusPublisher;
+  statusMessage;
+  goalSubscriber;
+  cancelSubscriber;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.

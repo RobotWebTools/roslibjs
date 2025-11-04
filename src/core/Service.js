@@ -28,6 +28,9 @@ export default class Service extends EventEmitter {
    * @private
    */
   _pendingUnadvertise = false;
+  ros;
+  name;
+  serviceType;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
