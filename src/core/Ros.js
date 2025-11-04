@@ -364,8 +364,7 @@ export default class Ros extends EventEmitter {
   }
   /**
    * @callback getServiceRequestDetailsCallback
-   * @param {Object} result - The result object with the following params:
-   * @param {string[]} result.typedefs - An array containing the details of the service request.
+   * @param {import("../types/rosapi.ts").rosapi.ServiceRequestDetailsResponse} result
    */
   /**
    * @callback getServiceRequestDetailsFailedCallback
@@ -406,7 +405,7 @@ export default class Ros extends EventEmitter {
   }
   /**
    * @callback getServiceResponseDetailsCallback
-   * @param {{typedefs: string[]}} result - The result object with the following params:
+   * @param {import("../types/rosapi.ts").rosapi.ServiceResponseDetailsResponse} result
    */
   /**
    * @callback getServiceResponseDetailsFailedCallback
@@ -420,7 +419,7 @@ export default class Ros extends EventEmitter {
    * @param {getServiceResponseDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getServiceResponseDetails(type, callback, failedCallback) {
-    /** @satisfies {Service<{},{typedefs: string[]}>} */
+    /** @satisfies {Service<import("../types/rosapi.ts").rosapi.ServiceResponseDetailsRequest, import("../types/rosapi.ts").rosapi.ServiceResponseDetailsResponse>} */
     var serviceTypeClient = new Service({
       ros: this,
       name: 'rosapi/service_response_details',
@@ -710,7 +709,7 @@ export default class Ros extends EventEmitter {
   /**
    * Decode a typedef array into a dictionary like `rosmsg show foo/bar`.
    *
-   * @param {Object[]} defs - Array of type_def dictionary.
+   * @param {import("../types/rosapi.ts").rosapi.TypeDef[]} defs - Array of type_def dictionary.
    */
   decodeTypeDefs(defs) {
     var decodeTypeDefsRec = (theType, hints) => {
