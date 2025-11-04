@@ -33,20 +33,28 @@ export default class Topic extends EventEmitter {
    * @param {number} [options.queue_length=0] - The queue length at bridge side used when subscribing.
    * @param {boolean} [options.reconnect_on_close=true] - The flag to enable resubscription and readvertisement on close event.
    */
-  constructor(options) {
+  constructor({
+    ros,
+    name,
+    messageType,
+    compression = 'none',
+    throttle_rate = 0,
+    latch = false,
+    queue_size = 100,
+    queue_length = 0,
+    reconnect_on_close = true
+  }) {
     super();
-    this.ros = options.ros;
-    this.name = options.name;
-    this.messageType = options.messageType;
-    this.compression = options.compression || 'none';
-    this.throttle_rate = options.throttle_rate || 0;
-    this.latch = options.latch || false;
-    this.queue_size = options.queue_size || 100;
-    this.queue_length = options.queue_length || 0;
-    this.reconnect_on_close =
-      options.reconnect_on_close !== undefined
-        ? options.reconnect_on_close
-        : true;
+
+    this.ros = ros;
+    this.name = name;
+    this.messageType = messageType;
+    this.compression = compression;
+    this.throttle_rate = throttle_rate;
+    this.latch = latch;
+    this.queue_size = queue_size;
+    this.queue_length = queue_length;
+    this.reconnect_on_close = reconnect_on_close;
 
     // Check for valid compression types
     if (
@@ -59,7 +67,7 @@ export default class Topic extends EventEmitter {
       this.emit(
         'warning',
         this.compression +
-          ' compression is not supported. No compression will be used.'
+        ' compression is not supported. No compression will be used.'
       );
       this.compression = 'none';
     }

@@ -32,15 +32,23 @@ export default class ActionClient extends EventEmitter {
    * @param {boolean} [options.omitStatus] - The flag to indicate whether to omit the status channel or not.
    * @param {boolean} [options.omitResult] - The flag to indicate whether to omit the result channel or not.
    */
-  constructor(options) {
+  constructor({
+    ros,
+    serverName,
+    actionName,
+    timeout,
+    omitFeedback,
+    omitStatus,
+    omitResult
+  }) {
     super();
-    this.ros = options.ros;
-    this.serverName = options.serverName;
-    this.actionName = options.actionName;
-    this.timeout = options.timeout;
-    this.omitFeedback = options.omitFeedback;
-    this.omitStatus = options.omitStatus;
-    this.omitResult = options.omitResult;
+    this.ros = ros;
+    this.serverName = serverName;
+    this.actionName = actionName;
+    this.timeout = timeout;
+    this.omitFeedback = omitFeedback;
+    this.omitStatus = omitStatus;
+    this.omitResult = omitResult;
 
     // create the topics associated with actionlib
     this.feedbackListener = new Topic({

@@ -38,11 +38,15 @@ export default class Action extends EventEmitter {
    * @param {string} options.name - The action name, like '/fibonacci'.
    * @param {string} options.actionType - The action type, like 'example_interfaces/Fibonacci'.
    */
-  constructor(options) {
+  constructor({
+    ros,
+    name,
+    actionType
+  }) {
     super();
-    this.ros = options.ros;
-    this.name = options.name;
-    this.actionType = options.actionType;
+    this.ros = ros;
+    this.name = name;
+    this.actionType = actionType;
   }
 
   /**

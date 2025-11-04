@@ -40,27 +40,38 @@ export default class TFClient extends EventEmitter {
    * @param {string} [options.serverName="/tf2_web_republisher"] - The name of the tf2_web_republisher server.
    * @param {string} [options.repubServiceName="/republish_tfs"] - The name of the republish_tfs service (non groovy compatibility mode only).
    */
-  constructor(options) {
+  constructor({
+    ros,
+    fixedFrame = 'base_link',
+    angularThres = 2.0,
+    transThres = 0.01,
+    rate = 10.0,
+    updateDelay = 50,
+    topicTimeout = 2.0,
+    serverName = '/tf2_web_republisher',
+    repubServiceName = '/republish_tfs'
+  }) {
     super();
-    this.ros = options.ros;
-    this.fixedFrame = options.fixedFrame || 'base_link';
-    this.angularThres = options.angularThres || 2.0;
-    this.transThres = options.transThres || 0.01;
-    this.rate = options.rate || 10.0;
-    this.updateDelay = options.updateDelay || 50;
-    var seconds = options.topicTimeout || 2.0;
+
+    this.ros = ros;
+    this.fixedFrame = fixedFrame;
+    this.angularThres = angularThres;
+    this.transThres = transThres;
+    this.rate = rate;
+    this.updateDelay = updateDelay;
+    var seconds = topicTimeout;
     var secs = Math.floor(seconds);
     var nsecs = Math.floor((seconds - secs) * 1000000000);
     this.topicTimeout = {
       secs: secs,
       nsecs: nsecs
     };
-    this.serverName = options.serverName || '/tf2_web_republisher';
-    this.repubServiceName = options.repubServiceName || '/republish_tfs';
+    this.serverName = serverName;
+    this.repubServiceName = repubServiceName;
 
     // Create an Action Client
     this.actionClient = new ActionClient({
-      ros: options.ros,
+      ros: this.ros,
       serverName: this.serverName,
       actionName: 'tf2_web_republisher/TFSubscriptionAction',
       omitStatus: true,
@@ -69,7 +80,7 @@ export default class TFClient extends EventEmitter {
 
     // Create a Service Client
     this.serviceClient = new Service({
-      ros: options.ros,
+      ros: this.ros,
       name: this.repubServiceName,
       serviceType: 'tf2_web_republisher/RepublishTFs'
     });
@@ -214,7 +225,7 @@ export default class TFClient extends EventEmitter {
       frameID = frameID.substring(1);
     }
     var info = this.frameInfos[frameID];
-    for (var cbs = (info && info.cbs) || [], idx = cbs.length; idx--; ) {
+    for (var cbs = (info && info.cbs) || [], idx = cbs.length; idx--;) {
       if (cbs[idx] === callback) {
         cbs.splice(idx, 1);
       }

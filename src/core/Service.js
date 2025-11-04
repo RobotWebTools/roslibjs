@@ -34,11 +34,15 @@ export default class Service extends EventEmitter {
    * @param {string} options.name - The service name, like '/add_two_ints'.
    * @param {string} options.serviceType - The service type, like 'rospy_tutorials/AddTwoInts'.
    */
-  constructor(options) {
+  constructor({
+    ros,
+    name,
+    serviceType
+  }) {
     super();
-    this.ros = options.ros;
-    this.name = options.name;
-    this.serviceType = options.serviceType;
+    this.ros = ros;
+    this.name = name;
+    this.serviceType = serviceType;
   }
   /**
    * @callback callServiceCallback
