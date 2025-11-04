@@ -14,9 +14,6 @@ jobs:
   ci:
     name: ${{ matrix.ros_distro }} (node ${{ matrix.node_version }})
     runs-on: ubuntu-latest
-    container:
-      image: ros:${{ matrix.ros_distro }}-ros-base
-      options: --cap-add=SYS_ADMIN
     strategy:
       fail-fast: false
       matrix:
@@ -26,15 +23,17 @@ jobs:
       ROS_DISTRO: ${{ matrix.ros_distro }}
     steps:
       - uses: actions/checkout@v5
+
       - uses: actions/setup-node@v6
         with:
           cache: npm
           node-version: ${{ matrix.node_version }}
-      - name: Install dependencies
-        run: |
-          apt-get update
-          rosdep update --include-eol-distros
-          rosdep install --from-paths . --ignore-src -y
-      - name: Tests
-        run: |
-          bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && bash test/build.bash"
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Build JavaScript library
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
