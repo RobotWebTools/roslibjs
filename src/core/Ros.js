@@ -708,6 +708,121 @@ export default class Ros extends EventEmitter {
     }
   }
   /**
+   * @callback getActionGoalDetailsCallback
+   * @param {{typedefs: string[]}} result - The result object with the following params:
+   */
+  /**
+   * @callback getActionGoalDetailsFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
+   * Retrieve the details of a ROS action goal.
+   *
+   * @param {string} type - The type of the action.
+   * @param {getActionGoalDetailsCallback} callback - Function with the following params:
+   * @param {getActionGoalDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   */
+  getActionGoalDetails(type, callback, failedCallback) {
+    this._getActionInterfaceDetails(
+      'rosapi/action_goal_details',
+      'rosapi/ActionGoalDetails',
+      type,
+      callback,
+      failedCallback
+    );
+  }
+  /**
+   * @callback getActionResultDetailsCallback
+   * @param {{typedefs: string[]}} result - The result object with the following params:
+   */
+  /**
+   * @callback getActionResultDetailsFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
+   * Retrieve the details of a ROS action result.
+   *
+   * @param {string} type - The type of the action.
+   * @param {getActionResultDetailsCallback} callback - Function with the following params:
+   * @param {getActionResultDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   */
+  getActionResultDetails(type, callback, failedCallback) {
+    this._getActionInterfaceDetails(
+      'rosapi/action_result_details',
+      'rosapi/ActionResultDetails',
+      type,
+      callback,
+      failedCallback
+    );
+  }
+  /**
+   * @callback getActionFeedbackDetailsCallback
+   * @param {{typedefs: string[]}} result - The result object with the following params:
+   */
+  /**
+   * @callback getActionFeedbackDetailsFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+  /**
+   * Retrieve the details of a ROS Action feedback.
+   *
+   * @param {string} type - The type of the action.
+   * @param {getActionFeedbackDetailsCallback} callback - Function with the following params:
+   * @param {getActionFeedbackDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   */
+  getActionFeedbackDetails(type, callback, failedCallback) {
+    this._getActionInterfaceDetails(
+      'rosapi/action_feedback_details',
+      'rosapi/ActionFeedbackDetails',
+      type,
+      callback,
+      failedCallback
+    );
+  }
+  /**
+   * @callback _getActionDetailsCallback
+   * @param {{typedefs: string[]}} result - The result object with the following params:
+   */
+  /**
+   * @callback _getActionDetailsFailedCallback
+   * @param {string} error - The error message reported by ROS.
+   */
+   /** 
+   * @param {string} srv 
+   * @param {string} srvType 
+   * @param {string} type 
+   * @param {_getActionDetailsCallback} callback 
+   * @param {_getActionDetailsFailedCallback} [failedCallback] 
+   */
+  _getActionInterfaceDetails(srv, srvType, type, callback, failedCallback) {
+    /** @satisfies {Service<{},{typedefs: string[]}>} */
+    const client = new Service({
+      ros: this,
+      name: srv,
+      serviceType: srvType
+    });
+    const request = {
+      type,
+    };
+
+    if (typeof failedCallback === 'function') {
+      client.callService(
+        request,
+        function (result) {
+          callback(result);
+        },
+        function (message) {
+          failedCallback(message);
+        }
+      );
+    } else {
+      client.callService(request, function (result) {
+        callback(result);
+      });
+    }
+  }
+
+  /**
    * Decode a typedef array into a dictionary like `rosmsg show foo/bar`.
    *
    * @param {Object[]} defs - Array of type_def dictionary.
