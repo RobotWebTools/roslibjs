@@ -4,19 +4,53 @@ import SocketAdapter from "../src/core/SocketAdapter.js";
 describe("SocketAdapter fragment handling", () => {
   let client;
   let adapter;
+  let mockSocket;
 
   beforeEach(() => {
     client = {
       emit: vi.fn(),
       transportOptions: {},
     };
-    adapter = SocketAdapter(client);
+
+    // Create mock WebSocket
+    mockSocket = {
+      onopen: null,
+      onclose: null,
+      onerror: null,
+      onmessage: null,
+      readyState: 1, // WebSocket.OPEN
+      send: vi.fn(),
+      close: vi.fn(),
+    };
+
+    const options = {
+      onOpen: (event) => {
+        client.isConnected = true;
+        client.emit("connection", event);
+      },
+      onClose: (event) => {
+        client.isConnected = false;
+        client.emit("close", event);
+      },
+      onError: (event) => {
+        client.emit("error", event);
+      },
+      onMessage: (message) => {
+        // Simulate Ros.js message handling
+        if (message.op === "publish") {
+          client.emit(message.topic, message.msg);
+        }
+      },
+    };
+
+    adapter = new SocketAdapter(mockSocket, options);
     vi.clearAllMocks();
   });
 
   function sendFragment(id, total, fragments) {
     for (let i = 0; i < fragments.length; i++) {
-      adapter.onmessage({
+      // Simulate socket receiving a message
+      mockSocket.onmessage({
         data: JSON.stringify({
           op: "fragment",
           id,
@@ -50,7 +84,7 @@ describe("SocketAdapter fragment handling", () => {
     expect(client.emit).toHaveBeenCalledTimes(1);
   });
 
-  it("ignores extra fragments beyond integer total", () => {
+  it("handles extra fragments beyond integer total", () => {
     const id = "test3";
     const total = 2.1;
     const msg = { op: "publish", topic: "baz", msg: { data: 7 } };
@@ -72,7 +106,55 @@ describe("SocketAdapter fragment handling", () => {
   });
 
   it("ignores malformed fragments", () => {
-    adapter.onmessage({ data: JSON.stringify({ op: "fragment", id: "bad" }) });
+    mockSocket.onmessage({
+      data: JSON.stringify({ op: "fragment", id: "bad" }),
+    });
     expect(client.emit).not.toHaveBeenCalled();
+  });
+
+  describe("socket event handling", () => {
+    it("handles socket open event", () => {
+      mockSocket.onopen({ type: "open" });
+      expect(client.isConnected).toBe(true);
+      expect(client.emit).toHaveBeenCalledWith("connection", { type: "open" });
+    });
+
+    it("handles socket close event", () => {
+      client.isConnected = true;
+      mockSocket.onclose({ type: "close" });
+      expect(client.isConnected).toBe(false);
+      expect(client.emit).toHaveBeenCalledWith("close", { type: "close" });
+    });
+
+    it("handles socket error event", () => {
+      const errorEvent = { type: "error", message: "Connection failed" };
+      mockSocket.onerror(errorEvent);
+      expect(client.emit).toHaveBeenCalledWith("error", errorEvent);
+    });
+  });
+
+  describe("socket proxy methods", () => {
+    it("sends data when socket is open", () => {
+      const testData = "test message";
+      adapter.send(testData);
+      expect(mockSocket.send).toHaveBeenCalledWith(testData);
+    });
+
+    it("does not send data when socket is closed", () => {
+      mockSocket.readyState = 3; // WebSocket.CLOSED
+      const testData = "test message";
+      adapter.send(testData);
+      expect(mockSocket.send).not.toHaveBeenCalled();
+    });
+
+    it("closes the socket", () => {
+      adapter.close();
+      expect(mockSocket.close).toHaveBeenCalled();
+    });
+
+    it("returns socket readyState", () => {
+      mockSocket.readyState = 2; // WebSocket.CLOSING
+      expect(adapter.readyState).toBe(2);
+    });
   });
 });

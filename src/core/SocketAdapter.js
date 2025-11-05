@@ -1,25 +1,8 @@
-/**
- * Socket event handling utilities for handling events on either
- * WebSocket and TCP sockets
- *
- * Note to anyone reviewing this code: these functions are called
- * in the context of their parent object, unless bound
- * @fileOverview
- */
-
 import CBOR from "cbor-js";
 import typedArrayTagger from "../util/cborTypedArrayTags.js";
 import {
-  isRosbridgeActionFeedbackMessage,
-  isRosbridgeActionResultMessage,
-  isRosbridgeCallServiceMessage,
-  isRosbridgeCancelActionGoalMessage,
   isRosbridgeFragmentMessage,
   isRosbridgePngMessage,
-  isRosbridgePublishMessage,
-  isRosbridgeSendActionGoalMessage,
-  isRosbridgeServiceResponseMessage,
-  isRosbridgeStatusMessage,
 } from "../types/protocol.js";
 let BSON = null;
 // @ts-expect-error -- Workarounds for not including BSON in bundle. need to revisit
@@ -29,63 +12,66 @@ if (typeof bson !== "undefined") {
 }
 
 /**
- * Event listeners for a WebSocket or TCP socket to a JavaScript
- * ROS Client. Sets up Messages for a given topic to trigger an
- * event on the ROS client.
+ * Socket adapter that provides unified event handling for WebSocket and RTCDataChannel.
+ * Handles transport-level concerns like fragmentation, encoding/decoding, and delegates
+ * message processing to provided callbacks.
  *
- * @namespace SocketAdapter
- * @private
- * @param {import('./Ros.js').default} client
+ * @class SocketAdapter
  */
-export default function SocketAdapter(client) {
-  let decoder = null;
-  if (client.transportOptions.decoder) {
-    decoder = client.transportOptions.decoder;
+export default class SocketAdapter {
+  /**
+   * @param {WebSocket|RTCDataChannel|import("ws").WebSocket} socket - The socket to attach event listeners to
+   * @param {Object} options - Configuration options
+   * @param {function(Event): void} options.onOpen - Callback for socket open events
+   * @param {function(Event): void} options.onClose - Callback for socket close events
+   * @param {function(Event): void} options.onError - Callback for socket error events
+   * @param {function(import('../types/protocol.ts').RosbridgeMessage): void} options.onMessage - Callback for processed messages
+   * @param {function(any, function): void} [options.decoder] - Optional decoder function
+   */
+  constructor(socket, options) {
+    this.socket = socket;
+    this.onOpenCallback = options.onOpen;
+    this.onCloseCallback = options.onClose;
+    this.onErrorCallback = options.onError;
+    this.onMessageCallback = options.onMessage;
+    this.decoder = options.decoder || null;
+
+    /**
+     * Buffer Map for incoming message fragments
+     * @type {Map<string, {fragments: Array<string>, received: number, total: number}>}
+     */
+    this.fragmentBuffer = new Map();
+
+    this.setupEventListeners();
   }
 
   /**
-   * Buffer Map for incoming message fragments
-   * @type {Map<string, {fragments: Array<string>, received: number, total: number}>}
+   * Set up event listeners on the socket
+   * @private
    */
-  const fragmentBuffer = new Map();
+  setupEventListeners() {
+    this.socket.onopen = (event) => this.onopen(event);
+    this.socket.onclose = (event) => this.onclose(event);
+    this.socket.onerror = (event) => this.onerror(event);
+    this.socket.onmessage = (data) => this.onmessage(data);
+  }
 
   /**
    * @param {import('../types/protocol.ts').RosbridgeMessage} message
    */
-  function handleMessage(message) {
+  handleMessage(message) {
     if (isRosbridgeFragmentMessage(message)) {
-      handleFragment(message);
-    } else if (isRosbridgePublishMessage(message)) {
-      client.emit(message.topic, message.msg);
-    } else if (isRosbridgeServiceResponseMessage(message)) {
-      if (message.id) {
-        client.emit(message.id, message);
-      } else {
-        console.error("Received service response without ID");
-      }
-    } else if (isRosbridgeCallServiceMessage(message)) {
-      client.emit(message.service, message);
-    } else if (isRosbridgeSendActionGoalMessage(message)) {
-      client.emit(message.action, message);
-    } else if (isRosbridgeCancelActionGoalMessage(message)) {
-      client.emit(message.id, message);
-    } else if (isRosbridgeActionFeedbackMessage(message)) {
-      client.emit(message.id, message);
-    } else if (isRosbridgeActionResultMessage(message)) {
-      client.emit(message.id, message);
-    } else if (isRosbridgeStatusMessage(message)) {
-      if (message.id) {
-        client.emit("status:" + message.id, message);
-      } else {
-        client.emit("status", message);
-      }
+      this.handleFragment(message);
+    } else {
+      // Delegate message processing to the callback
+      this.onMessageCallback(message);
     }
   }
 
   /**
    * @param {import('../types/protocol.ts').RosbridgeFragmentMessage} fragment
    */
-  function handleFragment(fragment) {
+  handleFragment(fragment) {
     const { id, data, num, total } = fragment;
     if (
       !id ||
@@ -98,10 +84,14 @@ export default function SocketAdapter(client) {
     }
     // If total is a float, use its integer part for fragment count
     const totalInt = Math.floor(total);
-    if (!fragmentBuffer.has(id)) {
-      fragmentBuffer.set(id, { fragments: [], received: 0, total: totalInt });
+    if (!this.fragmentBuffer.has(id)) {
+      this.fragmentBuffer.set(id, {
+        fragments: [],
+        received: 0,
+        total: totalInt,
+      });
     }
-    const entry = fragmentBuffer.get(id);
+    const entry = this.fragmentBuffer.get(id);
 
     if (!entry) {
       // Should not happen, signal error
@@ -122,11 +112,11 @@ export default function SocketAdapter(client) {
         message = JSON.parse(fullData);
       } catch {
         // Failed to parse, ignore
-        fragmentBuffer.delete(id);
+        this.fragmentBuffer.delete(id);
         return;
       }
-      fragmentBuffer.delete(id);
-      handleMessage(message);
+      this.fragmentBuffer.delete(id);
+      this.handleMessage(message);
     }
   }
 
@@ -134,7 +124,7 @@ export default function SocketAdapter(client) {
    * @param {import('../types/protocol.ts').RosbridgeMessage} message
    * @param {(message: import('../types/protocol.ts').RosbridgeMessage) => void} callback
    */
-  function handlePng(message, callback) {
+  handlePng(message, callback) {
     if (isRosbridgePngMessage(message)) {
       // If in Node.js..
       if (typeof window === "undefined") {
@@ -156,7 +146,7 @@ export default function SocketAdapter(client) {
     }
   }
 
-  function decodeBSON(data, callback) {
+  decodeBSON(data, callback) {
     if (!BSON) {
       throw "Cannot process BSON encoded message without BSON header.";
     }
@@ -170,62 +160,87 @@ export default function SocketAdapter(client) {
     reader.readAsArrayBuffer(data);
   }
 
-  return {
-    /**
-     * Emit a 'connection' event on WebSocket connection.
-     *
-     * @param {function} event - The argument to emit with the event.
-     * @memberof SocketAdapter
-     */
-    onopen: function onOpen(event) {
-      client.isConnected = true;
-      client.emit("connection", event);
-    },
+  /**
+   * Send data through the socket
+   * @param {string|ArrayBuffer|Blob} data - Data to send
+   */
+  send(data) {
+    // Check readyState for both WebSocket and RTCDataChannel
+    const isOpen =
+      this.socket.readyState === 1 || // WebSocket.OPEN
+      this.socket.readyState === "open"; // RTCDataChannel 'open'
+    if (isOpen) {
+      // @ts-expect-error -- WebSocket and RTCDataChannel have compatible send methods in practice
+      this.socket.send(data);
+    }
+  }
 
-    /**
-     * Emit a 'close' event on WebSocket disconnection.
-     *
-     * @param {function} event - The argument to emit with the event.
-     * @memberof SocketAdapter
-     */
-    onclose: function onClose(event) {
-      client.isConnected = false;
-      client.emit("close", event);
-    },
+  /**
+   * Close the socket connection
+   */
+  close() {
+    this.socket.close();
+  }
 
-    /**
-     * Emit an 'error' event whenever there was an error.
-     *
-     * @param {function} event - The argument to emit with the event.
-     * @memberof SocketAdapter
-     */
-    onerror: function onError(event) {
-      client.emit("error", event);
-    },
+  /**
+   * Get the current connection state
+   * @returns {number|string} The socket ready state
+   */
+  get readyState() {
+    return this.socket.readyState;
+  }
 
-    /**
-     * Parse message responses from rosbridge and send to the appropriate
-     * topic, service, or param.
-     *
-     * @param {Object} data - The raw JSON message from rosbridge.
-     * @memberof SocketAdapter
-     */
-    onmessage: function onMessage(data) {
-      if (decoder) {
-        decoder(data.data, function (message) {
-          handleMessage(message);
-        });
-      } else if (typeof Blob !== "undefined" && data.data instanceof Blob) {
-        decodeBSON(data.data, function (message) {
-          handlePng(message, handleMessage);
-        });
-      } else if (data.data instanceof ArrayBuffer) {
-        const decoded = CBOR.decode(data.data, typedArrayTagger);
-        handleMessage(decoded);
-      } else {
-        const message = JSON.parse(typeof data === "string" ? data : data.data);
-        handlePng(message, handleMessage);
-      }
-    },
-  };
+  /**
+   * Handle socket open event.
+   *
+   * @param {Event} event - The open event
+   * @memberof SocketAdapter
+   */
+  onopen(event) {
+    this.onOpenCallback(event);
+  }
+
+  /**
+   * Handle socket close event.
+   *
+   * @param {Event} event - The close event
+   * @memberof SocketAdapter
+   */
+  onclose(event) {
+    this.onCloseCallback(event);
+  }
+
+  /**
+   * Handle socket error event.
+   *
+   * @param {Event} event - The error event
+   * @memberof SocketAdapter
+   */
+  onerror(event) {
+    this.onErrorCallback(event);
+  }
+
+  /**
+   * Handle incoming socket message and decode it appropriately.
+   *
+   * @param {Object} data - The raw message data from the socket.
+   * @memberof SocketAdapter
+   */
+  onmessage(data) {
+    if (this.decoder) {
+      this.decoder(data.data, (message) => {
+        this.handleMessage(message);
+      });
+    } else if (typeof Blob !== "undefined" && data.data instanceof Blob) {
+      this.decodeBSON(data.data, (message) => {
+        this.handlePng(message, this.handleMessage.bind(this));
+      });
+    } else if (data.data instanceof ArrayBuffer) {
+      const decoded = CBOR.decode(data.data, typedArrayTagger);
+      this.handleMessage(decoded);
+    } else {
+      const message = JSON.parse(typeof data === "string" ? data : data.data);
+      this.handlePng(message, this.handleMessage.bind(this));
+    }
+  }
 }
