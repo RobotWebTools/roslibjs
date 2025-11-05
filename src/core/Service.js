@@ -12,10 +12,10 @@ import { EventEmitter } from 'eventemitter3';
  */
 export default class Service extends EventEmitter {
   /**
-     * Stores a reference to the most recent service callback advertised so it can be removed from the EventEmitter during un-advertisement
-     * @private
-     * @type {((rosbridgeRequest) => any) | null}
-     */
+   * Stores a reference to the most recent service callback advertised so it can be removed from the EventEmitter during un-advertisement
+   * @private
+   * @type {((rosbridgeRequest) => any) | null}
+   */
   _serviceCallback = null;
   isAdvertised = false;
   /**
@@ -57,7 +57,7 @@ export default class Service extends EventEmitter {
    * @param {callServiceFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    * @param {number} [timeout] - Optional timeout, in seconds, for the service call. A non-positive value means no timeout.
    *                             If not provided, the rosbridge server will use its default value.
-  */
+   */
   callService(request, callback, failedCallback, timeout) {
     if (this.isAdvertised) {
       return;
@@ -156,8 +156,10 @@ export default class Service extends EventEmitter {
     this._pendingUnadvertise = true;
     
     try {
-      // Mark as not advertised first to prevent new service calls
-      // This ensures callService() will not be blocked while we're unadvertising
+      /*
+       * Mark as not advertised first to prevent new service calls
+       * This ensures callService() will not be blocked while we're unadvertising
+       */
       this.isAdvertised = false;
       
       // Remove the registered callback to stop processing new requests
@@ -166,9 +168,11 @@ export default class Service extends EventEmitter {
         this._serviceCallback = null;
       }
       
-      // Send the unadvertise message to the server
-      // Note: This is fire-and-forget, but the operation queue ensures
-      // no new advertise can start until this completes
+      /*
+       * Send the unadvertise message to the server
+       * Note: This is fire-and-forget, but the operation queue ensures
+       * no new advertise can start until this completes
+       */
       this.ros.callOnConnection({
         op: 'unadvertise_service',
         service: this.name

@@ -89,8 +89,10 @@ export default class SimpleActionServer extends EventEmitter {
       }
     });
 
-    // helper function to determine ordering of timestamps
-    // returns t1 < t2
+    /*
+     * helper function to determine ordering of timestamps
+     * returns t1 < t2
+     */
     var isEarlier = function (t1, t2) {
       if (t1.secs > t2.secs) {
         return false;
@@ -103,10 +105,12 @@ export default class SimpleActionServer extends EventEmitter {
       }
     };
 
-    // TODO: this may be more complicated than necessary, since I'm
-    // not sure if the callbacks can ever wind up with a scenario
-    // where we've been preempted by a next goal, it hasn't finished
-    // processing, and then we get a cancel message
+    /*
+     * TODO: this may be more complicated than necessary, since I'm
+     * not sure if the callbacks can ever wind up with a scenario
+     * where we've been preempted by a next goal, it hasn't finished
+     * processing, and then we get a cancel message
+     */
     cancelListener.subscribe((cancelMessage) => {
       // cancel ALL goals if both empty
       if (

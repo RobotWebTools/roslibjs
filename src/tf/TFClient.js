@@ -111,8 +111,10 @@ export default class TFClient extends EventEmitter {
       rate: this.rate
     };
 
-    // if we're running in groovy compatibility mode (the default)
-    // then use the action interface to tf2_web_republisher
+    /*
+     * if we're running in groovy compatibility mode (the default)
+     * then use the action interface to tf2_web_republisher
+     */
     if (this.ros.groovyCompatibility) {
       if (this.currentGoal) {
         this.currentGoal.cancel();
@@ -125,9 +127,11 @@ export default class TFClient extends EventEmitter {
       this.currentGoal.on('feedback', this.processTFArray.bind(this));
       this.currentGoal.send();
     } else {
-      // otherwise, use the service interface
-      // The service interface has the same parameters as the action,
-      // plus the timeout
+      /*
+       * otherwise, use the service interface
+       * The service interface has the same parameters as the action,
+       * plus the timeout
+       */
       goalMessage.timeout = this.topicTimeout;
       this.serviceClient.callService(goalMessage, this.processResponse.bind(this));
     }
@@ -141,14 +145,18 @@ export default class TFClient extends EventEmitter {
    * @param {Object} response - The service response containing the topic name.
    */
   processResponse(response) {
-    // Do not setup a topic subscription if already disposed. Prevents a race condition where
-    // The dispose() function is called before the service call receives a response.
+    /*
+     * Do not setup a topic subscription if already disposed. Prevents a race condition where
+     * The dispose() function is called before the service call receives a response.
+     */
     if (this._isDisposed) {
       return;
     }
 
-    // if we subscribed to a topic before, unsubscribe so
-    // the republisher stops publishing it
+    /*
+     * if we subscribed to a topic before, unsubscribe so
+     * the republisher stops publishing it
+     */
     if (this.currentTopic) {
       this.currentTopic.unsubscribe(this._subscribeCB);
     }

@@ -4,11 +4,13 @@ import * as ROSLIB from '../src/RosLib.js';
 describe('Transform', function() {
 
   describe('creation', function() {
-    // Fails test. Claims type is Object.
-    // it('should return an object of the correct type', function() {
-    //   var t = new ROSLIB.Transform();
-    //   expect(t).to.be.a('ROSLIB.Transform');
-    // });
+    /*
+     * Fails test. Claims type is Object.
+     * it('should return an object of the correct type', function() {
+     *   var t = new ROSLIB.Transform();
+     *   expect(t).to.be.a('ROSLIB.Transform');
+     * });
+     */
     it('should contain a valid vector and quaternion', function() {
       var t = new ROSLIB.Transform({
         translation: new ROSLIB.Vector3({ x: 1, y: 2, z: 3 }),
