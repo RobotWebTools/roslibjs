@@ -14,11 +14,36 @@ export default class Param {
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} options.name - The param name, like max_vel_x.
+   * @param {'int' | 'double'} [options.numberTypeHint] - The type hint for numbers. Defaults to 'int'.
    */
   constructor(options) {
     this.ros = options.ros;
     this.name = options.name;
+    this.numberTypeHint = options.numberTypeHint ?? 'int';
   }
+
+  /**
+   * Function to replace or transform values during JSON stringification.
+   *
+   * Stringification of a whole double value will result in a string without a decimal point.
+   * (e.g. 1.0 will be stringified as "1"). This causes conflict with ROS2 parameters, which incorrectly parse the incoming value as an integer.
+   * If dynamic typing is not enabled, this will cause the parameter set operation to fail.
+   *
+   * @param {string} _key - The key of the property being replaced (not used in the logic but needed for a replacer).
+   * @param {unknown} value - The value to be inspected or transformed.
+   * @returns {unknown} - The original value or a transformed representation of the value.
+   */
+  replacer = (_key, value) => {
+    if (typeof value === 'number' && this.numberTypeHint === 'double') {
+      let numberStr = String(value);
+      if (!numberStr.includes('.')) {
+        numberStr += '.0';
+      }
+      return numberStr;
+    }
+    return value;
+  };
+
   /**
    * @callback getCallback
    * @param {Object} value - The value of the param from ROS.
@@ -79,7 +104,7 @@ export default class Param {
 
     var request = {
       name: this.name,
-      value: JSON.stringify(value)
+      value: JSON.stringify(value, this.replacer)
     };
 
     paramClient.callService(
