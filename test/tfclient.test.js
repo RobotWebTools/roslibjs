@@ -12,7 +12,7 @@ describe('TFClient', function() {
        * from the server.
        */
 
-      var dummyROS = {
+      const dummyROS = {
         idCounter: 0,
         on: () => {},
         off: () => {},
@@ -20,13 +20,13 @@ describe('TFClient', function() {
       };
 
       // @ts-expect-error -- stub impl
-      var tfclient = new ROSLIB.TFClient({ ros: dummyROS });
+      const tfclient = new ROSLIB.TFClient({ ros: dummyROS });
       tfclient.dispose();
 
       // Simulated a response from the server after the client is already disposed
       tfclient.processResponse({ topic_name: '/repub_1' });
 
-      expect(tfclient.currentTopic).to.be.false;
+      expect(tfclient.currentTopic).toBeFalsy();
     });
   });
 

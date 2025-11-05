@@ -3,11 +3,11 @@ import * as ROSLIB from '../../src/RosLib.js';
 
 describe('Topics Example', function() {
 
-  var ros = new ROSLIB.Ros({
+  const ros = new ROSLIB.Ros({
     url: 'ws://localhost:9090'
   });
 
-  var example = ros.Topic({
+  const example = ros.Topic({
     name: '/example_topic',
     messageType: 'std_msgs/String'
   });
@@ -15,39 +15,39 @@ describe('Topics Example', function() {
   function format(msg) {
     return {data: msg};
   }
-  var messages1 = ['Hello Example2!', 'Whats good?'].map(format);
-  var messages2 = ['Hi there', 'this example working'].map(format);
+  const messages1 = ['Hello Example2!', 'Whats good?'].map(format);
+  const messages2 = ['Hi there', 'this example working'].map(format);
 
-  var example2 = ros.Topic({
+  const example2 = ros.Topic({
     name: '/example_topic',
     messageType: 'std_msgs/String'
   });
 
   it('Listening and publishing to a topic', () => new Promise((done) =>  {
     // Kind of harry...
-    var topic1msg = messages1[0],
+    let topic1msg = messages1[0],
       topic2msg = {};
     example.subscribe(function(message) {
       if (message.data === topic1msg.data) {return;}
       topic1msg = messages1[0];
       expect(message).to.be.eql(messages2.shift());
       if (messages1.length) {example.publish(topic1msg);}
-      else {done();}
+      else {done(message);}
     });
     example2.subscribe(function(message) {
       if (message.data === topic2msg.data) {return;}
       topic2msg = messages2[0];
       expect(message).to.be.eql(messages1.shift());
       if (messages2.length) {example2.publish(topic2msg);}
-      else {done();}
+      else {done(message);}
     });
     example.publish(topic1msg);
   }));
 
   it('unsubscribe doesn\'t affect other topics', () => new Promise((done) =>  {
-    example2.subscribe(function(message) {
+    example2.subscribe(function() {
       // should never be called
-      expect(false).to.be.ok;
+      expect(false).toBeTruthy();
     });
     example.unsubscribe();
     example2.removeAllListeners('message');
@@ -55,7 +55,7 @@ describe('Topics Example', function() {
       expect(message).to.be.eql({
         data: 'hi'
       });
-      done();
+      done(message);
     });
     example.publish({
       data: 'hi'
@@ -67,11 +67,11 @@ describe('Topics Example', function() {
     example2.unadvertise();
     example2.removeAllListeners('message');
     example2.subscribe(function(message) {
-      expect(example2.isAdvertised).to.be.false;
+      expect(example2.isAdvertised).toBeFalsy();
       expect(message).to.be.eql({
         data: 'hi'
       });
-      done();
+      done(message);
     });
     example.publish({
       data: 'hi'
@@ -82,7 +82,7 @@ describe('Topics Example', function() {
     example.unsubscribe();
     example2.unsubscribe();
     ros.on('/example_topic', function() {
-      expect(false).to.be.ok;
+      expect(false).toBeTruthy();
     });
     example.publish({
       data: 'sup'

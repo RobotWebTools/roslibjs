@@ -4,7 +4,7 @@ import * as ROSLIB from '../../src/RosLib.js';
 describe('Fibonacci Example', function() {
   it('Fibonacci', () => new Promise((done) =>  {
 
-    var ros = new ROSLIB.Ros({
+    const ros = new ROSLIB.Ros({
       url: 'ws://localhost:9090'
     });
     /*
@@ -12,14 +12,14 @@ describe('Fibonacci Example', function() {
      * ----------------
      */
 
-    var fibonacciClient = new ROSLIB.ActionClient({
+    const fibonacciClient = new ROSLIB.ActionClient({
       ros: ros,
       serverName: '/fibonacci',
       actionName: 'actionlib_tutorials/FibonacciAction'
     });
 
     // Create a goal.
-    var goal = new ROSLIB.Goal({
+    const goal = new ROSLIB.Goal({
       actionClient: fibonacciClient,
       goalMessage: {
         order: 7
@@ -27,7 +27,7 @@ describe('Fibonacci Example', function() {
     });
 
     // Print out their output into the terminal.
-    var items = [
+    const items = [
       {'sequence': [0, 1, 1]},
       {'sequence': [0, 1, 1, 2]},
       {'sequence': [0, 1, 1, 2, 3]},

@@ -4,8 +4,6 @@
  */
 
 import Topic from '../core/Topic.js';
-import Message from '../core/Message.js';
-import Ros from '../core/Ros.js';
 import { EventEmitter } from 'eventemitter3';
 
 /**
@@ -36,7 +34,7 @@ export default class ActionClient extends EventEmitter {
   cancelTopic;
   /**
    * @param {Object} options
-   * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+   * @param {import('../core/Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} options.serverName - The action server name, like '/fibonacci'.
    * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
    * @param {number} [options.timeout] - The timeout length when connecting to the action server.
@@ -102,7 +100,7 @@ export default class ActionClient extends EventEmitter {
       this.statusListener.subscribe((statusMessage) => {
         this.receivedStatus = true;
         statusMessage.status_list.forEach((status) => {
-          var goal = this.goals[status.goal_id.id];
+          const goal = this.goals[status.goal_id.id];
           if (goal) {
             goal.emit('status', status);
           }
@@ -113,7 +111,7 @@ export default class ActionClient extends EventEmitter {
     // subscribe the the feedback topic
     if (!this.omitFeedback) {
       this.feedbackListener.subscribe((feedbackMessage) => {
-        var goal = this.goals[feedbackMessage.status.goal_id.id];
+        const goal = this.goals[feedbackMessage.status.goal_id.id];
         if (goal) {
           goal.emit('status', feedbackMessage.status);
           goal.emit('feedback', feedbackMessage.feedback);
@@ -124,7 +122,7 @@ export default class ActionClient extends EventEmitter {
     // subscribe to the result topic
     if (!this.omitResult) {
       this.resultListener.subscribe((resultMessage) => {
-        var goal = this.goals[resultMessage.status.goal_id.id];
+        const goal = this.goals[resultMessage.status.goal_id.id];
 
         if (goal) {
           goal.emit('status', resultMessage.status);
@@ -146,7 +144,7 @@ export default class ActionClient extends EventEmitter {
    * Cancel all goals associated with this ActionClient.
    */
   cancel() {
-    var cancelMessage = {};
+    const cancelMessage = {};
     this.cancelTopic.publish(cancelMessage);
   }
   /**

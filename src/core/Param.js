@@ -4,7 +4,6 @@
  */
 
 import Service from './Service.js';
-import Ros from '../core/Ros.js';
 
 /**
  * A ROS parameter.
@@ -14,7 +13,7 @@ export default class Param {
   name;
   /**
    * @param {Object} options
-   * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+   * @param {import('../core/Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} options.name - The param name, like max_vel_x.
    */
   constructor({
@@ -39,13 +38,13 @@ export default class Param {
    * @param {getFailedCallback} [failedCallback] - The callback function when the service call failed or the parameter retrieval was unsuccessful.
    */
   get(callback, failedCallback) {
-    var paramClient = new Service({
+    const paramClient = new Service({
       ros: this.ros,
       name: 'rosapi/get_param',
       serviceType: 'rosapi/GetParam'
     });
 
-    var request = { name: this.name };
+    const request = { name: this.name };
 
     paramClient.callService(
       request,
@@ -53,7 +52,7 @@ export default class Param {
         if (result.successful === false && failedCallback) {
           failedCallback(result.reason);
         } else {
-          var value = JSON.parse(result.value);
+          const value = JSON.parse(result.value);
           callback(value);
         }
       },
@@ -76,13 +75,13 @@ export default class Param {
    * @param {setParamFailedCallback} [failedCallback] - The callback function when the service call failed or the parameter setting was unsuccessful.
    */
   set(value, callback, failedCallback) {
-    var paramClient = new Service({
+    const paramClient = new Service({
       ros: this.ros,
       name: 'rosapi/set_param',
       serviceType: 'rosapi/SetParam'
     });
 
-    var request = {
+    const request = {
       name: this.name,
       value: JSON.stringify(value)
     };
@@ -106,13 +105,13 @@ export default class Param {
    * @param {setParamFailedCallback} [failedCallback] - The callback function when the service call failed or the parameter deletion was unsuccessful.
    */
   delete(callback, failedCallback) {
-    var paramClient = new Service({
+    const paramClient = new Service({
       ros: this.ros,
       name: 'rosapi/delete_param',
       serviceType: 'rosapi/DeleteParam'
     });
 
-    var request = {
+    const request = {
       name: this.name
     };
 

@@ -24,7 +24,7 @@ describe('Service', () => {
       serviceType: 'std_srvs/Trigger',
       name: '/test_service'
     })
-    const response = await new Promise((resolve, reject) => client.callService({}, resolve, reject));
+    const response = await new Promise((resolve, reject) => { client.callService({}, resolve, reject); });
     expect(response).toEqual({success: true, message: 'foo'});
     // Make sure un-advertisement actually disposes of the event handler
     expect(ros.listenerCount(server.name)).toEqual(1);
@@ -47,7 +47,7 @@ describe('Service', () => {
       serviceType: 'std_srvs/Trigger',
       name: '/test_service'
     })
-    const response = await new Promise((resolve, reject) => client.callService({}, resolve, reject));
+    const response = await new Promise((resolve, reject) => { client.callService({}, resolve, reject); });
     expect(response).toEqual({success: true, message: 'bar'});
     // Make sure un-advertisement actually disposes of the event handler
     expect(ros.listenerCount(server.name)).toEqual(1);
