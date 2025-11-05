@@ -213,7 +213,7 @@ export default class Service extends EventEmitter {
       }
 
       this._serviceCallback = async (rosbridgeRequest) => {
-        /** @type {{op: string, service: string, values?: TResponse, result: boolean, id?: string}} */
+        /** @type {import('../types/protocol.ts').RosbridgeServiceResponseMessage<TResponse>} */
         const rosbridgeResponse = {
           op: 'service_response',
           service: this.name,

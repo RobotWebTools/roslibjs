@@ -1,5 +1,18 @@
-interface RosbridgeMessage {
+export interface RosbridgeMessage {
   op: string;
+}
+
+export interface RosbridgeStatusMessage extends RosbridgeMessage {
+  op: 'status';
+  id?: string;
+  level: string;
+  msg: string;
+}
+
+export function isRosbridgeStatusMessage(
+  message: RosbridgeMessage,
+): message is RosbridgeStatusMessage {
+  return message.op === 'status';
 }
 
 export interface RosbridgeFragmentMessage extends RosbridgeMessage {
@@ -35,6 +48,8 @@ export interface RosbridgeAdvertiseMessage extends RosbridgeMessage {
   id?: string;
   type: string;
   topic: string;
+  latch?: boolean;
+  queue_size?: number;
 }
 
 export function isRosbridgeAdvertiseMessage(
@@ -176,7 +191,7 @@ export function isRosbridgeUnadvertiseActionMessage(
   return message.op === 'unadvertise_action';
 }
 
-export interface RosbridgeSendActionGoalMessage<TArgs = unknown[]>
+export interface RosbridgeSendActionGoalMessage<TArgs = unknown>
   extends RosbridgeMessage {
   op: 'send_action_goal';
   id?: string;
@@ -214,9 +229,9 @@ export interface RosbridgeActionFeedbackMessage<TFeedback = unknown>
   values: TFeedback;
 }
 
-export function isRosbridgeActionFeedbackMessage(
+export function isRosbridgeActionFeedbackMessage<TFeedback = unknown>(
   message: RosbridgeMessage,
-): message is RosbridgeActionFeedbackMessage {
+): message is RosbridgeActionFeedbackMessage<TFeedback> {
   return message.op === 'action_feedback';
 }
 

@@ -29,6 +29,8 @@ export default class Topic extends EventEmitter {
   queue_size;
   queue_length;
   reconnect_on_close;
+  /** @type {(message: import('../types/protocol.ts').RosbridgeSubscribeMessage | import('../types/protocol.ts').RosbridgeAdvertiseMessage) => void}*/
+  callForSubscribeAndAdvertise;
   /**
    * @param {Object} options
    * @param {import('./Ros.js').default} options.ros - The ROSLIB.Ros connection handle.

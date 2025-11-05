@@ -126,7 +126,7 @@ export default class Ros extends EventEmitter {
   /**
    * Send an encoded message over the WebSocket.
    *
-   * @param {Object} messageEncoded - The encoded message to be sent.
+   * @param {string} messageEncoded - The encoded message to be sent.
    */
   sendEncodedMessage(messageEncoded) {
     if (!this.isConnected) {
@@ -145,7 +145,8 @@ export default class Ros extends EventEmitter {
    * Send the message over the WebSocket, but queue the message up if not yet
    * connected.
    *
-   * @param {Object} message - The message to be sent.
+   * @template {import('../types/protocol.ts').RosbridgeMessage} TMessage
+   * @param {TMessage} message - The message to be sent.
    */
   callOnConnection(message) {
     if (this.transportOptions.encoder) {
