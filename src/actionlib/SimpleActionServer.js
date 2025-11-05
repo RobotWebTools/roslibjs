@@ -175,7 +175,7 @@ export default class SimpleActionServer extends EventEmitter {
         result: result
       };
       this.resultPublisher.publish(resultMessage);
-  
+
       this.statusMessage.status_list = [];
       if (this.nextGoal) {
         this.currentGoal = this.nextGoal;
@@ -198,7 +198,7 @@ export default class SimpleActionServer extends EventEmitter {
         result: result
       };
       this.resultPublisher.publish(resultMessage);
-  
+
       this.statusMessage.status_list = [];
       if (this.nextGoal) {
         this.currentGoal = this.nextGoal;
@@ -227,13 +227,13 @@ export default class SimpleActionServer extends EventEmitter {
    * Handle case where client requests preemption.
    */
   setPreempted() {
-    if (this.currentGoal !== null) { 
+    if (this.currentGoal !== null) {
       this.statusMessage.status_list = [];
       var resultMessage = {
         status: { goal_id: this.currentGoal.goal_id, status: 2 }
       };
       this.resultPublisher.publish(resultMessage);
-  
+
       if (this.nextGoal) {
         this.currentGoal = this.nextGoal;
         this.nextGoal = null;

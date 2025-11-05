@@ -140,7 +140,7 @@ export default class Service extends EventEmitter {
       this.emit('error', err);
       throw err;
     });
-    
+
     return this._operationQueue;
   }
 
@@ -152,22 +152,22 @@ export default class Service extends EventEmitter {
     if (!this.isAdvertised || this._pendingUnadvertise) {
       return;
     }
-    
+
     this._pendingUnadvertise = true;
-    
+
     try {
       /*
        * Mark as not advertised first to prevent new service calls
        * This ensures callService() will not be blocked while we're unadvertising
        */
       this.isAdvertised = false;
-      
+
       // Remove the registered callback to stop processing new requests
       if (this._serviceCallback) {
         this.ros.off(this.name, this._serviceCallback);
         this._serviceCallback = null;
       }
-      
+
       /*
        * Send the unadvertise message to the server
        * Note: This is fire-and-forget, but the operation queue ensures
@@ -190,7 +190,7 @@ export default class Service extends EventEmitter {
       this.emit('error', err);
       throw err;
     });
-    
+
     return this._operationQueue;
   }
 
@@ -205,7 +205,7 @@ export default class Service extends EventEmitter {
       if (this.isAdvertised) {
         await this._doUnadvertise();
       }
-      
+
       this._serviceCallback = async (rosbridgeRequest) => {
         /** @type {{op: string, service: string, values?: TResponse, result: boolean, id?: string}} */
         let rosbridgeResponse = {
@@ -234,7 +234,7 @@ export default class Service extends EventEmitter {
       this.emit('error', err);
       throw err;
     });
-    
+
     return this._operationQueue;
   }
 }

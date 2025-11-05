@@ -4,7 +4,7 @@ import * as ROSLIB from '../src/RosLib.js';
 describe('TFClient', function() {
 
   describe('dispose', function() {
-    
+
     it('should not subscribe to republished topic if already disposed', function() {
       /*
        * This test makes sure we do not subscribe to the republished topic if the

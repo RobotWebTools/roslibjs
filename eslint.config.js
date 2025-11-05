@@ -66,7 +66,8 @@ export default tseslint.config(
       // Disabled to allow namespaced ROS message types since that's how we think about message types in ROS
       '@typescript-eslint/no-namespace': 0,
       indent: [2, 2],
-      'multiline-comment-style': 2
+      'multiline-comment-style': 2,
+      'no-trailing-spaces': 2
     },
     files: ['**/*.{js,jsx,ts,tsx,cjs}'],
   }
