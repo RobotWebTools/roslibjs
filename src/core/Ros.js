@@ -282,6 +282,7 @@ export default class Ros extends EventEmitter {
       });
     }
   }
+
   /**
    * @callback getServicesCallback
    * @param {string[]} services - Array of service names.
