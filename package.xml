@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <package>
   <name>roslibjs</name>
-  <version>1.4.1</version>
+  <version>2.0.0</version>
   <description>The Robot Web Tools ROS JavaScript Library</description>
 
   <maintainer email="robotwebtools@googlegroups.com">Robot Web Tools</maintainer>
