@@ -10,18 +10,18 @@ import {EventEmitter} from 'eventemitter3';
  */
 export default class ROS2TFClient extends EventEmitter {
   /**
-     * @param {Object} options
-     * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
-     * @param {string} [options.fixedFrame=base_link] - The fixed frame.
-     * @param {number} [options.angularThres=2.0] - The angular threshold for the TF republisher.
-     * @param {number} [options.transThres=0.01] - The translation threshold for the TF republisher.
-     * @param {number} [options.rate=10.0] - The rate for the TF republisher.
-     * @param {number} [options.updateDelay=50] - The time (in ms) to wait after a new subscription
-     *     to update the TF republisher's list of TFs.
-     * @param {number} [options.topicTimeout=2.0] - The timeout parameter for the TF republisher.
-     * @param {string} [options.serverName="/tf2_web_republisher"] - The name of the tf2_web_republisher server.
-     * @param {string} [options.repubServiceName="/republish_tfs"] - The name of the republish_tfs service (non groovy compatibility mode only).
-     */
+   * @param {Object} options
+   * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+   * @param {string} [options.fixedFrame=base_link] - The fixed frame.
+   * @param {number} [options.angularThres=2.0] - The angular threshold for the TF republisher.
+   * @param {number} [options.transThres=0.01] - The translation threshold for the TF republisher.
+   * @param {number} [options.rate=10.0] - The rate for the TF republisher.
+   * @param {number} [options.updateDelay=50] - The time (in ms) to wait after a new subscription
+   *     to update the TF republisher's list of TFs.
+   * @param {number} [options.topicTimeout=2.0] - The timeout parameter for the TF republisher.
+   * @param {string} [options.serverName="/tf2_web_republisher"] - The name of the tf2_web_republisher server.
+   * @param {string} [options.repubServiceName="/republish_tfs"] - The name of the republish_tfs service (non groovy compatibility mode only).
+   */
   constructor(options) {
     super();
     this.ros = options.ros;
@@ -54,11 +54,11 @@ export default class ROS2TFClient extends EventEmitter {
   }
 
   /**
-     * Process the incoming TF message and send them out using the callback
-     * functions.
-     *
-     * @param {Object} tf - The TF message from the server.
-     */
+   * Process the incoming TF message and send them out using the callback
+   * functions.
+   *
+   * @param {Object} tf - The TF message from the server.
+   */
   processTFArray(tf) {
     let that = this;
     tf.transforms.forEach(function (transform) {
@@ -80,9 +80,9 @@ export default class ROS2TFClient extends EventEmitter {
   }
 
   /**
-     * Create and send a new goal (or service request) to the tf2_web_republisher
-     * based on the current list of TFs.
-     */
+   * Create and send a new goal (or service request) to the tf2_web_republisher
+   * based on the current list of TFs.
+   */
   updateGoal() {
     const goalMessage = {
       source_frames: Object.keys(this.frameInfos),
@@ -112,15 +112,15 @@ export default class ROS2TFClient extends EventEmitter {
   }
 
   /**
-     * @callback subscribeCallback
-     * @param {Transform} callback.transform - The transform data.
-     */
+   * @callback subscribeCallback
+   * @param {Transform} callback.transform - The transform data.
+   */
   /**
-     * Subscribe to the given TF frame.
-     *
-     * @param {string} frameID - The TF frame to subscribe to.
-     * @param {subscribeCallback} callback - Function with the following params:
-     */
+   * Subscribe to the given TF frame.
+   *
+   * @param {string} frameID - The TF frame to subscribe to.
+   * @param {subscribeCallback} callback - Function with the following params:
+   */
   subscribe(frameID, callback) {
     // remove leading slash, if it's there
     if (frameID[0] === '/') {
@@ -145,11 +145,11 @@ export default class ROS2TFClient extends EventEmitter {
   }
 
   /**
-     * Unsubscribe from the given TF frame.
-     *
-     * @param {string} frameID - The TF frame to unsubscribe from.
-     * @param {function} callback - The callback function to remove.
-     */
+   * Unsubscribe from the given TF frame.
+   *
+   * @param {string} frameID - The TF frame to unsubscribe from.
+   * @param {function} callback - The callback function to remove.
+   */
   unsubscribe(frameID, callback) {
     // remove leading slash, if it's there
     if (frameID[0] === '/') {
@@ -167,8 +167,8 @@ export default class ROS2TFClient extends EventEmitter {
   }
 
   /**
-     * Unsubscribe and unadvertise all topics associated with this TFClient.
-     */
+   * Unsubscribe and unadvertise all topics associated with this TFClient.
+   */
   dispose() {
     this._isDisposed = true;
   }

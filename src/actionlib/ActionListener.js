@@ -16,7 +16,7 @@ import { EventEmitter } from 'eventemitter3';
  *  * 'feedback' - The feedback messages received from the action server.
  *  * 'result' - The result returned from the action server.
  *
-
+ *
  */
 export default class ActionListener extends EventEmitter {
   /**

@@ -5,11 +5,13 @@ import * as ROSLIB from '../src/RosLib.js';
 describe('Quaternion', function() {
 
   describe('creation', function() {
-    // Test fails. Claims returning Object.
-    // it('should return an object of the correct type', function() {
-    //   var q = new ROSLIB.Quaternion();
-    //   expect(q).to.be.a('ROSLIB.Quaternion');
-    // });
+    /*
+     * Test fails. Claims returning Object.
+     * it('should return an object of the correct type', function() {
+     *   var q = new ROSLIB.Quaternion();
+     *   expect(q).to.be.a('ROSLIB.Quaternion');
+     * });
+     */
     it('should return an identity quaternion when no params are specified', function() {
       var q = new ROSLIB.Quaternion();
       expect(q.x).to.equal(0);

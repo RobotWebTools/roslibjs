@@ -19,8 +19,10 @@ ros.on('close', function() {
   console.log('Connection to websocket server closed.');
 });
 
-// Publishing a Topic
-// ------------------
+/*
+ * Publishing a Topic
+ * ------------------
+ */
 
 var cmdVel = new ROSLIB.Topic({
   ros: ros,

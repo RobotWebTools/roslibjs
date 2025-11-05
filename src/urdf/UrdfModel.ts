@@ -11,8 +11,10 @@ import UrdfJoint from './UrdfJoint.js';
 import { isElement } from './UrdfUtils.js';
 import { UrdfAttrs } from './UrdfTypes.js';
 
-// See https://developer.mozilla.org/docs/XPathResult#Constants
-// const XPATH_FIRST_ORDERED_NODE_TYPE = 9;
+/*
+ * See https://developer.mozilla.org/docs/XPathResult#Constants
+ * const XPATH_FIRST_ORDERED_NODE_TYPE = 9;
+ */
 
 export interface UrdfModelOptions {
   /**

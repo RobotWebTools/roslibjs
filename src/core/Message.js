@@ -8,7 +8,7 @@
  *
  * @constructor
  * @template T
-*/
+ */
 export default class Message {
   /**
    * @param {T} [values={}] - An object matching the fields defined in the .msg definition file.

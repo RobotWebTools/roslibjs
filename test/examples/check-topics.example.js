@@ -2,8 +2,10 @@ import { describe, it, expect } from 'vitest';
 import * as ROSLIB from '../../src/RosLib.js';
 
 var expectedTopics = [
-  // '/turtle1/cmd_vel', '/turtle1/color_sensor', '/turtle1/pose',
-  // '/turtle2/cmd_vel', '/turtle2/color_sensor', '/turtle2/pose',
+  /*
+   * '/turtle1/cmd_vel', '/turtle1/color_sensor', '/turtle1/pose',
+   * '/turtle2/cmd_vel', '/turtle2/color_sensor', '/turtle2/pose',
+   */
   '/tf2_web_republisher/status', '/tf2_web_republisher/feedback',
   // '/tf2_web_republisher/goal', '/tf2_web_republisher/result',
   '/fibonacci/feedback', '/fibonacci/status', '/fibonacci/result'

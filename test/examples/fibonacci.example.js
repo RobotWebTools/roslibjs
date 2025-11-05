@@ -7,8 +7,10 @@ describe('Fibonacci Example', function() {
     var ros = new ROSLIB.Ros({
       url: 'ws://localhost:9090'
     });
-    // The ActionClient
-    // ----------------
+    /*
+     * The ActionClient
+     * ----------------
+     */
 
     var fibonacciClient = new ROSLIB.ActionClient({
       ros: ros,
@@ -44,9 +46,11 @@ describe('Fibonacci Example', function() {
       done();
     });
 
-    // Send the goal to the action server.
-    // The timeout is to allow rosbridge to properly subscribe all the
-    // Action topics - otherwise, the first feedback message might get lost
+    /*
+     * Send the goal to the action server.
+     * The timeout is to allow rosbridge to properly subscribe all the
+     * Action topics - otherwise, the first feedback message might get lost
+     */
     setTimeout(function(){
       goal.send();
     }, 100);
