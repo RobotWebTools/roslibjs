@@ -4,7 +4,6 @@
  */
 
 import { EventEmitter } from 'eventemitter3';
-import Ros from '../core/Ros.js';
 import { GoalStatus } from '../core/GoalStatus.ts';
 
 /**
@@ -37,7 +36,7 @@ export default class Action extends EventEmitter {
   actionType;
   /**
    * @param {Object} options
-   * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+   * @param {import('../core/Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} options.name - The action name, like '/fibonacci'.
    * @param {string} options.actionType - The action type, like 'example_interfaces/Fibonacci'.
    */
@@ -79,7 +78,7 @@ export default class Action extends EventEmitter {
       return;
     }
 
-    var actionGoalId =
+    const actionGoalId =
       'send_action_goal:' + this.name + ':' + ++this.ros.idCounter;
 
     if (resultCallback || failedCallback) {
@@ -102,7 +101,7 @@ export default class Action extends EventEmitter {
       });
     }
 
-    var call = {
+    const call = {
       op: 'send_action_goal',
       id: actionGoalId,
       action: this.name,
@@ -121,7 +120,7 @@ export default class Action extends EventEmitter {
    * @param {string} id - The ID of the action goal to cancel.
    */
   cancelGoal(id) {
-    var call = {
+    const call = {
       op: 'cancel_action_goal',
       id: id,
       action: this.name
@@ -176,7 +175,7 @@ export default class Action extends EventEmitter {
    * @param {TGoal} rosbridgeRequest.args - The arguments of the action goal.
    */
   _executeAction(rosbridgeRequest) {
-    var id = rosbridgeRequest.id;
+    const id = rosbridgeRequest.id;
 
     // If a cancellation callback exists, call it when a cancellation event is emitted.
     if (typeof id === 'string') {
@@ -203,7 +202,7 @@ export default class Action extends EventEmitter {
    * @param {TFeedback} feedback - The feedback to send.
    */
   sendFeedback(id, feedback) {
-    var call = {
+    const call = {
       op: 'action_feedback',
       id: id,
       action: this.name,
@@ -219,7 +218,7 @@ export default class Action extends EventEmitter {
    * @param {TResult} result - The result to set.
    */
   setSucceeded(id, result) {
-    var call = {
+    const call = {
       op: 'action_result',
       id: id,
       action: this.name,
@@ -237,7 +236,7 @@ export default class Action extends EventEmitter {
    * @param {TResult} result - The result to set.
    */
   setCanceled(id, result) {
-    var call = {
+    const call = {
       op: 'action_result',
       id: id,
       action: this.name,
@@ -254,7 +253,7 @@ export default class Action extends EventEmitter {
    * @param {string} id - The action goal ID.
    */
   setFailed(id) {
-    var call = {
+    const call = {
       op: 'action_result',
       id: id,
       action: this.name,

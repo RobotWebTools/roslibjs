@@ -3,7 +3,6 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-import Ros from './Ros.js';
 import { EventEmitter } from 'eventemitter3';
 
 /**
@@ -33,7 +32,7 @@ export default class Service extends EventEmitter {
   serviceType;
   /**
    * @param {Object} options
-   * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+   * @param {import('./Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} options.name - The service name, like '/add_two_ints'.
    * @param {string} options.serviceType - The service type, like 'rospy_tutorials/AddTwoInts'.
    */
@@ -70,7 +69,7 @@ export default class Service extends EventEmitter {
       return;
     }
 
-    var serviceCallId =
+    const serviceCallId =
       'call_service:' + this.name + ':' + (++this.ros.idCounter).toString();
 
     if (callback || failedCallback) {
@@ -85,7 +84,7 @@ export default class Service extends EventEmitter {
       });
     }
 
-    var call = {
+    const call = {
       op: 'call_service',
       id: serviceCallId,
       service: this.name,
@@ -119,10 +118,10 @@ export default class Service extends EventEmitter {
 
       // Store the new callback for removal during un-advertisement
       this._serviceCallback = (rosbridgeRequest) => {
-        var response = {};
-        var success = callback(rosbridgeRequest.args, response);
+        const response = {};
+        const success = callback(rosbridgeRequest.args, response);
 
-        var call = {
+        const call = {
           op: 'service_response',
           service: this.name,
           values: response,
@@ -215,7 +214,7 @@ export default class Service extends EventEmitter {
 
       this._serviceCallback = async (rosbridgeRequest) => {
         /** @type {{op: string, service: string, values?: TResponse, result: boolean, id?: string}} */
-        let rosbridgeResponse = {
+        const rosbridgeResponse = {
           op: 'service_response',
           service: this.name,
           result: false

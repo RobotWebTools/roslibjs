@@ -4,7 +4,6 @@
  */
 
 import Topic from '../core/Topic.js';
-import Ros from '../core/Ros.js';
 import { EventEmitter } from 'eventemitter3';
 
 /**
@@ -31,7 +30,7 @@ export default class SimpleActionServer extends EventEmitter {
   cancelSubscriber;
   /**
    * @param {Object} options
-   * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+   * @param {import('../core/Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} options.serverName - The action server name, like '/fibonacci'.
    * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
    */
@@ -53,7 +52,7 @@ export default class SimpleActionServer extends EventEmitter {
     });
     this.feedbackPublisher.advertise();
 
-    var statusPublisher = new Topic({
+    const statusPublisher = new Topic({
       ros: this.ros,
       name: this.serverName + '/status',
       messageType: 'actionlib_msgs/GoalStatusArray'
@@ -68,13 +67,13 @@ export default class SimpleActionServer extends EventEmitter {
     this.resultPublisher.advertise();
 
     // create and subscribe to listeners
-    var goalListener = new Topic({
+    const goalListener = new Topic({
       ros: this.ros,
       name: this.serverName + '/goal',
       messageType: this.actionName + 'Goal'
     });
 
-    var cancelListener = new Topic({
+    const cancelListener = new Topic({
       ros: this.ros,
       name: this.serverName + '/cancel',
       messageType: 'actionlib_msgs/GoalID'
@@ -106,7 +105,7 @@ export default class SimpleActionServer extends EventEmitter {
      * helper function to determine ordering of timestamps
      * returns t1 < t2
      */
-    var isEarlier = function (t1, t2) {
+    const isEarlier = function (t1, t2) {
       if (t1.secs > t2.secs) {
         return false;
       } else if (t1.secs < t2.secs) {
@@ -166,9 +165,9 @@ export default class SimpleActionServer extends EventEmitter {
 
     // publish status at pseudo-fixed rate; required for clients to know they've connected
     setInterval(() => {
-      var currentTime = new Date();
-      var secs = Math.floor(currentTime.getTime() / 1000);
-      var nsecs = Math.round(
+      const currentTime = new Date();
+      const secs = Math.floor(currentTime.getTime() / 1000);
+      const nsecs = Math.round(
         1000000000 * (currentTime.getTime() / 1000 - secs)
       );
       this.statusMessage.header.stamp.secs = secs;
@@ -183,7 +182,7 @@ export default class SimpleActionServer extends EventEmitter {
    */
   setSucceeded(result) {
     if (this.currentGoal !== null) {
-      var resultMessage = {
+      const resultMessage = {
         status: { goal_id: this.currentGoal.goal_id, status: 3 },
         result: result
       };
@@ -206,7 +205,7 @@ export default class SimpleActionServer extends EventEmitter {
    */
   setAborted(result) {
     if (this.currentGoal !== null) {
-      var resultMessage = {
+      const resultMessage = {
         status: { goal_id: this.currentGoal.goal_id, status: 4 },
         result: result
       };
@@ -229,7 +228,7 @@ export default class SimpleActionServer extends EventEmitter {
    */
   sendFeedback(feedback) {
     if (this.currentGoal !== null) {
-      var feedbackMessage = {
+      const feedbackMessage = {
         status: { goal_id: this.currentGoal.goal_id, status: 1 },
         feedback: feedback
       };
@@ -242,7 +241,7 @@ export default class SimpleActionServer extends EventEmitter {
   setPreempted() {
     if (this.currentGoal !== null) {
       this.statusMessage.status_list = [];
-      var resultMessage = {
+      const resultMessage = {
         status: { goal_id: this.currentGoal.goal_id, status: 2 }
       };
       this.resultPublisher.publish(resultMessage);

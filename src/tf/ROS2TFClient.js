@@ -2,7 +2,6 @@
 import Action from '../core/Action.js';
 import Transform from '../math/Transform.js';
 
-import Ros from '../core/Ros.js';
 import { EventEmitter } from 'eventemitter3';
 
 /**
@@ -26,7 +25,7 @@ export default class ROS2TFClient extends EventEmitter {
   currentGoal;
   /**
    * @param {Object} options
-   * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+   * @param {import('../core/Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} [options.fixedFrame=base_link] - The fixed frame.
    * @param {number} [options.angularThres=2.0] - The angular threshold for the TF republisher.
    * @param {number} [options.transThres=0.01] - The translation threshold for the TF republisher.
@@ -85,13 +84,12 @@ export default class ROS2TFClient extends EventEmitter {
    * @param {Object} tf - The TF message from the server.
    */
   processTFArray(tf) {
-    let that = this;
-    tf.transforms.forEach(function (transform) {
+    tf.transforms.forEach((transform) => {
       let frameID = transform.child_frame_id;
       if (frameID[0] === '/') {
         frameID = frameID.substring(1);
       }
-      const info = that.frameInfos[frameID];
+      const info = this.frameInfos[frameID];
       if (info) {
         info.transform = new Transform({
           translation: transform.transform.translation,
@@ -123,7 +121,7 @@ export default class ROS2TFClient extends EventEmitter {
     this.currentGoal = goalMessage;
 
     const id = this.actionClient.sendGoal(goalMessage,
-      (result) => {
+      () => {
       },
       (feedback) => {
         this.processTFArray(feedback)
@@ -148,7 +146,7 @@ export default class ROS2TFClient extends EventEmitter {
    */
   subscribe(frameID, callback) {
     // remove leading slash, if it's there
-    if (frameID[0] === '/') {
+    if (frameID.startsWith('/')) {
       frameID = frameID.substring(1);
     }
     // if there is no callback registered for the given frame, create empty callback list
@@ -177,11 +175,12 @@ export default class ROS2TFClient extends EventEmitter {
    */
   unsubscribe(frameID, callback) {
     // remove leading slash, if it's there
-    if (frameID[0] === '/') {
+    if (frameID.startsWith('/')) {
       frameID = frameID.substring(1);
     }
     const info = this.frameInfos[frameID];
-    for (var cbs = (info && info.cbs) || [], idx = cbs.length; idx--;) {
+    // eslint-disable-next-line no-var -- literally what even is going on here
+    for (var cbs = (info?.cbs) || [], idx = cbs.length; idx--;) {
       if (cbs[idx] === callback) {
         cbs.splice(idx, 1);
       }

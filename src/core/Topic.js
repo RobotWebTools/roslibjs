@@ -4,7 +4,6 @@
  */
 
 import { EventEmitter } from 'eventemitter3';
-import Ros from './Ros.js';
 import Service from './Service.js';
 
 /**
@@ -32,7 +31,7 @@ export default class Topic extends EventEmitter {
   reconnect_on_close;
   /**
    * @param {Object} options
-   * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+   * @param {import('./Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} options.name - The topic name, like '/cmd_vel'.
    * @param {string} options.messageType - The message type, like 'std_msgs/String'.
    * @param {string} [options.compression=none] - The type of compression to use, like 'png', 'cbor', or 'cbor-raw'.
@@ -230,7 +229,7 @@ export default class Topic extends EventEmitter {
     }
 
     this.ros.idCounter++;
-    var call = {
+    const call = {
       op: 'publish',
       id: 'publish:' + this.name + ':' + this.ros.idCounter,
       topic: this.name,
@@ -248,13 +247,13 @@ export default class Topic extends EventEmitter {
    * @param {function} [failedCallback] - The callback function when the service call failed.
    */
   getPublishers(callback, failedCallback) {
-    var publishersClient = new Service({
+    const publishersClient = new Service({
       ros: this.ros,
       name: '/rosapi/publishers',
       serviceType: 'rosapi/Publishers'
     });
 
-    var request = {
+    const request = {
       topic: this.name
     };
     if (typeof failedCallback === 'function') {

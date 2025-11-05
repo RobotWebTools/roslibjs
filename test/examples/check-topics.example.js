@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as ROSLIB from '../../src/RosLib.js';
 
-var expectedTopics = [
+const expectedTopics = [
   /*
    * '/turtle1/cmd_vel', '/turtle1/color_sensor', '/turtle1/pose',
    * '/turtle2/cmd_vel', '/turtle2/color_sensor', '/turtle2/pose',
@@ -12,7 +12,7 @@ var expectedTopics = [
 ];
 
 describe('Example topics are live', function() {
-  var ros = new ROSLIB.Ros({
+  const ros = new ROSLIB.Ros({
     url: 'ws://localhost:9090'
   });
 
@@ -21,11 +21,11 @@ describe('Example topics are live', function() {
       expectedTopics.forEach(function(topic) {
         expect(result.topics).to.contain(topic, 'Couldn\'t find topic: ' + topic);
       });
-      done();
+      done(result);
     });
   }));
 
-  var example = ros.Topic({
+  const example = ros.Topic({
     name: '/some_test_topic',
     messageType: 'std_msgs/String'
   });
@@ -34,7 +34,7 @@ describe('Example topics are live', function() {
     ros.getTopics(function(result) {
       expect(result.topics).not.to.contain('/some_test_topic');
       example.advertise();
-      done();
+      done(result);
     });
   }));
 
@@ -42,16 +42,16 @@ describe('Example topics are live', function() {
     ros.getTopics(function(result) {
       expect(result.topics).to.contain('/some_test_topic');
       example.unadvertise();
-      done();
+      done(result);
     });
   }));
 
-  it('unadvertise will end the topic (if it\s the last around)', () => new Promise((done) =>  {
+  it('unadvertise will end the topic (if it\'s the last around)', () => new Promise((done) =>  {
     console.log('Unadvertisement test. Wait for 15 seconds..');
     setTimeout(function() {
       ros.getTopics(function(result) {
         expect(result.topics).not.to.contain('/some_test_topic');
-        done();
+        done(result);
       });
     }, 15000);
   }), 20000);

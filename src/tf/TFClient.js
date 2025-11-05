@@ -11,7 +11,6 @@ import Topic from '../core/Topic.js';
 
 import Transform from '../math/Transform.js';
 
-import Ros from '../core/Ros.js';
 import { EventEmitter } from 'eventemitter3';
 
 /**
@@ -41,7 +40,7 @@ export default class TFClient extends EventEmitter {
 
   /**
    * @param {Object} options
-   * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
+   * @param {import('../core/Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} [options.fixedFrame=base_link] - The fixed frame.
    * @param {number} [options.angularThres=2.0] - The angular threshold for the TF republisher.
    * @param {number} [options.transThres=0.01] - The translation threshold for the TF republisher.
@@ -71,9 +70,9 @@ export default class TFClient extends EventEmitter {
     this.transThres = transThres;
     this.rate = rate;
     this.updateDelay = updateDelay;
-    var seconds = topicTimeout;
-    var secs = Math.floor(seconds);
-    var nsecs = Math.floor((seconds - secs) * 1000000000);
+    const seconds = topicTimeout;
+    const secs = Math.floor(seconds);
+    const nsecs = Math.floor((seconds - secs) * 1000000000);
     this.topicTimeout = {
       secs: secs,
       nsecs: nsecs
@@ -105,11 +104,11 @@ export default class TFClient extends EventEmitter {
    */
   processTFArray(tf) {
     tf.transforms.forEach((transform) => {
-      var frameID = transform.child_frame_id;
+      let frameID = transform.child_frame_id;
       if (frameID[0] === '/') {
         frameID = frameID.substring(1);
       }
-      var info = this.frameInfos[frameID];
+      const info = this.frameInfos[frameID];
       if (info) {
         info.transform = new Transform({
           translation: transform.transform.translation,
@@ -126,7 +125,7 @@ export default class TFClient extends EventEmitter {
    * based on the current list of TFs.
    */
   updateGoal() {
-    var goalMessage = {
+    const goalMessage = {
       source_frames: Object.keys(this.frameInfos),
       target_frame: this.fixedFrame,
       angular_thres: this.angularThres,
@@ -205,7 +204,7 @@ export default class TFClient extends EventEmitter {
    */
   subscribe(frameID, callback) {
     // remove leading slash, if it's there
-    if (frameID[0] === '/') {
+    if (frameID.startsWith('/')) {
       frameID = frameID.substring(1);
     }
     // if there is no callback registered for the given frame, create empty callback list
@@ -233,11 +232,12 @@ export default class TFClient extends EventEmitter {
    */
   unsubscribe(frameID, callback) {
     // remove leading slash, if it's there
-    if (frameID[0] === '/') {
+    if (frameID.startsWith('/')) {
       frameID = frameID.substring(1);
     }
-    var info = this.frameInfos[frameID];
-    for (var cbs = (info && info.cbs) || [], idx = cbs.length; idx--;) {
+    const info = this.frameInfos[frameID];
+    // eslint-disable-next-line no-var -- literally what even is going on here
+    for (var cbs = (info?.cbs) || [], idx = cbs.length; idx--;) {
       if (cbs[idx] === callback) {
         cbs.splice(idx, 1);
       }

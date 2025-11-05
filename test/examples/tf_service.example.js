@@ -3,13 +3,13 @@ import * as ROSLIB from '../../src/RosLib.js';
 
 describe('TF2 Republisher Service Example', function() {
   it('tf republisher', () => new Promise((done) =>  {
-    var ros = new ROSLIB.Ros({
+    const ros = new ROSLIB.Ros({
       // Use the service interface to tf2_web_republisher
       groovyCompatibility: false
     });
     ros.connect('ws://localhost:9090');
 
-    var tfClient = new ROSLIB.TFClient({
+    const tfClient = new ROSLIB.TFClient({
       ros: ros,
       fixedFrame: 'world',
       angularThres: 0.01,
@@ -25,11 +25,11 @@ describe('TF2 Republisher Service Example', function() {
   }));
 
   it('tf republisher alternative syntax', () => new Promise((done) =>  {
-    var ros = new ROSLIB.Ros({
+    const ros = new ROSLIB.Ros({
       url: 'ws://localhost:9090'
     });
 
-    var tfClient = ros.TFClient({
+    const tfClient = ros.TFClient({
       fixedFrame: 'world',
       angularThres: 0.01,
       transThres: 0.01

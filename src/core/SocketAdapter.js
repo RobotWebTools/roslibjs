@@ -9,7 +9,7 @@
 
 import CBOR from 'cbor-js';
 import typedArrayTagger from '../util/cborTypedArrayTags.js';
-var BSON = null;
+let BSON = null;
 // @ts-expect-error -- Workarounds for not including BSON in bundle. need to revisit
 if (typeof bson !== 'undefined') {
   // @ts-expect-error -- Workarounds for not including BSON in bundle. need to revisit
@@ -25,7 +25,7 @@ if (typeof bson !== 'undefined') {
  * @private
  */
 export default function SocketAdapter(client) {
-  var decoder = null;
+  let decoder = null;
   if (client.transportOptions.decoder) {
     decoder = client.transportOptions.decoder;
   }
@@ -94,7 +94,7 @@ export default function SocketAdapter(client) {
       let message;
       try {
         message = JSON.parse(fullData);
-      } catch (e) {
+      } catch {
         // Failed to parse, ignore
         fragmentBuffer.delete(id);
         return;
@@ -108,10 +108,10 @@ export default function SocketAdapter(client) {
     if (message.op === 'png') {
       // If in Node.js..
       if (typeof window === 'undefined') {
-        import('../util/decompressPng.js').then(({ default: decompressPng }) => decompressPng(message.data, callback));
+        import('../util/decompressPng.js').then(({ default: decompressPng }) => { decompressPng(message.data, callback); });
       } else {
         // if in browser..
-        import('../util/shim/decompressPng.js').then(({default: decompressPng}) => decompressPng(message.data, callback));
+        import('../util/shim/decompressPng.js').then(({default: decompressPng}) => { decompressPng(message.data, callback); });
       }
     } else {
       callback(message);
@@ -122,11 +122,11 @@ export default function SocketAdapter(client) {
     if (!BSON) {
       throw 'Cannot process BSON encoded message without BSON header.';
     }
-    var reader = new FileReader();
+    const reader = new FileReader();
     reader.onload = function () {
       // @ts-expect-error -- this doesn't seem right, but don't want to break current type coercion assumption
-      var uint8Array = new Uint8Array(this.result);
-      var msg = BSON.deserialize(uint8Array);
+      const uint8Array = new Uint8Array(this.result);
+      const msg = BSON.deserialize(uint8Array);
       callback(msg);
     };
     reader.readAsArrayBuffer(data);
@@ -182,10 +182,10 @@ export default function SocketAdapter(client) {
           handlePng(message, handleMessage);
         });
       } else if (data.data instanceof ArrayBuffer) {
-        var decoded = CBOR.decode(data.data, typedArrayTagger);
+        const decoded = CBOR.decode(data.data, typedArrayTagger);
         handleMessage(decoded);
       } else {
-        var message = JSON.parse(typeof data === 'string' ? data : data.data);
+        const message = JSON.parse(typeof data === 'string' ? data : data.data);
         handlePng(message, handleMessage);
       }
     }

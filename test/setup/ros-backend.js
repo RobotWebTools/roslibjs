@@ -84,7 +84,7 @@ async function startContainer(rosDistro) {
     const existingContainer = docker.getContainer(CONTAINER_NAME);
     await existingContainer.stop();
     await existingContainer.remove();
-  } catch (error) {
+  } catch {
     // Container doesn't exist, that's fine
   }
 
@@ -115,7 +115,7 @@ async function waitForBackend() {
       await waitForRosConnection(new Ros({ url: `ws://localhost:${CONTAINER_PORT}` }))
       console.log('ROS backend is ready');
       return true;
-    } catch (_) {
+    } catch {
       await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL));
     }
 

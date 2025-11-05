@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import * as ROSLIB from '../src/RosLib.js';
 
 function clone(x) {
-  var y = {};
-  for (var prop in x) {
-    if (x.hasOwnProperty(prop)) {
+  const y = {};
+  for (const prop in x) {
+    if (Object.prototype.hasOwnProperty.call(x, prop)) {
       y[prop] = typeof x[prop] === 'object' ? clone(x[prop]) : x[prop];
     }
   }
@@ -12,8 +12,8 @@ function clone(x) {
 }
 
 describe('Math examples', function() {
-  var v1, q1, v2, q2;
-  var pos;
+  let v1, q1, v2, q2;
+  let pos;
   it('Vector3 example', function() {
     // Let's start by adding some vectors.
     v1 = new ROSLIB.Vector3({
@@ -64,7 +64,7 @@ describe('Math examples', function() {
 
   it('Transform example', function() {
     // Finally, let's play with some transforms.
-    var tf = new ROSLIB.Transform({
+    const tf = new ROSLIB.Transform({
       translation: v2,
       rotation: q2
     });

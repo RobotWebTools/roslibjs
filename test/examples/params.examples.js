@@ -2,10 +2,10 @@ import { describe, it, expect } from 'vitest';
 import * as ROSLIB from '../../src/RosLib.js';
 
 describe('Param setting', function() {
-  var ros = new ROSLIB.Ros({
+  const ros = new ROSLIB.Ros({
     url: 'ws://localhost:9090'
   });
-  var param = ros.Param({
+  const param = ros.Param({
     name: '/test/foo'
   });
 

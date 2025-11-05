@@ -19,13 +19,13 @@ import pngparse from 'pngparse';
  * @param {decompressPngCallback} callback - Function with the following params:
  */
 export default function decompressPng(data, callback) {
-  var buffer = new Buffer(data, 'base64');
+  const buffer = new Buffer(data, 'base64');
 
   pngparse.parse(buffer, function (err, data) {
     if (err) {
       console.warn('Cannot process PNG encoded message ');
     } else {
-      var jsonData = data.data.toString();
+      const jsonData = data.data.toString();
       callback(JSON.parse(jsonData));
     }
   });

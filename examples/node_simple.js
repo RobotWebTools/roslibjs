@@ -3,7 +3,7 @@
 // Connecting to ROS
 import ROSLIB from 'roslib';
 
-var ros = new ROSLIB.Ros({
+const ros = new ROSLIB.Ros({
   url: 'ws://localhost:9090'
 });
 
@@ -24,13 +24,13 @@ ros.on('close', function() {
  * ------------------
  */
 
-var cmdVel = new ROSLIB.Topic({
+const cmdVel = new ROSLIB.Topic({
   ros: ros,
   name: '/cmd_vel',
   messageType: 'geometry_msgs/Twist'
 });
 
-var twist = {
+const twist = {
   linear: {
     x: 0.1,
     y: 0.2,

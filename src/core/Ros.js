@@ -110,7 +110,7 @@ export default class Ros extends EventEmitter {
    */
   authenticate(mac, client, dest, rand, t, level, end) {
     // create the request
-    var auth = {
+    const auth = {
       op: 'auth',
       mac: mac,
       client: client,
@@ -161,7 +161,7 @@ export default class Ros extends EventEmitter {
    * @param {number} [id] - Operation ID to change status level on.
    */
   setStatusLevel(level, id) {
-    var levelMsg = {
+    const levelMsg = {
       op: 'set_level',
       level: level,
       id: id
@@ -185,13 +185,13 @@ export default class Ros extends EventEmitter {
    */
   getActionServers(callback, failedCallback) {
     /** @satisfies {Service<any, any>} */
-    var getActionServers = new Service({
+    const getActionServers = new Service({
       ros: this,
       name: 'rosapi/action_servers',
       serviceType: 'rosapi/GetActionServers'
     });
 
-    var request = {};
+    const request = {};
     if (typeof failedCallback === 'function') {
       getActionServers.callService(
         request,
@@ -225,13 +225,13 @@ export default class Ros extends EventEmitter {
    * @param {getTopicsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getTopics(callback, failedCallback) {
-    var topicsClient = new Service({
+    const topicsClient = new Service({
       ros: this,
       name: 'rosapi/topics',
       serviceType: 'rosapi/Topics'
     });
 
-    var request = {};
+    const request = {};
     if (typeof failedCallback === 'function') {
       topicsClient.callService(
         request,
@@ -264,13 +264,13 @@ export default class Ros extends EventEmitter {
    * @param {getTopicsForTypeFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getTopicsForType(topicType, callback, failedCallback) {
-    var topicsForTypeClient = new Service({
+    const topicsForTypeClient = new Service({
       ros: this,
       name: 'rosapi/topics_for_type',
       serviceType: 'rosapi/TopicsForType'
     });
 
-    var request = {
+    const request = {
       type: topicType
     };
     if (typeof failedCallback === 'function') {
@@ -305,13 +305,13 @@ export default class Ros extends EventEmitter {
    * @param {getServicesFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getServices(callback, failedCallback) {
-    var servicesClient = new Service({
+    const servicesClient = new Service({
       ros: this,
       name: 'rosapi/services',
       serviceType: 'rosapi/Services'
     });
 
-    var request = {};
+    const request = {};
     if (typeof failedCallback === 'function') {
       servicesClient.callService(
         request,
@@ -344,13 +344,13 @@ export default class Ros extends EventEmitter {
    * @param {getServicesForTypeFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getServicesForType(serviceType, callback, failedCallback) {
-    var servicesForTypeClient = new Service({
+    const servicesForTypeClient = new Service({
       ros: this,
       name: 'rosapi/services_for_type',
       serviceType: 'rosapi/ServicesForType'
     });
 
-    var request = {
+    const request = {
       type: serviceType
     };
     if (typeof failedCallback === 'function') {
@@ -385,12 +385,12 @@ export default class Ros extends EventEmitter {
    * @param {getServiceRequestDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getServiceRequestDetails(type, callback, failedCallback) {
-    var serviceTypeClient = new Service({
+    const serviceTypeClient = new Service({
       ros: this,
       name: 'rosapi/service_request_details',
       serviceType: 'rosapi/ServiceRequestDetails'
     });
-    var request = {
+    const request = {
       type: type
     };
 
@@ -427,12 +427,12 @@ export default class Ros extends EventEmitter {
    */
   getServiceResponseDetails(type, callback, failedCallback) {
     /** @satisfies {Service<import("../types/rosapi.ts").rosapi.ServiceResponseDetailsRequest, import("../types/rosapi.ts").rosapi.ServiceResponseDetailsResponse>} */
-    var serviceTypeClient = new Service({
+    const serviceTypeClient = new Service({
       ros: this,
       name: 'rosapi/service_response_details',
       serviceType: 'rosapi/ServiceResponseDetails'
     });
-    var request = {
+    const request = {
       type: type
     };
 
@@ -467,13 +467,13 @@ export default class Ros extends EventEmitter {
    * @param {getNodesFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getNodes(callback, failedCallback) {
-    var nodesClient = new Service({
+    const nodesClient = new Service({
       ros: this,
       name: 'rosapi/nodes',
       serviceType: 'rosapi/Nodes'
     });
 
-    var request = {};
+    const request = {};
     if (typeof failedCallback === 'function') {
       nodesClient.callService(
         request,
@@ -527,13 +527,13 @@ export default class Ros extends EventEmitter {
    * @param {getNodeDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getNodeDetails(node, callback, failedCallback) {
-    var nodesClient = new Service({
+    const nodesClient = new Service({
       ros: this,
       name: 'rosapi/node_details',
       serviceType: 'rosapi/NodeDetails'
     });
 
-    var request = {
+    const request = {
       node: node
     };
     if (typeof failedCallback === 'function') {
@@ -568,12 +568,12 @@ export default class Ros extends EventEmitter {
    * @param {getParamsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getParams(callback, failedCallback) {
-    var paramsClient = new Service({
+    const paramsClient = new Service({
       ros: this,
       name: 'rosapi/get_param_names',
       serviceType: 'rosapi/GetParamNames'
     });
-    var request = {};
+    const request = {};
     if (typeof failedCallback === 'function') {
       paramsClient.callService(
         request,
@@ -606,12 +606,12 @@ export default class Ros extends EventEmitter {
    * @param {getTopicTypeFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getTopicType(topic, callback, failedCallback) {
-    var topicTypeClient = new Service({
+    const topicTypeClient = new Service({
       ros: this,
       name: 'rosapi/topic_type',
       serviceType: 'rosapi/TopicType'
     });
-    var request = {
+    const request = {
       topic: topic
     };
 
@@ -647,12 +647,12 @@ export default class Ros extends EventEmitter {
    * @param {getServiceTypeFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getServiceType(service, callback, failedCallback) {
-    var serviceTypeClient = new Service({
+    const serviceTypeClient = new Service({
       ros: this,
       name: 'rosapi/service_type',
       serviceType: 'rosapi/ServiceType'
     });
-    var request = {
+    const request = {
       service: service
     };
 
@@ -688,12 +688,12 @@ export default class Ros extends EventEmitter {
    * @param {getMessageDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getMessageDetails(message, callback, failedCallback) {
-    var messageDetailClient = new Service({
+    const messageDetailClient = new Service({
       ros: this,
       name: 'rosapi/message_details',
       serviceType: 'rosapi/MessageDetails'
     });
-    var request = {
+    const request = {
       type: message
     };
 
@@ -719,13 +719,13 @@ export default class Ros extends EventEmitter {
    * @param {import("../types/rosapi.ts").rosapi.TypeDef[]} defs - Array of type_def dictionary.
    */
   decodeTypeDefs(defs) {
-    var decodeTypeDefsRec = (theType, hints) => {
+    const decodeTypeDefsRec = (theType, hints) => {
       // calls itself recursively to resolve type definition using hints.
-      var typeDefDict = {};
-      for (var i = 0; i < theType.fieldnames.length; i++) {
-        var arrayLen = theType.fieldarraylen[i];
-        var fieldName = theType.fieldnames[i];
-        var fieldType = theType.fieldtypes[i];
+      const typeDefDict = {};
+      for (let i = 0; i < theType.fieldnames.length; i++) {
+        const arrayLen = theType.fieldarraylen[i];
+        const fieldName = theType.fieldnames[i];
+        const fieldType = theType.fieldtypes[i];
         if (fieldType.indexOf('/') === -1) {
           // check the fieldType includes '/' or not
           if (arrayLen === -1) {
@@ -735,15 +735,15 @@ export default class Ros extends EventEmitter {
           }
         } else {
           // lookup the name
-          var sub = false;
-          for (var j = 0; j < hints.length; j++) {
-            if (hints[j].type.toString() === fieldType.toString()) {
-              sub = hints[j];
+          let sub = false;
+          for (const hint of hints) {
+            if (hint.type.toString() === fieldType.toString()) {
+              sub = hint;
               break;
             }
           }
           if (sub) {
-            var subResult = decodeTypeDefsRec(sub, hints);
+            const subResult = decodeTypeDefsRec(sub, hints);
             if (arrayLen === -1) {
               typeDefDict[fieldName] = subResult; // add this decoding result to dictionary
             } else {
@@ -780,13 +780,13 @@ export default class Ros extends EventEmitter {
    * @param {getTopicsAndRawTypesFailedCallback} [failedCallback] - The callback function when the service call failed with params:
    */
   getTopicsAndRawTypes(callback, failedCallback) {
-    var topicsAndRawTypesClient = new Service({
+    const topicsAndRawTypesClient = new Service({
       ros: this,
       name: 'rosapi/topics_and_raw_types',
       serviceType: 'rosapi/TopicsAndRawTypes'
     });
 
-    var request = {};
+    const request = {};
     if (typeof failedCallback === 'function') {
       topicsAndRawTypesClient.callService(
         request,

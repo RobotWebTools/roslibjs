@@ -1,6 +1,6 @@
-var UPPER32 = Math.pow(2, 32);
+const UPPER32 = Math.pow(2, 32);
 
-var warnedPrecision = false;
+let warnedPrecision = false;
 function warnPrecision() {
   if (!warnedPrecision) {
     warnedPrecision = true;
@@ -17,18 +17,18 @@ function warnPrecision() {
 function decodeUint64LE(bytes) {
   warnPrecision();
 
-  var byteLen = bytes.byteLength;
-  var offset = bytes.byteOffset;
-  var arrLen = byteLen / 8;
+  const byteLen = bytes.byteLength;
+  const offset = bytes.byteOffset;
+  const arrLen = byteLen / 8;
 
-  var buffer = bytes.buffer.slice(offset, offset + byteLen);
-  var uint32View = new Uint32Array(buffer);
+  const buffer = bytes.buffer.slice(offset, offset + byteLen);
+  const uint32View = new Uint32Array(buffer);
 
-  var arr = new Array(arrLen);
-  for (var i = 0; i < arrLen; i++) {
-    var si = i * 2;
-    var lo = uint32View[si];
-    var hi = uint32View[si + 1];
+  const arr = new Array(arrLen);
+  for (let i = 0; i < arrLen; i++) {
+    const si = i * 2;
+    const lo = uint32View[si];
+    const hi = uint32View[si + 1];
     arr[i] = lo + UPPER32 * hi;
   }
 
@@ -42,19 +42,19 @@ function decodeUint64LE(bytes) {
 function decodeInt64LE(bytes) {
   warnPrecision();
 
-  var byteLen = bytes.byteLength;
-  var offset = bytes.byteOffset;
-  var arrLen = byteLen / 8;
+  const byteLen = bytes.byteLength;
+  const offset = bytes.byteOffset;
+  const arrLen = byteLen / 8;
 
-  var buffer = bytes.buffer.slice(offset, offset + byteLen);
-  var uint32View = new Uint32Array(buffer);
-  var int32View = new Int32Array(buffer);
+  const buffer = bytes.buffer.slice(offset, offset + byteLen);
+  const uint32View = new Uint32Array(buffer);
+  const int32View = new Int32Array(buffer);
 
-  var arr = new Array(arrLen);
-  for (var i = 0; i < arrLen; i++) {
-    var si = i * 2;
-    var lo = uint32View[si];
-    var hi = int32View[si + 1];
+  const arr = new Array(arrLen);
+  for (let i = 0; i < arrLen; i++) {
+    const si = i * 2;
+    const lo = uint32View[si];
+    const hi = int32View[si + 1];
     arr[i] = lo + UPPER32 * hi;
   }
 
@@ -67,9 +67,9 @@ function decodeInt64LE(bytes) {
  * @param {ArrayConstructor} ArrayType - Desired output array type
  */
 function decodeNativeArray(bytes, ArrayType) {
-  var byteLen = bytes.byteLength;
-  var offset = bytes.byteOffset;
-  var buffer = bytes.buffer.slice(offset, offset + byteLen);
+  const byteLen = bytes.byteLength;
+  const offset = bytes.byteOffset;
+  const buffer = bytes.buffer.slice(offset, offset + byteLen);
   return new ArrayType(buffer);
 }
 
@@ -79,7 +79,7 @@ function decodeNativeArray(bytes, ArrayType) {
  *
  * Only supports little-endian tags for now.
  */
-var nativeArrayTypes = {
+const nativeArrayTypes = {
   64: Uint8Array,
   69: Uint16Array,
   70: Uint32Array,
@@ -93,7 +93,7 @@ var nativeArrayTypes = {
 /**
  * We can also decode 64-bit integer arrays, since ROS has these types.
  */
-var conversionArrayTypes = {
+const conversionArrayTypes = {
   71: decodeUint64LE,
   79: decodeInt64LE
 };
@@ -105,7 +105,7 @@ var conversionArrayTypes = {
  */
 export default function cborTypedArrayTagger(data, tag) {
   if (tag in nativeArrayTypes) {
-    var arrayType = nativeArrayTypes[tag];
+    const arrayType = nativeArrayTypes[tag];
     return decodeNativeArray(data, arrayType);
   }
   if (tag in conversionArrayTypes) {

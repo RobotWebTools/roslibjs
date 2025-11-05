@@ -12,7 +12,7 @@ describe('Transform', function() {
      * });
      */
     it('should contain a valid vector and quaternion', function() {
-      var t = new ROSLIB.Transform({
+      const t = new ROSLIB.Transform({
         translation: new ROSLIB.Vector3({ x: 1, y: 2, z: 3 }),
         rotation: new ROSLIB.Quaternion({ x: 0.9, y: 0.8, z: 0.7, w: 1 })
       });

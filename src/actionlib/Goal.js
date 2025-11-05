@@ -4,8 +4,6 @@
  */
 
 import { EventEmitter } from 'eventemitter3';
-import Message from '../core/Message.js';
-import ActionClient from './ActionClient.js';
 
 /**
  * An actionlib goal that is associated with an action server.
@@ -24,7 +22,7 @@ export default class Goal extends EventEmitter {
   goalMessage;
   /**
    * @param {Object} options
-   * @param {ActionClient} options.actionClient - The ROSLIB.ActionClient to use with this goal.
+   * @param {import('./ActionClient.js').default} options.actionClient - The ROSLIB.ActionClient to use with this goal.
    * @param {Object} options.goalMessage - The JSON object containing the goal for the action server.
    */
   constructor({
@@ -81,7 +79,7 @@ export default class Goal extends EventEmitter {
    * Cancel the current goal.
    */
   cancel() {
-    var cancelMessage = {
+    const cancelMessage = {
       id: this.goalID
     };
     this.actionClient.cancelTopic.publish(cancelMessage);
