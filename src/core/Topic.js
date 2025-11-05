@@ -5,6 +5,7 @@
 
 import { EventEmitter } from 'eventemitter3';
 import Ros from './Ros.js';
+import Service from './Service.js';
 
 /**
  * Publish and/or subscribe to a topic in ROS.
@@ -220,5 +221,39 @@ export default class Topic extends EventEmitter {
       latch: this.latch
     };
     this.ros.callOnConnection(call);
+  }
+
+  /**
+   * Retrieves list of publishers for this topic.
+   *
+   * @param {function} callback - Function with the following params:
+   *   * publishers - The list of publishers.
+   * @param {function} [failedCallback] - The callback function when the service call failed.
+   */
+  getPublishers(callback, failedCallback) {
+    var publishersClient = new Service({
+      ros: this.ros,
+      name: '/rosapi/publishers',
+      serviceType: 'rosapi/Publishers'
+    });
+
+    var request = {
+      topic: this.name
+    };
+    if (typeof failedCallback === 'function') {
+      publishersClient.callService(
+        request,
+        function (result) {
+          callback(result.publishers);
+        },
+        function (message) {
+          failedCallback(message);
+        }
+      );
+    } else {
+      publishersClient.callService(request, function (result) {
+        callback(result.publishers);
+      });
+    }
   }
 }
