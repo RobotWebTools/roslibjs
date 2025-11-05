@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<package>
+  <name>roslibjs</name>
+  <version>1.4.1</version>
+  <description>The Robot Web Tools ROS JavaScript Library</description>
+
+  <maintainer email="robotwebtools@googlegroups.com">Robot Web Tools</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">http://robotwebtools.github.io/</url>
+  <url type="bugtracker">https://github.com/RobotWebTools/roslibjs/issues</url>
+  <url type="repository">https://github.com/RobotWebTools/roslibjs</url>
+
+  <author email="robotwebtools@googlegroups.com">Robot Web Tools</author>
+
+  <test_depend>libasound2-dev</test_depend>
+  <test_depend>libnss3-dev</test_depend>
+  <test_depend>rosbridge_server</test_depend>
+  <test_depend>tf2_web_republisher</test_depend>
+  <test_depend>common_tutorials</test_depend>
+  <test_depend>ros_tutorials</test_depend>
+
+</package>
