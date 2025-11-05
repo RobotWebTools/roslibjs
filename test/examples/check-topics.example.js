@@ -15,7 +15,7 @@ describe('Example topics are live', function() {
   var ros = new ROSLIB.Ros({
     url: 'ws://localhost:9090'
   });
-    
+
   it('getTopics', () => new Promise((done) =>  {
     ros.getTopics(function(result) {
       expectedTopics.forEach(function(topic) {
