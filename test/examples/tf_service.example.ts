@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import * as ROSLIB from '../../src/RosLib.js';
 
 describe('TF2 Republisher Service Example', function() {
-  it('tf republisher', () => new Promise((done) =>  {
+  it('tf republisher', () => new Promise<void>((done) =>  {
     const ros = new ROSLIB.Ros({
       // Use the service interface to tf2_web_republisher
       groovyCompatibility: false
@@ -24,7 +24,7 @@ describe('TF2 Republisher Service Example', function() {
     });
   }));
 
-  it('tf republisher alternative syntax', () => new Promise((done) =>  {
+  it('tf republisher alternative syntax', () => new Promise<void>((done) =>  {
     const ros = new ROSLIB.Ros({
       url: 'ws://localhost:9090'
     });
