@@ -32,7 +32,7 @@ describe('Service', () => {
     expect(ros.listenerCount(server.name)).toEqual(0);
   })
   it('Successfully advertises a service with a synchronous return', async () => {
-    const server = new Service({
+    const server = new Service<undefined, {success: boolean, message: string}>({
       ros,
       serviceType: 'std_srvs/Trigger',
       name: '/test_service'
@@ -56,7 +56,7 @@ describe('Service', () => {
   })
 
   it('Handles re-advertisement gracefully without throwing errors', async () => {
-    const server = new Service({
+    const server = new Service<undefined, {success: boolean, message: string}>({
       ros,
       serviceType: 'std_srvs/Trigger',
       name: '/test_readvertise'
@@ -88,7 +88,7 @@ describe('Service', () => {
   })
 
   it('Handles multiple unadvertise calls gracefully', async () => {
-    const server = new Service({
+    const server = new Service<undefined, {success: boolean, message: string}>({
       ros,
       serviceType: 'std_srvs/Trigger',
       name: '/test_multiple_unadvertise'
@@ -143,7 +143,7 @@ describe('Service', () => {
   })
 
   it('Ensures operations are serialized through queue', async () => {
-    const server = new Service({
+    const server = new Service<undefined, {success: boolean, message: string}>({
       ros,
       serviceType: 'std_srvs/Trigger',
       name: '/test_queue'
