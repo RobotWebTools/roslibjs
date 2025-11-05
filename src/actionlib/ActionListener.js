@@ -19,17 +19,24 @@ import { EventEmitter } from 'eventemitter3';
  *
  */
 export default class ActionListener extends EventEmitter {
+  ros;
+  serverName;
+  actionName;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} options.serverName - The action server name, like '/fibonacci'.
    * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
    */
-  constructor(options) {
+  constructor({
+    ros,
+    serverName,
+    actionName
+  }) {
     super();
-    this.ros = options.ros;
-    this.serverName = options.serverName;
-    this.actionName = options.actionName;
+    this.ros = ros;
+    this.serverName = serverName;
+    this.actionName = actionName;
 
     // create the topics associated with actionlib
     var goalListener = new Topic({

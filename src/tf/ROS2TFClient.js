@@ -3,12 +3,27 @@ import Action from '../core/Action.js';
 import Transform from '../math/Transform.js';
 
 import Ros from '../core/Ros.js';
-import {EventEmitter} from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
  */
 export default class ROS2TFClient extends EventEmitter {
+  ros;
+  fixedFrame;
+  angularThres;
+  transThres;
+  rate;
+  updateDelay;
+  topicTimeout;
+  serverName;
+  goal_id;
+  frameInfos;
+  republisherUpdateRequested;
+  _subscribeCB;
+  _isDisposed;
+  actionClient;
+  currentGoal;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
@@ -22,22 +37,32 @@ export default class ROS2TFClient extends EventEmitter {
    * @param {string} [options.serverName="/tf2_web_republisher"] - The name of the tf2_web_republisher server.
    * @param {string} [options.repubServiceName="/republish_tfs"] - The name of the republish_tfs service (non groovy compatibility mode only).
    */
-  constructor(options) {
+  constructor({
+    ros,
+    fixedFrame = 'base_link',
+    angularThres = 2.0,
+    transThres = 0.01,
+    rate = 10.0,
+    updateDelay = 50,
+    topicTimeout = 2.0,
+    serverName = '/tf2_web_republisher'
+  }) {
     super();
-    this.ros = options.ros;
-    this.fixedFrame = options.fixedFrame || 'base_link';
-    this.angularThres = options.angularThres || 2.0;
-    this.transThres = options.transThres || 0.01;
-    this.rate = options.rate || 10.0;
-    this.updateDelay = options.updateDelay || 50;
-    const seconds = options.topicTimeout || 2.0;
+
+    this.ros = ros;
+    this.fixedFrame = fixedFrame;
+    this.angularThres = angularThres;
+    this.transThres = transThres;
+    this.rate = rate;
+    this.updateDelay = updateDelay;
+    const seconds = topicTimeout;
     const secs = Math.floor(seconds);
     const nsecs = Math.floor((seconds - secs) * 1E9);
     this.topicTimeout = {
       secs: secs,
       nsecs: nsecs
     };
-    this.serverName = options.serverName || '/tf2_web_republisher';
+    this.serverName = serverName;
     this.goal_id = '';
     this.frameInfos = {};
     this.republisherUpdateRequested = false;
@@ -46,7 +71,7 @@ export default class ROS2TFClient extends EventEmitter {
 
     // Create an Action Client
     this.actionClient = new Action({
-      ros: options.ros,
+      ros: this.ros,
       name: this.serverName,
       actionType: 'tf2_web_republisher_interfaces/TFSubscription',
     });

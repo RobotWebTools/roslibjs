@@ -28,17 +28,24 @@ export default class Service extends EventEmitter {
    * @private
    */
   _pendingUnadvertise = false;
+  ros;
+  name;
+  serviceType;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} options.name - The service name, like '/add_two_ints'.
    * @param {string} options.serviceType - The service type, like 'rospy_tutorials/AddTwoInts'.
    */
-  constructor(options) {
+  constructor({
+    ros,
+    name,
+    serviceType
+  }) {
     super();
-    this.ros = options.ros;
-    this.name = options.name;
-    this.serviceType = options.serviceType;
+    this.ros = ros;
+    this.name = name;
+    this.serviceType = serviceType;
   }
   /**
    * @callback callServiceCallback

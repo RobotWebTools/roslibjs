@@ -20,17 +20,30 @@ export default class SimpleActionServer extends EventEmitter {
   currentGoal = null; // currently tracked goal
   /** @type {{goal_id: {id: any, stamp: any}, goal: any} | null} */
   nextGoal = null; // the one this'll be preempting
+  ros;
+  serverName;
+  actionName;
+  feedbackPublisher;
+  resultPublisher;
+  statusPublisher;
+  statusMessage;
+  goalSubscriber;
+  cancelSubscriber;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} options.serverName - The action server name, like '/fibonacci'.
    * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
    */
-  constructor(options) {
+  constructor({
+    ros,
+    serverName,
+    actionName
+  }) {
     super();
-    this.ros = options.ros;
-    this.serverName = options.serverName;
-    this.actionName = options.actionName;
+    this.ros = ros;
+    this.serverName = serverName;
+    this.actionName = actionName;
 
     // create and advertise publishers
     this.feedbackPublisher = new Topic({

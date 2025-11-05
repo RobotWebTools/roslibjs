@@ -28,7 +28,9 @@ export default class Ros extends EventEmitter {
   socket = null;
   idCounter = 0;
   isConnected = false;
-  groovyCompatibility = true;
+  transportLibrary;
+  transportOptions;
+  groovyCompatibility;
   /**
    * @param {Object} [options]
    * @param {string} [options.url] - The WebSocket URL for rosbridge. Can be specified later with `connect`.
@@ -36,16 +38,21 @@ export default class Ros extends EventEmitter {
    * @param {'websocket'|RTCPeerConnection} [options.transportLibrary='websocket'] - 'websocket', or an RTCPeerConnection instance controlling how the connection is created in `connect`.
    * @param {Object} [options.transportOptions={}] - The options to use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.
    */
-  constructor(options) {
+  constructor({
+    url,
+    transportLibrary = 'websocket',
+    transportOptions = {},
+    groovyCompatibility = true
+  } = {}) {
     super();
-    options = options || {};
-    this.transportLibrary = options.transportLibrary || 'websocket';
-    this.transportOptions = options.transportOptions || {};
-    this.groovyCompatibility = options.groovyCompatibility ?? true;
+
+    this.transportLibrary = transportLibrary;
+    this.transportOptions = transportOptions;
+    this.groovyCompatibility = groovyCompatibility;
 
     // begin by checking if a URL was given
-    if (options.url) {
-      this.connect(options.url);
+    if (url) {
+      this.connect(url);
     }
   }
   /**

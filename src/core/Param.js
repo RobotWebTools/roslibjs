@@ -10,14 +10,19 @@ import Ros from '../core/Ros.js';
  * A ROS parameter.
  */
 export default class Param {
+  ros;
+  name;
   /**
    * @param {Object} options
    * @param {Ros} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} options.name - The param name, like max_vel_x.
    */
-  constructor(options) {
-    this.ros = options.ros;
-    this.name = options.name;
+  constructor({
+    ros,
+    name
+  }) {
+    this.ros = ros;
+    this.name = name;
   }
   /**
    * @callback getCallback
