@@ -1,6 +1,10 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
 
 defaults:
   run:
@@ -9,11 +13,7 @@ defaults:
 jobs:
   ci:
     name: ${{ matrix.ros_distro }} (node ${{ matrix.node_version }})
-    if: ${{ github.actor != 'RWT-bot' }}
     runs-on: ubuntu-latest
-    container:
-      image: ros:${{ matrix.ros_distro }}-ros-core
-      options: --cap-add=SYS_ADMIN
     strategy:
       fail-fast: false
       matrix:
@@ -22,28 +22,18 @@ jobs:
     env:
       ROS_DISTRO: ${{ matrix.ros_distro }}
     steps:
-      - name: Install git in container
-        run: |
-          apt-get update
-          apt-get install -q -y git
-      - name: Set git safe directory
-        run: |
-          git config --global safe.directory '*'
       - uses: actions/checkout@v5
-        env:
-          TOKEN: "${{ github.event_name == 'push' && endsWith(github.ref, 'develop') && matrix.ros_distro == 'noetic' && secrets.RWT_BOT_PAT || github.token }}"
-        with:
-          token: ${{ env.TOKEN }}
+
       - uses: actions/setup-node@v6
         with:
           cache: npm
           node-version: ${{ matrix.node_version }}
-      - name: Own /github/home and PWD
-        run: |
-          chown -hR 1001:121 /github/home .
-      - name: Install apt dependencies
-        run: |
-          apt-get install -q -y libasound2 libnss3 ros-$ROS_DISTRO-rosbridge-server ros-$ROS_DISTRO-tf2-web-republisher ros-$ROS_DISTRO-common-tutorials ros-$ROS_DISTRO-rospy-tutorials ros-$ROS_DISTRO-actionlib-tutorials
-      - name: Tests
-        run: |
-          bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && bash test/build.bash"
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Build JavaScript library
+        run: npm run build
+
+      - name: Run tests
+        run: npm test

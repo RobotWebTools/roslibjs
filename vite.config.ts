@@ -44,6 +44,7 @@ export default defineConfig({
       './test/examples/*.js',
     ],
     exclude: ['dist'],
+    globalSetup: './test/setup/vitest-setup.js',
     projects: [
       {
         extends: true,
