@@ -142,12 +142,12 @@ export function isRosbridgeUnadvertiseServiceMessage(
   return message.op === "unadvertise_service";
 }
 
-export interface RosbridgeCallServiceMessage<TArgs = unknown[]>
+export interface RosbridgeCallServiceMessage<TArgs = void>
   extends RosbridgeMessage {
   op: "call_service";
   id?: string;
   service: string;
-  args?: TArgs;
+  args: TArgs;
   fragment_size?: number;
   compression?: string;
   timeout?: number;

@@ -4,18 +4,23 @@
  */
 
 import { EventEmitter } from "eventemitter3";
+import {
+  RosbridgeCallServiceMessage,
+  RosbridgeServiceResponseMessage,
+} from "../types/protocol.ts";
+import Ros from "./Ros.js";
 
 /**
  * A ROS service client.
- * @template TRequest, TResponse
  */
-export default class Service extends EventEmitter {
+export default class Service<TRequest, TResponse> extends EventEmitter {
   /**
    * Stores a reference to the most recent service callback advertised so it can be removed from the EventEmitter during un-advertisement
    * @private
-   * @type {((rosbridgeRequest) => any) | null}
    */
-  _serviceCallback = null;
+  _serviceCallback:
+    | ((rosbridgeRequest: RosbridgeCallServiceMessage<TRequest>) => void)
+    | null = null;
   isAdvertised = false;
   /**
    * Queue for serializing advertise/unadvertise operations to prevent race conditions
@@ -27,40 +32,45 @@ export default class Service extends EventEmitter {
    * @private
    */
   _pendingUnadvertise = false;
-  ros;
-  name;
-  serviceType;
+  ros: Ros;
+  name: string;
+  serviceType: string;
   /**
-   * @param {Object} options
-   * @param {import('./Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
-   * @param {string} options.name - The service name, like '/add_two_ints'.
-   * @param {string} options.serviceType - The service type, like 'rospy_tutorials/AddTwoInts'.
+   * @param options
+   * @param options.ros - The ROSLIB.Ros connection handle.
+   * @param options.name - The service name, like '/add_two_ints'.
+   * @param options.serviceType - The service type, like 'rospy_tutorials/AddTwoInts'.
    */
-  constructor({ ros, name, serviceType }) {
+  constructor({
+    ros,
+    name,
+    serviceType,
+  }: {
+    ros: Ros;
+    name: string;
+    serviceType: string;
+  }) {
     super();
     this.ros = ros;
     this.name = name;
     this.serviceType = serviceType;
   }
   /**
-   * @callback callServiceCallback
-   *  @param {TResponse} response - The response from the service request.
-   */
-  /**
-   * @callback callServiceFailedCallback
-   * @param {string} error - The error message reported by ROS.
-   */
-  /**
    * Call the service. Returns the service response in the
    * callback. Does nothing if this service is currently advertised.
    *
-   * @param {TRequest} request - The service request to send.
-   * @param {callServiceCallback} [callback] - Function with the following params:
-   * @param {callServiceFailedCallback} [failedCallback] - The callback function when the service call failed with params:
-   * @param {number} [timeout] - Optional timeout, in seconds, for the service call. A non-positive value means no timeout.
+   * @param request - The service request to send.
+   * @param [callback] - Function with the following params:
+   * @param [failedCallback] - The callback function when the service call failed with params:
+   * @param [timeout] - Optional timeout, in seconds, for the service call. A non-positive value means no timeout.
    *                             If not provided, the rosbridge server will use its default value.
    */
-  callService(request, callback, failedCallback, timeout) {
+  callService(
+    request: TRequest,
+    callback?: (response: TResponse) => void,
+    failedCallback?: (error: string) => void,
+    timeout?: number,
+  ) {
     if (this.isAdvertised) {
       return;
     }
@@ -92,19 +102,16 @@ export default class Service extends EventEmitter {
     this.ros.callOnConnection(call);
   }
   /**
-   * @callback advertiseCallback
-   * @param {TRequest} request - The service request.
-   * @param {Partial<TResponse>} response - An empty dictionary. Take care not to overwrite this. Instead, only modify the values within.
-   * @returns {boolean} true if the service has finished successfully, i.e., without any fatal errors.
-   */
-  /**
    * Advertise the service. This turns the Service object from a client
    * into a server. The callback will be called with every request
    * that's made on this service.
    *
-   * @param {advertiseCallback} callback - This works similarly to the callback for a C++ service and should take the following params
+   * @param callback This works similarly to the callback for a C++ service in that you should take care not to overwrite the response object.
+   *  Instead, only modify the values within.
    */
-  advertise(callback) {
+  advertise(
+    callback: (request: TRequest, response: Partial<TResponse>) => boolean,
+  ) {
     // Queue this operation to prevent race conditions
     this._operationQueue = this._operationQueue
       .then(async () => {
@@ -118,7 +125,7 @@ export default class Service extends EventEmitter {
           const response = {};
           const success = callback(rosbridgeRequest.args, response);
 
-          const call = {
+          const call: RosbridgeServiceResponseMessage<Partial<TResponse>> = {
             op: "service_response",
             service: this.name,
             values: response,
@@ -202,9 +209,9 @@ export default class Service extends EventEmitter {
 
   /**
    * An alternate form of Service advertisement that supports a modern Promise-based interface for use with async/await.
-   * @param {(request: TRequest) => Promise<TResponse>} callback An asynchronous callback processing the request and returning a response.
+   * @param callback An asynchronous callback processing the request and returning a response.
    */
-  advertiseAsync(callback) {
+  advertiseAsync(callback: (request: TRequest) => Promise<TResponse>) {
     // Queue this operation to prevent race conditions
     this._operationQueue = this._operationQueue
       .then(async () => {
@@ -214,12 +221,12 @@ export default class Service extends EventEmitter {
         }
 
         this._serviceCallback = async (rosbridgeRequest) => {
-          /** @type {import('../types/protocol.ts').RosbridgeServiceResponseMessage<TResponse>} */
-          const rosbridgeResponse = {
-            op: "service_response",
-            service: this.name,
-            result: false,
-          };
+          const rosbridgeResponse: RosbridgeServiceResponseMessage<TResponse> =
+            {
+              op: "service_response",
+              service: this.name,
+              result: false,
+            };
           try {
             rosbridgeResponse.values = await callback(rosbridgeRequest.args);
             rosbridgeResponse.result = true;
