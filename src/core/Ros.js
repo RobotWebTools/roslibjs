@@ -4,6 +4,16 @@
  */
 
 import socketAdapter from "./SocketAdapter.js";
+import {
+  isRosbridgeActionFeedbackMessage,
+  isRosbridgeActionResultMessage,
+  isRosbridgeCallServiceMessage,
+  isRosbridgeCancelActionGoalMessage,
+  isRosbridgePublishMessage,
+  isRosbridgeSendActionGoalMessage,
+  isRosbridgeServiceResponseMessage,
+  isRosbridgeStatusMessage,
+} from "../types/protocol.js";
 
 import Topic from "./Topic.js";
 import Service from "./Service.js";
@@ -24,7 +34,7 @@ import { EventEmitter } from "eventemitter3";
  *  * &#60;serviceID&#62; - A service response came from rosbridge with the given ID.
  */
 export default class Ros extends EventEmitter {
-  /** @type {WebSocket | import("ws").WebSocket | null} */
+  /** @type {import('./SocketAdapter.js').default | null} */
   socket = null;
   idCounter = 0;
   isConnected = false;
@@ -56,37 +66,102 @@ export default class Ros extends EventEmitter {
     }
   }
   /**
-   * Connect to the specified WebSocket.
-   *
+   * Create the appropriate transport based on transport library configuration
    * @param {string} url - WebSocket URL or RTCDataChannel label for rosbridge.
+   * @returns {Promise<WebSocket|RTCDataChannel|import("ws").WebSocket|null>} The created transport
+   * @private
    */
-  connect(url) {
+  async createTransport(url) {
     if (this.transportLibrary.constructor.name === "RTCPeerConnection") {
-      this.socket = Object.assign(
-        // @ts-expect-error -- this is kinda wild. `this.transportLibrary` can either be a string or an RTCDataChannel. This needs fixing.
-        this.transportLibrary.createDataChannel(url, this.transportOptions),
-        socketAdapter(this),
+      // @ts-expect-error -- this is kinda wild. `this.transportLibrary` can either be a string or an RTCDataChannel. This needs fixing.
+      const dataChannel = this.transportLibrary.createDataChannel(
+        url,
+        this.transportOptions,
       );
+      return dataChannel;
     } else if (this.transportLibrary === "websocket") {
       // browsers, Deno, and Bun support WebSockets natively
       if (typeof WebSocket === "function") {
         if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
           const sock = new WebSocket(url);
           sock.binaryType = "arraybuffer";
-          this.socket = Object.assign(sock, socketAdapter(this));
+          return sock;
         }
+        return null; // Already connected
       } else {
         // if in Node.js, import ws to replace WebSocket API
-        import("ws").then((ws) => {
-          if (!this.socket || this.socket.readyState === ws.WebSocket.CLOSED) {
-            const sock = new ws.WebSocket(url);
-            sock.binaryType = "arraybuffer";
-            this.socket = Object.assign(sock, socketAdapter(this));
-          }
-        });
+        const ws = await import("ws");
+        if (!this.socket || this.socket.readyState === ws.WebSocket.CLOSED) {
+          const sock = new ws.WebSocket(url);
+          sock.binaryType = "arraybuffer";
+          return sock;
+        }
+        return null; // Already connected
       }
     } else {
       throw "Unknown transportLibrary: " + this.transportLibrary.toString();
+    }
+  }
+
+  /**
+   * @param {string} url - WebSocket URL or RTCDataChannel label for rosbridge.
+   */
+  async connect(url) {
+    const transport = await this.createTransport(url);
+
+    if (!transport) {
+      return; // Already connected
+    }
+
+    this.socket = new socketAdapter(transport, {
+      onOpen: (event) => {
+        this.isConnected = true;
+        this.emit("connection", event);
+      },
+      onClose: (event) => {
+        this.isConnected = false;
+        this.emit("close", event);
+      },
+      onError: (event) => {
+        this.emit("error", event);
+      },
+      onMessage: (message) => {
+        this.handleMessage(message);
+      },
+      decoder: this.transportOptions.decoder,
+    });
+  }
+
+  /**
+   * Handle processed messages from SocketAdapter
+   * @param {import('../types/protocol.ts').RosbridgeMessage} message
+   * @private
+   */
+  handleMessage(message) {
+    if (isRosbridgePublishMessage(message)) {
+      this.emit(message.topic, message.msg);
+    } else if (isRosbridgeServiceResponseMessage(message)) {
+      if (message.id) {
+        this.emit(message.id, message);
+      } else {
+        console.error("Received service response without ID");
+      }
+    } else if (isRosbridgeCallServiceMessage(message)) {
+      this.emit(message.service, message);
+    } else if (isRosbridgeSendActionGoalMessage(message)) {
+      this.emit(message.action, message);
+    } else if (isRosbridgeCancelActionGoalMessage(message)) {
+      this.emit(message.id, message);
+    } else if (isRosbridgeActionFeedbackMessage(message)) {
+      this.emit(message.id, message);
+    } else if (isRosbridgeActionResultMessage(message)) {
+      this.emit(message.id, message);
+    } else if (isRosbridgeStatusMessage(message)) {
+      if (message.id) {
+        this.emit("status:" + message.id, message);
+      } else {
+        this.emit("status", message);
+      }
     }
   }
   /**
