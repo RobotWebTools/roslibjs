@@ -20,4 +20,10 @@ export namespace rosapi {
   export interface ServiceRequestDetailsResponse {
     typedefs: TypeDef[];
   }
+  export interface PublishersRequest {
+    topic: string;
+  }
+  export interface PublishersResponse {
+    publishers: string[];
+  }
 }
