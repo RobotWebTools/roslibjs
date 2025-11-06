@@ -26,7 +26,7 @@ describe('Topics Example', function() {
   it('Listening and publishing to a topic', () => new Promise((done) =>  {
     // Kind of harry...
     let topic1msg = messages1[0],
-      topic2msg = {};
+      topic2msg: {data?: string} = {};
     example.subscribe(function(message) {
       if (message.data === topic1msg.data) {return;}
       topic1msg = messages1[0];
