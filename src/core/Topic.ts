@@ -5,6 +5,12 @@
 
 import { EventEmitter } from "eventemitter3";
 import Service from "./Service.js";
+import Ros from "./Ros.js";
+import {
+  RosbridgeAdvertiseMessage,
+  RosbridgeSubscribeMessage,
+} from "../types/protocol.ts";
+import { rosapi } from "../types/rosapi.ts";
 
 /**
  * Publish and/or subscribe to a topic in ROS.
@@ -12,36 +18,36 @@ import Service from "./Service.js";
  * Emits the following events:
  *  * 'warning' - If there are any warning during the Topic creation.
  *  * 'message' - The message data from rosbridge.
- * @template T
  */
-export default class Topic extends EventEmitter {
-  /** @type {boolean | undefined} */
-  waitForReconnect = undefined;
-  /** @type {(() => void) | undefined} */
-  reconnectFunc = undefined;
+export default class Topic<T> extends EventEmitter {
+  waitForReconnect: boolean | undefined = undefined;
+  reconnectFunc: (() => void) | undefined = undefined;
   isAdvertised = false;
-  ros;
-  name;
-  messageType;
-  compression;
-  throttle_rate;
-  latch;
-  queue_size;
-  queue_length;
-  reconnect_on_close;
-  /** @type {(message: import('../types/protocol.ts').RosbridgeSubscribeMessage | import('../types/protocol.ts').RosbridgeAdvertiseMessage) => void}*/
-  callForSubscribeAndAdvertise;
+  ros: Ros;
+  name: string;
+  messageType: string;
+  compression: string;
+  throttle_rate: number;
+  latch: boolean;
+  queue_size: number;
+  queue_length: number;
+  reconnect_on_close: boolean;
+  callForSubscribeAndAdvertise: (
+    message: RosbridgeSubscribeMessage | RosbridgeAdvertiseMessage,
+  ) => void;
+  subscribeId: string | null;
+  advertiseId: string;
   /**
-   * @param {Object} options
-   * @param {import('./Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
-   * @param {string} options.name - The topic name, like '/cmd_vel'.
-   * @param {string} options.messageType - The message type, like 'std_msgs/String'.
-   * @param {string} [options.compression=none] - The type of compression to use, like 'png', 'cbor', or 'cbor-raw'.
-   * @param {number} [options.throttle_rate=0] - The rate (in ms in between messages) at which to throttle the topics.
-   * @param {number} [options.queue_size=100] - The queue created at bridge side for re-publishing webtopics.
-   * @param {boolean} [options.latch=false] - Latch the topic when publishing.
-   * @param {number} [options.queue_length=0] - The queue length at bridge side used when subscribing.
-   * @param {boolean} [options.reconnect_on_close=true] - The flag to enable resubscription and readvertisement on close event.
+   * @param options
+   * @param options.ros - The ROSLIB.Ros connection handle.
+   * @param options.name - The topic name, like '/cmd_vel'.
+   * @param options.messageType - The message type, like 'std_msgs/String'.
+   * @param [options.compression=none] - The type of compression to use, like 'png', 'cbor', or 'cbor-raw'.
+   * @param [options.throttle_rate=0] - The rate (in ms in between messages) at which to throttle the topics.
+   * @param [options.queue_size=100] - The queue created at bridge side for re-publishing webtopics.
+   * @param [options.latch=false] - Latch the topic when publishing.
+   * @param [options.queue_length=0] - The queue length at bridge side used when subscribing.
+   * @param [options.reconnect_on_close=true] - The flag to enable resubscription and readvertisement on close event.
    */
   constructor({
     ros,
@@ -53,6 +59,16 @@ export default class Topic extends EventEmitter {
     queue_size = 100,
     queue_length = 0,
     reconnect_on_close = true,
+  }: {
+    ros: Ros;
+    name: string;
+    messageType: string;
+    compression?: string;
+    throttle_rate?: number;
+    queue_size?: number;
+    latch?: boolean;
+    queue_length?: number;
+    reconnect_on_close?: boolean;
   }) {
     super();
 
@@ -109,20 +125,16 @@ export default class Topic extends EventEmitter {
     }
   }
 
-  _messageCallback = (data) => {
+  _messageCallback = (data: T) => {
     this.emit("message", data);
   };
-  /**
-   * @callback subscribeCallback
-   * @param {T} message - The published message.
-   */
   /**
    * Every time a message is published for the given topic, the callback
    * will be called with the message object.
    *
-   * @param {subscribeCallback} callback - Function with the following params:
+   * @param callback - Function with the following params:
    */
-  subscribe(callback) {
+  subscribe(callback: (message: T) => void) {
     if (typeof callback === "function") {
       this.on("message", callback);
     }
@@ -149,11 +161,11 @@ export default class Topic extends EventEmitter {
    * and remove all subscribe callbacks. To remove a callback, you must
    * explicitly pass the callback function in.
    *
-   * @param {import('eventemitter3').EventEmitter.ListenerFn} [callback] - The callback to unregister, if
+   * @param [callback] - The callback to unregister, if
    *     provided and other listeners are registered the topic won't
    *     unsubscribe, just stop emitting to the passed listener.
    */
-  unsubscribe(callback) {
+  unsubscribe(callback?: Parameters<EventEmitter["off"]>[1]) {
     if (callback) {
       this.off("message", callback);
       // If there is any other callbacks still subscribed don't unsubscribe
@@ -223,9 +235,9 @@ export default class Topic extends EventEmitter {
   /**
    * Publish the message.
    *
-   * @param {T} message - The message to publish.
+   * @param message - The message to publish.
    */
-  publish(message) {
+  publish(message: T) {
     if (!this.isAdvertised) {
       this.advertise();
     }
@@ -244,12 +256,18 @@ export default class Topic extends EventEmitter {
   /**
    * Retrieves list of publishers for this topic.
    *
-   * @param {function} callback - Function with the following params:
+   * @param callback - Function with the following params:
    *   * publishers - The list of publishers.
-   * @param {function} [failedCallback] - The callback function when the service call failed.
+   * @param [failedCallback] - The callback function when the service call failed.
    */
-  getPublishers(callback, failedCallback) {
-    const publishersClient = new Service({
+  getPublishers(
+    callback: (publishers: string[]) => void,
+    failedCallback?: (error: string) => void,
+  ) {
+    const publishersClient = new Service<
+      rosapi.PublishersRequest,
+      rosapi.PublishersResponse
+    >({
       ros: this.ros,
       name: "/rosapi/publishers",
       serviceType: "rosapi/Publishers",

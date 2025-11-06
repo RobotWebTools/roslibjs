@@ -2,14 +2,12 @@ import CBOR from "cbor-js";
 import typedArrayTagger from "../util/cborTypedArrayTags.js";
 import {
   isRosbridgeFragmentMessage,
+  isRosbridgeMessage,
   isRosbridgePngMessage,
+  RosbridgeFragmentMessage,
+  RosbridgeMessage,
 } from "../types/protocol.js";
-let BSON = null;
-// @ts-expect-error -- Workarounds for not including BSON in bundle. need to revisit
-if (typeof bson !== "undefined") {
-  // @ts-expect-error -- Workarounds for not including BSON in bundle. need to revisit
-  BSON = bson().BSON;
-}
+import { deserialize } from "bson";
 
 /**
  * Socket adapter that provides unified event handling for WebSocket and RTCDataChannel.
@@ -19,47 +17,58 @@ if (typeof bson !== "undefined") {
  * @class SocketAdapter
  */
 export default class SocketAdapter {
+  onOpenCallback: (event: Event) => void;
+  onCloseCallback: (event: Event) => void;
+  onErrorCallback: (event: Event) => void;
+  onMessageCallback: (message: RosbridgeMessage) => void;
+  decoder:
+    | ((data: unknown, callback: (message: RosbridgeMessage) => void) => void)
+    | null;
   /**
-   * @param {WebSocket|RTCDataChannel|import("ws").WebSocket} socket - The socket to attach event listeners to
-   * @param {Object} options - Configuration options
-   * @param {function(Event): void} options.onOpen - Callback for socket open events
-   * @param {function(Event): void} options.onClose - Callback for socket close events
-   * @param {function(Event): void} options.onError - Callback for socket error events
-   * @param {function(import('../types/protocol.ts').RosbridgeMessage): void} options.onMessage - Callback for processed messages
-   * @param {function(any, function): void} [options.decoder] - Optional decoder function
+   * Buffer Map for incoming message fragments
    */
-  constructor(socket, options) {
-    this.socket = socket;
-    this.onOpenCallback = options.onOpen;
-    this.onCloseCallback = options.onClose;
-    this.onErrorCallback = options.onError;
-    this.onMessageCallback = options.onMessage;
-    this.decoder = options.decoder || null;
+  fragmentBuffer = new Map<
+    string,
+    { fragments: string[]; received: number; total: number }
+  >();
+  /**
+   * @param socket - The socket to attach event listeners to
+   * @param options - Configuration options
+   * @param options.onOpen - Callback for socket open events
+   * @param options.onClose - Callback for socket close events
+   * @param options.onError - Callback for socket error events
+   * @param options.onMessage - Callback for processed messages
+   * @param [options.decoder] - Optional decoder function
+   */
+  constructor(
+    private socket: WebSocket | RTCDataChannel | import("ws").WebSocket,
+    {
+      onOpen,
+      onClose,
+      onError,
+      onMessage,
+      decoder = null,
+    }: {
+      onOpen: (event: Event) => void;
+      onClose: (event: Event) => void;
+      onError: (event: Event) => void;
+      onMessage: (message: RosbridgeMessage) => void;
+      decoder: ((data, callback: (error, result) => void) => void) | null;
+    },
+  ) {
+    this.onOpenCallback = onOpen;
+    this.onCloseCallback = onClose;
+    this.onErrorCallback = onError;
+    this.onMessageCallback = onMessage;
+    this.decoder = decoder;
 
-    /**
-     * Buffer Map for incoming message fragments
-     * @type {Map<string, {fragments: Array<string>, received: number, total: number}>}
-     */
-    this.fragmentBuffer = new Map();
-
-    this.setupEventListeners();
+    this.socket.onopen = (e: Event) => onOpen(e);
+    this.socket.onclose = (e: Event) => onClose(e);
+    this.socket.onerror = (e: Event) => onError(e);
+    this.socket.onmessage = (e: MessageEvent) => this.onmessage(e);
   }
 
-  /**
-   * Set up event listeners on the socket
-   * @private
-   */
-  setupEventListeners() {
-    this.socket.onopen = (event) => this.onopen(event);
-    this.socket.onclose = (event) => this.onclose(event);
-    this.socket.onerror = (event) => this.onerror(event);
-    this.socket.onmessage = (data) => this.onmessage(data);
-  }
-
-  /**
-   * @param {import('../types/protocol.ts').RosbridgeMessage} message
-   */
-  handleMessage(message) {
+  handleMessage(message: RosbridgeMessage) {
     if (isRosbridgeFragmentMessage(message)) {
       this.handleFragment(message);
     } else {
@@ -68,10 +77,7 @@ export default class SocketAdapter {
     }
   }
 
-  /**
-   * @param {import('../types/protocol.ts').RosbridgeFragmentMessage} fragment
-   */
-  handleFragment(fragment) {
+  handleFragment(fragment: RosbridgeFragmentMessage) {
     const { id, data, num, total } = fragment;
     if (
       !id ||
@@ -120,11 +126,10 @@ export default class SocketAdapter {
     }
   }
 
-  /**
-   * @param {import('../types/protocol.ts').RosbridgeMessage} message
-   * @param {(message: import('../types/protocol.ts').RosbridgeMessage) => void} callback
-   */
-  handlePng(message, callback) {
+  handlePng(
+    message: RosbridgeMessage,
+    callback: (message: RosbridgeMessage) => void,
+  ) {
     if (isRosbridgePngMessage(message)) {
       // If in Node.js..
       if (typeof window === "undefined") {
@@ -146,25 +151,26 @@ export default class SocketAdapter {
     }
   }
 
-  decodeBSON(data, callback) {
-    if (!BSON) {
-      throw "Cannot process BSON encoded message without BSON header.";
-    }
+  decodeBSON(data: Blob, callback: (msg: RosbridgeMessage) => void) {
     const reader = new FileReader();
     reader.onload = function () {
-      // @ts-expect-error -- this doesn't seem right, but don't want to break current type coercion assumption
-      const uint8Array = new Uint8Array(this.result);
-      const msg = BSON.deserialize(uint8Array);
-      callback(msg);
+      if (this.result instanceof ArrayBuffer) {
+        const uint8Array = new Uint8Array(this.result);
+        const msg: unknown = deserialize(uint8Array);
+        if (isRosbridgeMessage(msg)) {
+          callback(msg);
+        } else {
+          console.error("Invalid BSON message", msg);
+        }
+      }
     };
     reader.readAsArrayBuffer(data);
   }
 
   /**
    * Send data through the socket
-   * @param {string|ArrayBuffer|Blob} data - Data to send
    */
-  send(data) {
+  send(data: string | ArrayBuffer | Blob) {
     // Check readyState for both WebSocket and RTCDataChannel
     const isOpen =
       this.socket.readyState === 1 || // WebSocket.OPEN
@@ -184,49 +190,18 @@ export default class SocketAdapter {
 
   /**
    * Get the current connection state
-   * @returns {number|string} The socket ready state
+   * @returns The socket ready state
    */
-  get readyState() {
+  get readyState(): number | string {
     return this.socket.readyState;
-  }
-
-  /**
-   * Handle socket open event.
-   *
-   * @param {Event} event - The open event
-   * @memberof SocketAdapter
-   */
-  onopen(event) {
-    this.onOpenCallback(event);
-  }
-
-  /**
-   * Handle socket close event.
-   *
-   * @param {Event} event - The close event
-   * @memberof SocketAdapter
-   */
-  onclose(event) {
-    this.onCloseCallback(event);
-  }
-
-  /**
-   * Handle socket error event.
-   *
-   * @param {Event} event - The error event
-   * @memberof SocketAdapter
-   */
-  onerror(event) {
-    this.onErrorCallback(event);
   }
 
   /**
    * Handle incoming socket message and decode it appropriately.
    *
-   * @param {Object} data - The raw message data from the socket.
-   * @memberof SocketAdapter
+   * @param data - The raw message data from the socket.
    */
-  onmessage(data) {
+  onmessage(data: MessageEvent) {
     if (this.decoder) {
       this.decoder(data.data, (message) => {
         this.handleMessage(message);
