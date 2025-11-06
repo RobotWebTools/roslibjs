@@ -8,6 +8,9 @@ import Goal from "../actionlib/Goal.js";
 
 import Service from "../core/Service.js";
 import Topic from "../core/Topic.js";
+import Ros from "../core/Ros.js";
+import { tf2_msgs } from "../types/tf2_msgs.js";
+import { tf2_web_republisher } from "../types/tf2_web_republisher.js";
 
 import BaseTFClient from "./BaseTFClient.js";
 
@@ -15,28 +18,43 @@ import BaseTFClient from "./BaseTFClient.js";
  * A TF Client that listens to TFs from tf2_web_republisher.
  */
 export default class TFClient extends BaseTFClient {
-  /** @type {Goal|false} */
-  currentGoal = false;
-  /** @type {Topic|false} */
-  currentTopic = false;
-  repubServiceName;
-  actionClient;
-  serviceClient;
+  currentGoal: Goal<tf2_web_republisher.TFSubscriptionGoal> | false = false;
+  currentTopic: Topic<tf2_msgs.TFMessage> | false = false;
+  repubServiceName: string;
+  actionClient: ActionClient<tf2_web_republisher.TFSubscriptionGoal>;
+  serviceClient: Service<
+    tf2_web_republisher.RepublishTFsRequest,
+    tf2_web_republisher.RepublishTFsResponse
+  >;
+  _subscribeCB: ((tf: tf2_msgs.TFMessage) => void) | undefined = undefined;
 
   /**
-   * @param {Object} options
-   * @param {import('../core/Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
-   * @param {string} [options.fixedFrame=base_link] - The fixed frame.
-   * @param {number} [options.angularThres=2.0] - The angular threshold for the TF republisher.
-   * @param {number} [options.transThres=0.01] - The translation threshold for the TF republisher.
-   * @param {number} [options.rate=10.0] - The rate for the TF republisher.
-   * @param {number} [options.updateDelay=50] - The time (in ms) to wait after a new subscription
+   * @param options
+   * @param options.ros - The ROSLIB.Ros connection handle.
+   * @param [options.fixedFrame=base_link] - The fixed frame.
+   * @param [options.angularThres=2.0] - The angular threshold for the TF republisher.
+   * @param [options.transThres=0.01] - The translation threshold for the TF republisher.
+   * @param [options.rate=10.0] - The rate for the TF republisher.
+   * @param [options.updateDelay=50] - The time (in ms) to wait after a new subscription
    *     to update the TF republisher's list of TFs.
-   * @param {number} [options.topicTimeout=2.0] - The timeout parameter for the TF republisher.
-   * @param {string} [options.serverName="/tf2_web_republisher"] - The name of the tf2_web_republisher server.
-   * @param {string} [options.repubServiceName="/republish_tfs"] - The name of the republish_tfs service (non groovy compatibility mode only).
+   * @param [options.topicTimeout=2.0] - The timeout parameter for the TF republisher.
+   * @param [options.serverName="/tf2_web_republisher"] - The name of the tf2_web_republisher server.
+   * @param [options.repubServiceName="/republish_tfs"] - The name of the republish_tfs service (non groovy compatibility mode only).
    */
-  constructor({ repubServiceName = "/republish_tfs", ...options }) {
+  constructor({
+    repubServiceName = "/republish_tfs",
+    ...options
+  }: {
+    ros: Ros;
+    fixedFrame?: string;
+    angularThres?: number;
+    transThres?: number;
+    rate?: number;
+    updateDelay?: number;
+    topicTimeout?: number;
+    serverName?: string;
+    repubServiceName?: string;
+  }) {
     super(options);
 
     this.repubServiceName = repubServiceName;
@@ -63,7 +81,7 @@ export default class TFClient extends BaseTFClient {
    * based on the current list of TFs.
    */
   updateGoal() {
-    const goalMessage = {
+    const goalMessage: tf2_web_republisher.TFSubscriptionGoal = {
       source_frames: Object.keys(this.frameInfos),
       target_frame: this.fixedFrame,
       angular_thres: this.angularThres,
@@ -79,7 +97,7 @@ export default class TFClient extends BaseTFClient {
       if (this.currentGoal) {
         this.currentGoal.cancel();
       }
-      this.currentGoal = new Goal({
+      this.currentGoal = new Goal<tf2_web_republisher.TFSubscriptionGoal>({
         actionClient: this.actionClient,
         goalMessage: goalMessage,
       });
@@ -92,9 +110,8 @@ export default class TFClient extends BaseTFClient {
        * The service interface has the same parameters as the action,
        * plus the timeout
        */
-      goalMessage.timeout = this.topicTimeout;
       this.serviceClient.callService(
-        goalMessage,
+        { ...goalMessage, timeout: this.topicTimeout },
         this.processResponse.bind(this),
       );
     }
@@ -106,9 +123,9 @@ export default class TFClient extends BaseTFClient {
    * Process the service response and subscribe to the tf republisher
    * topic.
    *
-   * @param {Object} response - The service response containing the topic name.
+   * @param response - The service response containing the topic name.
    */
-  processResponse(response) {
+  processResponse(response: tf2_web_republisher.RepublishTFsResponse) {
     /*
      * Do not setup a topic subscription if already disposed. Prevents a race condition where
      * The dispose() function is called before the service call receives a response.
@@ -125,7 +142,7 @@ export default class TFClient extends BaseTFClient {
       this.currentTopic.unsubscribe(this._subscribeCB);
     }
 
-    this.currentTopic = new Topic({
+    this.currentTopic = new Topic<tf2_msgs.TFMessage>({
       ros: this.ros,
       name: response.topic_name,
       messageType: "tf2_web_republisher/TFArray",

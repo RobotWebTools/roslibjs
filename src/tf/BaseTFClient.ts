@@ -1,35 +1,41 @@
 import Transform from "../math/Transform.js";
 import { EventEmitter } from "eventemitter3";
+import Ros from "../core/Ros.js";
+import { tf2_msgs } from "../types/tf2_msgs.js";
 
 /**
  * Base class for TF Clients that provides common functionality.
  */
 export default class BaseTFClient extends EventEmitter {
-  frameInfos = {};
+  frameInfos: Record<
+    string,
+    { transform?: Transform; cbs: ((tf: Transform) => void)[] }
+  > = {};
   republisherUpdateRequested = false;
-  /** @type {((tf: any) => any) | undefined} */
-  _subscribeCB = undefined;
   _isDisposed = false;
-  ros;
-  fixedFrame;
-  angularThres;
-  transThres;
-  rate;
-  updateDelay;
-  topicTimeout;
-  serverName;
+  ros: Ros;
+  fixedFrame: string;
+  angularThres: number;
+  transThres: number;
+  rate: number;
+  updateDelay: number;
+  topicTimeout: {
+    sec: number;
+    nsec: number;
+  };
+  serverName: string;
 
   /**
-   * @param {Object} options
-   * @param {import('../core/Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
-   * @param {string} [options.fixedFrame=base_link] - The fixed frame.
-   * @param {number} [options.angularThres=2.0] - The angular threshold for the TF republisher.
-   * @param {number} [options.transThres=0.01] - The translation threshold for the TF republisher.
-   * @param {number} [options.rate=10.0] - The rate for the TF republisher.
-   * @param {number} [options.updateDelay=50] - The time (in ms) to wait after a new subscription
+   * @param options
+   * @param options.ros - The ROSLIB.Ros connection handle.
+   * @param [options.fixedFrame=base_link] - The fixed frame.
+   * @param [options.angularThres=2.0] - The angular threshold for the TF republisher.
+   * @param [options.transThres=0.01] - The translation threshold for the TF republisher.
+   * @param [options.rate=10.0] - The rate for the TF republisher.
+   * @param [options.updateDelay=50] - The time (in ms) to wait after a new subscription
    *     to update the TF republisher's list of TFs.
-   * @param {number} [options.topicTimeout=2.0] - The timeout parameter for the TF republisher.
-   * @param {string} [options.serverName="/tf2_web_republisher"] - The name of the tf2_web_republisher server.
+   * @param [options.topicTimeout=2.0] - The timeout parameter for the TF republisher.
+   * @param [options.serverName="/tf2_web_republisher"] - The name of the tf2_web_republisher server.
    */
   constructor({
     ros,
@@ -40,6 +46,15 @@ export default class BaseTFClient extends EventEmitter {
     updateDelay = 50,
     topicTimeout = 2.0,
     serverName = "/tf2_web_republisher",
+  }: {
+    ros: Ros;
+    fixedFrame?: string;
+    angularThres?: number;
+    transThres?: number;
+    rate?: number;
+    updateDelay?: number;
+    topicTimeout?: number;
+    serverName?: string;
   }) {
     super();
 
@@ -53,8 +68,8 @@ export default class BaseTFClient extends EventEmitter {
     const secs = Math.floor(seconds);
     const nsecs = Math.floor((seconds - secs) * 1000000000);
     this.topicTimeout = {
-      secs: secs,
-      nsecs: nsecs,
+      sec: secs,
+      nsec: nsecs,
     };
     this.serverName = serverName;
   }
@@ -63,9 +78,9 @@ export default class BaseTFClient extends EventEmitter {
    * Process the incoming TF message and send them out using the callback
    * functions.
    *
-   * @param {Object} tf - The TF message from the server.
+   * @param tf - The TF message from the server.
    */
-  processTFArray(tf) {
+  processTFArray(tf: tf2_msgs.TFMessage) {
     tf.transforms.forEach((transform) => {
       let frameID = transform.child_frame_id;
       if (frameID[0] === "/") {
@@ -73,13 +88,12 @@ export default class BaseTFClient extends EventEmitter {
       }
       const info = this.frameInfos[frameID];
       if (info) {
-        info.transform = new Transform({
+        const tf = new Transform({
           translation: transform.transform.translation,
           rotation: transform.transform.rotation,
         });
-        info.cbs.forEach((cb) => {
-          cb(info.transform);
-        });
+        info.transform = tf;
+        info.cbs.forEach((cb) => cb(tf));
       }
     }, this);
   }
@@ -94,16 +108,12 @@ export default class BaseTFClient extends EventEmitter {
   }
 
   /**
-   * @callback subscribeCallback
-   * @param {Transform} callback.transform - The transform data.
-   */
-  /**
    * Subscribe to the given TF frame.
    *
-   * @param {string} frameID - The TF frame to subscribe to.
-   * @param {subscribeCallback} callback - Function with the following params:
+   * @param frameID - The TF frame to subscribe to.
+   * @param callback - Function with the following params:
    */
-  subscribe(frameID, callback) {
+  subscribe(frameID: string, callback: (transform: Transform) => void) {
     // remove leading slash, if it's there
     if (frameID.startsWith("/")) {
       frameID = frameID.substring(1);
@@ -120,8 +130,9 @@ export default class BaseTFClient extends EventEmitter {
     }
 
     // if we already have a transform, callback immediately
-    else if (this.frameInfos[frameID].transform) {
-      callback(this.frameInfos[frameID].transform);
+    const transform = this.frameInfos[frameID].transform;
+    if (transform) {
+      callback(transform);
     }
     this.frameInfos[frameID].cbs.push(callback);
   }
@@ -129,10 +140,10 @@ export default class BaseTFClient extends EventEmitter {
   /**
    * Unsubscribe from the given TF frame.
    *
-   * @param {string} frameID - The TF frame to unsubscribe from.
-   * @param {function} callback - The callback function to remove.
+   * @param frameID - The TF frame to unsubscribe from.
+   * @param callback - The callback function to remove.
    */
-  unsubscribe(frameID, callback) {
+  unsubscribe(frameID: string, callback: (transform: Transform) => void) {
     // remove leading slash, if it's there
     if (frameID.startsWith("/")) {
       frameID = frameID.substring(1);
