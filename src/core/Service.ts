@@ -125,18 +125,22 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
           const response = {};
           const success = callback(rosbridgeRequest.args, response);
 
-          const call: RosbridgeServiceResponseMessage<Partial<TResponse>> = {
-            op: "service_response",
-            service: this.name,
-            values: response,
-            result: success,
-          };
-
-          if (rosbridgeRequest.id) {
-            call.id = rosbridgeRequest.id;
+          if (success) {
+            this.ros.callOnConnection({
+              op: "service_response",
+              service: this.name,
+              values: response,
+              result: success,
+              id: rosbridgeRequest.id,
+            } satisfies RosbridgeServiceResponseMessage<Partial<TResponse>>);
+          } else {
+            this.ros.callOnConnection({
+              op: "service_response",
+              service: this.name,
+              result: success,
+              id: rosbridgeRequest.id,
+            } satisfies RosbridgeServiceResponseMessage<Partial<TResponse>>);
           }
-
-          this.ros.callOnConnection(call);
         };
 
         this.ros.on(this.name, this._serviceCallback);
@@ -221,20 +225,22 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
         }
 
         this._serviceCallback = async (rosbridgeRequest) => {
-          const rosbridgeResponse: RosbridgeServiceResponseMessage<TResponse> =
-            {
+          try {
+            this.ros.callOnConnection({
+              op: "service_response",
+              service: this.name,
+              result: true,
+              values: await callback(rosbridgeRequest.args),
+              id: rosbridgeRequest.id,
+            } satisfies RosbridgeServiceResponseMessage<TResponse>);
+          } catch (err) {
+            this.ros.callOnConnection({
               op: "service_response",
               service: this.name,
               result: false,
-            };
-          try {
-            rosbridgeResponse.values = await callback(rosbridgeRequest.args);
-            rosbridgeResponse.result = true;
-          } finally {
-            if (rosbridgeRequest.id) {
-              rosbridgeResponse.id = rosbridgeRequest.id;
-            }
-            this.ros.callOnConnection(rosbridgeResponse);
+              values: String(err),
+              id: rosbridgeRequest.id,
+            } satisfies RosbridgeServiceResponseMessage<TResponse>);
           }
         };
         this.ros.on(this.name, this._serviceCallback);
