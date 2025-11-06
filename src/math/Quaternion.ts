@@ -90,7 +90,7 @@ export default class Quaternion implements IQuaternion {
   /**
    * Set the values of this quaternion to the product of itself and the given quaternion.
    *
-   * @param {IQuaternion} q - The quaternion to multiply with.
+   * @param q - The quaternion to multiply with.
    */
   multiply(q: IQuaternion): void {
     const newX = this.x * q.w + this.y * q.z - this.z * q.y + this.w * q.x;
@@ -106,7 +106,7 @@ export default class Quaternion implements IQuaternion {
   /**
    * Clone a copy of this quaternion.
    *
-   * @returns {Quaternion} The cloned quaternion.
+   * @returns The cloned quaternion.
    */
   clone(): Quaternion {
     return new Quaternion(this);

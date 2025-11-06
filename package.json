@@ -23,6 +23,7 @@
     "@types/ws": "^8.5.10",
     "dockerode": "^4.0.9",
     "eslint": "^9.32.0",
+    "eslint-plugin-jsdoc": "^61.1.12",
     "globals": "^16.0.0",
     "jsdoc": "^4.0.2",
     "jsdom": "^27.0.0",

@@ -34,7 +34,7 @@ export default class Pose implements IPose {
   /**
    * Apply a transform against this pose.
    *
-   * @param {ITransform} tf - The transform to be applied.
+   * @param tf - The transform to be applied.
    */
   applyTransform(tf: ITransform) {
     this.position.multiplyQuaternion(tf.rotation);
@@ -47,7 +47,7 @@ export default class Pose implements IPose {
   /**
    * Clone a copy of this pose.
    *
-   * @returns {Pose} The cloned pose.
+   * @returns The cloned pose.
    */
   clone(): Pose {
     return new Pose(this);
@@ -56,7 +56,7 @@ export default class Pose implements IPose {
   /**
    * Multiply this pose with another pose without altering this pose.
    *
-   * @returns {Pose} The result of the multiplication.
+   * @returns The result of the multiplication.
    */
   multiply(pose: Pose): Pose {
     const p = pose.clone();
@@ -70,7 +70,7 @@ export default class Pose implements IPose {
   /**
    * Compute the inverse of this pose.
    *
-   * @returns {Pose} The inverse of the pose.
+   * @returns The inverse of the pose.
    */
   getInverse(): Pose {
     const inverse = this.clone();

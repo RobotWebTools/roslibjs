@@ -3,6 +3,7 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import globals from 'globals';
+import jsdoc from 'eslint-plugin-jsdoc';
 
 export default tseslint.config(
   eslint.configs.recommended,
@@ -57,6 +58,16 @@ export default tseslint.config(
           'jsx': true
         }
       }
+    }
+  },
+  {
+    files: ['**/*.{ts,tsx}'],
+    plugins: {
+      jsdoc
+    },
+    rules: {
+      // Redundant in typescript files
+      'jsdoc/no-types': 'error'
     }
   },
   {
