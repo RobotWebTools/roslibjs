@@ -9,6 +9,7 @@
 
 import CBOR from 'cbor-js';
 import typedArrayTagger from '../util/cborTypedArrayTags.js';
+import { isRosbridgeActionFeedbackMessage, isRosbridgeActionResultMessage, isRosbridgeCallServiceMessage, isRosbridgeCancelActionGoalMessage, isRosbridgeFragmentMessage, isRosbridgePngMessage, isRosbridgePublishMessage, isRosbridgeSendActionGoalMessage, isRosbridgeServiceResponseMessage, isRosbridgeStatusMessage } from '../types/protocol.js';
 let BSON = null;
 // @ts-expect-error -- Workarounds for not including BSON in bundle. need to revisit
 if (typeof bson !== 'undefined') {
@@ -23,6 +24,7 @@ if (typeof bson !== 'undefined') {
  *
  * @namespace SocketAdapter
  * @private
+ * @param {import('./Ros.js').default} client
  */
 export default function SocketAdapter(client) {
   let decoder = null;
@@ -36,26 +38,31 @@ export default function SocketAdapter(client) {
    */
   const fragmentBuffer = new Map();
 
+  /**
+   * @param {import('../types/protocol.ts').RosbridgeMessage} message
+   */
   function handleMessage(message) {
-    if (message.op === 'fragment') {
+    if (isRosbridgeFragmentMessage(message)) {
       handleFragment(message);
-      return;
-    }
-    if (message.op === 'publish') {
+    } else if (isRosbridgePublishMessage(message)) {
       client.emit(message.topic, message.msg);
-    } else if (message.op === 'service_response') {
-      client.emit(message.id, message);
-    } else if (message.op === 'call_service') {
+    } else if (isRosbridgeServiceResponseMessage(message)) {
+      if (message.id) {
+        client.emit(message.id, message);
+      } else {
+        console.error('Received service response without ID');
+      }
+    } else if (isRosbridgeCallServiceMessage(message)) {
       client.emit(message.service, message);
-    } else if (message.op === 'send_action_goal') {
+    } else if (isRosbridgeSendActionGoalMessage(message)) {
       client.emit(message.action, message);
-    } else if (message.op === 'cancel_action_goal') {
+    } else if (isRosbridgeCancelActionGoalMessage(message)) {
       client.emit(message.id, message);
-    } else if (message.op === 'action_feedback') {
+    } else if (isRosbridgeActionFeedbackMessage(message)) {
       client.emit(message.id, message);
-    } else if (message.op === 'action_result') {
+    } else if (isRosbridgeActionResultMessage(message)) {
       client.emit(message.id, message);
-    } else if (message.op === 'status') {
+    } else if (isRosbridgeStatusMessage(message)) {
       if (message.id) {
         client.emit('status:' + message.id, message);
       } else {
@@ -64,6 +71,9 @@ export default function SocketAdapter(client) {
     }
   }
 
+  /**
+   * @param {import('../types/protocol.ts').RosbridgeFragmentMessage} fragment
+   */
   function handleFragment(fragment) {
     const { id, data, num, total } = fragment;
     if (!id || typeof num !== 'number' || typeof total !== 'number' || typeof data !== 'string') {
@@ -104,14 +114,18 @@ export default function SocketAdapter(client) {
     }
   }
 
+  /**
+   * @param {import('../types/protocol.ts').RosbridgeMessage} message
+   * @param {(message: import('../types/protocol.ts').RosbridgeMessage) => void} callback
+   */
   function handlePng(message, callback) {
-    if (message.op === 'png') {
+    if (isRosbridgePngMessage(message)) {
       // If in Node.js..
       if (typeof window === 'undefined') {
         import('../util/decompressPng.js').then(({ default: decompressPng }) => { decompressPng(message.data, callback); });
       } else {
         // if in browser..
-        import('../util/shim/decompressPng.js').then(({default: decompressPng}) => { decompressPng(message.data, callback); });
+        import('../util/shim/decompressPng.js').then(({ default: decompressPng }) => { decompressPng(message.data, callback); });
       }
     } else {
       callback(message);

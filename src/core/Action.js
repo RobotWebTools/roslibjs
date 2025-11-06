@@ -5,6 +5,7 @@
 
 import { EventEmitter } from 'eventemitter3';
 import { GoalStatus } from '../core/GoalStatus.ts';
+import { isRosbridgeActionFeedbackMessage, isRosbridgeActionResultMessage, isRosbridgeCancelActionGoalMessage } from '../types/protocol.ts';
 
 /**
  * A ROS 2 action client.
@@ -88,14 +89,16 @@ export default class Action extends EventEmitter {
             failedCallback(message.values);
           }
         } else if (
-          message.op === 'action_feedback' &&
+          isRosbridgeActionFeedbackMessage(message) &&
           typeof feedbackCallback === 'function'
         ) {
+          // @ts-expect-error -- can't do generic type guards in this file until it's migrated to typescript
           feedbackCallback(message.values);
         } else if (
-          message.op === 'action_result' &&
+          isRosbridgeActionResultMessage(message) &&
           typeof resultCallback === 'function'
         ) {
+          // @ts-expect-error -- can't do generic type guards in this file until it's migrated to typescript
           resultCallback(message.values);
         }
       });
@@ -181,7 +184,7 @@ export default class Action extends EventEmitter {
     if (typeof id === 'string') {
       this.ros.on(id, (message) => {
         if (
-          message.op === 'cancel_action_goal' &&
+          isRosbridgeCancelActionGoalMessage(message) &&
           typeof this._cancelCallback === 'function'
         ) {
           this._cancelCallback(id);
