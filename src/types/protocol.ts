@@ -2,6 +2,12 @@ export interface RosbridgeMessage {
   op: string;
 }
 
+export function isRosbridgeMessage(
+  message: unknown,
+): message is RosbridgeMessage {
+  return message instanceof Object && typeof message["op"] === "string";
+}
+
 export interface RosbridgeStatusMessage extends RosbridgeMessage {
   op: "status";
   id?: string;
