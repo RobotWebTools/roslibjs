@@ -20,7 +20,7 @@ export interface UrdfModelOptions {
   /**
    * The XML element to parse.
    */
-  xml: Element | null;
+  xml?: Element;
   /**
    * The XML element to parse as a string.
    */
@@ -43,7 +43,7 @@ export default class UrdfModel {
     // Check if we are using a string or an XML element
     if (string) {
       // Parse the string
-      xmlDoc = new DOMParser().parseFromString(string, MIME_TYPE.XML_TEXT).documentElement;
+      xmlDoc = new DOMParser().parseFromString(string, MIME_TYPE.XML_TEXT).documentElement ?? undefined;
     }
 
     if (!xmlDoc) {
