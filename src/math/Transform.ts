@@ -34,7 +34,7 @@ export default class Transform implements ITransform {
   /**
    * Clone a copy of this transform.
    *
-   * @returns {Transform} The cloned transform.
+   * @returns The cloned transform.
    */
   clone(): Transform {
     return new Transform(this);

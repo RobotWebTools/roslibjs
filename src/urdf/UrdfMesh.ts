@@ -16,10 +16,6 @@ export default class UrdfMesh {
   scale: Nullable<Vector3> = null;
   filename: Nullable<string>;
 
-  /**
-   * @param {Object} options
-   * @param {Element} options.xml - The XML element to parse.
-   */
   constructor({xml}: UrdfDefaultOptions) {
     this.type = UrdfType.MESH;
     this.filename = xml.getAttribute(UrdfAttrs.Filename);

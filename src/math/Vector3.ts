@@ -38,7 +38,7 @@ export default class Vector3 implements IVector3 {
   /**
    * Set the values of this vector to the sum of itself and the given vector.
    *
-   * @param {Vector3} v - The vector to add with.
+   * @param v - The vector to add with.
    */
   add(v: IVector3): void {
     this.x += v.x;
@@ -49,7 +49,7 @@ export default class Vector3 implements IVector3 {
   /**
    * Set the values of this vector to the difference of itself and the given vector.
    *
-   * @param {Vector3} v - The vector to subtract with.
+   * @param v - The vector to subtract with.
    */
   subtract(v: IVector3): void {
     this.x -= v.x;
@@ -60,7 +60,7 @@ export default class Vector3 implements IVector3 {
   /**
    * Multiply the given Quaternion with this vector.
    *
-   * @param {Quaternion} q - The quaternion to multiply with.
+   * @param q - The quaternion to multiply with.
    */
   multiplyQuaternion(q: IQuaternion) {
     const ix = q.w * this.x + q.y * this.z - q.z * this.y;
@@ -75,7 +75,7 @@ export default class Vector3 implements IVector3 {
   /**
    * Clone a copy of this vector.
    *
-   * @returns {Vector3} The cloned vector.
+   * @returns The cloned vector.
    */
   clone(): Vector3 {
     return new Vector3(this);
