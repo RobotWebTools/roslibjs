@@ -2,10 +2,10 @@
  * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
  */
-import Vector3, { type IVector3 } from './Vector3.js';
-import Quaternion, { type IQuaternion } from './Quaternion.js';
-import { type ITransform } from './Transform.js';
-import { PartialNullable } from '../types/interface-types.js';
+import Vector3, { type IVector3 } from "./Vector3.js";
+import Quaternion, { type IQuaternion } from "./Quaternion.js";
+import { type ITransform } from "./Transform.js";
+import { PartialNullable } from "../types/interface-types.js";
 
 export interface IPose {
   /**
@@ -22,7 +22,6 @@ export interface IPose {
  * A Pose in 3D space. Values are copied into this object.
  */
 export default class Pose implements IPose {
-
   position: Vector3;
   orientation: Quaternion;
 
@@ -62,7 +61,7 @@ export default class Pose implements IPose {
     const p = pose.clone();
     p.applyTransform({
       rotation: this.orientation,
-      translation: this.position
+      translation: this.position,
     });
     return p;
   }

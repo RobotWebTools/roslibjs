@@ -22,11 +22,11 @@ export default function decompressPng(data, callback) {
   // When the image loads, extracts the raw data (JSON message).
   image.onload = function () {
     // Creates a local canvas to draw on.
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
 
     if (!context) {
-      throw new Error('Failed to create Canvas context!');
+      throw new Error("Failed to create Canvas context!");
     }
 
     // Sets width and height.
@@ -39,20 +39,25 @@ export default function decompressPng(data, callback) {
     // Puts the data into the image.
     context.drawImage(image, 0, 0);
     // Grabs the raw, uncompressed data.
-    const imageData = context.getImageData(0, 0, image.width, image.height).data;
+    const imageData = context.getImageData(
+      0,
+      0,
+      image.width,
+      image.height,
+    ).data;
 
     // Constructs the JSON.
-    let jsonData = '';
+    let jsonData = "";
     for (let i = 0; i < imageData.length; i += 4) {
       // RGB
       jsonData += String.fromCharCode(
         imageData[i],
         imageData[i + 1],
-        imageData[i + 2]
+        imageData[i + 2],
       );
     }
     callback(JSON.parse(jsonData));
   };
   // Sends the image data to load.
-  image.src = 'data:image/png;base64,' + data;
+  image.src = "data:image/png;base64," + data;
 }

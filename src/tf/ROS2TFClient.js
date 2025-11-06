@@ -1,8 +1,7 @@
+import Action from "../core/Action.js";
+import Transform from "../math/Transform.js";
 
-import Action from '../core/Action.js';
-import Transform from '../math/Transform.js';
-
-import { EventEmitter } from 'eventemitter3';
+import { EventEmitter } from "eventemitter3";
 
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
@@ -38,13 +37,13 @@ export default class ROS2TFClient extends EventEmitter {
    */
   constructor({
     ros,
-    fixedFrame = 'base_link',
+    fixedFrame = "base_link",
     angularThres = 2.0,
     transThres = 0.01,
     rate = 10.0,
     updateDelay = 50,
     topicTimeout = 2.0,
-    serverName = '/tf2_web_republisher'
+    serverName = "/tf2_web_republisher",
   }) {
     super();
 
@@ -56,13 +55,13 @@ export default class ROS2TFClient extends EventEmitter {
     this.updateDelay = updateDelay;
     const seconds = topicTimeout;
     const secs = Math.floor(seconds);
-    const nsecs = Math.floor((seconds - secs) * 1E9);
+    const nsecs = Math.floor((seconds - secs) * 1e9);
     this.topicTimeout = {
       secs: secs,
-      nsecs: nsecs
+      nsecs: nsecs,
     };
     this.serverName = serverName;
-    this.goal_id = '';
+    this.goal_id = "";
     this.frameInfos = {};
     this.republisherUpdateRequested = false;
     this._subscribeCB = undefined;
@@ -72,9 +71,8 @@ export default class ROS2TFClient extends EventEmitter {
     this.actionClient = new Action({
       ros: this.ros,
       name: this.serverName,
-      actionType: 'tf2_web_republisher_interfaces/TFSubscription',
+      actionType: "tf2_web_republisher_interfaces/TFSubscription",
     });
-
   }
 
   /**
@@ -86,14 +84,14 @@ export default class ROS2TFClient extends EventEmitter {
   processTFArray(tf) {
     tf.transforms.forEach((transform) => {
       let frameID = transform.child_frame_id;
-      if (frameID[0] === '/') {
+      if (frameID[0] === "/") {
         frameID = frameID.substring(1);
       }
       const info = this.frameInfos[frameID];
       if (info) {
         info.transform = new Transform({
           translation: transform.transform.translation,
-          rotation: transform.transform.rotation
+          rotation: transform.transform.rotation,
         });
         info.cbs.forEach(function (cb) {
           cb(info.transform);
@@ -112,22 +110,22 @@ export default class ROS2TFClient extends EventEmitter {
       target_frame: this.fixedFrame,
       angular_thres: this.angularThres,
       trans_thres: this.transThres,
-      rate: this.rate
+      rate: this.rate,
     };
 
-    if (this.goal_id !== '') {
+    if (this.goal_id !== "") {
       this.actionClient.cancelGoal(this.goal_id);
     }
     this.currentGoal = goalMessage;
 
-    const id = this.actionClient.sendGoal(goalMessage,
-      () => {
-      },
+    const id = this.actionClient.sendGoal(
+      goalMessage,
+      () => {},
       (feedback) => {
-        this.processTFArray(feedback)
+        this.processTFArray(feedback);
       },
     );
-    if (typeof id === 'string') {
+    if (typeof id === "string") {
       this.goal_id = id;
     }
 
@@ -146,13 +144,13 @@ export default class ROS2TFClient extends EventEmitter {
    */
   subscribe(frameID, callback) {
     // remove leading slash, if it's there
-    if (frameID.startsWith('/')) {
+    if (frameID.startsWith("/")) {
       frameID = frameID.substring(1);
     }
     // if there is no callback registered for the given frame, create empty callback list
     if (!this.frameInfos[frameID]) {
       this.frameInfos[frameID] = {
-        cbs: []
+        cbs: [],
       };
       if (!this.republisherUpdateRequested) {
         setTimeout(this.updateGoal.bind(this), this.updateDelay);
@@ -175,12 +173,12 @@ export default class ROS2TFClient extends EventEmitter {
    */
   unsubscribe(frameID, callback) {
     // remove leading slash, if it's there
-    if (frameID.startsWith('/')) {
+    if (frameID.startsWith("/")) {
       frameID = frameID.substring(1);
     }
     const info = this.frameInfos[frameID];
     // eslint-disable-next-line no-var -- literally what even is going on here
-    for (var cbs = (info?.cbs) || [], idx = cbs.length; idx--;) {
+    for (var cbs = info?.cbs || [], idx = cbs.length; idx--; ) {
       if (cbs[idx] === callback) {
         cbs.splice(idx, 1);
       }

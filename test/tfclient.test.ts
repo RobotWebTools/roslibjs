@@ -1,11 +1,9 @@
-import { describe, it, expect } from 'vitest';
-import * as ROSLIB from '../src/RosLib.js';
+import { describe, it, expect } from "vitest";
+import * as ROSLIB from "../src/RosLib.js";
 
-describe('TFClient', function() {
-
-  describe('dispose', function() {
-
-    it('should not subscribe to republished topic if already disposed', function() {
+describe("TFClient", function () {
+  describe("dispose", function () {
+    it("should not subscribe to republished topic if already disposed", function () {
       /*
        * This test makes sure we do not subscribe to the republished topic if the
        * tf client has already been disposed when we get the response (from the setup request)
@@ -16,7 +14,7 @@ describe('TFClient', function() {
         idCounter: 0,
         on: () => {},
         off: () => {},
-        callOnConnection: () => {}
+        callOnConnection: () => {},
       };
 
       // @ts-expect-error -- stub impl
@@ -24,10 +22,9 @@ describe('TFClient', function() {
       tfclient.dispose();
 
       // Simulated a response from the server after the client is already disposed
-      tfclient.processResponse({ topic_name: '/repub_1' });
+      tfclient.processResponse({ topic_name: "/repub_1" });
 
       expect(tfclient.currentTopic).toBeFalsy();
     });
   });
-
 });

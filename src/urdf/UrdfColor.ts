@@ -4,14 +4,13 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import { UrdfAttrs, type UrdfDefaultOptions } from './UrdfTypes.js';
-import type { Optional } from '../types/interface-types.js';
+import { UrdfAttrs, type UrdfDefaultOptions } from "./UrdfTypes.js";
+import type { Optional } from "../types/interface-types.js";
 
 /**
  * A Color element in a URDF.
  */
 export default class UrdfColor {
-
   /**
    * Color Red, [0, 1]
    */
@@ -31,7 +30,9 @@ export default class UrdfColor {
 
   constructor({ xml }: UrdfDefaultOptions) {
     // Parse the xml string
-    const rgba: Optional<string[]> = xml.getAttribute(UrdfAttrs.Rgba)?.split(' ');
+    const rgba: Optional<string[]> = xml
+      .getAttribute(UrdfAttrs.Rgba)
+      ?.split(" ");
     if (rgba?.length !== 4) {
       return;
     }

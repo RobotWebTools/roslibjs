@@ -1,9 +1,8 @@
-import { describe, it, expect } from 'vitest';
-import * as ROSLIB from '../src/RosLib.js';
+import { describe, it, expect } from "vitest";
+import * as ROSLIB from "../src/RosLib.js";
 
-describe('Transform', function() {
-
-  describe('creation', function() {
+describe("Transform", function () {
+  describe("creation", function () {
     /*
      * Fails test. Claims type is Object.
      * it('should return an object of the correct type', function() {
@@ -11,10 +10,10 @@ describe('Transform', function() {
      *   expect(t).to.be.a('ROSLIB.Transform');
      * });
      */
-    it('should contain a valid vector and quaternion', function() {
+    it("should contain a valid vector and quaternion", function () {
       const t = new ROSLIB.Transform({
         translation: new ROSLIB.Vector3({ x: 1, y: 2, z: 3 }),
-        rotation: new ROSLIB.Quaternion({ x: 0.9, y: 0.8, z: 0.7, w: 1 })
+        rotation: new ROSLIB.Quaternion({ x: 0.9, y: 0.8, z: 0.7, w: 1 }),
       });
       // expect(t.translation).to.be.a('ROSLIB.Vector3');
       expect(t.translation.x).to.equal(1);
@@ -23,5 +22,4 @@ describe('Transform', function() {
       expect(t.rotation.w).to.equal(1);
     });
   });
-
 });

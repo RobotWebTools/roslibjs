@@ -1,71 +1,80 @@
-import { it, describe, expect } from 'vitest';
-import { Service, Ros } from '../';
+import { it, describe, expect } from "vitest";
+import { Service, Ros } from "../";
 
-describe('Service', () => {
+describe("Service", () => {
   const ros = new Ros({
-    url: 'ws://localhost:9090'
+    url: "ws://localhost:9090",
   });
 
-
-  it('Successfully advertises a service with an async return', async () => {
+  it("Successfully advertises a service with an async return", async () => {
     const server = new Service({
       ros,
-      serviceType: 'std_srvs/Trigger',
-      name: '/test_service'
+      serviceType: "std_srvs/Trigger",
+      name: "/test_service",
     });
     await server.advertiseAsync(async () => {
       return {
         success: true,
-        message: 'foo'
-      }
+        message: "foo",
+      };
     });
     const client = new Service({
       ros,
-      serviceType: 'std_srvs/Trigger',
-      name: '/test_service'
-    })
-    const response = await new Promise((resolve, reject) => { client.callService({}, resolve, reject); });
-    expect(response).toEqual({success: true, message: 'foo'});
+      serviceType: "std_srvs/Trigger",
+      name: "/test_service",
+    });
+    const response = await new Promise((resolve, reject) => {
+      client.callService({}, resolve, reject);
+    });
+    expect(response).toEqual({ success: true, message: "foo" });
     // Make sure un-advertisement actually disposes of the event handler
     expect(ros.listenerCount(server.name)).toEqual(1);
     await server.unadvertise();
     expect(ros.listenerCount(server.name)).toEqual(0);
-  })
-  it('Successfully advertises a service with a synchronous return', async () => {
-    const server = new Service<undefined, {success: boolean, message: string}>({
+  });
+  it("Successfully advertises a service with a synchronous return", async () => {
+    const server = new Service<
+      undefined,
+      { success: boolean; message: string }
+    >({
       ros,
-      serviceType: 'std_srvs/Trigger',
-      name: '/test_service'
+      serviceType: "std_srvs/Trigger",
+      name: "/test_service",
     });
     await server.advertise((_request, response) => {
       response.success = true;
-      response.message = 'bar';
+      response.message = "bar";
       return true;
     });
     const client = new Service({
       ros,
-      serviceType: 'std_srvs/Trigger',
-      name: '/test_service'
-    })
-    const response = await new Promise((resolve, reject) => { client.callService({}, resolve, reject); });
-    expect(response).toEqual({success: true, message: 'bar'});
+      serviceType: "std_srvs/Trigger",
+      name: "/test_service",
+    });
+    const response = await new Promise((resolve, reject) => {
+      client.callService({}, resolve, reject);
+    });
+    expect(response).toEqual({ success: true, message: "bar" });
     // Make sure un-advertisement actually disposes of the event handler
     expect(ros.listenerCount(server.name)).toEqual(1);
     await server.unadvertise();
     expect(ros.listenerCount(server.name)).toEqual(0);
-  })
+  });
 
-  it('Handles re-advertisement gracefully without throwing errors', async () => {
-    const server = new Service<undefined, {success: boolean, message: string}>({
+  it("Handles re-advertisement gracefully without throwing errors", async () => {
+    const server = new Service<
+      undefined,
+      { success: boolean; message: string }
+    >({
       ros,
-      serviceType: 'std_srvs/Trigger',
-      name: '/test_readvertise'
+      serviceType: "std_srvs/Trigger",
+      name: "/test_readvertise",
     });
 
     // First advertisement
     await server.advertise((_request, response) => {
       response.success = true;
-      response.message = 'first';
+      response.message = "first";
       return true;
     });
 
@@ -75,7 +84,7 @@ describe('Service', () => {
     // Re-advertise with different callback - should not throw
     await server.advertise((_request, response) => {
       response.success = true;
-      response.message = 'second';
+      response.message = "second";
       return true;
     });
 
@@ -85,13 +94,16 @@ describe('Service', () => {
     await server.unadvertise();
     expect(server.isAdvertised).toBe(false);
     expect(ros.listenerCount(server.name)).toEqual(0);
-  })
+  });
 
-  it('Handles multiple unadvertise calls gracefully', async () => {
-    const server = new Service<undefined, {success: boolean, message: string}>({
+  it("Handles multiple unadvertise calls gracefully", async () => {
+    const server = new Service<
+      undefined,
+      { success: boolean; message: string }
+    >({
       ros,
-      serviceType: 'std_srvs/Trigger',
-      name: '/test_multiple_unadvertise'
+      serviceType: "std_srvs/Trigger",
+      name: "/test_multiple_unadvertise",
     });
 
     await server.advertise((_request, response) => {
@@ -109,21 +121,21 @@ describe('Service', () => {
     await server.unadvertise();
 
     expect(server.isAdvertised).toBe(false);
-  })
+  });
 
-  it('Handles re-advertisement with advertiseAsync gracefully', async () => {
+  it("Handles re-advertisement with advertiseAsync gracefully", async () => {
     const server = new Service({
       ros,
-      serviceType: 'std_srvs/Trigger',
-      name: '/test_readvertise_async'
+      serviceType: "std_srvs/Trigger",
+      name: "/test_readvertise_async",
     });
 
     // First advertisement
     await server.advertiseAsync(async () => {
       return {
         success: true,
-        message: 'first'
-      }
+        message: "first",
+      };
     });
 
     expect(server.isAdvertised).toBe(true);
@@ -132,42 +144,45 @@ describe('Service', () => {
     await server.advertiseAsync(async () => {
       return {
         success: true,
-        message: 'second'
-      }
+        message: "second",
+      };
     });
 
     expect(server.isAdvertised).toBe(true);
 
     await server.unadvertise();
     expect(server.isAdvertised).toBe(false);
-  })
+  });
 
-  it('Ensures operations are serialized through queue', async () => {
-    const server = new Service<undefined, {success: boolean, message: string}>({
+  it("Ensures operations are serialized through queue", async () => {
+    const server = new Service<
+      undefined,
+      { success: boolean; message: string }
+    >({
       ros,
-      serviceType: 'std_srvs/Trigger',
-      name: '/test_queue'
+      serviceType: "std_srvs/Trigger",
+      name: "/test_queue",
     });
 
     // Rapid advertise/unadvertise operations
     const operations = [
       server.advertise((_request, response) => {
         response.success = true;
-        response.message = 'first';
+        response.message = "first";
         return true;
       }),
       server.unadvertise(),
       server.advertise((_request, response) => {
         response.success = true;
-        response.message = 'second';
+        response.message = "second";
         return true;
       }),
       server.unadvertise(),
       server.advertise((_request, response) => {
         response.success = true;
-        response.message = 'third';
+        response.message = "third";
         return true;
-      })
+      }),
     ];
 
     // All operations should complete without errors
@@ -178,5 +193,5 @@ describe('Service', () => {
 
     await server.unadvertise();
     expect(server.isAdvertised).toBe(false);
-  })
-})
+  });
+});

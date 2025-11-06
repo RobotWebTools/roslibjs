@@ -4,8 +4,8 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import Topic from '../core/Topic.js';
-import { EventEmitter } from 'eventemitter3';
+import Topic from "../core/Topic.js";
+import { EventEmitter } from "eventemitter3";
 
 /**
  * An actionlib action listener.
@@ -27,11 +27,7 @@ export default class ActionListener extends EventEmitter {
    * @param {string} options.serverName - The action server name, like '/fibonacci'.
    * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
    */
-  constructor({
-    ros,
-    serverName,
-    actionName
-  }) {
+  constructor({ ros, serverName, actionName }) {
     super();
     this.ros = ros;
     this.serverName = serverName;
@@ -40,47 +36,47 @@ export default class ActionListener extends EventEmitter {
     // create the topics associated with actionlib
     const goalListener = new Topic({
       ros: this.ros,
-      name: this.serverName + '/goal',
-      messageType: this.actionName + 'Goal'
+      name: this.serverName + "/goal",
+      messageType: this.actionName + "Goal",
     });
 
     const feedbackListener = new Topic({
       ros: this.ros,
-      name: this.serverName + '/feedback',
-      messageType: this.actionName + 'Feedback'
+      name: this.serverName + "/feedback",
+      messageType: this.actionName + "Feedback",
     });
 
     const statusListener = new Topic({
       ros: this.ros,
-      name: this.serverName + '/status',
-      messageType: 'actionlib_msgs/GoalStatusArray'
+      name: this.serverName + "/status",
+      messageType: "actionlib_msgs/GoalStatusArray",
     });
 
     const resultListener = new Topic({
       ros: this.ros,
-      name: this.serverName + '/result',
-      messageType: this.actionName + 'Result'
+      name: this.serverName + "/result",
+      messageType: this.actionName + "Result",
     });
 
     goalListener.subscribe((goalMessage) => {
-      this.emit('goal', goalMessage);
+      this.emit("goal", goalMessage);
     });
 
     statusListener.subscribe((statusMessage) => {
       statusMessage.status_list.forEach((status) => {
-        this.emit('status', status);
+        this.emit("status", status);
       });
     });
 
     feedbackListener.subscribe((feedbackMessage) => {
-      this.emit('status', feedbackMessage.status);
-      this.emit('feedback', feedbackMessage.feedback);
+      this.emit("status", feedbackMessage.status);
+      this.emit("feedback", feedbackMessage.feedback);
     });
 
     // subscribe to the result topic
     resultListener.subscribe((resultMessage) => {
-      this.emit('status', resultMessage.status);
-      this.emit('result', resultMessage.result);
+      this.emit("status", resultMessage.status);
+      this.emit("result", resultMessage.result);
     });
   }
 }

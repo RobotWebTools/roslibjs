@@ -3,8 +3,8 @@
  * @author Laura Lindzey - lindzey@gmail.com
  */
 
-import Topic from '../core/Topic.js';
-import { EventEmitter } from 'eventemitter3';
+import Topic from "../core/Topic.js";
+import { EventEmitter } from "eventemitter3";
 
 /**
  * An actionlib action server client.
@@ -34,11 +34,7 @@ export default class SimpleActionServer extends EventEmitter {
    * @param {string} options.serverName - The action server name, like '/fibonacci'.
    * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
    */
-  constructor({
-    ros,
-    serverName,
-    actionName
-  }) {
+  constructor({ ros, serverName, actionName }) {
     super();
     this.ros = ros;
     this.serverName = serverName;
@@ -47,57 +43,59 @@ export default class SimpleActionServer extends EventEmitter {
     // create and advertise publishers
     this.feedbackPublisher = new Topic({
       ros: this.ros,
-      name: this.serverName + '/feedback',
-      messageType: this.actionName + 'Feedback'
+      name: this.serverName + "/feedback",
+      messageType: this.actionName + "Feedback",
     });
     this.feedbackPublisher.advertise();
 
     const statusPublisher = new Topic({
       ros: this.ros,
-      name: this.serverName + '/status',
-      messageType: 'actionlib_msgs/GoalStatusArray'
+      name: this.serverName + "/status",
+      messageType: "actionlib_msgs/GoalStatusArray",
     });
     statusPublisher.advertise();
 
     this.resultPublisher = new Topic({
       ros: this.ros,
-      name: this.serverName + '/result',
-      messageType: this.actionName + 'Result'
+      name: this.serverName + "/result",
+      messageType: this.actionName + "Result",
     });
     this.resultPublisher.advertise();
 
     // create and subscribe to listeners
     const goalListener = new Topic({
       ros: this.ros,
-      name: this.serverName + '/goal',
-      messageType: this.actionName + 'Goal'
+      name: this.serverName + "/goal",
+      messageType: this.actionName + "Goal",
     });
 
     const cancelListener = new Topic({
       ros: this.ros,
-      name: this.serverName + '/cancel',
-      messageType: 'actionlib_msgs/GoalID'
+      name: this.serverName + "/cancel",
+      messageType: "actionlib_msgs/GoalID",
     });
 
     // Track the goals and their status in order to publish status...
     this.statusMessage = {
       header: {
         stamp: { secs: 0, nsecs: 100 },
-        frame_id: ''
+        frame_id: "",
       },
       /** @type {{goal_id: any, status: number}[]} */
-      status_list: []
+      status_list: [],
     };
 
     goalListener.subscribe((goalMessage) => {
       if (this.currentGoal) {
         this.nextGoal = goalMessage;
         // needs to happen AFTER rest is set up
-        this.emit('cancel');
+        this.emit("cancel");
       } else {
-        this.statusMessage.status_list = [{ goal_id: goalMessage.goal_id, status: 1 }];
+        this.statusMessage.status_list = [
+          { goal_id: goalMessage.goal_id, status: 1 },
+        ];
         this.currentGoal = goalMessage;
-        this.emit('goal', goalMessage.goal);
+        this.emit("goal", goalMessage.goal);
       }
     });
 
@@ -128,11 +126,11 @@ export default class SimpleActionServer extends EventEmitter {
       if (
         cancelMessage.stamp.secs === 0 &&
         cancelMessage.stamp.secs === 0 &&
-        cancelMessage.id === ''
+        cancelMessage.id === ""
       ) {
         this.nextGoal = null;
         if (this.currentGoal) {
-          this.emit('cancel');
+          this.emit("cancel");
         }
       } else {
         // treat id and stamp independently
@@ -140,7 +138,7 @@ export default class SimpleActionServer extends EventEmitter {
           this.currentGoal &&
           cancelMessage.id === this.currentGoal.goal_id.id
         ) {
-          this.emit('cancel');
+          this.emit("cancel");
         } else if (
           this.nextGoal &&
           cancelMessage.id === this.nextGoal.goal_id.id
@@ -158,7 +156,7 @@ export default class SimpleActionServer extends EventEmitter {
           this.currentGoal &&
           isEarlier(this.currentGoal.goal_id.stamp, cancelMessage.stamp)
         ) {
-          this.emit('cancel');
+          this.emit("cancel");
         }
       }
     });
@@ -168,7 +166,7 @@ export default class SimpleActionServer extends EventEmitter {
       const currentTime = new Date();
       const secs = Math.floor(currentTime.getTime() / 1000);
       const nsecs = Math.round(
-        1000000000 * (currentTime.getTime() / 1000 - secs)
+        1000000000 * (currentTime.getTime() / 1000 - secs),
       );
       this.statusMessage.header.stamp.secs = secs;
       this.statusMessage.header.stamp.nsecs = nsecs;
@@ -184,7 +182,7 @@ export default class SimpleActionServer extends EventEmitter {
     if (this.currentGoal !== null) {
       const resultMessage = {
         status: { goal_id: this.currentGoal.goal_id, status: 3 },
-        result: result
+        result: result,
       };
       this.resultPublisher.publish(resultMessage);
 
@@ -192,7 +190,7 @@ export default class SimpleActionServer extends EventEmitter {
       if (this.nextGoal) {
         this.currentGoal = this.nextGoal;
         this.nextGoal = null;
-        this.emit('goal', this.currentGoal.goal);
+        this.emit("goal", this.currentGoal.goal);
       } else {
         this.currentGoal = null;
       }
@@ -207,7 +205,7 @@ export default class SimpleActionServer extends EventEmitter {
     if (this.currentGoal !== null) {
       const resultMessage = {
         status: { goal_id: this.currentGoal.goal_id, status: 4 },
-        result: result
+        result: result,
       };
       this.resultPublisher.publish(resultMessage);
 
@@ -215,7 +213,7 @@ export default class SimpleActionServer extends EventEmitter {
       if (this.nextGoal) {
         this.currentGoal = this.nextGoal;
         this.nextGoal = null;
-        this.emit('goal', this.currentGoal.goal);
+        this.emit("goal", this.currentGoal.goal);
       } else {
         this.currentGoal = null;
       }
@@ -230,7 +228,7 @@ export default class SimpleActionServer extends EventEmitter {
     if (this.currentGoal !== null) {
       const feedbackMessage = {
         status: { goal_id: this.currentGoal.goal_id, status: 1 },
-        feedback: feedback
+        feedback: feedback,
       };
       this.feedbackPublisher.publish(feedbackMessage);
     }
@@ -242,14 +240,14 @@ export default class SimpleActionServer extends EventEmitter {
     if (this.currentGoal !== null) {
       this.statusMessage.status_list = [];
       const resultMessage = {
-        status: { goal_id: this.currentGoal.goal_id, status: 2 }
+        status: { goal_id: this.currentGoal.goal_id, status: 2 },
       };
       this.resultPublisher.publish(resultMessage);
 
       if (this.nextGoal) {
         this.currentGoal = this.nextGoal;
         this.nextGoal = null;
-        this.emit('goal', this.currentGoal.goal);
+        this.emit("goal", this.currentGoal.goal);
       } else {
         this.currentGoal = null;
       }

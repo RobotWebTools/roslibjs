@@ -4,9 +4,9 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import { Vector3 } from '../math/index.js';
-import { UrdfAttrs, type UrdfDefaultOptions, UrdfType } from './UrdfTypes.js';
-import type { Nullable, Optional } from '../types/interface-types.js';
+import { Vector3 } from "../math/index.js";
+import { UrdfAttrs, type UrdfDefaultOptions, UrdfType } from "./UrdfTypes.js";
+import type { Nullable, Optional } from "../types/interface-types.js";
 
 /**
  * A Mesh element in a URDF.
@@ -16,12 +16,14 @@ export default class UrdfMesh {
   scale: Nullable<Vector3> = null;
   filename: Nullable<string>;
 
-  constructor({xml}: UrdfDefaultOptions) {
+  constructor({ xml }: UrdfDefaultOptions) {
     this.type = UrdfType.MESH;
     this.filename = xml.getAttribute(UrdfAttrs.Filename);
 
     // Check for a scale
-    const scale: Optional<string[]> = xml.getAttribute(UrdfAttrs.Scale)?.split(' ');
+    const scale: Optional<string[]> = xml
+      .getAttribute(UrdfAttrs.Scale)
+      ?.split(" ");
     if (scale?.length !== 3) {
       return;
     }
@@ -29,7 +31,7 @@ export default class UrdfMesh {
     this.scale = new Vector3({
       x: parseFloat(scale[0]),
       y: parseFloat(scale[1]),
-      z: parseFloat(scale[2])
+      z: parseFloat(scale[2]),
     });
   }
 }

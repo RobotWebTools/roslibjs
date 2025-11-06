@@ -3,8 +3,8 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
-import { type IQuaternion } from './Quaternion.js';
-import { type PartialNullable } from '../types/interface-types.js';
+import { type IQuaternion } from "./Quaternion.js";
+import { type PartialNullable } from "../types/interface-types.js";
 
 export interface IVector3 {
   /**
