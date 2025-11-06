@@ -6,7 +6,7 @@
 import Ros from "../core/Ros.js";
 import Topic from "../core/Topic.js";
 import { EventEmitter } from "eventemitter3";
-import { actionlib_msgs } from "./actionlib_msgs.js";
+import { actionlib_msgs } from "../types/actionlib_msgs.js";
 
 /**
  * An actionlib action server client.
