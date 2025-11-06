@@ -3,8 +3,10 @@
  * @author Laura Lindzey - lindzey@gmail.com
  */
 
+import Ros from "../core/Ros.js";
 import Topic from "../core/Topic.js";
 import { EventEmitter } from "eventemitter3";
+import { actionlib_msgs } from "./actionlib_msgs.js";
 
 /**
  * An actionlib action server client.
@@ -13,28 +15,42 @@ import { EventEmitter } from "eventemitter3";
  *  * 'goal' - Goal sent by action client.
  *  * 'cancel' - Action client has canceled the request.
  */
-export default class SimpleActionServer extends EventEmitter {
+export default class SimpleActionServer<
+  TGoal = unknown,
+  TFeedback = unknown,
+  TResult = unknown,
+> extends EventEmitter {
   // needed for handling preemption prompted by a new goal being received
-  /** @type {{goal_id: {id: any, stamp: any}, goal: any} | null} */
-  currentGoal = null; // currently tracked goal
-  /** @type {{goal_id: {id: any, stamp: any}, goal: any} | null} */
-  nextGoal = null; // the one this'll be preempting
-  ros;
-  serverName;
-  actionName;
-  feedbackPublisher;
-  resultPublisher;
-  statusPublisher;
-  statusMessage;
-  goalSubscriber;
-  cancelSubscriber;
+  currentGoal: { goal: TGoal; goal_id: actionlib_msgs.GoalID } | null = null; // currently tracked goal
+  nextGoal: { goal: TGoal; goal_id: actionlib_msgs.GoalID } | null = null; // the one this'll be preempting
+  ros: Ros;
+  serverName: string;
+  actionName: string;
+  feedbackPublisher: Topic<{
+    feedback: TFeedback;
+    status: actionlib_msgs.GoalStatus;
+  }>;
+  resultPublisher: Topic<{
+    result?: TResult;
+    status: actionlib_msgs.GoalStatus;
+  }>;
+  statusPublisher: Topic<actionlib_msgs.GoalStatusArray>;
+  statusMessage: actionlib_msgs.GoalStatusArray;
   /**
-   * @param {Object} options
-   * @param {import('../core/Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
-   * @param {string} options.serverName - The action server name, like '/fibonacci'.
-   * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
+   * @param options
+   * @param options.ros - The ROSLIB.Ros connection handle.
+   * @param options.serverName - The action server name, like '/fibonacci'.
+   * @param options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
    */
-  constructor({ ros, serverName, actionName }) {
+  constructor({
+    ros,
+    serverName,
+    actionName,
+  }: {
+    ros: Ros;
+    serverName: string;
+    actionName: string;
+  }) {
     super();
     this.ros = ros;
     this.serverName = serverName;
@@ -63,13 +79,16 @@ export default class SimpleActionServer extends EventEmitter {
     this.resultPublisher.advertise();
 
     // create and subscribe to listeners
-    const goalListener = new Topic({
+    const goalListener = new Topic<{
+      goal: TGoal;
+      goal_id: actionlib_msgs.GoalID;
+    }>({
       ros: this.ros,
       name: this.serverName + "/goal",
       messageType: this.actionName + "Goal",
     });
 
-    const cancelListener = new Topic({
+    const cancelListener = new Topic<actionlib_msgs.GoalID>({
       ros: this.ros,
       name: this.serverName + "/cancel",
       messageType: "actionlib_msgs/GoalID",
@@ -78,7 +97,7 @@ export default class SimpleActionServer extends EventEmitter {
     // Track the goals and their status in order to publish status...
     this.statusMessage = {
       header: {
-        stamp: { secs: 0, nsecs: 100 },
+        stamp: { sec: 0, nsec: 100 },
         frame_id: "",
       },
       /** @type {{goal_id: any, status: number}[]} */
@@ -124,8 +143,8 @@ export default class SimpleActionServer extends EventEmitter {
     cancelListener.subscribe((cancelMessage) => {
       // cancel ALL goals if both empty
       if (
-        cancelMessage.stamp.secs === 0 &&
-        cancelMessage.stamp.secs === 0 &&
+        cancelMessage.stamp.sec === 0 &&
+        cancelMessage.stamp.nsec === 0 &&
         cancelMessage.id === ""
       ) {
         this.nextGoal = null;
@@ -168,17 +187,19 @@ export default class SimpleActionServer extends EventEmitter {
       const nsecs = Math.round(
         1000000000 * (currentTime.getTime() / 1000 - secs),
       );
-      this.statusMessage.header.stamp.secs = secs;
-      this.statusMessage.header.stamp.nsecs = nsecs;
+      this.statusMessage.header = {
+        ...this.statusMessage.header,
+        stamp: { sec: secs, nsec: nsecs },
+      };
       statusPublisher.publish(this.statusMessage);
     }, 500); // publish every 500ms
   }
   /**
    * Set action state to succeeded and return to client.
    *
-   * @param {Object} result - The result to return to the client.
+   * @param result - The result to return to the client.
    */
-  setSucceeded(result) {
+  setSucceeded(result: TResult) {
     if (this.currentGoal !== null) {
       const resultMessage = {
         status: { goal_id: this.currentGoal.goal_id, status: 3 },
@@ -199,9 +220,9 @@ export default class SimpleActionServer extends EventEmitter {
   /**
    * Set action state to aborted and return to client.
    *
-   * @param {Object} result - The result to return to the client.
+   * @param result - The result to return to the client.
    */
-  setAborted(result) {
+  setAborted(result: TResult) {
     if (this.currentGoal !== null) {
       const resultMessage = {
         status: { goal_id: this.currentGoal.goal_id, status: 4 },
@@ -222,9 +243,9 @@ export default class SimpleActionServer extends EventEmitter {
   /**
    * Send a feedback message.
    *
-   * @param {Object} feedback - The feedback to send to the client.
+   * @param feedback - The feedback to send to the client.
    */
-  sendFeedback(feedback) {
+  sendFeedback(feedback: TFeedback) {
     if (this.currentGoal !== null) {
       const feedbackMessage = {
         status: { goal_id: this.currentGoal.goal_id, status: 1 },

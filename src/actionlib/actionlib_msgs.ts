@@ -1,0 +1,18 @@
+import { std_msgs } from "../types/std_msgs";
+import { GoalStatus as GoalStatusEnum } from "../core/GoalStatus.js";
+
+export namespace actionlib_msgs {
+  export interface GoalID {
+    id: string;
+    stamp: { sec: number; nsec: number };
+  }
+  export interface GoalStatus {
+    goal_id: GoalID;
+    status: GoalStatusEnum;
+    text?: string;
+  }
+  export interface GoalStatusArray {
+    header: std_msgs.Header;
+    status_list: GoalStatus[];
+  }
+}
