@@ -3,7 +3,7 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-import { EventEmitter } from 'eventemitter3';
+import { EventEmitter } from "eventemitter3";
 
 /**
  * A ROS service client.
@@ -36,11 +36,7 @@ export default class Service extends EventEmitter {
    * @param {string} options.name - The service name, like '/add_two_ints'.
    * @param {string} options.serviceType - The service type, like 'rospy_tutorials/AddTwoInts'.
    */
-  constructor({
-    ros,
-    name,
-    serviceType
-  }) {
+  constructor({ ros, name, serviceType }) {
     super();
     this.ros = ros;
     this.name = name;
@@ -70,27 +66,27 @@ export default class Service extends EventEmitter {
     }
 
     const serviceCallId =
-      'call_service:' + this.name + ':' + (++this.ros.idCounter).toString();
+      "call_service:" + this.name + ":" + (++this.ros.idCounter).toString();
 
     if (callback || failedCallback) {
       this.ros.once(serviceCallId, function (message) {
         if (message.result !== undefined && message.result === false) {
-          if (typeof failedCallback === 'function') {
+          if (typeof failedCallback === "function") {
             failedCallback(message.values);
           }
-        } else if (typeof callback === 'function') {
+        } else if (typeof callback === "function") {
           callback(message.values);
         }
       });
     }
 
     const call = {
-      op: 'call_service',
+      op: "call_service",
       id: serviceCallId,
       service: this.name,
       type: this.serviceType,
       args: request,
-      timeout: timeout
+      timeout: timeout,
     };
 
     this.ros.callOnConnection(call);
@@ -110,42 +106,44 @@ export default class Service extends EventEmitter {
    */
   advertise(callback) {
     // Queue this operation to prevent race conditions
-    this._operationQueue = this._operationQueue.then(async () => {
-      // If already advertised, unadvertise first
-      if (this.isAdvertised) {
-        await this._doUnadvertise();
-      }
-
-      // Store the new callback for removal during un-advertisement
-      this._serviceCallback = (rosbridgeRequest) => {
-        const response = {};
-        const success = callback(rosbridgeRequest.args, response);
-
-        const call = {
-          op: 'service_response',
-          service: this.name,
-          values: response,
-          result: success
-        };
-
-        if (rosbridgeRequest.id) {
-          call.id = rosbridgeRequest.id;
+    this._operationQueue = this._operationQueue
+      .then(async () => {
+        // If already advertised, unadvertise first
+        if (this.isAdvertised) {
+          await this._doUnadvertise();
         }
 
-        this.ros.callOnConnection(call);
-      };
+        // Store the new callback for removal during un-advertisement
+        this._serviceCallback = (rosbridgeRequest) => {
+          const response = {};
+          const success = callback(rosbridgeRequest.args, response);
 
-      this.ros.on(this.name, this._serviceCallback);
-      this.ros.callOnConnection({
-        op: 'advertise_service',
-        type: this.serviceType,
-        service: this.name
+          const call = {
+            op: "service_response",
+            service: this.name,
+            values: response,
+            result: success,
+          };
+
+          if (rosbridgeRequest.id) {
+            call.id = rosbridgeRequest.id;
+          }
+
+          this.ros.callOnConnection(call);
+        };
+
+        this.ros.on(this.name, this._serviceCallback);
+        this.ros.callOnConnection({
+          op: "advertise_service",
+          type: this.serviceType,
+          service: this.name,
+        });
+        this.isAdvertised = true;
+      })
+      .catch((err) => {
+        this.emit("error", err);
+        throw err;
       });
-      this.isAdvertised = true;
-    }).catch(err => {
-      this.emit('error', err);
-      throw err;
-    });
 
     return this._operationQueue;
   }
@@ -180,8 +178,8 @@ export default class Service extends EventEmitter {
        * no new advertise can start until this completes
        */
       this.ros.callOnConnection({
-        op: 'unadvertise_service',
-        service: this.name
+        op: "unadvertise_service",
+        service: this.name,
       });
     } finally {
       this._pendingUnadvertise = false;
@@ -190,12 +188,14 @@ export default class Service extends EventEmitter {
 
   unadvertise() {
     // Queue this operation to prevent race conditions
-    this._operationQueue = this._operationQueue.then(async () => {
-      await this._doUnadvertise();
-    }).catch(err => {
-      this.emit('error', err);
-      throw err;
-    });
+    this._operationQueue = this._operationQueue
+      .then(async () => {
+        await this._doUnadvertise();
+      })
+      .catch((err) => {
+        this.emit("error", err);
+        throw err;
+      });
 
     return this._operationQueue;
   }
@@ -206,40 +206,42 @@ export default class Service extends EventEmitter {
    */
   advertiseAsync(callback) {
     // Queue this operation to prevent race conditions
-    this._operationQueue = this._operationQueue.then(async () => {
-      // If already advertised, unadvertise first
-      if (this.isAdvertised) {
-        await this._doUnadvertise();
-      }
+    this._operationQueue = this._operationQueue
+      .then(async () => {
+        // If already advertised, unadvertise first
+        if (this.isAdvertised) {
+          await this._doUnadvertise();
+        }
 
-      this._serviceCallback = async (rosbridgeRequest) => {
-        /** @type {import('../types/protocol.ts').RosbridgeServiceResponseMessage<TResponse>} */
-        const rosbridgeResponse = {
-          op: 'service_response',
-          service: this.name,
-          result: false
-        }
-        try {
-          rosbridgeResponse.values = await callback(rosbridgeRequest.args);
-          rosbridgeResponse.result = true;
-        } finally {
-          if (rosbridgeRequest.id) {
-            rosbridgeResponse.id = rosbridgeRequest.id;
+        this._serviceCallback = async (rosbridgeRequest) => {
+          /** @type {import('../types/protocol.ts').RosbridgeServiceResponseMessage<TResponse>} */
+          const rosbridgeResponse = {
+            op: "service_response",
+            service: this.name,
+            result: false,
+          };
+          try {
+            rosbridgeResponse.values = await callback(rosbridgeRequest.args);
+            rosbridgeResponse.result = true;
+          } finally {
+            if (rosbridgeRequest.id) {
+              rosbridgeResponse.id = rosbridgeRequest.id;
+            }
+            this.ros.callOnConnection(rosbridgeResponse);
           }
-          this.ros.callOnConnection(rosbridgeResponse);
-        }
-      }
-      this.ros.on(this.name, this._serviceCallback);
-      this.ros.callOnConnection({
-        op: 'advertise_service',
-        type: this.serviceType,
-        service: this.name
+        };
+        this.ros.on(this.name, this._serviceCallback);
+        this.ros.callOnConnection({
+          op: "advertise_service",
+          type: this.serviceType,
+          service: this.name,
+        });
+        this.isAdvertised = true;
+      })
+      .catch((err) => {
+        this.emit("error", err);
+        throw err;
       });
-      this.isAdvertised = true;
-    }).catch(err => {
-      this.emit('error', err);
-      throw err;
-    });
 
     return this._operationQueue;
   }

@@ -3,7 +3,7 @@
  * @author Ramon Wijnands - rayman747@hotmail.com
  */
 
-import pngparse from 'pngparse';
+import pngparse from "pngparse";
 
 /**
  * @callback decompressPngCallback
@@ -19,11 +19,11 @@ import pngparse from 'pngparse';
  * @param {decompressPngCallback} callback - Function with the following params:
  */
 export default function decompressPng(data, callback) {
-  const buffer = new Buffer(data, 'base64');
+  const buffer = new Buffer(data, "base64");
 
   pngparse.parse(buffer, function (err, data) {
     if (err) {
-      console.warn('Cannot process PNG encoded message ');
+      console.warn("Cannot process PNG encoded message ");
     } else {
       const jsonData = data.data.toString();
       callback(JSON.parse(jsonData));

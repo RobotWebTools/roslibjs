@@ -4,12 +4,12 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import { DOMParser, Element, MIME_TYPE } from '@xmldom/xmldom';
-import UrdfMaterial from './UrdfMaterial.js';
-import UrdfLink from './UrdfLink.js';
-import UrdfJoint from './UrdfJoint.js';
-import { isElement } from './UrdfUtils.js';
-import { UrdfAttrs } from './UrdfTypes.js';
+import { DOMParser, Element, MIME_TYPE } from "@xmldom/xmldom";
+import UrdfMaterial from "./UrdfMaterial.js";
+import UrdfLink from "./UrdfLink.js";
+import UrdfJoint from "./UrdfJoint.js";
+import { isElement } from "./UrdfUtils.js";
+import { UrdfAttrs } from "./UrdfTypes.js";
 
 /*
  * See https://developer.mozilla.org/docs/XPathResult#Constants
@@ -31,7 +31,6 @@ export interface UrdfModelOptions {
  * A URDF Model can be used to parse a given URDF into the appropriate elements.
  */
 export default class UrdfModel {
-
   name: string | null;
   materials: Record<string, UrdfMaterial> = {};
   links: Record<string, UrdfLink> = {};
@@ -43,11 +42,13 @@ export default class UrdfModel {
     // Check if we are using a string or an XML element
     if (string) {
       // Parse the string
-      xmlDoc = new DOMParser().parseFromString(string, MIME_TYPE.XML_TEXT).documentElement ?? undefined;
+      xmlDoc =
+        new DOMParser().parseFromString(string, MIME_TYPE.XML_TEXT)
+          .documentElement ?? undefined;
     }
 
     if (!xmlDoc) {
-      throw new Error('No URDF document parsed!');
+      throw new Error("No URDF document parsed!");
     }
 
     // Get the robot name
@@ -56,61 +57,60 @@ export default class UrdfModel {
     const childNodes = xmlDoc.childNodes;
     // Parse all the visual elements we need
     for (const node of childNodes) {
-
       // Safety check to make sure we're working with an element.
       if (!isElement(node)) {
         continue;
       }
 
       switch (node.tagName) {
-      case 'material': {
-        const material = new UrdfMaterial({ xml: node });
-        // Make sure this is unique
-        if (!Object.hasOwn(this.materials, material.name)) {
-          this.materials[material.name] = material;
-          break;
-        }
-
-        if (this.materials[material.name].isLink()) {
-          this.materials[material.name].assign(material);
-        } else {
-          console.warn(`Material ${material.name} is not unique.`);
-        }
-
-        break;
-      }
-      case 'link': {
-        const link = new UrdfLink({ xml: node });
-        // Make sure this is unique
-        if (Object.hasOwn(this.links, link.name)) {
-          console.warn(`Link ${link.name} is not unique.`);
-          break;
-        }
-
-        // Check for a material
-        for (const item of link.visuals) {
-          const mat = item.material;
-          if (!mat?.name) {
-            continue;
+        case "material": {
+          const material = new UrdfMaterial({ xml: node });
+          // Make sure this is unique
+          if (!Object.hasOwn(this.materials, material.name)) {
+            this.materials[material.name] = material;
+            break;
           }
 
-          if (Object.hasOwn(this.materials, mat.name)) {
-            item.material = this.materials[mat.name];
+          if (this.materials[material.name].isLink()) {
+            this.materials[material.name].assign(material);
           } else {
-            this.materials[mat.name] = mat;
+            console.warn(`Material ${material.name} is not unique.`);
           }
+
+          break;
         }
+        case "link": {
+          const link = new UrdfLink({ xml: node });
+          // Make sure this is unique
+          if (Object.hasOwn(this.links, link.name)) {
+            console.warn(`Link ${link.name} is not unique.`);
+            break;
+          }
 
-        // Add the link
-        this.links[link.name] = link;
+          // Check for a material
+          for (const item of link.visuals) {
+            const mat = item.material;
+            if (!mat?.name) {
+              continue;
+            }
 
-        break;
-      }
-      case 'joint': {
-        const joint = new UrdfJoint({ xml: node });
-        this.joints[joint.name] = joint;
-        break;
-      }
+            if (Object.hasOwn(this.materials, mat.name)) {
+              item.material = this.materials[mat.name];
+            } else {
+              this.materials[mat.name] = mat;
+            }
+          }
+
+          // Add the link
+          this.links[link.name] = link;
+
+          break;
+        }
+        case "joint": {
+          const joint = new UrdfJoint({ xml: node });
+          this.joints[joint.name] = joint;
+          break;
+        }
       }
     }
   }

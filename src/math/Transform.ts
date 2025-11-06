@@ -3,8 +3,8 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
-import Vector3, { type IVector3 } from './Vector3.js';
-import Quaternion, { type IQuaternion } from './Quaternion.js';
+import Vector3, { type IVector3 } from "./Vector3.js";
+import Quaternion, { type IQuaternion } from "./Quaternion.js";
 
 export interface ITransform {
   /**
@@ -21,7 +21,6 @@ export interface ITransform {
  * A Transform in 3-space. Values are copied into this object.
  */
 export default class Transform implements ITransform {
-
   translation: Vector3;
   rotation: Quaternion;
 

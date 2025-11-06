@@ -3,16 +3,15 @@
  * @author David V. Lu!! - davidvlu@gmail.com
  */
 
-import { UrdfAttrs, type UrdfDefaultOptions } from './UrdfTypes.js';
-import { Pose } from '../math/index.js';
-import { parseUrdfOrigin } from './UrdfUtils.js';
-import type { Nullable } from '../types/interface-types.js';
+import { UrdfAttrs, type UrdfDefaultOptions } from "./UrdfTypes.js";
+import { Pose } from "../math/index.js";
+import { parseUrdfOrigin } from "./UrdfUtils.js";
+import type { Nullable } from "../types/interface-types.js";
 
 /**
  * A Joint element in a URDF.
  */
 export default class UrdfJoint {
-
   name: string;
   type: Nullable<string>;
   parent: Nullable<string> = null;
@@ -21,9 +20,8 @@ export default class UrdfJoint {
   maxval = NaN;
   origin: Pose = new Pose();
 
-
-  constructor({xml}: UrdfDefaultOptions) {
-    this.name = xml.getAttribute(UrdfAttrs.Name) ?? 'unknown_name';
+  constructor({ xml }: UrdfDefaultOptions) {
+    this.name = xml.getAttribute(UrdfAttrs.Name) ?? "unknown_name";
     this.type = xml.getAttribute(UrdfAttrs.Type);
 
     const parents = xml.getElementsByTagName(UrdfAttrs.Parent);
@@ -38,8 +36,12 @@ export default class UrdfJoint {
 
     const limits = xml.getElementsByTagName(UrdfAttrs.Limit);
     if (limits.length > 0) {
-      this.minval = parseFloat(limits[0].getAttribute(UrdfAttrs.Lower) ?? 'NaN');
-      this.maxval = parseFloat(limits[0].getAttribute(UrdfAttrs.Upper) ?? 'NaN');
+      this.minval = parseFloat(
+        limits[0].getAttribute(UrdfAttrs.Lower) ?? "NaN",
+      );
+      this.maxval = parseFloat(
+        limits[0].getAttribute(UrdfAttrs.Upper) ?? "NaN",
+      );
     }
 
     // Origin

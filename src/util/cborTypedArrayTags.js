@@ -5,7 +5,7 @@ function warnPrecision() {
   if (!warnedPrecision) {
     warnedPrecision = true;
     console.warn(
-      'CBOR 64-bit integer array values may lose precision. No further warnings.'
+      "CBOR 64-bit integer array values may lose precision. No further warnings.",
     );
   }
 }
@@ -87,7 +87,7 @@ const nativeArrayTypes = {
   77: Int16Array,
   78: Int32Array,
   85: Float32Array,
-  86: Float64Array
+  86: Float64Array,
 };
 
 /**
@@ -95,7 +95,7 @@ const nativeArrayTypes = {
  */
 const conversionArrayTypes = {
   71: decodeUint64LE,
-  79: decodeInt64LE
+  79: decodeInt64LE,
 };
 
 /**

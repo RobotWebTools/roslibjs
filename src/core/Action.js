@@ -3,9 +3,13 @@
  * @author Sebastian Castro - sebastian.castro@picknik.ai
  */
 
-import { EventEmitter } from 'eventemitter3';
-import { GoalStatus } from '../core/GoalStatus.ts';
-import { isRosbridgeActionFeedbackMessage, isRosbridgeActionResultMessage, isRosbridgeCancelActionGoalMessage } from '../types/protocol.ts';
+import { EventEmitter } from "eventemitter3";
+import { GoalStatus } from "../core/GoalStatus.ts";
+import {
+  isRosbridgeActionFeedbackMessage,
+  isRosbridgeActionResultMessage,
+  isRosbridgeCancelActionGoalMessage,
+} from "../types/protocol.ts";
 
 /**
  * A ROS 2 action client.
@@ -41,11 +45,7 @@ export default class Action extends EventEmitter {
    * @param {string} options.name - The action name, like '/fibonacci'.
    * @param {string} options.actionType - The action type, like 'example_interfaces/Fibonacci'.
    */
-  constructor({
-    ros,
-    name,
-    actionType
-  }) {
+  constructor({ ros, name, actionType }) {
     super();
     this.ros = ros;
     this.name = name;
@@ -80,23 +80,23 @@ export default class Action extends EventEmitter {
     }
 
     const actionGoalId =
-      'send_action_goal:' + this.name + ':' + ++this.ros.idCounter;
+      "send_action_goal:" + this.name + ":" + ++this.ros.idCounter;
 
     if (resultCallback || failedCallback) {
       this.ros.on(actionGoalId, function (message) {
         if (message.result !== undefined && message.result === false) {
-          if (typeof failedCallback === 'function') {
+          if (typeof failedCallback === "function") {
             failedCallback(message.values);
           }
         } else if (
           isRosbridgeActionFeedbackMessage(message) &&
-          typeof feedbackCallback === 'function'
+          typeof feedbackCallback === "function"
         ) {
           // @ts-expect-error -- can't do generic type guards in this file until it's migrated to typescript
           feedbackCallback(message.values);
         } else if (
           isRosbridgeActionResultMessage(message) &&
-          typeof resultCallback === 'function'
+          typeof resultCallback === "function"
         ) {
           // @ts-expect-error -- can't do generic type guards in this file until it's migrated to typescript
           resultCallback(message.values);
@@ -105,7 +105,7 @@ export default class Action extends EventEmitter {
     }
 
     const call = {
-      op: 'send_action_goal',
+      op: "send_action_goal",
       id: actionGoalId,
       action: this.name,
       action_type: this.actionType,
@@ -124,9 +124,9 @@ export default class Action extends EventEmitter {
    */
   cancelGoal(id) {
     const call = {
-      op: 'cancel_action_goal',
+      op: "cancel_action_goal",
       id: id,
-      action: this.name
+      action: this.name,
     };
     this.ros.callOnConnection(call);
   }
@@ -139,7 +139,7 @@ export default class Action extends EventEmitter {
    * @param {advertiseCancelCallback} cancelCallback - A callback function to execute when the action is canceled.
    */
   advertise(actionCallback, cancelCallback) {
-    if (this.isAdvertised || typeof actionCallback !== 'function') {
+    if (this.isAdvertised || typeof actionCallback !== "function") {
       return;
     }
 
@@ -147,9 +147,9 @@ export default class Action extends EventEmitter {
     this._cancelCallback = cancelCallback;
     this.ros.on(this.name, this._executeAction.bind(this));
     this.ros.callOnConnection({
-      op: 'advertise_action',
+      op: "advertise_action",
       type: this.actionType,
-      action: this.name
+      action: this.name,
     });
     this.isAdvertised = true;
   }
@@ -162,8 +162,8 @@ export default class Action extends EventEmitter {
       return;
     }
     this.ros.callOnConnection({
-      op: 'unadvertise_action',
-      action: this.name
+      op: "unadvertise_action",
+      action: this.name,
     });
     this.isAdvertised = false;
   }
@@ -181,11 +181,11 @@ export default class Action extends EventEmitter {
     const id = rosbridgeRequest.id;
 
     // If a cancellation callback exists, call it when a cancellation event is emitted.
-    if (typeof id === 'string') {
+    if (typeof id === "string") {
       this.ros.on(id, (message) => {
         if (
           isRosbridgeCancelActionGoalMessage(message) &&
-          typeof this._cancelCallback === 'function'
+          typeof this._cancelCallback === "function"
         ) {
           this._cancelCallback(id);
         }
@@ -193,7 +193,7 @@ export default class Action extends EventEmitter {
     }
 
     // Call the action goal execution function provided.
-    if (typeof this._actionCallback === 'function') {
+    if (typeof this._actionCallback === "function") {
       this._actionCallback(rosbridgeRequest.args, id);
     }
   }
@@ -206,10 +206,10 @@ export default class Action extends EventEmitter {
    */
   sendFeedback(id, feedback) {
     const call = {
-      op: 'action_feedback',
+      op: "action_feedback",
       id: id,
       action: this.name,
-      values: feedback
+      values: feedback,
     };
     this.ros.callOnConnection(call);
   }
@@ -222,12 +222,12 @@ export default class Action extends EventEmitter {
    */
   setSucceeded(id, result) {
     const call = {
-      op: 'action_result',
+      op: "action_result",
       id: id,
       action: this.name,
       values: result,
       status: GoalStatus.STATUS_SUCCEEDED,
-      result: true
+      result: true,
     };
     this.ros.callOnConnection(call);
   }
@@ -240,12 +240,12 @@ export default class Action extends EventEmitter {
    */
   setCanceled(id, result) {
     const call = {
-      op: 'action_result',
+      op: "action_result",
       id: id,
       action: this.name,
       values: result,
       status: GoalStatus.STATUS_CANCELED,
-      result: true
+      result: true,
     };
     this.ros.callOnConnection(call);
   }
@@ -257,11 +257,11 @@ export default class Action extends EventEmitter {
    */
   setFailed(id) {
     const call = {
-      op: 'action_result',
+      op: "action_result",
       id: id,
       action: this.name,
       status: GoalStatus.STATUS_ABORTED,
-      result: false
+      result: false,
     };
     this.ros.callOnConnection(call);
   }

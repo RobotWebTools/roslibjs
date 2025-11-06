@@ -3,15 +3,15 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
-import ActionClient from '../actionlib/ActionClient.js';
-import Goal from '../actionlib/Goal.js';
+import ActionClient from "../actionlib/ActionClient.js";
+import Goal from "../actionlib/Goal.js";
 
-import Service from '../core/Service.js';
-import Topic from '../core/Topic.js';
+import Service from "../core/Service.js";
+import Topic from "../core/Topic.js";
 
-import Transform from '../math/Transform.js';
+import Transform from "../math/Transform.js";
 
-import { EventEmitter } from 'eventemitter3';
+import { EventEmitter } from "eventemitter3";
 
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
@@ -53,14 +53,14 @@ export default class TFClient extends EventEmitter {
    */
   constructor({
     ros,
-    fixedFrame = 'base_link',
+    fixedFrame = "base_link",
     angularThres = 2.0,
     transThres = 0.01,
     rate = 10.0,
     updateDelay = 50,
     topicTimeout = 2.0,
-    serverName = '/tf2_web_republisher',
-    repubServiceName = '/republish_tfs'
+    serverName = "/tf2_web_republisher",
+    repubServiceName = "/republish_tfs",
   }) {
     super();
 
@@ -75,7 +75,7 @@ export default class TFClient extends EventEmitter {
     const nsecs = Math.floor((seconds - secs) * 1000000000);
     this.topicTimeout = {
       secs: secs,
-      nsecs: nsecs
+      nsecs: nsecs,
     };
     this.serverName = serverName;
     this.repubServiceName = repubServiceName;
@@ -84,16 +84,16 @@ export default class TFClient extends EventEmitter {
     this.actionClient = new ActionClient({
       ros: this.ros,
       serverName: this.serverName,
-      actionName: 'tf2_web_republisher/TFSubscriptionAction',
+      actionName: "tf2_web_republisher/TFSubscriptionAction",
       omitStatus: true,
-      omitResult: true
+      omitResult: true,
     });
 
     // Create a Service Client
     this.serviceClient = new Service({
       ros: this.ros,
       name: this.repubServiceName,
-      serviceType: 'tf2_web_republisher/RepublishTFs'
+      serviceType: "tf2_web_republisher/RepublishTFs",
     });
   }
   /**
@@ -105,14 +105,14 @@ export default class TFClient extends EventEmitter {
   processTFArray(tf) {
     tf.transforms.forEach((transform) => {
       let frameID = transform.child_frame_id;
-      if (frameID[0] === '/') {
+      if (frameID[0] === "/") {
         frameID = frameID.substring(1);
       }
       const info = this.frameInfos[frameID];
       if (info) {
         info.transform = new Transform({
           translation: transform.transform.translation,
-          rotation: transform.transform.rotation
+          rotation: transform.transform.rotation,
         });
         info.cbs.forEach((cb) => {
           cb(info.transform);
@@ -130,7 +130,7 @@ export default class TFClient extends EventEmitter {
       target_frame: this.fixedFrame,
       angular_thres: this.angularThres,
       trans_thres: this.transThres,
-      rate: this.rate
+      rate: this.rate,
     };
 
     /*
@@ -143,10 +143,10 @@ export default class TFClient extends EventEmitter {
       }
       this.currentGoal = new Goal({
         actionClient: this.actionClient,
-        goalMessage: goalMessage
+        goalMessage: goalMessage,
       });
 
-      this.currentGoal.on('feedback', this.processTFArray.bind(this));
+      this.currentGoal.on("feedback", this.processTFArray.bind(this));
       this.currentGoal.send();
     } else {
       /*
@@ -155,7 +155,10 @@ export default class TFClient extends EventEmitter {
        * plus the timeout
        */
       goalMessage.timeout = this.topicTimeout;
-      this.serviceClient.callService(goalMessage, this.processResponse.bind(this));
+      this.serviceClient.callService(
+        goalMessage,
+        this.processResponse.bind(this),
+      );
     }
 
     this.republisherUpdateRequested = false;
@@ -186,7 +189,7 @@ export default class TFClient extends EventEmitter {
     this.currentTopic = new Topic({
       ros: this.ros,
       name: response.topic_name,
-      messageType: 'tf2_web_republisher/TFArray'
+      messageType: "tf2_web_republisher/TFArray",
     });
     this._subscribeCB = this.processTFArray.bind(this);
     // @ts-expect-error Function was bound above
@@ -204,13 +207,13 @@ export default class TFClient extends EventEmitter {
    */
   subscribe(frameID, callback) {
     // remove leading slash, if it's there
-    if (frameID.startsWith('/')) {
+    if (frameID.startsWith("/")) {
       frameID = frameID.substring(1);
     }
     // if there is no callback registered for the given frame, create empty callback list
     if (!this.frameInfos[frameID]) {
       this.frameInfos[frameID] = {
-        cbs: []
+        cbs: [],
       };
       if (!this.republisherUpdateRequested) {
         setTimeout(this.updateGoal.bind(this), this.updateDelay);
@@ -232,12 +235,12 @@ export default class TFClient extends EventEmitter {
    */
   unsubscribe(frameID, callback) {
     // remove leading slash, if it's there
-    if (frameID.startsWith('/')) {
+    if (frameID.startsWith("/")) {
       frameID = frameID.substring(1);
     }
     const info = this.frameInfos[frameID];
     // eslint-disable-next-line no-var -- literally what even is going on here
-    for (var cbs = (info?.cbs) || [], idx = cbs.length; idx--;) {
+    for (var cbs = info?.cbs || [], idx = cbs.length; idx--; ) {
       if (cbs[idx] === callback) {
         cbs.splice(idx, 1);
       }

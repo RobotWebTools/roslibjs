@@ -3,7 +3,7 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import { EventEmitter } from 'eventemitter3';
+import { EventEmitter } from "eventemitter3";
 
 /**
  * An actionlib goal that is associated with an action server.
@@ -17,7 +17,7 @@ export default class Goal extends EventEmitter {
   result = undefined;
   feedback = undefined;
   // Create a random ID
-  goalID = 'goal_' + Math.random() + '_' + new Date().getTime();
+  goalID = "goal_" + Math.random() + "_" + new Date().getTime();
   actionClient;
   goalMessage;
   /**
@@ -25,10 +25,7 @@ export default class Goal extends EventEmitter {
    * @param {import('./ActionClient.js').default} options.actionClient - The ROSLIB.ActionClient to use with this goal.
    * @param {Object} options.goalMessage - The JSON object containing the goal for the action server.
    */
-  constructor({
-    actionClient,
-    goalMessage
-  }) {
+  constructor({ actionClient, goalMessage }) {
     super();
     this.actionClient = actionClient;
 
@@ -37,23 +34,23 @@ export default class Goal extends EventEmitter {
       goal_id: {
         stamp: {
           secs: 0,
-          nsecs: 0
+          nsecs: 0,
         },
-        id: this.goalID
+        id: this.goalID,
       },
-      goal: goalMessage
+      goal: goalMessage,
     };
 
-    this.on('status', (status) => {
+    this.on("status", (status) => {
       this.status = status;
     });
 
-    this.on('result', (result) => {
+    this.on("result", (result) => {
       this.isFinished = true;
       this.result = result;
     });
 
-    this.on('feedback', (feedback) => {
+    this.on("feedback", (feedback) => {
       this.feedback = feedback;
     });
 
@@ -70,7 +67,7 @@ export default class Goal extends EventEmitter {
     if (timeout) {
       setTimeout(() => {
         if (!this.isFinished) {
-          this.emit('timeout');
+          this.emit("timeout");
         }
       }, timeout);
     }
@@ -80,7 +77,7 @@ export default class Goal extends EventEmitter {
    */
   cancel() {
     const cancelMessage = {
-      id: this.goalID
+      id: this.goalID,
     };
     this.actionClient.cancelTopic.publish(cancelMessage);
   }

@@ -1,26 +1,25 @@
-import { describe, it, expect } from 'vitest';
-import * as ROSLIB from '../../src/RosLib.js';
+import { describe, it, expect } from "vitest";
+import * as ROSLIB from "../../src/RosLib.js";
 
 const ros = new ROSLIB.Ros({
-  url: 'ws://localhost:9090'
+  url: "ws://localhost:9090",
 });
 
 function format(msg) {
-  return {data: msg};
+  return { data: msg };
 }
-const messages = ['1', '2', '3', '4'].map(format);
+const messages = ["1", "2", "3", "4"].map(format);
 
-describe('Topics Example', function() {
-
+describe("Topics Example", function () {
   function createAndStreamTopic(topicName) {
     const topic = ros.Topic({
       name: topicName,
-      messageType: 'std_msgs/String'
+      messageType: "std_msgs/String",
     });
     let idx = 0;
 
     function emit() {
-      setTimeout(function() {
+      setTimeout(function () {
         topic.publish(messages[idx++]);
         if (idx < messages.length) {
           emit();
@@ -35,15 +34,15 @@ describe('Topics Example', function() {
     return topic;
   }
 
+  it("Listening to a topic & unsubscribes", () =>
+    new Promise((done) => {
+      const topic = createAndStreamTopic("/echo/test");
+      const expected = messages.slice();
 
-  it('Listening to a topic & unsubscribes', () => new Promise((done) => {
-    const topic = createAndStreamTopic('/echo/test');
-    const expected = messages.slice();
+      topic.subscribe(function (message) {
+        expect(message).to.be.eql(expected.shift());
+      });
 
-    topic.subscribe(function(message) {
-      expect(message).to.be.eql(expected.shift());
-    });
-
-    topic.on('unsubscribe', done);
-  }));
+      topic.on("unsubscribe", done);
+    }));
 }, 1000);

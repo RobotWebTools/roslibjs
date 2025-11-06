@@ -3,7 +3,7 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-import Service from './Service.js';
+import Service from "./Service.js";
 
 /**
  * A ROS parameter.
@@ -16,10 +16,7 @@ export default class Param {
    * @param {import('../core/Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
    * @param {string} options.name - The param name, like max_vel_x.
    */
-  constructor({
-    ros,
-    name
-  }) {
+  constructor({ ros, name }) {
     this.ros = ros;
     this.name = name;
   }
@@ -40,8 +37,8 @@ export default class Param {
   get(callback, failedCallback) {
     const paramClient = new Service({
       ros: this.ros,
-      name: 'rosapi/get_param',
-      serviceType: 'rosapi/GetParam'
+      name: "rosapi/get_param",
+      serviceType: "rosapi/GetParam",
     });
 
     const request = { name: this.name };
@@ -56,7 +53,7 @@ export default class Param {
           callback(value);
         }
       },
-      failedCallback
+      failedCallback,
     );
   }
   /**
@@ -77,13 +74,13 @@ export default class Param {
   set(value, callback, failedCallback) {
     const paramClient = new Service({
       ros: this.ros,
-      name: 'rosapi/set_param',
-      serviceType: 'rosapi/SetParam'
+      name: "rosapi/set_param",
+      serviceType: "rosapi/SetParam",
     });
 
     const request = {
       name: this.name,
-      value: JSON.stringify(value)
+      value: JSON.stringify(value),
     };
 
     paramClient.callService(
@@ -95,7 +92,7 @@ export default class Param {
           callback(result);
         }
       },
-      failedCallback
+      failedCallback,
     );
   }
   /**
@@ -107,12 +104,12 @@ export default class Param {
   delete(callback, failedCallback) {
     const paramClient = new Service({
       ros: this.ros,
-      name: 'rosapi/delete_param',
-      serviceType: 'rosapi/DeleteParam'
+      name: "rosapi/delete_param",
+      serviceType: "rosapi/DeleteParam",
     });
 
     const request = {
-      name: this.name
+      name: this.name,
     };
 
     paramClient.callService(
@@ -124,7 +121,7 @@ export default class Param {
           callback(result);
         }
       },
-      failedCallback
+      failedCallback,
     );
   }
 }
