@@ -19,34 +19,34 @@ describe('Param setting', function() {
     setTimeout(done, 500);
   }));
 
-  it('Param.get', () => new Promise((done) =>  {
+  it('Param.get', () => new Promise<void>((done) =>  {
     param.get(function(result) {
       expect(result).to.be.equal('foo');
       done();
     });
   }));
 
-  it('Param.set w/ callback', () => new Promise((done) =>  {
+  it('Param.set w/ callback', () => new Promise<void>((done) =>  {
     param.set('bar', function() {
       done();
     });
   }));
 
-  it('Param.get', () => new Promise((done) =>  {
+  it('Param.get', () => new Promise<void>((done) =>  {
     param.get(function(result) {
       expect(result).to.be.equal('bar');
       done();
     });
   }));
 
-  it('ros.getParams', () => new Promise((done) =>  {
+  it('ros.getParams', () => new Promise<void>((done) =>  {
     ros.getParams(function(params) {
       expect(params).to.include(param.name);
       done();
     });
   }));
 
-  it('Param.delete', () => new Promise((done) =>  {
+  it('Param.delete', () => new Promise<void>((done) =>  {
     param.delete(function() {
       ros.getParams(function(params) {
         expect(params).to.not.include(param.name);
