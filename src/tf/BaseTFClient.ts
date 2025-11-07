@@ -12,7 +12,6 @@ export default class BaseTFClient extends EventEmitter {
     { transform?: Transform; cbs: ((tf: Transform) => void)[] }
   > = {};
   republisherUpdateRequested = false;
-  _isDisposed = false;
   ros: Ros;
   fixedFrame: string;
   angularThres: number;
@@ -158,13 +157,5 @@ export default class BaseTFClient extends EventEmitter {
     if (!callback || cbs.length === 0) {
       delete this.frameInfos[frameID];
     }
-  }
-
-  /**
-   * Basic dispose functionality. Subclasses should override to add
-   * their specific cleanup logic.
-   */
-  dispose() {
-    this._isDisposed = true;
   }
 }

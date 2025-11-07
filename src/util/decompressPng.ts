@@ -10,7 +10,6 @@ import pngparse from "pngparse";
  * gzipping over WebSockets * is not supported yet), this function decodes
  * the "image" as a Base64 string.
  *
- * @private
  * @param data - An object containing the PNG data.
  * @param callback - Function with the following params:
  */

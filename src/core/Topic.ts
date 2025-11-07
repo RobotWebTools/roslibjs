@@ -125,7 +125,7 @@ export default class Topic<T> extends EventEmitter {
     }
   }
 
-  _messageCallback = (data: T) => {
+  #messageCallback = (data: T) => {
     this.emit("message", data);
   };
   /**
@@ -142,7 +142,7 @@ export default class Topic<T> extends EventEmitter {
     if (this.subscribeId) {
       return;
     }
-    this.ros.on(this.name, this._messageCallback);
+    this.ros.on(this.name, this.#messageCallback);
     this.subscribeId =
       "subscribe:" + this.name + ":" + (++this.ros.idCounter).toString();
 
@@ -177,7 +177,7 @@ export default class Topic<T> extends EventEmitter {
       return;
     }
     // Note: Don't call this.removeAllListeners, allow client to handle that themselves
-    this.ros.off(this.name, this._messageCallback);
+    this.ros.off(this.name, this.#messageCallback);
     if (this.reconnect_on_close) {
       this.ros.off("close", this.reconnectFunc);
     }

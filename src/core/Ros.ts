@@ -76,9 +76,8 @@ export default class Ros extends EventEmitter {
    * Create the appropriate transport based on transport library configuration
    * @param url - WebSocket URL or RTCDataChannel label for rosbridge.
    * @returns The created transport
-   * @private
    */
-  async createTransport(
+  async #createTransport(
     url: string,
   ): Promise<WebSocket | RTCDataChannel | import("ws").WebSocket | null> {
     if (this.transportLibrary.constructor.name === "RTCPeerConnection") {
@@ -116,7 +115,7 @@ export default class Ros extends EventEmitter {
    * @param url - WebSocket URL or RTCDataChannel label for rosbridge.
    */
   async connect(url: string) {
-    const transport = await this.createTransport(url);
+    const transport = await this.#createTransport(url);
 
     if (!transport) {
       return; // Already connected
@@ -135,7 +134,7 @@ export default class Ros extends EventEmitter {
         this.emit("error", event);
       },
       onMessage: (message) => {
-        this.handleMessage(message);
+        this.#handleMessage(message);
       },
       decoder: this.transportOptions.decoder,
     });
@@ -144,9 +143,8 @@ export default class Ros extends EventEmitter {
   /**
    * Handle processed messages from SocketAdapter
    * @param message
-   * @private
    */
-  handleMessage(message: RosbridgeMessage) {
+  #handleMessage(message: RosbridgeMessage) {
     if (isRosbridgePublishMessage(message)) {
       this.emit(message.topic, message.msg);
     } else if (isRosbridgeServiceResponseMessage(message)) {

@@ -63,7 +63,6 @@ export default class ROS2TFClient extends BaseTFClient {
    * Unsubscribe and unadvertise all topics associated with this TFClient.
    */
   dispose() {
-    super.dispose();
     if (this.goal_id !== "") {
       this.actionClient.cancelGoal(this.goal_id);
     }

@@ -8,7 +8,6 @@
  * gzipping over WebSockets * is not supported yet), this function places the
  * "image" in a canvas element then decodes the * "image" as a Base64 string.
  *
- * @private
  * @param data - A string containing the PNG data.
  * @param callback - Function with the following params:
  */
