@@ -20,7 +20,7 @@ export default class Goal<T> extends EventEmitter {
   feedback = undefined;
   // Create a random ID
   goalID = "goal_" + Math.random() + "_" + new Date().getTime();
-  actionClient: ActionClient;
+  actionClient: ActionClient<T>;
   goalMessage: { goal: T; goal_id: actionlib_msgs.GoalID };
   /**
    * @param options
@@ -31,7 +31,7 @@ export default class Goal<T> extends EventEmitter {
     actionClient,
     goalMessage,
   }: {
-    actionClient: ActionClient;
+    actionClient: ActionClient<T>;
     goalMessage: T;
   }) {
     super();

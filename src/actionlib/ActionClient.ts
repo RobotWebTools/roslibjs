@@ -3,8 +3,10 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
+import Ros from "../core/Ros.js";
 import Topic from "../core/Topic.js";
 import { EventEmitter } from "eventemitter3";
+import { actionlib_msgs } from "../types/actionlib_msgs.js";
 
 /**
  * An actionlib action client.
@@ -16,31 +18,41 @@ import { EventEmitter } from "eventemitter3";
  *  * 'result' - The result returned from the action server.
  *
  */
-export default class ActionClient extends EventEmitter {
+export default class ActionClient<
+  TGoal = unknown,
+  TFeedback = unknown,
+  TResult = unknown,
+> extends EventEmitter {
   goals = {};
   /** flag to check if a status has been received */
   receivedStatus = false;
-  ros;
-  serverName;
-  actionName;
-  timeout;
-  omitFeedback;
-  omitStatus;
-  omitResult;
-  feedbackListener;
-  statusListener;
-  resultListener;
-  goalTopic;
-  cancelTopic;
+  ros: Ros;
+  serverName: string;
+  actionName: string;
+  timeout?: number;
+  omitFeedback?: boolean;
+  omitStatus?: boolean;
+  omitResult?: boolean;
+  feedbackListener: Topic<{
+    status: actionlib_msgs.GoalStatus;
+    feedback: TFeedback;
+  }>;
+  statusListener: Topic<actionlib_msgs.GoalStatusArray>;
+  resultListener: Topic<{
+    status: actionlib_msgs.GoalStatus;
+    result: TResult;
+  }>;
+  goalTopic: Topic<{ goal: TGoal; goal_id: actionlib_msgs.GoalID }>;
+  cancelTopic: Topic<Partial<actionlib_msgs.GoalID>>;
   /**
-   * @param {Object} options
-   * @param {import('../core/Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
-   * @param {string} options.serverName - The action server name, like '/fibonacci'.
-   * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
-   * @param {number} [options.timeout] - The timeout length when connecting to the action server.
-   * @param {boolean} [options.omitFeedback] - The flag to indicate whether to omit the feedback channel or not.
-   * @param {boolean} [options.omitStatus] - The flag to indicate whether to omit the status channel or not.
-   * @param {boolean} [options.omitResult] - The flag to indicate whether to omit the result channel or not.
+   * @param options
+   * @param options.ros - The ROSLIB.Ros connection handle.
+   * @param options.serverName - The action server name, like '/fibonacci'.
+   * @param options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
+   * @param [options.timeout] - The timeout length when connecting to the action server.
+   * @param [options.omitFeedback] - The flag to indicate whether to omit the feedback channel or not.
+   * @param [options.omitStatus] - The flag to indicate whether to omit the status channel or not.
+   * @param [options.omitResult] - The flag to indicate whether to omit the result channel or not.
    */
   constructor({
     ros,
@@ -50,6 +62,14 @@ export default class ActionClient extends EventEmitter {
     omitFeedback,
     omitStatus,
     omitResult,
+  }: {
+    ros: Ros;
+    serverName: string;
+    actionName: string;
+    timeout?: number;
+    omitFeedback?: boolean;
+    omitStatus?: boolean;
+    omitResult?: boolean;
   }) {
     super();
     this.ros = ros;
