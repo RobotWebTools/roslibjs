@@ -4,7 +4,7 @@ import { GoalStatus as GoalStatusEnum } from "../core/GoalStatus.js";
 export namespace actionlib_msgs {
   export interface GoalID {
     id: string;
-    stamp: { sec: number; nsec: number };
+    stamp: std_msgs.time;
   }
   export interface GoalStatus {
     goal_id: GoalID;

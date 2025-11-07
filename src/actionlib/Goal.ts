@@ -41,8 +41,8 @@ export default class Goal<T> extends EventEmitter {
     this.goalMessage = {
       goal_id: {
         stamp: {
-          sec: 0,
-          nsec: 0,
+          secs: 0,
+          nsecs: 0,
         },
         id: this.goalID,
       },
