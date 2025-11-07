@@ -19,7 +19,7 @@ import {
 import Topic from "./Topic.js";
 import Service from "./Service.js";
 import Param from "./Param.js";
-import TFClient from "../tf/TFClient.js";
+import TFClient from "../tf/TFClient";
 import ActionClient from "../actionlib/ActionClient.js";
 import SimpleActionServer from "../actionlib/SimpleActionServer.js";
 import { EventEmitter } from "eventemitter3";

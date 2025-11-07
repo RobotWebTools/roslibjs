@@ -1,3 +1,4 @@
+import { tf2_web_republisher } from "../types/tf2_web_republisher.js";
 import Action from "../core/Action.js";
 import BaseTFClient from "./BaseTFClient.js";
 
@@ -5,12 +6,15 @@ import BaseTFClient from "./BaseTFClient.js";
  * A TF Client that listens to TFs from tf2_web_republisher using ROS2 actions.
  */
 export default class ROS2TFClient extends BaseTFClient {
-  goal_id;
-  actionClient;
-  currentGoal;
+  goal_id: string;
+  actionClient: Action<
+    tf2_web_republisher.TFSubscriptionGoal,
+    tf2_web_republisher.TFSubscriptionResult,
+    tf2_web_republisher.TFSubscriptionFeedback
+  >;
+  currentGoal: tf2_web_republisher.TFSubscriptionGoal;
 
-  /** @param {ConstructorParameters<typeof BaseTFClient>[0]} options */
-  constructor(options) {
+  constructor(options: ConstructorParameters<typeof BaseTFClient>[0]) {
     super(options);
 
     this.goal_id = "";
@@ -44,7 +48,7 @@ export default class ROS2TFClient extends BaseTFClient {
     const id = this.actionClient.sendGoal(
       goalMessage,
       () => {},
-      (feedback) => {
+      (feedback: tf2_web_republisher.TFSubscriptionFeedback) => {
         this.processTFArray(feedback);
       },
     );
