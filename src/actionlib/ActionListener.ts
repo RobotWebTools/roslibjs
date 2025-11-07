@@ -4,8 +4,10 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
+import Ros from "../core/Ros.js";
 import Topic from "../core/Topic.js";
 import { EventEmitter } from "eventemitter3";
+import { actionlib_msgs } from "../types/actionlib_msgs.js";
 
 /**
  * An actionlib action listener.
@@ -17,42 +19,60 @@ import { EventEmitter } from "eventemitter3";
  *
  *
  */
-export default class ActionListener extends EventEmitter {
-  ros;
-  serverName;
-  actionName;
+export default class ActionListener<
+  TGoal,
+  TFeedback,
+  TResult,
+> extends EventEmitter {
+  ros: Ros;
+  serverName: string;
+  actionName: string;
   /**
-   * @param {Object} options
-   * @param {import('../core/Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
-   * @param {string} options.serverName - The action server name, like '/fibonacci'.
-   * @param {string} options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
+   * @param options
+   * @param options.ros - The ROSLIB.Ros connection handle.
+   * @param options.serverName - The action server name, like '/fibonacci'.
+   * @param options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
    */
-  constructor({ ros, serverName, actionName }) {
+  constructor({
+    ros,
+    serverName,
+    actionName,
+  }: {
+    ros: Ros;
+    serverName: string;
+    actionName: string;
+  }) {
     super();
     this.ros = ros;
     this.serverName = serverName;
     this.actionName = actionName;
 
     // create the topics associated with actionlib
-    const goalListener = new Topic({
+    const goalListener = new Topic<TGoal>({
       ros: this.ros,
       name: this.serverName + "/goal",
       messageType: this.actionName + "Goal",
     });
 
-    const feedbackListener = new Topic({
+    const feedbackListener = new Topic<{
+      status: actionlib_msgs.GoalStatus;
+      feedback: TFeedback;
+    }>({
       ros: this.ros,
       name: this.serverName + "/feedback",
       messageType: this.actionName + "Feedback",
     });
 
-    const statusListener = new Topic({
+    const statusListener = new Topic<actionlib_msgs.GoalStatusArray>({
       ros: this.ros,
       name: this.serverName + "/status",
       messageType: "actionlib_msgs/GoalStatusArray",
     });
 
-    const resultListener = new Topic({
+    const resultListener = new Topic<{
+      status: actionlib_msgs.GoalStatus;
+      result: TResult;
+    }>({
       ros: this.ros,
       name: this.serverName + "/result",
       messageType: this.actionName + "Result",
