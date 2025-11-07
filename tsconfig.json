@@ -7,7 +7,7 @@
     "vite.config.ts",
     "./src",
     "./test",
-    "eslint.config.js",
+    "eslint.config.ts",
     "examples"
   ]
 }

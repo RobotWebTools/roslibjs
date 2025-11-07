@@ -21,7 +21,7 @@ function getRosDistro() {
 }
 
 async function waitForRosConnection(ros, timeout = 5000) {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     const timeoutId = setTimeout(() => {
       reject(new Error("Timeout waiting for ROS connection"));
     }, timeout);
