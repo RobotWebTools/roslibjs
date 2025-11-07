@@ -13,6 +13,7 @@ import {
   isRosbridgeSendActionGoalMessage,
   isRosbridgeServiceResponseMessage,
   isRosbridgeStatusMessage,
+  RosbridgeMessage,
 } from "../types/protocol.js";
 
 import Topic from "./Topic.js";
@@ -22,6 +23,7 @@ import TFClient from "../tf/TFClient.js";
 import ActionClient from "../actionlib/ActionClient.js";
 import SimpleActionServer from "../actionlib/SimpleActionServer.js";
 import { EventEmitter } from "eventemitter3";
+import { rosapi } from "../types/rosapi.ts";
 
 /**
  * Manages connection to the server and all interactions with ROS.
@@ -35,24 +37,29 @@ import { EventEmitter } from "eventemitter3";
  */
 export default class Ros extends EventEmitter {
   /** @type {import('./SocketAdapter.js').default | null} */
-  socket = null;
+  socket: import("./SocketAdapter.js").default | null = null;
   idCounter = 0;
   isConnected = false;
-  transportLibrary;
+  transportLibrary: "websocket" | RTCPeerConnection;
   transportOptions;
-  groovyCompatibility;
+  groovyCompatibility: boolean;
   /**
-   * @param {Object} [options]
-   * @param {string} [options.url] - The WebSocket URL for rosbridge. Can be specified later with `connect`.
-   * @param {boolean} [options.groovyCompatibility=true] - Don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools.
-   * @param {'websocket'|RTCPeerConnection} [options.transportLibrary='websocket'] - 'websocket', or an RTCPeerConnection instance controlling how the connection is created in `connect`.
-   * @param {Object} [options.transportOptions={}] - The options to use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.
+   * @param [options]
+   * @param [options.url] - The WebSocket URL for rosbridge. Can be specified later with `connect`.
+   * @param [options.groovyCompatibility=true] - Don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools.
+   * @param [options.transportLibrary='websocket'] - 'websocket', or an RTCPeerConnection instance controlling how the connection is created in `connect`.
+   * @param [options.transportOptions={}] - The options to use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.
    */
   constructor({
     url,
     transportLibrary = "websocket",
     transportOptions = {},
     groovyCompatibility = true,
+  }: {
+    url?: string;
+    groovyCompatibility?: boolean;
+    transportLibrary?: "websocket" | RTCPeerConnection;
+    transportOptions?: object;
   } = {}) {
     super();
 
@@ -67,11 +74,13 @@ export default class Ros extends EventEmitter {
   }
   /**
    * Create the appropriate transport based on transport library configuration
-   * @param {string} url - WebSocket URL or RTCDataChannel label for rosbridge.
-   * @returns {Promise<WebSocket|RTCDataChannel|import("ws").WebSocket|null>} The created transport
+   * @param url - WebSocket URL or RTCDataChannel label for rosbridge.
+   * @returns The created transport
    * @private
    */
-  async createTransport(url) {
+  async createTransport(
+    url: string,
+  ): Promise<WebSocket | RTCDataChannel | import("ws").WebSocket | null> {
     if (this.transportLibrary.constructor.name === "RTCPeerConnection") {
       // @ts-expect-error -- this is kinda wild. `this.transportLibrary` can either be a string or an RTCDataChannel. This needs fixing.
       const dataChannel = this.transportLibrary.createDataChannel(
@@ -104,9 +113,9 @@ export default class Ros extends EventEmitter {
   }
 
   /**
-   * @param {string} url - WebSocket URL or RTCDataChannel label for rosbridge.
+   * @param url - WebSocket URL or RTCDataChannel label for rosbridge.
    */
-  async connect(url) {
+  async connect(url: string) {
     const transport = await this.createTransport(url);
 
     if (!transport) {
@@ -134,10 +143,10 @@ export default class Ros extends EventEmitter {
 
   /**
    * Handle processed messages from SocketAdapter
-   * @param {import('../types/protocol.ts').RosbridgeMessage} message
+   * @param message
    * @private
    */
-  handleMessage(message) {
+  handleMessage(message: RosbridgeMessage) {
     if (isRosbridgePublishMessage(message)) {
       this.emit(message.topic, message.msg);
     } else if (isRosbridgeServiceResponseMessage(message)) {
@@ -175,15 +184,23 @@ export default class Ros extends EventEmitter {
   /**
    * Send an authorization request to the server.
    *
-   * @param {string} mac - MAC (hash) string given by the trusted source.
-   * @param {string} client - IP of the client.
-   * @param {string} dest - IP of the destination.
-   * @param {string} rand - Random string given by the trusted source.
-   * @param {Object} t - Time of the authorization request.
-   * @param {string} level - User level as a string given by the client.
-   * @param {Object} end - End time of the client's session.
+   * @param mac - MAC (hash) string given by the trusted source.
+   * @param client - IP of the client.
+   * @param dest - IP of the destination.
+   * @param rand - Random string given by the trusted source.
+   * @param t - Time of the authorization request.
+   * @param level - User level as a string given by the client.
+   * @param end - End time of the client's session.
    */
-  authenticate(mac, client, dest, rand, t, level, end) {
+  authenticate(
+    mac: string,
+    client: string,
+    dest: string,
+    rand: string,
+    t: object,
+    level: string,
+    end: object,
+  ) {
     // create the request
     const auth = {
       op: "auth",
@@ -201,9 +218,9 @@ export default class Ros extends EventEmitter {
   /**
    * Send an encoded message over the WebSocket.
    *
-   * @param {string} messageEncoded - The encoded message to be sent.
+   * @param messageEncoded - The encoded message to be sent.
    */
-  sendEncodedMessage(messageEncoded) {
+  sendEncodedMessage(messageEncoded: string) {
     if (!this.isConnected) {
       this.once("connection", () => {
         if (this.socket !== null) {
@@ -220,10 +237,9 @@ export default class Ros extends EventEmitter {
    * Send the message over the WebSocket, but queue the message up if not yet
    * connected.
    *
-   * @template {import('../types/protocol.ts').RosbridgeMessage} TMessage
-   * @param {TMessage} message - The message to be sent.
+   * @param message - The message to be sent.
    */
-  callOnConnection(message) {
+  callOnConnection<TMessage extends RosbridgeMessage>(message: TMessage) {
     if (this.transportOptions.encoder) {
       this.transportOptions.encoder(message, this.sendEncodedMessage);
     } else {
@@ -233,10 +249,10 @@ export default class Ros extends EventEmitter {
   /**
    * Send a set_level request to the server.
    *
-   * @param {string} level - Status level (none, error, warning, info).
-   * @param {number} [id] - Operation ID to change status level on.
+   * @param level - Status level (none, error, warning, info).
+   * @param [id] - Operation ID to change status level on.
    */
-  setStatusLevel(level, id) {
+  setStatusLevel(level: string, id?: number) {
     const levelMsg = {
       op: "set_level",
       level: level,
@@ -246,22 +262,19 @@ export default class Ros extends EventEmitter {
     this.callOnConnection(levelMsg);
   }
   /**
-   * @callback getActionServersCallback
-   * @param {string[]} actionservers - Array of action server names.
-   */
-  /**
-   * @callback getActionServersFailedCallback
-   * @param {string} error - The error message reported by ROS.
-   */
-  /**
    * Retrieve a list of action servers in ROS as an array of string.
    *
-   * @param {getActionServersCallback} callback - Function with the following params:
-   * @param {getActionServersFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   * @param callback - Function with the following params:
+   * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getActionServers(callback, failedCallback) {
-    /** @satisfies {Service<any, any>} */
-    const getActionServers = new Service({
+  getActionServers(
+    callback: (actionservers: string[]) => void,
+    failedCallback?: (error: string) => void,
+  ) {
+    const getActionServers = new Service<
+      rosapi.GetActionServersRequest,
+      rosapi.GetActionServersResponse
+    >({
       ros: this,
       name: "rosapi/action_servers",
       serviceType: "rosapi/GetActionServers",
@@ -285,23 +298,19 @@ export default class Ros extends EventEmitter {
     }
   }
   /**
-   * @callback getTopicsCallback
-   * @param {Object} result - The result object with the following params:
-   * @param {string[]} result.topics - Array of topic names.
-   * @param {string[]} result.types - Array of message type names.
-   */
-  /**
-   * @callback getTopicsFailedCallback
-   * @param {string} error - The error message reported by ROS.
-   */
-  /**
    * Retrieve a list of topics in ROS as an array.
    *
-   * @param {getTopicsCallback} callback - Function with the following params:
-   * @param {getTopicsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   * @param callback - Function with the following params:
+   * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getTopics(callback, failedCallback) {
-    const topicsClient = new Service({
+  getTopics(
+    callback: (result: rosapi.TopicsResponse) => void,
+    failedCallback?: (error: string) => void,
+  ) {
+    const topicsClient = new Service<
+      rosapi.TopicsRequest,
+      rosapi.TopicsResponse
+    >({
       ros: this,
       name: "rosapi/topics",
       serviceType: "rosapi/Topics",
@@ -325,22 +334,21 @@ export default class Ros extends EventEmitter {
     }
   }
   /**
-   * @callback getTopicsForTypeCallback
-   * @param {string[]} topics - Array of topic names.
-   */
-  /**
-   * @callback getTopicsForTypeFailedCallback
-   * @param {string} error - The error message reported by ROS.
-   */
-  /**
    * Retrieve a list of topics in ROS as an array of a specific type.
    *
-   * @param {string} topicType - The topic type to find.
-   * @param {getTopicsForTypeCallback} callback - Function with the following params:
-   * @param {getTopicsForTypeFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   * @param topicType - The topic type to find.
+   * @param callback - Function with the following params:
+   * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getTopicsForType(topicType, callback, failedCallback) {
-    const topicsForTypeClient = new Service({
+  getTopicsForType(
+    topicType: string,
+    callback: (topics: string[]) => void,
+    failedCallback?: (error: string) => void,
+  ) {
+    const topicsForTypeClient = new Service<
+      rosapi.TopicsForTypeRequest,
+      rosapi.TopicsForTypeResponse
+    >({
       ros: this,
       name: "rosapi/topics_for_type",
       serviceType: "rosapi/TopicsForType",
@@ -367,21 +375,19 @@ export default class Ros extends EventEmitter {
   }
 
   /**
-   * @callback getServicesCallback
-   * @param {string[]} services - Array of service names.
-   */
-  /**
-   * @callback getServicesFailedCallback
-   * @param {string} error - The error message reported by ROS.
-   */
-  /**
    * Retrieve a list of active service names in ROS.
    *
-   * @param {getServicesCallback} callback - Function with the following params:
-   * @param {getServicesFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   * @param callback - Function with the following params:
+   * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getServices(callback, failedCallback) {
-    const servicesClient = new Service({
+  getServices(
+    callback: (services: string[]) => void,
+    failedCallback?: (error: string) => void,
+  ) {
+    const servicesClient = new Service<
+      rosapi.ServicesRequest,
+      rosapi.ServicesResponse
+    >({
       ros: this,
       name: "rosapi/services",
       serviceType: "rosapi/Services",
@@ -405,22 +411,21 @@ export default class Ros extends EventEmitter {
     }
   }
   /**
-   * @callback getServicesForTypeCallback
-   * @param {string[]} topics - Array of service names.
-   */
-  /**
-   * @callback getServicesForTypeFailedCallback
-   * @param {string} error - The error message reported by ROS.
-   */
-  /**
    * Retrieve a list of services in ROS as an array as specific type.
    *
-   * @param {string} serviceType - The service type to find.
-   * @param {getServicesForTypeCallback} callback - Function with the following params:
-   * @param {getServicesForTypeFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   * @param serviceType - The service type to find.
+   * @param callback - Function with the following params:
+   * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getServicesForType(serviceType, callback, failedCallback) {
-    const servicesForTypeClient = new Service({
+  getServicesForType(
+    serviceType: string,
+    callback: (services: string[]) => void,
+    failedCallback?: (error: string) => void,
+  ) {
+    const servicesForTypeClient = new Service<
+      rosapi.ServicesForTypeRequest,
+      rosapi.ServicesForTypeResponse
+    >({
       ros: this,
       name: "rosapi/services_for_type",
       serviceType: "rosapi/ServicesForType",
@@ -446,22 +451,21 @@ export default class Ros extends EventEmitter {
     }
   }
   /**
-   * @callback getServiceRequestDetailsCallback
-   * @param {import("../types/rosapi.ts").rosapi.ServiceRequestDetailsResponse} result
-   */
-  /**
-   * @callback getServiceRequestDetailsFailedCallback
-   * @param {string} error - The error message reported by ROS.
-   */
-  /**
    * Retrieve the details of a ROS service request.
    *
-   * @param {string} type - The type of the service.
-   * @param {getServiceRequestDetailsCallback} callback - Function with the following params:
-   * @param {getServiceRequestDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   * @param type - The type of the service.
+   * @param callback - Function with the following params:
+   * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getServiceRequestDetails(type, callback, failedCallback) {
-    const serviceTypeClient = new Service({
+  getServiceRequestDetails(
+    type: string,
+    callback: (result: rosapi.ServiceRequestDetailsResponse) => void,
+    failedCallback?: (error: string) => void,
+  ) {
+    const serviceTypeClient = new Service<
+      rosapi.ServiceRequestDetailsRequest,
+      rosapi.ServiceRequestDetailsResponse
+    >({
       ros: this,
       name: "rosapi/service_request_details",
       serviceType: "rosapi/ServiceRequestDetails",
@@ -487,23 +491,21 @@ export default class Ros extends EventEmitter {
     }
   }
   /**
-   * @callback getServiceResponseDetailsCallback
-   * @param {import("../types/rosapi.ts").rosapi.ServiceResponseDetailsResponse} result
-   */
-  /**
-   * @callback getServiceResponseDetailsFailedCallback
-   * @param {string} error - The error message reported by ROS.
-   */
-  /**
    * Retrieve the details of a ROS service response.
    *
-   * @param {string} type - The type of the service.
-   * @param {getServiceResponseDetailsCallback} callback - Function with the following params:
-   * @param {getServiceResponseDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   * @param type - The type of the service.
+   * @param callback - Function with the following params:
+   * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getServiceResponseDetails(type, callback, failedCallback) {
-    /** @satisfies {Service<import("../types/rosapi.ts").rosapi.ServiceResponseDetailsRequest, import("../types/rosapi.ts").rosapi.ServiceResponseDetailsResponse>} */
-    const serviceTypeClient = new Service({
+  getServiceResponseDetails(
+    type: string,
+    callback: (result: rosapi.ServiceResponseDetailsResponse) => void,
+    failedCallback?: (error: string) => void,
+  ) {
+    const serviceTypeClient = new Service<
+      rosapi.ServiceResponseDetailsRequest,
+      rosapi.ServiceResponseDetailsResponse
+    >({
       ros: this,
       name: "rosapi/service_response_details",
       serviceType: "rosapi/ServiceResponseDetails",
@@ -529,21 +531,16 @@ export default class Ros extends EventEmitter {
     }
   }
   /**
-   * @callback getNodesCallback
-   * @param {string[]} nodes - Array of node names.
-   */
-  /**
-   * @callback getNodesFailedCallback
-   * @param {string} error - The error message reported by ROS.
-   */
-  /**
    * Retrieve a list of active node names in ROS.
    *
-   * @param {getNodesCallback} callback - Function with the following params:
-   * @param {getNodesFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   * @param callback - Function with the following params:
+   * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getNodes(callback, failedCallback) {
-    const nodesClient = new Service({
+  getNodes(
+    callback: (result: string[]) => void,
+    failedCallback?: (error: string) => void,
+  ) {
+    const nodesClient = new Service<rosapi.NodesRequest, rosapi.NodesResponse>({
       ros: this,
       name: "rosapi/nodes",
       serviceType: "rosapi/Nodes",
@@ -567,84 +564,40 @@ export default class Ros extends EventEmitter {
     }
   }
   /**
-   * @callback getNodeDetailsCallback
-   * @param {string[]} subscriptions - Array of subscribed topic names.
-   * @param {string[]} publications - Array of published topic names.
-   * @param {string[]} services - Array of service names hosted.
-   */
-  /**
-   * @callback getNodeDetailsFailedCallback
-   * @param {string} error - The error message reported by ROS.
-   */
-  /**
-   * @callback getNodeDetailsLegacyCallback
-   * @param {Object} result - The result object with the following params:
-   * @param {string[]} result.subscribing - Array of subscribed topic names.
-   * @param {string[]} result.publishing - Array of published topic names.
-   * @param {string[]} result.services - Array of service names hosted.
-   */
-  /**
    * Retrieve a list of subscribed topics, publishing topics and services of a specific node.
-   * <br>
-   * These are the parameters if failedCallback is <strong>defined</strong>.
    *
-   * @param {string} node - Name of the node.
-   * @param {getNodeDetailsCallback} callback - Function with the following params:
-   * @param {getNodeDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
-   *
-   * @also
-   *
-   * Retrieve a list of subscribed topics, publishing topics and services of a specific node.
-   * <br>
-   * These are the parameters if failedCallback is <strong>undefined</strong>.
-   *
-   * @param {string} node - Name of the node.
-   * @param {getNodeDetailsLegacyCallback} callback - Function with the following params:
-   * @param {getNodeDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   * @param node - Name of the node.
    */
-  getNodeDetails(node, callback, failedCallback) {
-    const nodesClient = new Service({
+  getNodeDetails(
+    node: string,
+    callback: (result: rosapi.NodeDetailsResponse) => void,
+    failedCallback?: (error: string) => void,
+  ) {
+    const nodesClient = new Service<
+      rosapi.NodeDetailsRequest,
+      rosapi.NodeDetailsResponse
+    >({
       ros: this,
       name: "rosapi/node_details",
       serviceType: "rosapi/NodeDetails",
     });
 
-    const request = {
-      node: node,
-    };
-    if (typeof failedCallback === "function") {
-      nodesClient.callService(
-        request,
-        function (result) {
-          callback(result.subscribing, result.publishing, result.services);
-        },
-        function (message) {
-          failedCallback(message);
-        },
-      );
-    } else {
-      nodesClient.callService(request, function (result) {
-        // @ts-expect-error -- callback parameter polymorphism, see JSDoc comment above
-        callback(result);
-      });
-    }
+    nodesClient.callService({ node }, callback, failedCallback);
   }
-  /**
-   * @callback getParamsCallback
-   * @param {string[]} params - Array of param names.
-   */
-  /**
-   * @callback getParamsFailedCallback
-   * @param {string} error - The error message reported by ROS.
-   */
   /**
    * Retrieve a list of parameter names from the ROS Parameter Server.
    *
-   * @param {getParamsCallback} callback - Function with the following params:
-   * @param {getParamsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   * @param callback - Function with the following params:
+   * @param failedCallback - The callback function when the service call failed with params:
    */
-  getParams(callback, failedCallback) {
-    const paramsClient = new Service({
+  getParams(
+    callback: (names: string[]) => void,
+    failedCallback?: (error: string) => void,
+  ) {
+    const paramsClient = new Service<
+      rosapi.GetParamNamesRequest,
+      rosapi.GetParamNamesResponse
+    >({
       ros: this,
       name: "rosapi/get_param_names",
       serviceType: "rosapi/GetParamNames",
@@ -667,22 +620,21 @@ export default class Ros extends EventEmitter {
     }
   }
   /**
-   * @callback getTopicTypeCallback
-   * @param {string} type - The type of the topic.
-   */
-  /**
-   * @callback getTopicTypeFailedCallback
-   * @param {string} error - The error message reported by ROS.
-   */
-  /**
    * Retrieve the type of a ROS topic.
    *
-   * @param {string} topic - Name of the topic.
-   * @param {getTopicTypeCallback} callback - Function with the following params:
-   * @param {getTopicTypeFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   * @param topic - Name of the topic.
+   * @param callback - Function with the following params:
+   * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getTopicType(topic, callback, failedCallback) {
-    const topicTypeClient = new Service({
+  getTopicType(
+    topic: string,
+    callback: (type: string) => void,
+    failedCallback?: (error: string) => void,
+  ) {
+    const topicTypeClient = new Service<
+      rosapi.TopicTypeRequest,
+      rosapi.TopicTypeResponse
+    >({
       ros: this,
       name: "rosapi/topic_type",
       serviceType: "rosapi/TopicType",
@@ -708,22 +660,21 @@ export default class Ros extends EventEmitter {
     }
   }
   /**
-   * @callback getServiceTypeCallback
-   * @param {string} type - The type of the service.
-   */
-  /**
-   * @callback getServiceTypeFailedCallback
-   * @param {string} error - The error message reported by ROS.
-   */
-  /**
    * Retrieve the type of a ROS service.
    *
-   * @param {string} service - Name of the service.
-   * @param {getServiceTypeCallback} callback - Function with the following params:
-   * @param {getServiceTypeFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   * @param service - Name of the service.
+   * @param callback - Function with the following params:
+   * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getServiceType(service, callback, failedCallback) {
-    const serviceTypeClient = new Service({
+  getServiceType(
+    service: string,
+    callback: (type: string) => void,
+    failedCallback?: (error: string) => void,
+  ) {
+    const serviceTypeClient = new Service<
+      rosapi.ServiceTypeRequest,
+      rosapi.ServiceTypeResponse
+    >({
       ros: this,
       name: "rosapi/service_type",
       serviceType: "rosapi/ServiceType",
@@ -749,22 +700,21 @@ export default class Ros extends EventEmitter {
     }
   }
   /**
-   * @callback getMessageDetailsCallback
-   * @param {string} details - An array of the message details.
-   */
-  /**
-   * @callback getMessageDetailsFailedCallback
-   * @param {string} error - The error message reported by ROS.
-   */
-  /**
    * Retrieve the details of a ROS message.
    *
-   * @param {string} message - The name of the message type.
-   * @param {getMessageDetailsCallback} callback - Function with the following params:
-   * @param {getMessageDetailsFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   * @param message - The name of the message type.
+   * @param callback - Function with the following params:
+   * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getMessageDetails(message, callback, failedCallback) {
-    const messageDetailClient = new Service({
+  getMessageDetails(
+    message: string,
+    callback: (typedefs: rosapi.TypeDef[]) => void,
+    failedCallback?: (error: string) => void,
+  ) {
+    const messageDetailClient = new Service<
+      rosapi.MessageDetailsRequest,
+      rosapi.MessageDetailsResponse
+    >({
       ros: this,
       name: "rosapi/message_details",
       serviceType: "rosapi/MessageDetails",
@@ -792,9 +742,9 @@ export default class Ros extends EventEmitter {
   /**
    * Decode a typedef array into a dictionary like `rosmsg show foo/bar`.
    *
-   * @param {import("../types/rosapi.ts").rosapi.TypeDef[]} defs - Array of type_def dictionary.
+   * @param defs - Array of type_def dictionary.
    */
-  decodeTypeDefs(defs) {
+  decodeTypeDefs(defs: rosapi.TypeDef[]) {
     const decodeTypeDefsRec = (theType, hints) => {
       // calls itself recursively to resolve type definition using hints.
       const typeDefDict = {};
@@ -852,11 +802,17 @@ export default class Ros extends EventEmitter {
   /**
    * Retrieve a list of topics and their associated type definitions.
    *
-   * @param {getTopicsAndRawTypesCallback} callback - Function with the following params:
-   * @param {getTopicsAndRawTypesFailedCallback} [failedCallback] - The callback function when the service call failed with params:
+   * @param callback - Function with the following params:
+   * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getTopicsAndRawTypes(callback, failedCallback) {
-    const topicsAndRawTypesClient = new Service({
+  getTopicsAndRawTypes(
+    callback: (result: rosapi.TopicsAndRawTypesResponse) => void,
+    failedCallback?: (error: string) => void,
+  ) {
+    const topicsAndRawTypesClient = new Service<
+      rosapi.TopicsAndRawTypesRequest,
+      rosapi.TopicsAndRawTypesResponse
+    >({
       ros: this,
       name: "rosapi/topics_and_raw_types",
       serviceType: "rosapi/TopicsAndRawTypes",
