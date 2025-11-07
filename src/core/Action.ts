@@ -4,48 +4,50 @@
  */
 
 import { EventEmitter } from "eventemitter3";
-import { GoalStatus } from "../core/GoalStatus.ts";
+import { GoalStatus } from "./GoalStatus.ts";
 import {
   isRosbridgeActionFeedbackMessage,
   isRosbridgeActionResultMessage,
   isRosbridgeCancelActionGoalMessage,
 } from "../types/protocol.ts";
+import Ros from "./Ros.js";
 
 /**
  * A ROS 2 action client.
  * @template TGoal, TFeedback, TResult
  */
-export default class Action extends EventEmitter {
+export default class Action<
+  TGoal = unknown,
+  TFeedback = unknown,
+  TResult = unknown,
+> extends EventEmitter {
   isAdvertised = false;
   /**
-   * @callback advertiseActionCallback
-   * @param {TGoal} goal - The action goal.
-   * @param {string} id - The ID of the action goal to execute.
+   * @private
    */
+  _actionCallback: ((goal: TGoal, id: string) => void) | null = null;
   /**
    * @private
-   * @type {advertiseActionCallback | null}
    */
-  _actionCallback = null;
+  _cancelCallback: ((id: string) => void) | null = null;
+  ros: Ros;
+  name: string;
+  actionType: string;
   /**
-   * @callback advertiseCancelCallback
-   * @param {string} id - The ID of the action goal to cancel.
+   * @param options
+   * @param options.ros - The ROSLIB.Ros connection handle.
+   * @param options.name - The action name, like '/fibonacci'.
+   * @param options.actionType - The action type, like 'example_interfaces/Fibonacci'.
    */
-  /**
-   * @private
-   * @type {advertiseCancelCallback | null}
-   */
-  _cancelCallback = null;
-  ros;
-  name;
-  actionType;
-  /**
-   * @param {Object} options
-   * @param {import('../core/Ros.js').default} options.ros - The ROSLIB.Ros connection handle.
-   * @param {string} options.name - The action name, like '/fibonacci'.
-   * @param {string} options.actionType - The action type, like 'example_interfaces/Fibonacci'.
-   */
-  constructor({ ros, name, actionType }) {
+  constructor({
+    ros,
+    name,
+    actionType,
+  }: {
+    ros: Ros;
+    name: string;
+    actionType: string;
+  }) {
     super();
     this.ros = ros;
     this.name = name;
@@ -53,28 +55,21 @@ export default class Action extends EventEmitter {
   }
 
   /**
-   * @callback sendGoalResultCallback
-   * @param {TResult} result - The result from the action.
-   */
-  /**
-   * @callback sendGoalFeedbackCallback
-   * @param {TFeedback} feedback - The feedback from the action.
-   */
-  /**
-   * @callback sendGoalFailedCallback
-   * @param {string} error - The error message reported by ROS.
-   */
-  /**
    * Sends an action goal. Returns the feedback in the feedback callback while the action is running
    * and the result in the result callback when the action is completed.
    * Does nothing if this action is currently advertised.
    *
-   * @param {TGoal} goal - The action goal to send.
-   * @param {sendGoalResultCallback} resultCallback - The callback function when the action is completed.
-   * @param {sendGoalFeedbackCallback} [feedbackCallback] - The callback function when the action pulishes feedback.
-   * @param {sendGoalFailedCallback} [failedCallback] - The callback function when the action failed.
+   * @param goal - The action goal to send.
+   * @param resultCallback - The callback function when the action is completed.
+   * @param [feedbackCallback] - The callback function when the action pulishes feedback.
+   * @param [failedCallback] - The callback function when the action failed.
    */
-  sendGoal(goal, resultCallback, feedbackCallback, failedCallback) {
+  sendGoal(
+    goal: TGoal,
+    resultCallback: (result: TResult) => void,
+    feedbackCallback?: (feedback: TFeedback) => void,
+    failedCallback?: (error: string) => void,
+  ) {
     if (this.isAdvertised) {
       return;
     }
@@ -120,9 +115,9 @@ export default class Action extends EventEmitter {
   /**
    * Cancels an action goal.
    *
-   * @param {string} id - The ID of the action goal to cancel.
+   * @param id - The ID of the action goal to cancel.
    */
-  cancelGoal(id) {
+  cancelGoal(id: string) {
     const call = {
       op: "cancel_action_goal",
       id: id,
@@ -135,10 +130,13 @@ export default class Action extends EventEmitter {
    * Advertise the action. This turns the Action object from a client
    * into a server. The callback will be called with every goal sent to this action.
    *
-   * @param {advertiseActionCallback} actionCallback - This works similarly to the callback for a C++ action.
-   * @param {advertiseCancelCallback} cancelCallback - A callback function to execute when the action is canceled.
+   * @param actionCallback - This works similarly to the callback for a C++ action.
+   * @param cancelCallback - A callback function to execute when the action is canceled.
    */
-  advertise(actionCallback, cancelCallback) {
+  advertise(
+    actionCallback: (goal: TGoal, id: string) => void,
+    cancelCallback: (id: string) => void,
+  ) {
     if (this.isAdvertised || typeof actionCallback !== "function") {
       return;
     }
@@ -173,11 +171,11 @@ export default class Action extends EventEmitter {
    * action callback with the auto-generated ID as a user-accessible input.
    * Should not be called manually.
    *
-   * @param {Object} rosbridgeRequest - The rosbridge request containing the action goal to send and its ID.
-   * @param {string} rosbridgeRequest.id - The ID of the action goal.
-   * @param {TGoal} rosbridgeRequest.args - The arguments of the action goal.
+   * @param rosbridgeRequest - The rosbridge request containing the action goal to send and its ID.
+   * @param rosbridgeRequest.id - The ID of the action goal.
+   * @param rosbridgeRequest.args - The arguments of the action goal.
    */
-  _executeAction(rosbridgeRequest) {
+  _executeAction(rosbridgeRequest: { id: string; args: TGoal }) {
     const id = rosbridgeRequest.id;
 
     // If a cancellation callback exists, call it when a cancellation event is emitted.
@@ -201,10 +199,10 @@ export default class Action extends EventEmitter {
   /**
    * Helper function to send action feedback inside an action handler.
    *
-   * @param {string} id - The action goal ID.
-   * @param {TFeedback} feedback - The feedback to send.
+   * @param id - The action goal ID.
+   * @param feedback - The feedback to send.
    */
-  sendFeedback(id, feedback) {
+  sendFeedback(id: string, feedback: TFeedback) {
     const call = {
       op: "action_feedback",
       id: id,
@@ -217,10 +215,10 @@ export default class Action extends EventEmitter {
   /**
    * Helper function to set an action as succeeded.
    *
-   * @param {string} id - The action goal ID.
-   * @param {TResult} result - The result to set.
+   * @param id - The action goal ID.
+   * @param result - The result to set.
    */
-  setSucceeded(id, result) {
+  setSucceeded(id: string, result: TResult) {
     const call = {
       op: "action_result",
       id: id,
@@ -235,10 +233,10 @@ export default class Action extends EventEmitter {
   /**
    * Helper function to set an action as canceled.
    *
-   * @param {string} id - The action goal ID.
-   * @param {TResult} result - The result to set.
+   * @param id - The action goal ID.
+   * @param result - The result to set.
    */
-  setCanceled(id, result) {
+  setCanceled(id: string, result: TResult) {
     const call = {
       op: "action_result",
       id: id,
@@ -253,9 +251,9 @@ export default class Action extends EventEmitter {
   /**
    * Helper function to set an action as failed.
    *
-   * @param {string} id - The action goal ID.
+   * @param id - The action goal ID.
    */
-  setFailed(id) {
+  setFailed(id: string) {
     const call = {
       op: "action_result",
       id: id,
