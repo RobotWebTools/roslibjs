@@ -4,6 +4,8 @@
  */
 
 import { EventEmitter } from "eventemitter3";
+import ActionClient from "./ActionClient";
+import { actionlib_msgs } from "../types/actionlib_msgs";
 
 /**
  * An actionlib goal that is associated with an action server.
@@ -11,21 +13,27 @@ import { EventEmitter } from "eventemitter3";
  * Emits the following events:
  *  * 'timeout' - If a timeout occurred while sending a goal.
  */
-export default class Goal extends EventEmitter {
+export default class Goal<T> extends EventEmitter {
   isFinished = false;
   status = undefined;
   result = undefined;
   feedback = undefined;
   // Create a random ID
   goalID = "goal_" + Math.random() + "_" + new Date().getTime();
-  actionClient;
-  goalMessage;
+  actionClient: ActionClient;
+  goalMessage: { goal: T; goal_id: actionlib_msgs.GoalID };
   /**
-   * @param {Object} options
-   * @param {import('./ActionClient.js').default} options.actionClient - The ROSLIB.ActionClient to use with this goal.
-   * @param {Object} options.goalMessage - The JSON object containing the goal for the action server.
+   * @param options
+   * @param options.actionClient - The ROSLIB.ActionClient to use with this goal.
+   * @param options.goalMessage - The JSON object containing the goal for the action server.
    */
-  constructor({ actionClient, goalMessage }) {
+  constructor({
+    actionClient,
+    goalMessage,
+  }: {
+    actionClient: ActionClient;
+    goalMessage: T;
+  }) {
     super();
     this.actionClient = actionClient;
 
@@ -33,8 +41,8 @@ export default class Goal extends EventEmitter {
     this.goalMessage = {
       goal_id: {
         stamp: {
-          secs: 0,
-          nsecs: 0,
+          sec: 0,
+          nsec: 0,
         },
         id: this.goalID,
       },
@@ -60,9 +68,9 @@ export default class Goal extends EventEmitter {
   /**
    * Send the goal to the action server.
    *
-   * @param {number} [timeout] - A timeout length for the goal's result.
+   * @param [timeout] - A timeout length for the goal's result.
    */
-  send(timeout) {
+  send(timeout?: number) {
     this.actionClient.goalTopic.publish(this.goalMessage);
     if (timeout) {
       setTimeout(() => {
