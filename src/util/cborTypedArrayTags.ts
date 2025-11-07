@@ -12,9 +12,9 @@ function warnPrecision() {
 
 /**
  * Unpack 64-bit unsigned integer from byte array.
- * @param {Uint8Array} bytes
+ * @param bytes
  */
-function decodeUint64LE(bytes) {
+function decodeUint64LE(bytes: Uint8Array) {
   warnPrecision();
 
   const byteLen = bytes.byteLength;
@@ -37,9 +37,9 @@ function decodeUint64LE(bytes) {
 
 /**
  * Unpack 64-bit signed integer from byte array.
- * @param {Uint8Array} bytes
+ * @param bytes
  */
-function decodeInt64LE(bytes) {
+function decodeInt64LE(bytes: Uint8Array) {
   warnPrecision();
 
   const byteLen = bytes.byteLength;
@@ -63,10 +63,10 @@ function decodeInt64LE(bytes) {
 
 /**
  * Unpack typed array from byte array.
- * @param {Uint8Array} bytes
- * @param {ArrayConstructor} ArrayType - Desired output array type
+ * @param bytes
+ * @param ArrayType - Desired output array type
  */
-function decodeNativeArray(bytes, ArrayType) {
+function decodeNativeArray(bytes: Uint8Array, ArrayType: ArrayConstructor) {
   const byteLen = bytes.byteLength;
   const offset = bytes.byteOffset;
   const buffer = bytes.buffer.slice(offset, offset + byteLen);
@@ -100,10 +100,10 @@ const conversionArrayTypes = {
 
 /**
  * Handle CBOR typed array tags during decoding.
- * @param {Uint8Array} data
- * @param {Number} tag
+ * @param data
+ * @param tag
  */
-export default function cborTypedArrayTagger(data, tag) {
+export default function cborTypedArrayTagger(data: Uint8Array, tag: number) {
   if (tag in nativeArrayTypes) {
     const arrayType = nativeArrayTypes[tag];
     return decodeNativeArray(data, arrayType);
