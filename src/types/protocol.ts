@@ -147,6 +147,10 @@ export interface RosbridgeCallServiceMessage<TArgs = undefined>
   op: "call_service";
   id?: string;
   service: string;
+  /**
+   * @todo this should be deeply partial when *outgoing*, because rosbridge will "fill in the blanks",
+   * but it's not partial when *incoming* - need to figure out a way to represent this.
+   */
   args: TArgs;
   fragment_size?: number;
   compression?: string;
