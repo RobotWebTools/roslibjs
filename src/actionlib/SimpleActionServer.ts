@@ -97,7 +97,7 @@ export default class SimpleActionServer<
     // Track the goals and their status in order to publish status...
     this.statusMessage = {
       header: {
-        stamp: { sec: 0, nsec: 100 },
+        stamp: { secs: 0, nsecs: 100 },
         frame_id: "",
       },
       /** @type {{goal_id: any, status: number}[]} */
@@ -143,8 +143,8 @@ export default class SimpleActionServer<
     cancelListener.subscribe((cancelMessage) => {
       // cancel ALL goals if both empty
       if (
-        cancelMessage.stamp.sec === 0 &&
-        cancelMessage.stamp.nsec === 0 &&
+        cancelMessage.stamp.secs === 0 &&
+        cancelMessage.stamp.nsecs === 0 &&
         cancelMessage.id === ""
       ) {
         this.nextGoal = null;
@@ -189,7 +189,7 @@ export default class SimpleActionServer<
       );
       this.statusMessage.header = {
         ...this.statusMessage.header,
-        stamp: { sec: secs, nsec: nsecs },
+        stamp: { secs, nsecs },
       };
       statusPublisher.publish(this.statusMessage);
     }, 500); // publish every 500ms
