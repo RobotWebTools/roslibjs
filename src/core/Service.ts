@@ -123,7 +123,12 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
         // Store the new callback for removal during un-advertisement
         this._serviceCallback = (rosbridgeRequest) => {
           const response = {};
-          const success = callback(rosbridgeRequest.args, response);
+          let success: boolean;
+          try {
+            success = callback(rosbridgeRequest.args, response);
+          } catch {
+            success = false;
+          }
 
           if (success) {
             this.ros.callOnConnection({
