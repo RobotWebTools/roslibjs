@@ -4,19 +4,18 @@
  */
 
 /**
- * @callback decompressPngCallback
- * @param data - The uncompressed data.
- */
-/**
  * If a message was compressed as a PNG image (a compression hack since
  * gzipping over WebSockets * is not supported yet), this function places the
  * "image" in a canvas element then decodes the * "image" as a Base64 string.
  *
  * @private
- * @param data - An object containing the PNG data.
- * @param {decompressPngCallback} callback - Function with the following params:
+ * @param data - A string containing the PNG data.
+ * @param callback - Function with the following params:
  */
-export default function decompressPng(data, callback) {
+export default function decompressPng(
+  data: string,
+  callback: (data: unknown) => void,
+) {
   // Uncompresses the data before sending it through (use image/canvas to do so).
   const image = new Image();
   // When the image loads, extracts the raw data (JSON message).
