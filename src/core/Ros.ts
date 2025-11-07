@@ -35,7 +35,14 @@ import { rosapi } from "../types/rosapi.ts";
  *  * &#60;topicName&#62; - A message came from rosbridge with the given topic name.
  *  * &#60;serviceID&#62; - A service response came from rosbridge with the given ID.
  */
-export default class Ros extends EventEmitter {
+export default class Ros extends EventEmitter<
+  {
+    error: [string];
+    connection: [Event];
+    close: [Event];
+    // Any dynamically-named event should correspond to a rosbridge protocol message
+  } & Record<string, [RosbridgeMessage]>
+> {
   /** @type {import('./SocketAdapter.js').default | null} */
   socket: import("./SocketAdapter.js").default | null = null;
   idCounter = 0;
@@ -131,7 +138,7 @@ export default class Ros extends EventEmitter {
         this.emit("close", event);
       },
       onError: (event) => {
-        this.emit("error", event);
+        this.emit("error", String(event));
       },
       onMessage: (message) => {
         this.#handleMessage(message);
@@ -146,7 +153,7 @@ export default class Ros extends EventEmitter {
    */
   #handleMessage(message: RosbridgeMessage) {
     if (isRosbridgePublishMessage(message)) {
-      this.emit(message.topic, message.msg);
+      this.emit(message.topic, message);
     } else if (isRosbridgeServiceResponseMessage(message)) {
       if (message.id) {
         this.emit(message.id, message);

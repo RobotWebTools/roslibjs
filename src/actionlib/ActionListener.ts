@@ -23,7 +23,12 @@ export default class ActionListener<
   TGoal,
   TFeedback,
   TResult,
-> extends EventEmitter {
+> extends EventEmitter<{
+  status: actionlib_msgs.GoalStatus;
+  feedback: [TFeedback];
+  result: [TResult];
+  goal: [TGoal];
+}> {
   ros: Ros;
   serverName: string;
   actionName: string;

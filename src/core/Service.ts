@@ -5,6 +5,7 @@
 
 import { EventEmitter } from "eventemitter3";
 import {
+  isRosbridgeServiceResponseMessage,
   RosbridgeCallServiceMessage,
   RosbridgeServiceResponseMessage,
 } from "../types/protocol.ts";
@@ -79,12 +80,12 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
 
     if (callback || failedCallback) {
       this.ros.once(serviceCallId, function (message) {
-        if (message.result !== undefined && message.result === false) {
-          if (typeof failedCallback === "function") {
-            failedCallback(message.values);
+        if (isRosbridgeServiceResponseMessage<TResponse>(message)) {
+          if (!message.result) {
+            failedCallback?.(message.values ?? "");
+          } else {
+            callback?.(message.values);
           }
-        } else if (typeof callback === "function") {
-          callback(message.values);
         }
       });
     }

@@ -8,6 +8,7 @@ import Service from "./Service.js";
 import Ros from "./Ros.js";
 import {
   RosbridgeAdvertiseMessage,
+  RosbridgePublishMessage,
   RosbridgeSubscribeMessage,
 } from "../types/protocol.ts";
 import { rosapi } from "../types/rosapi.ts";
@@ -19,7 +20,12 @@ import { rosapi } from "../types/rosapi.ts";
  *  * 'warning' - If there are any warning during the Topic creation.
  *  * 'message' - The message data from rosbridge.
  */
-export default class Topic<T> extends EventEmitter {
+export default class Topic<T> extends EventEmitter<{
+  message: [T];
+  warning: [string];
+  unsubscribe: void;
+  unadvertise: void;
+}> {
   waitForReconnect: boolean | undefined = undefined;
   reconnectFunc: (() => void) | undefined = undefined;
   isAdvertised = false;
@@ -125,8 +131,8 @@ export default class Topic<T> extends EventEmitter {
     }
   }
 
-  #messageCallback = (data: T) => {
-    this.emit("message", data);
+  #messageCallback = (data: RosbridgePublishMessage<T>) => {
+    this.emit("message", data.msg);
   };
   /**
    * Every time a message is published for the given topic, the callback

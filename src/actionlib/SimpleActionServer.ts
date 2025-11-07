@@ -19,7 +19,10 @@ export default class SimpleActionServer<
   TGoal = unknown,
   TFeedback = unknown,
   TResult = unknown,
-> extends EventEmitter {
+> extends EventEmitter<{
+  goal: [TGoal];
+  cancel: void;
+}> {
   // needed for handling preemption prompted by a new goal being received
   currentGoal: { goal: TGoal; goal_id: actionlib_msgs.GoalID } | null = null; // currently tracked goal
   nextGoal: { goal: TGoal; goal_id: actionlib_msgs.GoalID } | null = null; // the one this'll be preempting
