@@ -19,7 +19,9 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
    * @private
    */
   _serviceCallback:
-    | ((rosbridgeRequest: RosbridgeCallServiceMessage<TRequest>) => void)
+    | ((
+        rosbridgeRequest: RosbridgeCallServiceMessage<TRequest>,
+      ) => void | Promise<void>)
     | null = null;
   isAdvertised = false;
   /**
@@ -70,7 +72,7 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
     callback?: (response: TResponse) => void,
     failedCallback?: (error: string) => void,
     timeout?: number,
-  ) {
+  ): void {
     if (this.isAdvertised) {
       return;
     }
@@ -109,9 +111,9 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
    * @param callback This works similarly to the callback for a C++ service in that you should take care not to overwrite the response object.
    *  Instead, only modify the values within.
    */
-  advertise(
+  async advertise(
     callback: (request: TRequest, response: Partial<TResponse>) => boolean,
-  ) {
+  ): Promise<void> {
     // Queue this operation to prevent race conditions
     this._operationQueue = this._operationQueue
       .then(async () => {
@@ -202,7 +204,7 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
     }
   }
 
-  unadvertise() {
+  async unadvertise(): Promise<void> {
     // Queue this operation to prevent race conditions
     this._operationQueue = this._operationQueue
       .then(async () => {
@@ -220,7 +222,9 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
    * An alternate form of Service advertisement that supports a modern Promise-based interface for use with async/await.
    * @param callback An asynchronous callback processing the request and returning a response.
    */
-  advertiseAsync(callback: (request: TRequest) => Promise<TResponse>) {
+  async advertiseAsync(
+    callback: (request: TRequest) => Promise<TResponse>,
+  ): Promise<void> {
     // Queue this operation to prevent race conditions
     this._operationQueue = this._operationQueue
       .then(async () => {
