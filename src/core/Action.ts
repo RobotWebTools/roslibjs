@@ -3,7 +3,6 @@
  * @author Sebastian Castro - sebastian.castro@picknik.ai
  */
 
-import { EventEmitter } from "eventemitter3";
 import { GoalStatus } from "./GoalStatus.ts";
 import {
   isRosbridgeActionFeedbackMessage,
@@ -14,13 +13,12 @@ import Ros from "./Ros.js";
 
 /**
  * A ROS 2 action client.
- * @template TGoal, TFeedback, TResult
  */
 export default class Action<
   TGoal = unknown,
   TFeedback = unknown,
   TResult = unknown,
-> extends EventEmitter {
+> {
   isAdvertised = false;
   #actionCallback: ((goal: TGoal, id: string) => void) | null = null;
   #cancelCallback: ((id: string) => void) | null = null;
@@ -42,7 +40,6 @@ export default class Action<
     name: string;
     actionType: string;
   }) {
-    super();
     this.ros = ros;
     this.name = name;
     this.actionType = actionType;
@@ -73,22 +70,14 @@ export default class Action<
 
     if (resultCallback || failedCallback) {
       this.ros.on(actionGoalId, function (message) {
-        if (message.result !== undefined && message.result === false) {
-          if (typeof failedCallback === "function") {
-            failedCallback(message.values);
+        if (isRosbridgeActionResultMessage<TResult>(message)) {
+          if (!message.result) {
+            failedCallback?.(message.values ?? "");
+          } else {
+            resultCallback?.(message.values);
           }
-        } else if (
-          isRosbridgeActionFeedbackMessage(message) &&
-          typeof feedbackCallback === "function"
-        ) {
-          // @ts-expect-error -- can't do generic type guards in this file until it's migrated to typescript
-          feedbackCallback(message.values);
-        } else if (
-          isRosbridgeActionResultMessage(message) &&
-          typeof resultCallback === "function"
-        ) {
-          // @ts-expect-error -- can't do generic type guards in this file until it's migrated to typescript
-          resultCallback(message.values);
+        } else if (isRosbridgeActionFeedbackMessage<TFeedback>(message)) {
+          feedbackCallback?.(message.values);
         }
       });
     }

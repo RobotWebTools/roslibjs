@@ -187,9 +187,9 @@ export type RosbridgeServiceResponseMessage<TValues = undefined> =
   | FailedRosbridgeServiceResponseMessage
   | SuccessfulRosbridgeServiceResponseMessage<TValues>;
 
-export function isRosbridgeServiceResponseMessage(
+export function isRosbridgeServiceResponseMessage<T>(
   message: RosbridgeMessage,
-): message is RosbridgeServiceResponseMessage {
+): message is RosbridgeServiceResponseMessage<T> {
   return message.op === "service_response";
 }
 
@@ -260,19 +260,32 @@ export function isRosbridgeActionFeedbackMessage<TFeedback = unknown>(
   return message.op === "action_feedback";
 }
 
-export interface RosbridgeActionResultMessage<TResultValues = unknown>
-  extends RosbridgeMessage {
+interface RosbridgeActionResultMessageBase extends RosbridgeMessage {
   op: "action_result";
   id: string;
   action: string;
-  values: TResultValues;
   status: number;
-  result: boolean;
 }
 
-export function isRosbridgeActionResultMessage(
+interface FailedRosbridgeActionResultMessage
+  extends RosbridgeActionResultMessageBase {
+  result: false;
+  values?: string;
+}
+
+interface SuccessfulRosbridgeActionResultMessage<TResultValues = unknown>
+  extends RosbridgeActionResultMessageBase {
+  values: TResultValues;
+  result: true;
+}
+
+export type RosbridgeActionResultMessage<TResultValues = unknown> =
+  | FailedRosbridgeActionResultMessage
+  | SuccessfulRosbridgeActionResultMessage<TResultValues>;
+
+export function isRosbridgeActionResultMessage<TResultValues = unknown>(
   message: RosbridgeMessage,
-): message is RosbridgeActionResultMessage {
+): message is RosbridgeActionResultMessage<TResultValues> {
   return message.op === "action_result";
 }
 

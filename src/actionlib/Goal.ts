@@ -13,15 +13,24 @@ import { actionlib_msgs } from "../types/actionlib_msgs";
  * Emits the following events:
  *  * 'timeout' - If a timeout occurred while sending a goal.
  */
-export default class Goal<T> extends EventEmitter {
+export default class Goal<
+  TGoal,
+  TFeedback = unknown,
+  TResult = unknown,
+> extends EventEmitter<{
+  timeout: void;
+  status: actionlib_msgs.GoalStatus;
+  feedback: [TFeedback];
+  result: [TResult];
+}> {
   isFinished = false;
   status = undefined;
-  result = undefined;
-  feedback = undefined;
+  result?: TResult = undefined;
+  feedback?: TFeedback = undefined;
   // Create a random ID
   goalID = "goal_" + Math.random() + "_" + new Date().getTime();
-  actionClient: ActionClient<T>;
-  goalMessage: { goal: T; goal_id: actionlib_msgs.GoalID };
+  actionClient: ActionClient<TGoal, TFeedback, TResult>;
+  goalMessage: { goal: TGoal; goal_id: actionlib_msgs.GoalID };
   /**
    * @param options
    * @param options.actionClient - The ROSLIB.ActionClient to use with this goal.
@@ -31,8 +40,8 @@ export default class Goal<T> extends EventEmitter {
     actionClient,
     goalMessage,
   }: {
-    actionClient: ActionClient<T>;
-    goalMessage: T;
+    actionClient: ActionClient<TGoal, TFeedback, TResult>;
+    goalMessage: TGoal;
   }) {
     super();
     this.actionClient = actionClient;

@@ -1,12 +1,11 @@
 import Transform from "../math/Transform.js";
-import { EventEmitter } from "eventemitter3";
 import Ros from "../core/Ros.js";
 import { tf2_msgs } from "../types/tf2_msgs.js";
 
 /**
  * Base class for TF Clients that provides common functionality.
  */
-export default class BaseTFClient extends EventEmitter {
+export default class BaseTFClient {
   frameInfos: Record<
     string,
     { transform?: Transform; cbs: ((tf: Transform) => void)[] }
@@ -55,8 +54,6 @@ export default class BaseTFClient extends EventEmitter {
     topicTimeout?: number;
     serverName?: string;
   }) {
-    super();
-
     this.ros = ros;
     this.fixedFrame = fixedFrame;
     this.angularThres = angularThres;
