@@ -16,9 +16,8 @@ import Ros from "./Ros.js";
 export default class Service<TRequest, TResponse> extends EventEmitter {
   /**
    * Stores a reference to the most recent service callback advertised so it can be removed from the EventEmitter during un-advertisement
-   * @private
    */
-  _serviceCallback:
+  #serviceCallback:
     | ((
         rosbridgeRequest: RosbridgeCallServiceMessage<TRequest>,
       ) => void | Promise<void>)
@@ -26,14 +25,12 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
   isAdvertised = false;
   /**
    * Queue for serializing advertise/unadvertise operations to prevent race conditions
-   * @private
    */
-  _operationQueue = Promise.resolve();
+  #operationQueue = Promise.resolve();
   /**
    * Track if an unadvertise operation is pending to prevent double operations
-   * @private
    */
-  _pendingUnadvertise = false;
+  #pendingUnadvertise = false;
   ros: Ros;
   name: string;
   serviceType: string;
@@ -115,15 +112,15 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
     callback: (request: TRequest, response: Partial<TResponse>) => boolean,
   ): Promise<void> {
     // Queue this operation to prevent race conditions
-    this._operationQueue = this._operationQueue
+    this.#operationQueue = this.#operationQueue
       .then(async () => {
         // If already advertised, unadvertise first
         if (this.isAdvertised) {
-          await this._doUnadvertise();
+          await this.#doUnadvertise();
         }
 
         // Store the new callback for removal during un-advertisement
-        this._serviceCallback = (rosbridgeRequest) => {
+        this.#serviceCallback = (rosbridgeRequest) => {
           const response = {};
           let success: boolean;
           try {
@@ -150,7 +147,7 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
           }
         };
 
-        this.ros.on(this.name, this._serviceCallback);
+        this.ros.on(this.name, this.#serviceCallback);
         this.ros.callOnConnection({
           op: "advertise_service",
           type: this.serviceType,
@@ -163,19 +160,18 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
         throw err;
       });
 
-    return this._operationQueue;
+    return this.#operationQueue;
   }
 
   /**
    * Internal method to perform unadvertisement without queueing
-   * @private
    */
-  async _doUnadvertise() {
-    if (!this.isAdvertised || this._pendingUnadvertise) {
+  async #doUnadvertise() {
+    if (!this.isAdvertised || this.#pendingUnadvertise) {
       return;
     }
 
-    this._pendingUnadvertise = true;
+    this.#pendingUnadvertise = true;
 
     try {
       /*
@@ -185,9 +181,9 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
       this.isAdvertised = false;
 
       // Remove the registered callback to stop processing new requests
-      if (this._serviceCallback) {
-        this.ros.off(this.name, this._serviceCallback);
-        this._serviceCallback = null;
+      if (this.#serviceCallback) {
+        this.ros.off(this.name, this.#serviceCallback);
+        this.#serviceCallback = null;
       }
 
       /*
@@ -200,22 +196,22 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
         service: this.name,
       });
     } finally {
-      this._pendingUnadvertise = false;
+      this.#pendingUnadvertise = false;
     }
   }
 
   async unadvertise(): Promise<void> {
     // Queue this operation to prevent race conditions
-    this._operationQueue = this._operationQueue
+    this.#operationQueue = this.#operationQueue
       .then(async () => {
-        await this._doUnadvertise();
+        await this.#doUnadvertise();
       })
       .catch((err) => {
         this.emit("error", err);
         throw err;
       });
 
-    return this._operationQueue;
+    return this.#operationQueue;
   }
 
   /**
@@ -226,14 +222,14 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
     callback: (request: TRequest) => Promise<TResponse>,
   ): Promise<void> {
     // Queue this operation to prevent race conditions
-    this._operationQueue = this._operationQueue
+    this.#operationQueue = this.#operationQueue
       .then(async () => {
         // If already advertised, unadvertise first
         if (this.isAdvertised) {
-          await this._doUnadvertise();
+          await this.#doUnadvertise();
         }
 
-        this._serviceCallback = async (rosbridgeRequest) => {
+        this.#serviceCallback = async (rosbridgeRequest) => {
           try {
             this.ros.callOnConnection({
               op: "service_response",
@@ -252,7 +248,7 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
             } satisfies RosbridgeServiceResponseMessage<TResponse>);
           }
         };
-        this.ros.on(this.name, this._serviceCallback);
+        this.ros.on(this.name, this.#serviceCallback);
         this.ros.callOnConnection({
           op: "advertise_service",
           type: this.serviceType,
@@ -265,6 +261,6 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
         throw err;
       });
 
-    return this._operationQueue;
+    return this.#operationQueue;
   }
 }

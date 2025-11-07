@@ -22,14 +22,8 @@ export default class Action<
   TResult = unknown,
 > extends EventEmitter {
   isAdvertised = false;
-  /**
-   * @private
-   */
-  _actionCallback: ((goal: TGoal, id: string) => void) | null = null;
-  /**
-   * @private
-   */
-  _cancelCallback: ((id: string) => void) | null = null;
+  #actionCallback: ((goal: TGoal, id: string) => void) | null = null;
+  #cancelCallback: ((id: string) => void) | null = null;
   ros: Ros;
   name: string;
   actionType: string;
@@ -141,9 +135,9 @@ export default class Action<
       return;
     }
 
-    this._actionCallback = actionCallback;
-    this._cancelCallback = cancelCallback;
-    this.ros.on(this.name, this._executeAction.bind(this));
+    this.#actionCallback = actionCallback;
+    this.#cancelCallback = cancelCallback;
+    this.ros.on(this.name, this.#executeAction.bind(this));
     this.ros.callOnConnection({
       op: "advertise_action",
       type: this.actionType,
@@ -175,7 +169,7 @@ export default class Action<
    * @param rosbridgeRequest.id - The ID of the action goal.
    * @param rosbridgeRequest.args - The arguments of the action goal.
    */
-  _executeAction(rosbridgeRequest: { id: string; args: TGoal }) {
+  #executeAction(rosbridgeRequest: { id: string; args: TGoal }) {
     const id = rosbridgeRequest.id;
 
     // If a cancellation callback exists, call it when a cancellation event is emitted.
@@ -183,16 +177,16 @@ export default class Action<
       this.ros.on(id, (message) => {
         if (
           isRosbridgeCancelActionGoalMessage(message) &&
-          typeof this._cancelCallback === "function"
+          typeof this.#cancelCallback === "function"
         ) {
-          this._cancelCallback(id);
+          this.#cancelCallback(id);
         }
       });
     }
 
     // Call the action goal execution function provided.
-    if (typeof this._actionCallback === "function") {
-      this._actionCallback(rosbridgeRequest.args, id);
+    if (typeof this.#actionCallback === "function") {
+      this.#actionCallback(rosbridgeRequest.args, id);
     }
   }
 

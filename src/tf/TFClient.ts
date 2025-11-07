@@ -26,7 +26,8 @@ export default class TFClient extends BaseTFClient {
     tf2_web_republisher.RepublishTFsRequest,
     tf2_web_republisher.RepublishTFsResponse
   >;
-  _subscribeCB: ((tf: tf2_msgs.TFMessage) => void) | undefined = undefined;
+  #subscribeCB: ((tf: tf2_msgs.TFMessage) => void) | undefined = undefined;
+  #isDisposed = false;
 
   /**
    * @param options
@@ -130,7 +131,7 @@ export default class TFClient extends BaseTFClient {
      * Do not setup a topic subscription if already disposed. Prevents a race condition where
      * The dispose() function is called before the service call receives a response.
      */
-    if (this._isDisposed) {
+    if (this.#isDisposed) {
       return;
     }
 
@@ -139,7 +140,7 @@ export default class TFClient extends BaseTFClient {
      * the republisher stops publishing it
      */
     if (this.currentTopic) {
-      this.currentTopic.unsubscribe(this._subscribeCB);
+      this.currentTopic.unsubscribe(this.#subscribeCB);
     }
 
     this.currentTopic = new Topic<tf2_msgs.TFMessage>({
@@ -147,19 +148,19 @@ export default class TFClient extends BaseTFClient {
       name: response.topic_name,
       messageType: "tf2_web_republisher/TFArray",
     });
-    this._subscribeCB = this.processTFArray.bind(this);
+    this.#subscribeCB = this.processTFArray.bind(this);
     // @ts-expect-error Function was bound above
-    this.currentTopic.subscribe(this._subscribeCB);
+    this.currentTopic.subscribe(this.#subscribeCB);
   }
 
   /**
    * Unsubscribe and unadvertise all topics associated with this TFClient.
    */
   dispose() {
-    super.dispose();
+    this.#isDisposed = true;
     this.actionClient.dispose();
     if (this.currentTopic) {
-      this.currentTopic.unsubscribe(this._subscribeCB);
+      this.currentTopic.unsubscribe(this.#subscribeCB);
     }
   }
 }
