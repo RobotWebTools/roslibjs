@@ -142,12 +142,16 @@ export function isRosbridgeUnadvertiseServiceMessage(
   return message.op === "unadvertise_service";
 }
 
-export interface RosbridgeCallServiceMessage<TArgs = unknown[]>
+export interface RosbridgeCallServiceMessage<TArgs = undefined>
   extends RosbridgeMessage {
   op: "call_service";
   id?: string;
   service: string;
-  args?: TArgs;
+  /**
+   * @todo this should be deeply partial when *outgoing*, because rosbridge will "fill in the blanks",
+   * but it's not partial when *incoming* - need to figure out a way to represent this.
+   */
+  args: TArgs;
   fragment_size?: number;
   compression?: string;
   timeout?: number;
@@ -159,14 +163,29 @@ export function isRosbridgeCallServiceMessage(
   return message.op === "call_service";
 }
 
-export interface RosbridgeServiceResponseMessage<TValues = unknown[]>
-  extends RosbridgeMessage {
+interface BaseRosbridgeServiceResponseMessage extends RosbridgeMessage {
   op: "service_response";
   id?: string;
   service: string;
-  values?: TValues;
   result: boolean;
 }
+
+/** If the service call failed, `values` will be a string error message. */
+interface FailedRosbridgeServiceResponseMessage
+  extends BaseRosbridgeServiceResponseMessage {
+  values?: string;
+  result: false;
+}
+
+interface SuccessfulRosbridgeServiceResponseMessage<TValues = undefined>
+  extends BaseRosbridgeServiceResponseMessage {
+  values: TValues;
+  result: true;
+}
+
+export type RosbridgeServiceResponseMessage<TValues = undefined> =
+  | FailedRosbridgeServiceResponseMessage
+  | SuccessfulRosbridgeServiceResponseMessage<TValues>;
 
 export function isRosbridgeServiceResponseMessage(
   message: RosbridgeMessage,
