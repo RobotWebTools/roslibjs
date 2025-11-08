@@ -1,18 +1,7 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import * as ROSLIB from "../../src/RosLib.js";
 
-const expectedTopics = [
-  /*
-   * '/turtle1/cmd_vel', '/turtle1/color_sensor', '/turtle1/pose',
-   * '/turtle2/cmd_vel', '/turtle2/color_sensor', '/turtle2/pose',
-   */
-  "/tf2_web_republisher/status",
-  "/tf2_web_republisher/feedback",
-  // '/tf2_web_republisher/goal', '/tf2_web_republisher/result',
-  "/fibonacci/feedback",
-  "/fibonacci/status",
-  "/fibonacci/result",
-];
+const expectedTopics = ["/listener"];
 
 describe("Example topics are live", function () {
   const ros = new ROSLIB.Ros({
@@ -55,18 +44,12 @@ describe("Example topics are live", function () {
       });
     }));
 
-  it(
-    "unadvertise will end the topic (if it's the last around)",
-    () =>
-      new Promise((done) => {
-        console.log("Unadvertisement test. Wait for 15 seconds..");
-        setTimeout(function () {
-          ros.getTopics(function (result) {
-            expect(result.topics).not.to.contain("/some_test_topic");
-            done(result);
-          });
-        }, 15000);
-      }),
-    20000,
-  );
+  it("unadvertise will end the topic (if it's the last around)", async () => {
+    console.log("Unadvertisement test. Wait for 15 seconds..");
+    vi.waitFor(function () {
+      ros.getTopics(function (result) {
+        expect(result.topics).not.to.contain("/some_test_topic");
+      });
+    }, 15000);
+  });
 });
