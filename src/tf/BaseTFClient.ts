@@ -1,6 +1,7 @@
 import Transform from "../math/Transform.js";
 import Ros from "../core/Ros.js";
 import { tf2_msgs } from "../types/tf2_msgs.js";
+import { std_msgs } from "../types/std_msgs.js";
 
 /**
  * Base class for TF Clients that provides common functionality.
@@ -17,10 +18,7 @@ export default class BaseTFClient {
   transThres: number;
   rate: number;
   updateDelay: number;
-  topicTimeout: {
-    sec: number;
-    nsec: number;
-  };
+  topicTimeout: std_msgs.time;
   serverName: string;
 
   /**
@@ -64,8 +62,8 @@ export default class BaseTFClient {
     const secs = Math.floor(seconds);
     const nsecs = Math.floor((seconds - secs) * 1000000000);
     this.topicTimeout = {
-      sec: secs,
-      nsec: nsecs,
+      secs: secs,
+      nsecs: nsecs,
     };
     this.serverName = serverName;
   }

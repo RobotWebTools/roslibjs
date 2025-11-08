@@ -41,10 +41,7 @@ export default defineConfig({
     target: "node18",
   },
   test: {
-    include: [
-      "{src,test}/**/*.{test,spec}.?(c|m)[jt]s?(x)",
-      "./test/examples/*.js",
-    ],
+    include: ["{src,test}/**/*.{test,spec,example}.?(c|m)[jt]s?(x)"],
     exclude: ["dist"],
     globalSetup: "./test/setup/vitest-setup.js",
     projects: [

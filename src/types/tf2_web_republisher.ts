@@ -1,11 +1,9 @@
 import { geometry_msgs } from "./geometry_msgs";
+import { std_msgs } from "./std_msgs";
 
 export namespace tf2_web_republisher {
   export interface RepublishTFsRequest extends TFSubscriptionGoal {
-    timeout: {
-      sec: number;
-      nsec: number;
-    };
+    timeout: std_msgs.time;
   }
 
   export interface RepublishTFsResponse {
