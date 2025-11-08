@@ -1,63 +1,64 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import * as ROSLIB from "../../src/RosLib.js";
+
+const PARAM_NAME =
+  process.env.ROS_DISTRO === "noetic"
+    ? "/test/foo"
+    : // Is it crazy to muck around with use_sim_time here? I feel like it shouldn't matter..
+      "/add_two_ints_server:use_sim_time";
 
 describe("Param setting", function () {
   const ros = new ROSLIB.Ros({
     url: "ws://localhost:9090",
   });
-  const param = ros.Param({
-    name: "/test/foo",
+  const param = ros.Param<boolean>({
+    name: PARAM_NAME,
   });
 
   it("Param generics", function () {
     expect(param).to.be.instanceOf(ROSLIB.Param);
-    expect(param.name).to.be.equal("/test/foo");
+    expect(param.name).to.be.equal(PARAM_NAME);
   });
 
-  it("Param.set no callback", () =>
-    new Promise((done) => {
-      param.set("foo");
-      setTimeout(done, 500);
-    }));
+  it("Param.set no callback", () => {
+    param.set(true);
+  });
 
-  it("Param.get", () =>
-    new Promise<void>((done) => {
-      param.get(function (result) {
-        expect(result).to.be.equal("foo");
-        done();
-      });
-    }));
+  it("Param.get", { retry: 3 }, async () => {
+    const callback = vi.fn();
+    param.get(callback);
+    await vi.waitFor(() => expect(callback).toHaveBeenCalledWith(true));
+  });
 
-  it("Param.set w/ callback", () =>
-    new Promise<void>((done) => {
-      param.set("bar", function () {
-        done();
-      });
-    }));
+  it("Param.set w/ callback", async () => {
+    const callback = vi.fn();
+    param.set(false, callback);
+    await vi.waitFor(() => expect(callback).toHaveBeenCalled());
+  });
 
-  it("Param.get", () =>
-    new Promise<void>((done) => {
-      param.get(function (result) {
-        expect(result).to.be.equal("bar");
-        done();
-      });
-    }));
+  it("Param.get", async () => {
+    const callback = vi.fn();
+    param.get(callback);
+    await vi.waitFor(() => expect(callback).toHaveBeenCalledWith(false));
+  });
 
-  it("ros.getParams", () =>
-    new Promise<void>((done) => {
-      ros.getParams(function (params) {
-        expect(params).to.include(param.name);
-        done();
-      });
-    }));
+  it("ros.getParams", async () => {
+    const callback = vi.fn();
+    ros.getParams(callback);
+    await vi.waitFor(() =>
+      expect(callback.mock.calls[0][0]).to.include(PARAM_NAME),
+    );
+  });
 
-  it("Param.delete", () =>
-    new Promise<void>((done) => {
-      param.delete(function () {
-        ros.getParams(function (params) {
-          expect(params).to.not.include(param.name);
-          done();
-        });
-      });
-    }));
+  // In ROS 2 we can't forcibly un-declare someone else's parameter
+  it.skipIf(process.env.ROS_DISTRO !== "noetic")("Param.delete", async () => {
+    const callback = vi.fn();
+    param.delete(callback);
+    await vi.waitFor(() => expect(callback).toHaveBeenCalled());
+    const getParamsCallback = vi.fn();
+    ros.getParams(getParamsCallback);
+    vi.waitFor(() =>
+      expect(getParamsCallback.mock.calls[0][0]).to.not.include(PARAM_NAME),
+    );
+  });
 });

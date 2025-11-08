@@ -64,7 +64,7 @@ export default class Param<T = unknown> {
    * @param [failedCallback] - The callback function when the service call failed or the parameter setting was unsuccessful.
    */
   set(
-    value: object,
+    value: T,
     callback?: (message: rosapi.SetParamResponse) => void,
     failedCallback: (error: string) => void = console.error,
   ) {
