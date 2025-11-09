@@ -274,7 +274,7 @@ export default class Ros extends EventEmitter<
    */
   getActionServers(
     callback: (actionservers: string[]) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const getActionServers = new Service<
       rosapi.GetActionServersRequest,
@@ -286,21 +286,15 @@ export default class Ros extends EventEmitter<
     });
 
     const request = {};
-    if (typeof failedCallback === "function") {
-      getActionServers.callService(
-        request,
-        function (result) {
-          callback(result.action_servers);
-        },
-        function (message) {
-          failedCallback(message);
-        },
-      );
-    } else {
-      getActionServers.callService(request, function (result) {
+    getActionServers.callService(
+      request,
+      function (result) {
         callback(result.action_servers);
-      });
-    }
+      },
+      function (message) {
+        failedCallback(message);
+      },
+    );
   }
   /**
    * Retrieve a list of topics in ROS as an array.
@@ -310,7 +304,7 @@ export default class Ros extends EventEmitter<
    */
   getTopics(
     callback: (result: rosapi.TopicsResponse) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const topicsClient = new Service<
       rosapi.TopicsRequest,
@@ -322,21 +316,15 @@ export default class Ros extends EventEmitter<
     });
 
     const request = {};
-    if (typeof failedCallback === "function") {
-      topicsClient.callService(
-        request,
-        function (result) {
-          callback(result);
-        },
-        function (message) {
-          failedCallback(message);
-        },
-      );
-    } else {
-      topicsClient.callService(request, function (result) {
+    topicsClient.callService(
+      request,
+      function (result) {
         callback(result);
-      });
-    }
+      },
+      function (message) {
+        failedCallback(message);
+      },
+    );
   }
   /**
    * Retrieve a list of topics in ROS as an array of a specific type.
@@ -348,7 +336,7 @@ export default class Ros extends EventEmitter<
   getTopicsForType(
     topicType: string,
     callback: (topics: string[]) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const topicsForTypeClient = new Service<
       rosapi.TopicsForTypeRequest,
@@ -362,21 +350,15 @@ export default class Ros extends EventEmitter<
     const request = {
       type: topicType,
     };
-    if (typeof failedCallback === "function") {
-      topicsForTypeClient.callService(
-        request,
-        function (result) {
-          callback(result.topics);
-        },
-        function (message) {
-          failedCallback(message);
-        },
-      );
-    } else {
-      topicsForTypeClient.callService(request, function (result) {
+    topicsForTypeClient.callService(
+      request,
+      function (result) {
         callback(result.topics);
-      });
-    }
+      },
+      function (message) {
+        failedCallback(message);
+      },
+    );
   }
 
   /**
@@ -387,7 +369,7 @@ export default class Ros extends EventEmitter<
    */
   getServices(
     callback: (services: string[]) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const servicesClient = new Service<
       rosapi.ServicesRequest,
@@ -399,21 +381,15 @@ export default class Ros extends EventEmitter<
     });
 
     const request = {};
-    if (typeof failedCallback === "function") {
-      servicesClient.callService(
-        request,
-        function (result) {
-          callback(result.services);
-        },
-        function (message) {
-          failedCallback(message);
-        },
-      );
-    } else {
-      servicesClient.callService(request, function (result) {
+    servicesClient.callService(
+      request,
+      function (result) {
         callback(result.services);
-      });
-    }
+      },
+      function (message) {
+        failedCallback(message);
+      },
+    );
   }
   /**
    * Retrieve a list of services in ROS as an array as specific type.
@@ -425,7 +401,7 @@ export default class Ros extends EventEmitter<
   getServicesForType(
     serviceType: string,
     callback: (services: string[]) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const servicesForTypeClient = new Service<
       rosapi.ServicesForTypeRequest,
@@ -439,21 +415,15 @@ export default class Ros extends EventEmitter<
     const request = {
       type: serviceType,
     };
-    if (typeof failedCallback === "function") {
-      servicesForTypeClient.callService(
-        request,
-        function (result) {
-          callback(result.services);
-        },
-        function (message) {
-          failedCallback(message);
-        },
-      );
-    } else {
-      servicesForTypeClient.callService(request, function (result) {
+    servicesForTypeClient.callService(
+      request,
+      function (result) {
         callback(result.services);
-      });
-    }
+      },
+      function (message) {
+        failedCallback(message);
+      },
+    );
   }
   /**
    * Retrieve the details of a ROS service request.
@@ -465,7 +435,7 @@ export default class Ros extends EventEmitter<
   getServiceRequestDetails(
     type: string,
     callback: (result: rosapi.ServiceRequestDetailsResponse) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const serviceTypeClient = new Service<
       rosapi.ServiceRequestDetailsRequest,
@@ -479,21 +449,15 @@ export default class Ros extends EventEmitter<
       type: type,
     };
 
-    if (typeof failedCallback === "function") {
-      serviceTypeClient.callService(
-        request,
-        function (result) {
-          callback(result);
-        },
-        function (message) {
-          failedCallback(message);
-        },
-      );
-    } else {
-      serviceTypeClient.callService(request, function (result) {
+    serviceTypeClient.callService(
+      request,
+      function (result) {
         callback(result);
-      });
-    }
+      },
+      function (message) {
+        failedCallback(message);
+      },
+    );
   }
   /**
    * Retrieve the details of a ROS service response.
@@ -505,7 +469,7 @@ export default class Ros extends EventEmitter<
   getServiceResponseDetails(
     type: string,
     callback: (result: rosapi.ServiceResponseDetailsResponse) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const serviceTypeClient = new Service<
       rosapi.ServiceResponseDetailsRequest,
@@ -519,21 +483,15 @@ export default class Ros extends EventEmitter<
       type: type,
     };
 
-    if (typeof failedCallback === "function") {
-      serviceTypeClient.callService(
-        request,
-        function (result) {
-          callback(result);
-        },
-        function (message) {
-          failedCallback(message);
-        },
-      );
-    } else {
-      serviceTypeClient.callService(request, function (result) {
+    serviceTypeClient.callService(
+      request,
+      function (result) {
         callback(result);
-      });
-    }
+      },
+      function (message) {
+        failedCallback(message);
+      },
+    );
   }
   /**
    * Retrieve a list of active node names in ROS.
@@ -543,7 +501,7 @@ export default class Ros extends EventEmitter<
    */
   getNodes(
     callback: (result: string[]) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const nodesClient = new Service<rosapi.NodesRequest, rosapi.NodesResponse>({
       ros: this,
@@ -552,21 +510,15 @@ export default class Ros extends EventEmitter<
     });
 
     const request = {};
-    if (typeof failedCallback === "function") {
-      nodesClient.callService(
-        request,
-        function (result) {
-          callback(result.nodes);
-        },
-        function (message) {
-          failedCallback(message);
-        },
-      );
-    } else {
-      nodesClient.callService(request, function (result) {
+    nodesClient.callService(
+      request,
+      function (result) {
         callback(result.nodes);
-      });
-    }
+      },
+      function (message) {
+        failedCallback(message);
+      },
+    );
   }
   /**
    * Retrieve a list of subscribed topics, publishing topics and services of a specific node.
@@ -576,7 +528,7 @@ export default class Ros extends EventEmitter<
   getNodeDetails(
     node: string,
     callback: (result: rosapi.NodeDetailsResponse) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const nodesClient = new Service<
       rosapi.NodeDetailsRequest,
@@ -597,7 +549,7 @@ export default class Ros extends EventEmitter<
    */
   getParams(
     callback: (names: string[]) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const paramsClient = new Service<
       rosapi.GetParamNamesRequest,
@@ -608,21 +560,15 @@ export default class Ros extends EventEmitter<
       serviceType: "rosapi/GetParamNames",
     });
     const request = {};
-    if (typeof failedCallback === "function") {
-      paramsClient.callService(
-        request,
-        function (result) {
-          callback(result.names);
-        },
-        function (message) {
-          failedCallback(message);
-        },
-      );
-    } else {
-      paramsClient.callService(request, function (result) {
+    paramsClient.callService(
+      request,
+      function (result) {
         callback(result.names);
-      });
-    }
+      },
+      function (message) {
+        failedCallback(message);
+      },
+    );
   }
   /**
    * Retrieve the type of a ROS topic.
@@ -634,7 +580,7 @@ export default class Ros extends EventEmitter<
   getTopicType(
     topic: string,
     callback: (type: string) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const topicTypeClient = new Service<
       rosapi.TopicTypeRequest,
@@ -648,21 +594,15 @@ export default class Ros extends EventEmitter<
       topic: topic,
     };
 
-    if (typeof failedCallback === "function") {
-      topicTypeClient.callService(
-        request,
-        function (result) {
-          callback(result.type);
-        },
-        function (message) {
-          failedCallback(message);
-        },
-      );
-    } else {
-      topicTypeClient.callService(request, function (result) {
+    topicTypeClient.callService(
+      request,
+      function (result) {
         callback(result.type);
-      });
-    }
+      },
+      function (message) {
+        failedCallback(message);
+      },
+    );
   }
   /**
    * Retrieve the type of a ROS service.
@@ -674,7 +614,7 @@ export default class Ros extends EventEmitter<
   getServiceType(
     service: string,
     callback: (type: string) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const serviceTypeClient = new Service<
       rosapi.ServiceTypeRequest,
@@ -688,21 +628,15 @@ export default class Ros extends EventEmitter<
       service: service,
     };
 
-    if (typeof failedCallback === "function") {
-      serviceTypeClient.callService(
-        request,
-        function (result) {
-          callback(result.type);
-        },
-        function (message) {
-          failedCallback(message);
-        },
-      );
-    } else {
-      serviceTypeClient.callService(request, function (result) {
+    serviceTypeClient.callService(
+      request,
+      function (result) {
         callback(result.type);
-      });
-    }
+      },
+      function (message) {
+        failedCallback(message);
+      },
+    );
   }
   /**
    * Retrieve the details of a ROS message.
@@ -714,7 +648,7 @@ export default class Ros extends EventEmitter<
   getMessageDetails(
     message: string,
     callback: (typedefs: rosapi.TypeDef[]) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const messageDetailClient = new Service<
       rosapi.MessageDetailsRequest,
@@ -728,21 +662,15 @@ export default class Ros extends EventEmitter<
       type: message,
     };
 
-    if (typeof failedCallback === "function") {
-      messageDetailClient.callService(
-        request,
-        function (result) {
-          callback(result.typedefs);
-        },
-        function (message) {
-          failedCallback(message);
-        },
-      );
-    } else {
-      messageDetailClient.callService(request, function (result) {
+    messageDetailClient.callService(
+      request,
+      function (result) {
         callback(result.typedefs);
-      });
-    }
+      },
+      function (message) {
+        failedCallback(message);
+      },
+    );
   }
   /**
    * Decode a typedef array into a dictionary like `rosmsg show foo/bar`.
@@ -812,7 +740,7 @@ export default class Ros extends EventEmitter<
    */
   getTopicsAndRawTypes(
     callback: (result: rosapi.TopicsAndRawTypesResponse) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const topicsAndRawTypesClient = new Service<
       rosapi.TopicsAndRawTypesRequest,
@@ -824,21 +752,15 @@ export default class Ros extends EventEmitter<
     });
 
     const request = {};
-    if (typeof failedCallback === "function") {
-      topicsAndRawTypesClient.callService(
-        request,
-        function (result) {
-          callback(result);
-        },
-        function (message) {
-          failedCallback(message);
-        },
-      );
-    } else {
-      topicsAndRawTypesClient.callService(request, function (result) {
+    topicsAndRawTypesClient.callService(
+      request,
+      function (result) {
         callback(result);
-      });
-    }
+      },
+      function (message) {
+        failedCallback(message);
+      },
+    );
   }
   Topic(options) {
     return new Topic({ ros: this, ...options });

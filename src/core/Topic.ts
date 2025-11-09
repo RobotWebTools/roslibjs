@@ -141,9 +141,7 @@ export default class Topic<T> extends EventEmitter<{
    * @param callback - Function with the following params:
    */
   subscribe(callback: (message: T) => void) {
-    if (typeof callback === "function") {
-      this.on("message", callback);
-    }
+    this.on("message", callback);
 
     if (this.subscribeId) {
       return;
@@ -268,7 +266,7 @@ export default class Topic<T> extends EventEmitter<{
    */
   getPublishers(
     callback: (publishers: string[]) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const publishersClient = new Service<
       rosapi.PublishersRequest,
@@ -282,20 +280,14 @@ export default class Topic<T> extends EventEmitter<{
     const request = {
       topic: this.name,
     };
-    if (typeof failedCallback === "function") {
-      publishersClient.callService(
-        request,
-        function (result) {
-          callback(result.publishers);
-        },
-        function (message) {
-          failedCallback(message);
-        },
-      );
-    } else {
-      publishersClient.callService(request, function (result) {
+    publishersClient.callService(
+      request,
+      function (result) {
         callback(result.publishers);
-      });
-    }
+      },
+      function (message) {
+        failedCallback(message);
+      },
+    );
   }
 }

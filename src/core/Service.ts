@@ -68,7 +68,7 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
   callService(
     request: TRequest,
     callback?: (response: TResponse) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
     timeout?: number,
   ): void {
     if (this.isAdvertised) {
@@ -78,17 +78,15 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
     const serviceCallId =
       "call_service:" + this.name + ":" + (++this.ros.idCounter).toString();
 
-    if (callback || failedCallback) {
-      this.ros.once(serviceCallId, function (message) {
-        if (isRosbridgeServiceResponseMessage<TResponse>(message)) {
-          if (!message.result) {
-            failedCallback?.(message.values ?? "");
-          } else {
-            callback?.(message.values);
-          }
+    this.ros.once(serviceCallId, function (message) {
+      if (isRosbridgeServiceResponseMessage<TResponse>(message)) {
+        if (!message.result) {
+          failedCallback(message.values ?? "");
+        } else {
+          callback?.(message.values);
         }
-      });
-    }
+      }
+    });
 
     const call = {
       op: "call_service",

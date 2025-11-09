@@ -7,9 +7,8 @@ import { std_msgs } from "../types/std_msgs.js";
  * Base class for TF Clients that provides common functionality.
  */
 export default class BaseTFClient {
-  frameInfos: Record<
-    string,
-    { transform?: Transform; cbs: ((tf: Transform) => void)[] }
+  frameInfos: Partial<
+    Record<string, { transform?: Transform; cbs: ((tf: Transform) => void)[] }>
   > = {};
   republisherUpdateRequested = false;
   ros: Ros;
@@ -124,20 +123,20 @@ export default class BaseTFClient {
     }
 
     // if we already have a transform, callback immediately
-    const transform = this.frameInfos[frameID].transform;
+    const transform = this.frameInfos[frameID]?.transform;
     if (transform) {
       callback(transform);
     }
-    this.frameInfos[frameID].cbs.push(callback);
+    this.frameInfos[frameID]?.cbs.push(callback);
   }
 
   /**
    * Unsubscribe from the given TF frame.
    *
    * @param frameID - The TF frame to unsubscribe from.
-   * @param callback - The callback function to remove.
+   * @param [callback] - The callback function to remove.
    */
-  unsubscribe(frameID: string, callback: (transform: Transform) => void) {
+  unsubscribe(frameID: string, callback?: (transform: Transform) => void) {
     // remove leading slash, if it's there
     if (frameID.startsWith("/")) {
       frameID = frameID.substring(1);
