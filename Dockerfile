@@ -17,4 +17,4 @@ COPY test/examples/ /workspace/test/examples/
 EXPOSE 9090
 
 # Default command runs the ROS backend for testing
-CMD ["bash", "-c", "source /opt/ros/$ROS_DISTRO/setup.bash && roslaunch /workspace/test/examples/setup_examples.launch"]
+CMD ["bash", "-c", "source /opt/ros/$ROS_DISTRO/setup.bash && bash /workspace/test/examples/setup_examples.bash"]

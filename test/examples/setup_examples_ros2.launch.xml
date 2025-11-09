@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Include rosbridge websocket launch file for ROS 2 -->
+  <include file="$(find-pkg-share rosbridge_server)/launch/rosbridge_websocket_launch.xml">
+    <!-- This is only non-default on humble, remove when humble EOL -->
+    <arg name="call_services_in_new_thread" value="true"/>
+    <!-- This is only non-default on humble, remove when humble EOL -->
+    <arg name="send_action_goals_in_new_thread" value="true"/>
+  </include>
+
+  <!-- Static transform publisher (equivalent to tf static_transform_publisher) -->
+  <node pkg="tf2_ros" exec="static_transform_publisher" name="tf_publisher"
+        args="0 0 0 0 0 0 world turtle1"/>
+
+  <!-- TF2 web republisher -->
+  <node pkg="tf2_web_republisher" exec="tf2_web_republisher_node" name="tf2_web_republisher"/>
+
+  <!-- Fibonacci action server (ROS 2 equivalent) -->
+  <node pkg="action_tutorials_cpp" exec="fibonacci_action_server" name="fibonacci_server"/>
+
+  <!-- Add two ints service server (ROS 2 equivalent) -->
+  <node pkg="examples_rclpy_minimal_service" exec="service" name="add_two_ints_server"/>
+
+  <!-- Hello world publisher using ros2 topic pub command -->
+  <executable cmd="ros2 topic pub --rate 1 /listener std_msgs/msg/String 'data: Hello, World'"
+             name="hello_world_publisher"/>
+</launch>
