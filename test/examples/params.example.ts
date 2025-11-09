@@ -42,7 +42,9 @@ describe("Param setting", function () {
     await vi.waitFor(() => expect(callback).toHaveBeenCalledWith(false));
   });
 
-  it("ros.getParams", async () => {
+  // Known issue with getting params being able to hang in Humble because it had no timeout.
+  // This doesn't even work with `ros2 param list` at the CLI in our test environment :(
+  it.skipIf(process.env.ROS_DISTRO === "humble")("ros.getParams", async () => {
     const callback = vi.fn();
     ros.getParams(callback);
     await vi.waitFor(() => {
