@@ -1,4 +1,4 @@
-import { describe, it, expect, afterAll } from "vitest";
+import { describe, it, expect, afterAll, vi } from "vitest";
 import * as ROSLIB from "../../src/RosLib.js";
 
 describe("Topics Example", function () {
@@ -6,53 +6,68 @@ describe("Topics Example", function () {
     url: "ws://localhost:9090",
   });
 
-  const example = ros.Topic({
+  const example = ros.Topic<{ data: string }>({
     name: "/example_topic",
     messageType: "std_msgs/String",
   });
 
-  function format(msg) {
+  function format(msg: string) {
     return { data: msg };
   }
   const messages1 = ["Hello Example2!", "Whats good?"].map(format);
   const messages2 = ["Hi there", "this example working"].map(format);
 
-  const example2 = ros.Topic({
+  const example2 = ros.Topic<{ data: string }>({
     name: "/example_topic",
     messageType: "std_msgs/String",
   });
 
-  it("Listening and publishing to a topic", () =>
-    new Promise((done) => {
-      // Kind of harry...
-      let topic1msg = messages1[0],
-        topic2msg: { data?: string } = {};
-      example.subscribe(function (message) {
-        if (message.data === topic1msg.data) {
-          return;
+  it("Client-side subscribers receive messages from client-side publishers", async () => {
+    // Create copies of the message arrays so we can shift from them
+    const messages1Copy = [...messages1];
+    const messages2Copy = [...messages2];
+
+    const example1Callback = vi.fn((message: { data: string }) => {
+      if (messages1.some((m) => m.data === message.data)) {
+        return; // Skip our own published message
+      }
+
+      if (messages1Copy.length) {
+        example.publish(messages1Copy.shift()!);
+      }
+    });
+
+    const example2Callback = vi.fn((message: { data: string }) => {
+      if (messages2.some((m) => m.data === message.data)) {
+        return; // Skip our own published message
+      }
+
+      if (messages2Copy.length) {
+        example2.publish(messages2Copy.shift()!);
+      }
+    });
+
+    example.subscribe(example1Callback);
+    example2.subscribe(example2Callback);
+
+    // Start the conversation
+    example.publish(messages1Copy.shift()!);
+
+    // Wait for all expected calls to complete
+    await vi.waitFor(
+      () => {
+        for (const message of messages1) {
+          expect(example1Callback).toHaveBeenCalledWith(message);
+          expect(example2Callback).toHaveBeenCalledWith(message);
         }
-        topic1msg = messages1[0];
-        expect(message).to.be.eql(messages2.shift());
-        if (messages1.length) {
-          example.publish(topic1msg);
-        } else {
-          done(message);
+        for (const message of messages2) {
+          expect(example1Callback).toHaveBeenCalledWith(message);
+          expect(example2Callback).toHaveBeenCalledWith(message);
         }
-      });
-      example2.subscribe(function (message) {
-        if (message.data === topic2msg.data) {
-          return;
-        }
-        topic2msg = messages2[0];
-        expect(message).to.be.eql(messages1.shift());
-        if (messages2.length) {
-          example2.publish(topic2msg);
-        } else {
-          done(message);
-        }
-      });
-      example.publish(topic1msg);
-    }));
+      },
+      { timeout: 5000 },
+    );
+  }, 10000);
 
   it("unsubscribe doesn't affect other topics", () =>
     new Promise((done) => {
