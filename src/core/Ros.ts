@@ -840,22 +840,45 @@ export default class Ros extends EventEmitter<
       });
     }
   }
-  Topic(options) {
-    return new Topic({ ros: this, ...options });
+  Topic<T>(options: Omit<ConstructorParameters<typeof Topic<T>>[0], "ros">) {
+    return new Topic<T>({ ros: this, ...options });
   }
-  Param(options) {
-    return new Param({ ros: this, ...options });
+  Param<T>(options: Omit<ConstructorParameters<typeof Param<T>>[0], "ros">) {
+    return new Param<T>({ ros: this, ...options });
   }
-  Service(options) {
-    return new Service({ ros: this, ...options });
+  Service<TRequest, TResponse>(
+    options: Omit<
+      ConstructorParameters<typeof Service<TRequest, TResponse>>[0],
+      "ros"
+    >,
+  ) {
+    return new Service<TRequest, TResponse>({ ros: this, ...options });
   }
-  TFClient(options) {
+  TFClient(options: Omit<ConstructorParameters<typeof TFClient>[0], "ros">) {
     return new TFClient({ ros: this, ...options });
   }
-  ActionClient(options) {
-    return new ActionClient({ ros: this, ...options });
+  ActionClient<TGoal, TFeedback, TResult>(
+    options: Omit<
+      ConstructorParameters<typeof ActionClient<TGoal, TFeedback, TResult>>[0],
+      "ros"
+    >,
+  ) {
+    return new ActionClient<TGoal, TFeedback, TResult>({
+      ros: this,
+      ...options,
+    });
   }
-  SimpleActionServer(options) {
-    return new SimpleActionServer({ ros: this, ...options });
+  SimpleActionServer<TGoal, TFeedback, TResult>(
+    options: Omit<
+      ConstructorParameters<
+        typeof SimpleActionServer<TGoal, TFeedback, TResult>
+      >[0],
+      "ros"
+    >,
+  ) {
+    return new SimpleActionServer<TGoal, TFeedback, TResult>({
+      ros: this,
+      ...options,
+    });
   }
 }
