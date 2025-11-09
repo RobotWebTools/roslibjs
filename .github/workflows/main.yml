@@ -22,7 +22,6 @@ jobs:
           - humble
           - jazzy
           - kilted
-          - rolling
         node_version: [20, 22, 24]
     env:
       ROS_DISTRO: ${{ matrix.ros_distro }}
