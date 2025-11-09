@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <launch>
   <!-- Include rosbridge websocket launch file for ROS 2 -->
-  <include file="$(find-pkg-share rosbridge_server)/launch/rosbridge_websocket_launch.xml"/>
+  <include file="$(find-pkg-share rosbridge_server)/launch/rosbridge_websocket_launch.xml">
+    <arg name="call_services_in_new_thread" value="true"/>
+  </include>
 
   <!-- Static transform publisher (equivalent to tf static_transform_publisher) -->
   <node pkg="tf2_ros" exec="static_transform_publisher" name="tf_publisher"
