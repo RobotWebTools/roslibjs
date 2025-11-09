@@ -43,7 +43,8 @@ export default defineConfig({
   test: {
     include: ["{src,test}/**/*.{test,spec,example}.?(c|m)[jt]s?(x)"],
     exclude: ["dist"],
-    globalSetup: "./test/setup/vitest-setup.js",
+    globalSetup: "./test/setup/vitest-setup.ts",
+    setupFiles: "./test/setup/per-suite-setup.ts",
     projects: [
       {
         extends: true,
