@@ -62,7 +62,8 @@ describe("Service", () => {
         success: true,
         message: "bar",
       });
-    });
+      // synchronous is way slower than asynchronous for some reason. I guess this vindicates my adding the async option?
+    }, 3000);
     // Make sure un-advertisement actually disposes of the event handler
     expect(ros.listenerCount(server.name)).toEqual(1);
     await server.unadvertise();
