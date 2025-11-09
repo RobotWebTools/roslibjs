@@ -8,48 +8,50 @@ describe("Example topics are live", function () {
     url: "ws://localhost:9090",
   });
 
-  it("getTopics", () =>
-    new Promise((done) => {
-      ros.getTopics(function (result) {
-        expectedTopics.forEach(function (topic) {
-          expect(result.topics).to.contain(
-            topic,
-            "Couldn't find topic: " + topic,
-          );
-        });
-        done(result);
-      });
-    }));
+  it("getTopics", async () => {
+    const callback = vi.fn();
+    ros.getTopics(callback);
+    await vi.waitFor(() => {
+      expect(callback).toHaveBeenCalledOnce();
+      for (const topic of expectedTopics) {
+        expect(callback.mock.calls[0][0].topics).to.contain(topic);
+      }
+    });
+  });
 
   const example = ros.Topic({
     name: "/some_test_topic",
     messageType: "std_msgs/String",
   });
 
-  it("doesn't automatically advertise the topic", () =>
-    new Promise((done) => {
-      ros.getTopics(function (result) {
-        expect(result.topics).not.to.contain("/some_test_topic");
-        example.advertise();
-        done(result);
-      });
-    }));
+  it("doesn't automatically advertise the topic", async () => {
+    const callback = vi.fn();
+    ros.getTopics(callback);
+    await vi.waitFor(() => {
+      expect(callback).toHaveBeenCalledOnce();
+      expect(callback.mock.calls[0][0].topics).not.to.contain(
+        "/some_test_topic",
+      );
+    });
+    example.advertise();
+  });
 
-  it("advertise broadcasts the topic", () =>
-    new Promise((done) => {
-      ros.getTopics(function (result) {
-        expect(result.topics).to.contain("/some_test_topic");
-        example.unadvertise();
-        done(result);
-      });
-    }));
+  it("advertise broadcasts the topic", async () => {
+    const callback = vi.fn();
+    ros.getTopics(callback);
+    await vi.waitFor(() => {
+      expect(callback).toHaveBeenCalledOnce();
+      expect(callback.mock.calls[0][0].topics).to.contain("/some_test_topic");
+    });
+    example.unadvertise();
+  });
 
   it("unadvertise will end the topic (if it's the last around)", async () => {
-    console.log("Unadvertisement test. Wait for 15 seconds..");
+    const callback = vi.fn();
+    ros.getTopics(callback);
     vi.waitFor(function () {
-      ros.getTopics(function (result) {
-        expect(result.topics).not.to.contain("/some_test_topic");
-      });
+      expect(callback).toHaveBeenCalledOnce();
+      expect(callback.mock.calls[0][0]).not.to.contain("/some_test_topic");
     }, 15000);
   });
 });

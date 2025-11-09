@@ -45,9 +45,10 @@ describe("Param setting", function () {
   it("ros.getParams", async () => {
     const callback = vi.fn();
     ros.getParams(callback);
-    await vi.waitFor(() =>
-      expect(callback.mock.calls[0][0]).to.include(PARAM_NAME),
-    );
+    await vi.waitFor(() => {
+      expect(callback).toHaveBeenCalledOnce();
+      expect(callback.mock.calls[0][0]).to.include(PARAM_NAME);
+    });
   });
 
   // In ROS 2 we can't forcibly un-declare someone else's parameter
