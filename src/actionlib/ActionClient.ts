@@ -26,7 +26,7 @@ export default class ActionClient<
 > extends EventEmitter<{
   timeout: void;
 }> {
-  goals: Record<string, Goal<TGoal>> = {};
+  goals: Partial<Record<string, Goal<TGoal>>> = {};
   /** flag to check if a status has been received */
   receivedStatus = false;
   ros: Ros;

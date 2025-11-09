@@ -28,7 +28,10 @@ export default class Param<T = unknown> {
    * @param callback - The callback function.
    * @param [failedCallback] - The callback function when the service call failed or the parameter retrieval was unsuccessful.
    */
-  get(callback: (value: T) => void, failedCallback?: (error: string) => void) {
+  get(
+    callback: (value: T) => void,
+    failedCallback: (error: string) => void = console.error,
+  ) {
     const paramClient = new Service<
       rosapi.GetParamRequest,
       rosapi.GetParamResponse
@@ -43,7 +46,7 @@ export default class Param<T = unknown> {
     paramClient.callService(
       request,
       function (result) {
-        if (result.successful === false && failedCallback) {
+        if (result.successful === false) {
           failedCallback(result.reason);
         } else {
           const value = JSON.parse(result.value);
@@ -63,7 +66,7 @@ export default class Param<T = unknown> {
   set(
     value: object,
     callback?: (message: rosapi.SetParamResponse) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const paramClient = new Service<
       rosapi.SetParamRequest,
@@ -82,7 +85,7 @@ export default class Param<T = unknown> {
     paramClient.callService(
       request,
       function (result) {
-        if (result.successful === false && failedCallback) {
+        if (result.successful === false) {
           failedCallback(result.reason);
         } else if (callback) {
           callback(result);
@@ -99,7 +102,7 @@ export default class Param<T = unknown> {
    */
   delete(
     callback: (message: rosapi.DeleteParamResponse) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     const paramClient = new Service<
       rosapi.DeleteParamRequest,
@@ -117,9 +120,9 @@ export default class Param<T = unknown> {
     paramClient.callService(
       request,
       function (result) {
-        if (result.successful === false && failedCallback) {
+        if (result.successful === false) {
           failedCallback(result.reason);
-        } else if (callback) {
+        } else {
           callback(result);
         }
       },
