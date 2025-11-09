@@ -43,11 +43,9 @@ describe.skipIf(process.env.ROS_DISTRO !== "noetic")(
             { sequence: [0, 1, 1, 2, 3, 5, 8, 13, 21] },
           ];
           goal.on("feedback", function (feedback) {
-            console.log("Feedback:", feedback);
             expect(feedback).to.eql(items.shift());
           });
           goal.on("result", function (result) {
-            console.log("Result:", result);
             expect(result).to.eql({ sequence: [0, 1, 1, 2, 3, 5, 8, 13, 21] });
             done();
           });
