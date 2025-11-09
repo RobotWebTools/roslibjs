@@ -1,4 +1,4 @@
-import { it, describe, expect } from "vitest";
+import { it, describe, expect, vi } from "vitest";
 import { Service, Ros } from "../";
 
 describe("Service", () => {
@@ -23,10 +23,14 @@ describe("Service", () => {
       serviceType: "std_srvs/Trigger",
       name: "/test_service",
     });
-    const response = await new Promise((resolve, reject) => {
-      client.callService({}, resolve, reject);
+    const callback = vi.fn();
+    client.callService({}, callback);
+    await vi.waitFor(() => {
+      expect(callback).toHaveBeenCalledExactlyOnceWith({
+        success: true,
+        message: "foo",
+      });
     });
-    expect(response).toEqual({ success: true, message: "foo" });
     // Make sure un-advertisement actually disposes of the event handler
     expect(ros.listenerCount(server.name)).toEqual(1);
     await server.unadvertise();
@@ -51,10 +55,14 @@ describe("Service", () => {
       serviceType: "std_srvs/Trigger",
       name: "/test_service",
     });
-    const response = await new Promise((resolve, reject) => {
-      client.callService({}, resolve, reject);
+    const callback = vi.fn();
+    client.callService({}, callback);
+    await vi.waitFor(() => {
+      expect(callback).toHaveBeenCalledExactlyOnceWith({
+        success: true,
+        message: "bar",
+      });
     });
-    expect(response).toEqual({ success: true, message: "bar" });
     // Make sure un-advertisement actually disposes of the event handler
     expect(ros.listenerCount(server.name)).toEqual(1);
     await server.unadvertise();
