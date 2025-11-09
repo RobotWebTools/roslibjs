@@ -59,7 +59,7 @@ export default class Action<
     goal: TGoal,
     resultCallback: (result: TResult) => void,
     feedbackCallback?: (feedback: TFeedback) => void,
-    failedCallback?: (error: string) => void,
+    failedCallback: (error: string) => void = console.error,
   ) {
     if (this.isAdvertised) {
       return;
@@ -68,19 +68,17 @@ export default class Action<
     const actionGoalId =
       "send_action_goal:" + this.name + ":" + ++this.ros.idCounter;
 
-    if (resultCallback || failedCallback) {
-      this.ros.on(actionGoalId, function (message) {
-        if (isRosbridgeActionResultMessage<TResult>(message)) {
-          if (!message.result) {
-            failedCallback?.(message.values ?? "");
-          } else {
-            resultCallback?.(message.values);
-          }
-        } else if (isRosbridgeActionFeedbackMessage<TFeedback>(message)) {
-          feedbackCallback?.(message.values);
+    this.ros.on(actionGoalId, function (message) {
+      if (isRosbridgeActionResultMessage<TResult>(message)) {
+        if (!message.result) {
+          failedCallback(message.values ?? "");
+        } else {
+          resultCallback(message.values);
         }
-      });
-    }
+      } else if (isRosbridgeActionFeedbackMessage<TFeedback>(message)) {
+        feedbackCallback?.(message.values);
+      }
+    });
 
     const call = {
       op: "send_action_goal",
@@ -166,7 +164,7 @@ export default class Action<
       this.ros.on(id, (message) => {
         if (
           isRosbridgeCancelActionGoalMessage(message) &&
-          typeof this.#cancelCallback === "function"
+          this.#cancelCallback
         ) {
           this.#cancelCallback(id);
         }
@@ -174,7 +172,7 @@ export default class Action<
     }
 
     // Call the action goal execution function provided.
-    if (typeof this.#actionCallback === "function") {
+    if (this.#actionCallback) {
       this.#actionCallback(rosbridgeRequest.args, id);
     }
   }
