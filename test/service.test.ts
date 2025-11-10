@@ -1,5 +1,5 @@
 import { it, describe, expect, vi } from "vitest";
-import { Service, Ros } from "../";
+import { Service, Ros } from "../src/RosLib";
 
 describe("Service", () => {
   const ros = new Ros({
