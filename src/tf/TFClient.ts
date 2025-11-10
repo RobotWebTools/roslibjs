@@ -6,9 +6,7 @@
 import ActionClient from "../actionlib/ActionClient.js";
 import Goal from "../actionlib/Goal.js";
 
-import Service from "../core/Service.js";
 import Topic from "../core/Topic.js";
-import Ros from "../core/Ros.js";
 import { tf2_msgs } from "../types/tf2_msgs.js";
 import { tf2_web_republisher } from "../types/tf2_web_republisher.js";
 
@@ -20,12 +18,7 @@ import BaseTFClient from "./BaseTFClient.js";
 export default class TFClient extends BaseTFClient {
   currentGoal: Goal<tf2_web_republisher.TFSubscriptionGoal> | false = false;
   currentTopic: Topic<tf2_msgs.TFMessage> | false = false;
-  repubServiceName: string;
   actionClient: ActionClient<tf2_web_republisher.TFSubscriptionGoal>;
-  serviceClient: Service<
-    tf2_web_republisher.RepublishTFsRequest,
-    tf2_web_republisher.RepublishTFsResponse
-  >;
   #subscribeCB: ((tf: tf2_msgs.TFMessage) => void) | undefined = undefined;
   #isDisposed = false;
 
@@ -40,25 +33,9 @@ export default class TFClient extends BaseTFClient {
    *     to update the TF republisher's list of TFs.
    * @param [options.topicTimeout=2.0] - The timeout parameter for the TF republisher.
    * @param [options.serverName="/tf2_web_republisher"] - The name of the tf2_web_republisher server.
-   * @param [options.repubServiceName="/republish_tfs"] - The name of the republish_tfs service (non groovy compatibility mode only).
    */
-  constructor({
-    repubServiceName = "/republish_tfs",
-    ...options
-  }: {
-    ros: Ros;
-    fixedFrame?: string;
-    angularThres?: number;
-    transThres?: number;
-    rate?: number;
-    updateDelay?: number;
-    topicTimeout?: number;
-    serverName?: string;
-    repubServiceName?: string;
-  }) {
+  constructor(options: ConstructorParameters<typeof BaseTFClient>[0]) {
     super(options);
-
-    this.repubServiceName = repubServiceName;
 
     // Create an Action Client
     this.actionClient = new ActionClient({
@@ -67,13 +44,6 @@ export default class TFClient extends BaseTFClient {
       actionName: "tf2_web_republisher/TFSubscriptionAction",
       omitStatus: true,
       omitResult: true,
-    });
-
-    // Create a Service Client
-    this.serviceClient = new Service({
-      ros: this.ros,
-      name: this.repubServiceName,
-      serviceType: "tf2_web_republisher/RepublishTFs",
     });
   }
 
@@ -90,32 +60,16 @@ export default class TFClient extends BaseTFClient {
       rate: this.rate,
     };
 
-    /*
-     * if we're running in groovy compatibility mode (the default)
-     * then use the action interface to tf2_web_republisher
-     */
-    if (this.ros.groovyCompatibility) {
-      if (this.currentGoal) {
-        this.currentGoal.cancel();
-      }
-      this.currentGoal = new Goal<tf2_web_republisher.TFSubscriptionGoal>({
-        actionClient: this.actionClient,
-        goalMessage: goalMessage,
-      });
-
-      this.currentGoal.on("feedback", this.processTFArray.bind(this));
-      this.currentGoal.send();
-    } else {
-      /*
-       * otherwise, use the service interface
-       * The service interface has the same parameters as the action,
-       * plus the timeout
-       */
-      this.serviceClient.callService(
-        { ...goalMessage, timeout: this.topicTimeout },
-        this.processResponse.bind(this),
-      );
+    if (this.currentGoal) {
+      this.currentGoal.cancel();
     }
+    this.currentGoal = new Goal<tf2_web_republisher.TFSubscriptionGoal>({
+      actionClient: this.actionClient,
+      goalMessage: goalMessage,
+    });
+
+    this.currentGoal.on("feedback", this.processTFArray.bind(this));
+    this.currentGoal.send();
 
     this.republisherUpdateRequested = false;
   }
