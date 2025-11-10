@@ -58,14 +58,17 @@ export default class UrdfJoint {
     const axis = xml.getElementsByTagName(UrdfAttrs.Axis);
     if (axis.length > 0) {
       const xyzValue = axis[0].getAttribute(UrdfAttrs.Xyz)?.split(" ");
-      if (xyzValue && xyzValue.length === 3) {
-        const [x, y, z] = xyzValue.map(parseFloat);
-        this.axis = new Vector3({
-          x,
-          y,
-          z,
-        });
+      if (!xyzValue || xyzValue.length !== 3) {
+        throw new Error(
+          "If specified, axis must have an xyz value composed of three numbers",
+        );
       }
+      const [x, y, z] = xyzValue.map(parseFloat);
+      this.axis = new Vector3({
+        x,
+        y,
+        z,
+      });
     }
   }
 }
