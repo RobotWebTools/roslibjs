@@ -23,8 +23,8 @@ import { rosapi } from "../types/rosapi.ts";
 export default class Topic<T> extends EventEmitter<{
   message: [T];
   warning: [string];
-  unsubscribe: void;
-  unadvertise: void;
+  unsubscribe: undefined;
+  unadvertise: undefined;
 }> {
   waitForReconnect: boolean | undefined = undefined;
   reconnectFunc: (() => void) | undefined = undefined;
@@ -106,7 +106,10 @@ export default class Topic<T> extends EventEmitter<{
 
     // Check if throttle rate is negative
     if (this.throttle_rate < 0) {
-      this.emit("warning", this.throttle_rate + " is not allowed. Set to 0");
+      this.emit(
+        "warning",
+        this.throttle_rate.toString() + " is not allowed. Set to 0",
+      );
       this.throttle_rate = 0;
     }
 
@@ -127,8 +130,9 @@ export default class Topic<T> extends EventEmitter<{
         this.ros.on("close", this.reconnectFunc);
       };
     } else {
-      this.callForSubscribeAndAdvertise = (msg) =>
+      this.callForSubscribeAndAdvertise = (msg) => {
         this.ros.callOnConnection(msg);
+      };
     }
   }
 
@@ -250,7 +254,7 @@ export default class Topic<T> extends EventEmitter<{
     this.ros.idCounter++;
     const call = {
       op: "publish",
-      id: "publish:" + this.name + ":" + this.ros.idCounter,
+      id: "publish:" + this.name + ":" + this.ros.idCounter.toString(),
       topic: this.name,
       msg: message,
       latch: this.latch,

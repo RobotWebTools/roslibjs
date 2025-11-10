@@ -17,7 +17,7 @@ export default function decompressPng(
   data: string,
   callback: (data: unknown) => void,
 ) {
-  const buffer = new Buffer(data, "base64");
+  const buffer = Buffer.from(data, "base64");
 
   pngparse.parse(buffer, function (err, data) {
     if (err || !(data instanceof Object) || !("data" in data)) {

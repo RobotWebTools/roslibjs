@@ -67,8 +67,7 @@ export default class Action<
       return;
     }
 
-    const actionGoalId =
-      "send_action_goal:" + this.name + ":" + ++this.ros.idCounter;
+    const actionGoalId = `send_action_goal:${this.name}:${(++this.ros.idCounter).toString()}`;
 
     this.ros.on(actionGoalId, function (message) {
       if (isRosbridgeActionResultMessage<TResult>(message)) {

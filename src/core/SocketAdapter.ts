@@ -73,10 +73,18 @@ export default class SocketAdapter {
     this.onMessageCallback = onMessage;
     this.decoder = decoder;
 
-    this.socket.onopen = (e: Event) => onOpen(e);
-    this.socket.onclose = (e: Event) => onClose(e);
-    this.socket.onerror = (e: ErrorEvent) => onError(e);
-    this.socket.onmessage = (e: MessageEvent) => this.onmessage(e);
+    this.socket.onopen = (e: Event) => {
+      onOpen(e);
+    };
+    this.socket.onclose = (e: Event) => {
+      onClose(e);
+    };
+    this.socket.onerror = (e: ErrorEvent) => {
+      onError(e);
+    };
+    this.socket.onmessage = (e: MessageEvent) => {
+      this.onmessage(e);
+    };
   }
 
   handleMessage(message: RosbridgeMessage) {
@@ -223,7 +231,9 @@ export default class SocketAdapter {
       });
     } else if (typeof Blob !== "undefined" && data.data instanceof Blob) {
       this.decodeBSON(data.data, (message) => {
-        this.handlePng(message, (msg) => this.handleMessage(msg));
+        this.handlePng(message, (msg) => {
+          this.handleMessage(msg);
+        });
       });
     } else if (data.data instanceof ArrayBuffer) {
       const decoded = CBOR.decode(data.data, typedArrayTagger);
@@ -238,7 +248,9 @@ export default class SocketAdapter {
       );
 
       if (isRosbridgeMessage(message)) {
-        this.handlePng(message, (msg) => this.handleMessage(msg));
+        this.handlePng(message, (msg) => {
+          this.handleMessage(msg);
+        });
       } else {
         throw new Error("Received invalid rosbridge message!");
       }

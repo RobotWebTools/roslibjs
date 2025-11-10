@@ -86,7 +86,9 @@ export default class BaseTFClient {
           rotation: transform.transform.rotation,
         });
         info.transform = tf;
-        info.cbs.forEach((cb) => cb(tf));
+        info.cbs.forEach((cb) => {
+          cb(tf);
+        });
       }
     }, this);
   }
@@ -117,7 +119,9 @@ export default class BaseTFClient {
         cbs: [],
       };
       if (!this.republisherUpdateRequested) {
-        setTimeout(() => this.updateGoal(), this.updateDelay);
+        setTimeout(() => {
+          this.updateGoal();
+        }, this.updateDelay);
         this.republisherUpdateRequested = true;
       }
     }
@@ -149,6 +153,7 @@ export default class BaseTFClient {
       }
     }
     if (!callback || cbs.length === 0) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- TODO: refactor this to not cause runtime errors if you have a frame like "prototype" that would make JavaScript explode if you deleted it from an object
       delete this.frameInfos[frameID];
     }
   }

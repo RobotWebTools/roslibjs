@@ -247,11 +247,11 @@ export default class Ros extends EventEmitter<
    *
    * @param message - The message to be sent.
    */
-  callOnConnection = <TMessage extends RosbridgeMessage>(message: TMessage) => {
+  callOnConnection = (message: unknown) => {
     if (this.transportOptions.encoder) {
-      this.transportOptions.encoder(message, (msg) =>
-        this.sendEncodedMessage(msg),
-      );
+      this.transportOptions.encoder(message, (msg) => {
+        this.sendEncodedMessage(msg);
+      });
     } else {
       this.sendEncodedMessage(JSON.stringify(message));
     }
@@ -704,7 +704,7 @@ export default class Ros extends EventEmitter<
           // lookup the name
           let sub: boolean | rosapi.TypeDef = false;
           for (const hint of hints) {
-            if (hint.type.toString() === fieldType.toString()) {
+            if (hint.type === fieldType) {
               sub = hint;
               break;
             }

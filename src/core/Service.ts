@@ -152,7 +152,7 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
         });
         this.isAdvertised = true;
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         this.emit("error", err);
         throw err;
       });
@@ -203,7 +203,7 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
       .then(() => {
         this.#doUnadvertise();
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         this.emit("error", err);
         throw err;
       });
@@ -255,7 +255,7 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
         });
         this.isAdvertised = true;
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         this.emit("error", err);
         throw err;
       });

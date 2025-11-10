@@ -18,7 +18,7 @@ export default class Goal<
   TFeedback = unknown,
   TResult = unknown,
 > extends EventEmitter<{
-  timeout: void;
+  timeout: undefined;
   status: [actionlib_msgs.GoalStatus];
   feedback: [TFeedback];
   result: [TResult];
@@ -28,7 +28,7 @@ export default class Goal<
   result?: TResult = undefined;
   feedback?: TFeedback = undefined;
   // Create a random ID
-  goalID = "goal_" + Math.random() + "_" + new Date().getTime();
+  goalID = `goal_${Math.random().toString()}_${new Date().getTime().toString()}`;
   actionClient: ActionClient<TGoal, TFeedback, TResult>;
   goalMessage: { goal: TGoal; goal_id: actionlib_msgs.GoalID };
   /**

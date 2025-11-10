@@ -76,9 +76,9 @@ export default class TFClient extends BaseTFClient {
       goalMessage: goalMessage,
     });
 
-    this.currentGoal.on("feedback", (feedback) =>
-      this.processTFArray(feedback),
-    );
+    this.currentGoal.on("feedback", (feedback) => {
+      this.processTFArray(feedback);
+    });
     this.currentGoal.send();
 
     this.republisherUpdateRequested = false;
@@ -112,7 +112,9 @@ export default class TFClient extends BaseTFClient {
       name: response.topic_name,
       messageType: "tf2_web_republisher/TFArray",
     });
-    this.#subscribeCB = (response) => this.processTFArray(response);
+    this.#subscribeCB = (response) => {
+      this.processTFArray(response);
+    };
     this.currentTopic.subscribe(this.#subscribeCB);
   }
 

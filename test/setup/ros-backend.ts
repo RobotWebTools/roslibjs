@@ -89,7 +89,7 @@ async function buildContainer(rosDistro: string) {
 /**
  * Start the ROS backend container
  */
-async function startContainer(rosDistro) {
+async function startContainer(rosDistro: string) {
   console.log("Starting ROS backend container...");
 
   // Stop and remove existing container if it exists
@@ -112,7 +112,7 @@ async function startContainer(rosDistro) {
   });
 
   await container.start();
-  console.log(`Container started on port ${CONTAINER_PORT}`);
+  console.log(`Container started on port ${CONTAINER_PORT.toString()}`);
 }
 
 /**
@@ -126,7 +126,7 @@ async function waitForBackend() {
   while (Date.now() - startTime < MAX_WAIT_TIME) {
     try {
       await waitForRosConnection(
-        new Ros({ url: `ws://localhost:${CONTAINER_PORT}` }),
+        new Ros({ url: `ws://localhost:${CONTAINER_PORT.toString()}` }),
       );
       console.log("ROS backend is ready");
       return true;
