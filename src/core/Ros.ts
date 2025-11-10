@@ -49,11 +49,9 @@ export default class Ros extends EventEmitter<
   isConnected = false;
   transportLibrary: "websocket" | RTCPeerConnection;
   transportOptions;
-  groovyCompatibility: boolean;
   /**
    * @param [options]
    * @param [options.url] - The WebSocket URL for rosbridge. Can be specified later with `connect`.
-   * @param [options.groovyCompatibility=true] - Don't use interfaces that changed after the last groovy release or rosbridge_suite and related tools.
    * @param [options.transportLibrary='websocket'] - 'websocket', or an RTCPeerConnection instance controlling how the connection is created in `connect`.
    * @param [options.transportOptions={}] - The options to use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.
    */
@@ -61,10 +59,8 @@ export default class Ros extends EventEmitter<
     url,
     transportLibrary = "websocket",
     transportOptions = {},
-    groovyCompatibility = true,
   }: {
     url?: string;
-    groovyCompatibility?: boolean;
     transportLibrary?: "websocket" | RTCPeerConnection;
     transportOptions?: object;
   } = {}) {
@@ -72,7 +68,6 @@ export default class Ros extends EventEmitter<
 
     this.transportLibrary = transportLibrary;
     this.transportOptions = transportOptions;
-    this.groovyCompatibility = groovyCompatibility;
 
     // begin by checking if a URL was given
     if (url) {
