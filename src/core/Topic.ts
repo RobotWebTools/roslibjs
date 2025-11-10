@@ -42,8 +42,8 @@ export default class Topic<T> extends EventEmitter<{
   callForSubscribeAndAdvertise: (
     message: RosbridgeSubscribeMessage | RosbridgeAdvertiseMessage,
   ) => void;
-  subscribeId: string | null;
-  advertiseId: string;
+  subscribeId: string | null = null;
+  advertiseId?: string;
   /**
    * @param options
    * @param options.ros - The ROSLIB.Ros connection handle.
