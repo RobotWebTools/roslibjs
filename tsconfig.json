@@ -5,6 +5,9 @@
   },
   "include": [
     "vite.config.ts",
-    "./src"
+    "./src",
+    "./test",
+    "eslint.config.ts",
+    "examples"
   ]
 }

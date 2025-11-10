@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ros-infrastructure/rep/master/xsd/package_format3.xsd" format="3">
+  <name>roslibjs</name>
+  <version>2.0.0</version>
+  <description>The Robot Web Tools ROS JavaScript Library</description>
+
+  <maintainer email="robotwebtools@googlegroups.com">Robot Web Tools</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">http://robotwebtools.github.io/</url>
+  <url type="bugtracker">https://github.com/RobotWebTools/roslibjs/issues</url>
+  <url type="repository">https://github.com/RobotWebTools/roslibjs</url>
+
+  <author email="robotwebtools@googlegroups.com">Robot Web Tools</author>
+
+  <test_depend>libasound2-dev</test_depend>
+  <test_depend>libnss3-dev</test_depend>
+  <test_depend>rosbridge_server</test_depend>
+  <test_depend>tf2_web_republisher</test_depend>
+  <test_depend condition="$ROS_VERSION == 1">common_tutorials</test_depend>
+  <test_depend condition="$ROS_VERSION == 1">ros_tutorials</test_depend>
+  <test_depend condition="$ROS_VERSION == 2">action_tutorials_cpp</test_depend>
+  <test_depend condition="$ROS_VERSION == 2">examples_rclpy_minimal_service</test_depend>
+  <test_depend condition="$ROS_VERSION == 2">tf2_ros</test_depend>
+
+
+</package>

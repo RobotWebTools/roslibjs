@@ -4,22 +4,20 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import UrdfColor from './UrdfColor.js';
-import { UrdfAttrs, type UrdfDefaultOptions } from './UrdfTypes.js';
-import type { Nullable } from '../types/interface-types.js';
+import UrdfColor from "./UrdfColor.js";
+import { UrdfAttrs, type UrdfDefaultOptions } from "./UrdfTypes.js";
+import type { Nullable } from "../types/interface-types.js";
 
 /**
  * A Material element in a URDF.
  */
 export default class UrdfMaterial {
-
   name: string;
   textureFilename: Nullable<string> = null;
   color: Nullable<UrdfColor> = null;
 
   constructor({ xml }: UrdfDefaultOptions) {
-
-    this.name = xml.getAttribute(UrdfAttrs.Name) ?? 'unknown_name';
+    this.name = xml.getAttribute(UrdfAttrs.Name) ?? "unknown_name";
 
     // Texture
     const textures = xml.getElementsByTagName(UrdfAttrs.Texture);
@@ -32,7 +30,7 @@ export default class UrdfMaterial {
     if (colors.length > 0) {
       // Parse the RBGA string
       this.color = new UrdfColor({
-        xml: colors[0]
+        xml: colors[0],
       });
     }
   }

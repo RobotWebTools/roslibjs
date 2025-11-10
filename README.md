@@ -52,9 +52,28 @@ npm install
 
 Depending on your build environment.
 
-## Build
+## Development
 
-Checkout [CONTRIBUTING.md](CONTRIBUTING.md) for details on building.
+roslibjs tries to keep the development process simple by storing all relevant tasks as scripts in the package.json file.
+Some useful ones are as follows:
+
+### Building
+
+```bash
+npm run build
+```
+
+### Testing
+
+```bash
+npm run test
+```
+
+### Linting
+
+```bash
+npm run lint
+```
 
 ## License
 

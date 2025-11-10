@@ -11,7 +11,7 @@
     "checkJs": true /* Enable error reporting in type-checked JavaScript files. */,
 
     /* Build Options */
-    "rootDir": "./src" /* Specify the root folder within your source files. */,
+    "rootDir": "." /* Specify the root folder within your source files. */,
     "outDir": "./dist" /* Specify an output folder for all emitted files. */,
     "incremental": true /* Enable incremental compilation */,
     "tsBuildInfoFile": "./node_modules/.cache/typescript/tsbuildinfo" /* Specify the folder for .tsbuildinfo incremental compilation files. */,

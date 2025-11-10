@@ -4,21 +4,23 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import { DOMParser, Element, MIME_TYPE } from '@xmldom/xmldom';
-import UrdfMaterial from './UrdfMaterial.js';
-import UrdfLink from './UrdfLink.js';
-import UrdfJoint from './UrdfJoint.js';
-import { isElement } from './UrdfUtils.js';
-import { UrdfAttrs } from './UrdfTypes.js';
+import { DOMParser, Element, MIME_TYPE } from "@xmldom/xmldom";
+import UrdfMaterial from "./UrdfMaterial.js";
+import UrdfLink from "./UrdfLink.js";
+import UrdfJoint from "./UrdfJoint.js";
+import { isElement } from "./UrdfUtils.js";
+import { UrdfAttrs } from "./UrdfTypes.js";
 
-// See https://developer.mozilla.org/docs/XPathResult#Constants
-// const XPATH_FIRST_ORDERED_NODE_TYPE = 9;
+/*
+ * See https://developer.mozilla.org/docs/XPathResult#Constants
+ * const XPATH_FIRST_ORDERED_NODE_TYPE = 9;
+ */
 
 export interface UrdfModelOptions {
   /**
    * The XML element to parse.
    */
-  xml: Element | null;
+  xml?: Element;
   /**
    * The XML element to parse as a string.
    */
@@ -29,7 +31,6 @@ export interface UrdfModelOptions {
  * A URDF Model can be used to parse a given URDF into the appropriate elements.
  */
 export default class UrdfModel {
-
   name: string | null;
   materials: Record<string, UrdfMaterial> = {};
   links: Record<string, UrdfLink> = {};
@@ -41,11 +42,13 @@ export default class UrdfModel {
     // Check if we are using a string or an XML element
     if (string) {
       // Parse the string
-      xmlDoc = new DOMParser().parseFromString(string, MIME_TYPE.XML_TEXT).documentElement;
+      xmlDoc =
+        new DOMParser().parseFromString(string, MIME_TYPE.XML_TEXT)
+          .documentElement ?? undefined;
     }
 
     if (!xmlDoc) {
-      throw new Error('No URDF document parsed!');
+      throw new Error("No URDF document parsed!");
     }
 
     // Get the robot name
@@ -54,14 +57,13 @@ export default class UrdfModel {
     const childNodes = xmlDoc.childNodes;
     // Parse all the visual elements we need
     for (const node of childNodes) {
-
       // Safety check to make sure we're working with an element.
       if (!isElement(node)) {
         continue;
       }
 
       switch (node.tagName) {
-        case 'material': {
+        case "material": {
           const material = new UrdfMaterial({ xml: node });
           // Make sure this is unique
           if (!Object.hasOwn(this.materials, material.name)) {
@@ -77,7 +79,7 @@ export default class UrdfModel {
 
           break;
         }
-        case 'link': {
+        case "link": {
           const link = new UrdfLink({ xml: node });
           // Make sure this is unique
           if (Object.hasOwn(this.links, link.name)) {
@@ -104,7 +106,7 @@ export default class UrdfModel {
 
           break;
         }
-        case 'joint': {
+        case "joint": {
           const joint = new UrdfJoint({ xml: node });
           this.joints[joint.name] = joint;
           break;

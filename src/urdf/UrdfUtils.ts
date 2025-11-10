@@ -1,22 +1,24 @@
 /********** Utility Methods for parsing Joint **********/
-import { Element, Node } from '@xmldom/xmldom';
-import { Pose, Quaternion, Vector3 } from '../math/index.js';
-import { UrdfAttrs } from './UrdfTypes.js';
+import { Element, Node } from "@xmldom/xmldom";
+import { Pose, Quaternion, Vector3 } from "../math/index.js";
+import { UrdfAttrs } from "./UrdfTypes.js";
 
 export function parseUrdfOrigin(originElement: Element): Pose {
   // Check the XYZ
-  const xyz: string[] | undefined = originElement.getAttribute(UrdfAttrs.Xyz)?.split(' ');
+  const xyz: string[] | undefined = originElement
+    .getAttribute(UrdfAttrs.Xyz)
+    ?.split(" ");
   let position: Vector3 = new Vector3();
   if (xyz?.length === 3) {
     position = new Vector3({
       x: parseFloat(xyz[0]),
       y: parseFloat(xyz[1]),
-      z: parseFloat(xyz[2])
+      z: parseFloat(xyz[2]),
     });
   }
 
   // Check the RPY
-  const rpy = originElement.getAttribute(UrdfAttrs.Rpy)?.split(' ');
+  const rpy = originElement.getAttribute(UrdfAttrs.Rpy)?.split(" ");
   let orientation = new Quaternion();
   if (rpy?.length === 3) {
     // Convert from RPY
@@ -43,14 +45,14 @@ export function parseUrdfOrigin(originElement: Element): Pose {
       x: x,
       y: y,
       z: z,
-      w: w
+      w: w,
     });
     orientation.normalize();
   }
 
   return new Pose({
     position: position,
-    orientation: orientation
+    orientation: orientation,
   });
 }
 

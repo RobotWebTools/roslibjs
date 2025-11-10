@@ -7,6 +7,12 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-patch"]
+    groups:
+      eslint-and-eslint-plugins:
+        patterns:
+          - "*eslint*"
+          - "globals"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

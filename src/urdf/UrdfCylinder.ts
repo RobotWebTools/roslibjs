@@ -4,13 +4,12 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import { type UrdfDefaultOptions, UrdfType, UrdfAttrs } from './UrdfTypes.js';
+import { type UrdfDefaultOptions, UrdfType, UrdfAttrs } from "./UrdfTypes.js";
 
 /**
  * A Cylinder element in a URDF.
  */
 export default class UrdfCylinder {
-
   type: UrdfType;
   length: number;
   radius: number;
@@ -18,7 +17,7 @@ export default class UrdfCylinder {
   constructor({ xml }: UrdfDefaultOptions) {
     this.type = UrdfType.CYLINDER;
 
-    this.length = parseFloat(xml.getAttribute(UrdfAttrs.Length) ?? 'NaN');
-    this.radius = parseFloat(xml.getAttribute(UrdfAttrs.Radius) ?? 'NaN');
+    this.length = parseFloat(xml.getAttribute(UrdfAttrs.Length) ?? "NaN");
+    this.radius = parseFloat(xml.getAttribute(UrdfAttrs.Radius) ?? "NaN");
   }
 }

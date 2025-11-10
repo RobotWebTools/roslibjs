@@ -4,20 +4,19 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import { Element } from '@xmldom/xmldom';
-import Pose from '../math/Pose.js';
-import UrdfCylinder from './UrdfCylinder.js';
-import UrdfBox from './UrdfBox.js';
-import UrdfMaterial from './UrdfMaterial.js';
-import UrdfMesh from './UrdfMesh.js';
-import UrdfSphere from './UrdfSphere.js';
-import { UrdfAttrs, type UrdfDefaultOptions } from './UrdfTypes.js';
-import { isElement, parseUrdfOrigin } from './UrdfUtils.js';
+import { Element } from "@xmldom/xmldom";
+import Pose from "../math/Pose.js";
+import UrdfCylinder from "./UrdfCylinder.js";
+import UrdfBox from "./UrdfBox.js";
+import UrdfMaterial from "./UrdfMaterial.js";
+import UrdfMesh from "./UrdfMesh.js";
+import UrdfSphere from "./UrdfSphere.js";
+import { UrdfAttrs, type UrdfDefaultOptions } from "./UrdfTypes.js";
+import { isElement, parseUrdfOrigin } from "./UrdfUtils.js";
 
 export type UrdfGeometryLike = UrdfMesh | UrdfSphere | UrdfBox | UrdfCylinder;
 
 function parseUrdfGeometry(geometryElem: Element): UrdfGeometryLike | null {
-
   let childShape: Element | null = null;
   for (const childNode of geometryElem.childNodes) {
     if (isElement(childNode)) {
@@ -32,21 +31,21 @@ function parseUrdfGeometry(geometryElem: Element): UrdfGeometryLike | null {
   }
 
   const options: UrdfDefaultOptions = {
-    xml: childShape
-  }
+    xml: childShape,
+  };
 
   switch (childShape.nodeName) {
-    case 'sphere':
+    case "sphere":
       return new UrdfSphere(options);
-    case 'box':
+    case "box":
       return new UrdfBox(options);
-    case 'cylinder':
+    case "cylinder":
       return new UrdfCylinder(options);
-    case 'mesh':
+    case "mesh":
       return new UrdfMesh(options);
     default:
       console.warn(`Unknown geometry type ${childShape.nodeName}`);
-      return null
+      return null;
   }
 }
 
@@ -78,7 +77,7 @@ export default class UrdfVisual {
     const materials = xml.getElementsByTagName(UrdfAttrs.Material);
     if (materials.length > 0) {
       this.material = new UrdfMaterial({
-        xml: materials[0]
+        xml: materials[0],
       });
     }
   }

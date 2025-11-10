@@ -2,10 +2,10 @@
  * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
  */
-import Vector3, { type IVector3 } from './Vector3.js';
-import Quaternion, { type IQuaternion } from './Quaternion.js';
-import { type ITransform } from './Transform.js';
-import { PartialNullable } from '../types/interface-types.js';
+import Vector3, { type IVector3 } from "./Vector3.js";
+import Quaternion, { type IQuaternion } from "./Quaternion.js";
+import { type ITransform } from "./Transform.js";
+import { PartialNullable } from "../types/interface-types.js";
 
 export interface IPose {
   /**
@@ -22,7 +22,6 @@ export interface IPose {
  * A Pose in 3D space. Values are copied into this object.
  */
 export default class Pose implements IPose {
-
   position: Vector3;
   orientation: Quaternion;
 
@@ -34,7 +33,7 @@ export default class Pose implements IPose {
   /**
    * Apply a transform against this pose.
    *
-   * @param {ITransform} tf - The transform to be applied.
+   * @param tf - The transform to be applied.
    */
   applyTransform(tf: ITransform) {
     this.position.multiplyQuaternion(tf.rotation);
@@ -47,7 +46,7 @@ export default class Pose implements IPose {
   /**
    * Clone a copy of this pose.
    *
-   * @returns {Pose} The cloned pose.
+   * @returns The cloned pose.
    */
   clone(): Pose {
     return new Pose(this);
@@ -56,13 +55,13 @@ export default class Pose implements IPose {
   /**
    * Multiply this pose with another pose without altering this pose.
    *
-   * @returns {Pose} The result of the multiplication.
+   * @returns The result of the multiplication.
    */
   multiply(pose: Pose): Pose {
     const p = pose.clone();
     p.applyTransform({
       rotation: this.orientation,
-      translation: this.position
+      translation: this.position,
     });
     return p;
   }
@@ -70,7 +69,7 @@ export default class Pose implements IPose {
   /**
    * Compute the inverse of this pose.
    *
-   * @returns {Pose} The inverse of the pose.
+   * @returns The inverse of the pose.
    */
   getInverse(): Pose {
     const inverse = this.clone();

@@ -2,7 +2,7 @@
  * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
  */
-import { type PartialNullable } from '../types/interface-types.js';
+import { type PartialNullable } from "../types/interface-types.js";
 
 export interface IQuaternion {
   /**
@@ -39,7 +39,7 @@ export default class Quaternion implements IQuaternion {
     this.x = options?.x ?? 0;
     this.y = options?.y ?? 0;
     this.z = options?.z ?? 0;
-    this.w = typeof options?.w === 'number' ? options.w : 1;
+    this.w = typeof options?.w === "number" ? options.w : 1;
   }
 
   /**
@@ -56,7 +56,7 @@ export default class Quaternion implements IQuaternion {
    */
   norm(): number {
     return Math.sqrt(
-      this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w
+      this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w,
     );
   }
 
@@ -65,7 +65,7 @@ export default class Quaternion implements IQuaternion {
    */
   normalize(): void {
     let l = Math.sqrt(
-      this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w
+      this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w,
     );
     if (l === 0) {
       this.x = 0;
@@ -90,7 +90,7 @@ export default class Quaternion implements IQuaternion {
   /**
    * Set the values of this quaternion to the product of itself and the given quaternion.
    *
-   * @param {IQuaternion} q - The quaternion to multiply with.
+   * @param q - The quaternion to multiply with.
    */
   multiply(q: IQuaternion): void {
     const newX = this.x * q.w + this.y * q.z - this.z * q.y + this.w * q.x;
@@ -106,7 +106,7 @@ export default class Quaternion implements IQuaternion {
   /**
    * Clone a copy of this quaternion.
    *
-   * @returns {Quaternion} The cloned quaternion.
+   * @returns The cloned quaternion.
    */
   clone(): Quaternion {
     return new Quaternion(this);
