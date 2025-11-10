@@ -1,16 +1,19 @@
 import CBOR from "cbor-js";
 import typedArrayTagger from "../util/cborTypedArrayTags.js";
+import type {
+  RosbridgeFragmentMessage,
+  RosbridgeMessage,
+} from "../types/protocol.js";
 import {
   isRosbridgeFragmentMessage,
   isRosbridgeMessage,
   isRosbridgePngMessage,
-  RosbridgeFragmentMessage,
-  RosbridgeMessage,
 } from "../types/protocol.js";
 import { deserialize } from "bson";
+import type { WebSocket as WsWebSocket } from "ws";
 
 export type RequiredSocketInterface = Pick<
-  WebSocket | RTCDataChannel | import("ws").WebSocket,
+  WebSocket | RTCDataChannel | WsWebSocket,
   | "onmessage"
   | "onclose"
   | "onerror"

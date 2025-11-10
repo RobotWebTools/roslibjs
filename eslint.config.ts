@@ -30,6 +30,7 @@ export default defineConfig(
       // Plenty of APIs (like mocking APIs in Vitest) require empty functions to be declared.
       "@typescript-eslint/no-empty-function": 0,
       "prefer-template": 2,
+      "@typescript-eslint/consistent-type-imports": 2,
     },
   },
   {

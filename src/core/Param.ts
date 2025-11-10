@@ -3,8 +3,8 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-import { rosapi } from "../types/rosapi.js";
-import Ros from "./Ros.js";
+import type { rosapi } from "../types/rosapi.js";
+import type Ros from "./Ros.js";
 import Service from "./Service.js";
 
 /**

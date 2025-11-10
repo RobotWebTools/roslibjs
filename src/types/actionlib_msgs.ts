@@ -1,5 +1,5 @@
-import { std_msgs } from "./std_msgs.js";
-import { GoalStatus as GoalStatusEnum } from "../core/GoalStatus.js";
+import type { std_msgs } from "./std_msgs.js";
+import type { GoalStatus as GoalStatusEnum } from "../core/GoalStatus.js";
 
 export namespace actionlib_msgs {
   export interface GoalID {

@@ -1,12 +1,9 @@
 import { it, describe, expect, beforeEach, vi } from "vitest";
-import SocketAdapter, {
-  RequiredSocketInterface,
-} from "../src/core/SocketAdapter.js";
-import { Ros } from "../src/index.js";
-import {
-  isRosbridgePublishMessage,
-  RosbridgeMessage,
-} from "../src/types/protocol.js";
+import type { RequiredSocketInterface } from "../src/core/SocketAdapter.js";
+import SocketAdapter from "../src/core/SocketAdapter.js";
+import type { Ros } from "../src/index.js";
+import type { RosbridgeMessage } from "../src/types/protocol.js";
+import { isRosbridgePublishMessage } from "../src/types/protocol.js";
 
 describe("SocketAdapter fragment handling", () => {
   let client: Pick<Ros, "emit" | "transportOptions" | "isConnected">;

@@ -4,12 +4,12 @@
  */
 
 import { EventEmitter } from "eventemitter3";
-import {
-  isRosbridgeServiceResponseMessage,
+import type {
   RosbridgeCallServiceMessage,
   RosbridgeServiceResponseMessage,
 } from "../types/protocol.ts";
-import Ros from "./Ros.js";
+import { isRosbridgeServiceResponseMessage } from "../types/protocol.ts";
+import type Ros from "./Ros.js";
 import { v4 as uuidv4 } from "uuid";
 
 /**
