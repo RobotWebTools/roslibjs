@@ -12,7 +12,7 @@ export default class ROS2TFClient extends BaseTFClient {
     tf2_web_republisher.TFSubscriptionResult,
     tf2_web_republisher.TFSubscriptionFeedback
   >;
-  currentGoal: tf2_web_republisher.TFSubscriptionGoal;
+  currentGoal?: tf2_web_republisher.TFSubscriptionGoal;
 
   constructor(options: ConstructorParameters<typeof BaseTFClient>[0]) {
     super(options);
