@@ -86,31 +86,31 @@ export default class ActionClient<
     // create the topics associated with actionlib
     this.feedbackListener = new Topic({
       ros: this.ros,
-      name: this.serverName + "/feedback",
-      messageType: this.actionName + "Feedback",
+      name: `${this.serverName}/feedback`,
+      messageType: `${this.actionName}Feedback`,
     });
 
     this.statusListener = new Topic({
       ros: this.ros,
-      name: this.serverName + "/status",
+      name: `${this.serverName}/status`,
       messageType: "actionlib_msgs/GoalStatusArray",
     });
 
     this.resultListener = new Topic({
       ros: this.ros,
-      name: this.serverName + "/result",
-      messageType: this.actionName + "Result",
+      name: `${this.serverName}/result`,
+      messageType: `${this.actionName}Result`,
     });
 
     this.goalTopic = new Topic({
       ros: this.ros,
-      name: this.serverName + "/goal",
-      messageType: this.actionName + "Goal",
+      name: `${this.serverName}/goal`,
+      messageType: `${this.actionName}Goal`,
     });
 
     this.cancelTopic = new Topic({
       ros: this.ros,
-      name: this.serverName + "/cancel",
+      name: `${this.serverName}/cancel`,
       messageType: "actionlib_msgs/GoalID",
     });
 

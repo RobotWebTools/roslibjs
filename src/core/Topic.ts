@@ -12,6 +12,7 @@ import {
   RosbridgeSubscribeMessage,
 } from "../types/protocol.ts";
 import { rosapi } from "../types/rosapi.ts";
+import { v4 as uuidv4 } from "uuid";
 
 /**
  * Publish and/or subscribe to a topic in ROS.
@@ -98,8 +99,9 @@ export default class Topic<T> extends EventEmitter<{
     ) {
       this.emit(
         "warning",
-        this.compression +
-          " compression is not supported. No compression will be used.",
+        `${
+          this.compression
+        } compression is not supported. No compression will be used.`,
       );
       this.compression = "none";
     }
@@ -108,7 +110,7 @@ export default class Topic<T> extends EventEmitter<{
     if (this.throttle_rate < 0) {
       this.emit(
         "warning",
-        this.throttle_rate.toString() + " is not allowed. Set to 0",
+        `${this.throttle_rate.toString()} is not allowed. Set to 0`,
       );
       this.throttle_rate = 0;
     }
@@ -152,8 +154,7 @@ export default class Topic<T> extends EventEmitter<{
       return;
     }
     this.ros.on(this.name, this.#messageCallback);
-    this.subscribeId =
-      "subscribe:" + this.name + ":" + (++this.ros.idCounter).toString();
+    this.subscribeId = `subscribe:${this.name}:${uuidv4()}`;
 
     this.callForSubscribeAndAdvertise({
       op: "subscribe",
@@ -205,8 +206,7 @@ export default class Topic<T> extends EventEmitter<{
     if (this.isAdvertised) {
       return;
     }
-    this.advertiseId =
-      "advertise:" + this.name + ":" + (++this.ros.idCounter).toString();
+    this.advertiseId = `advertise:${this.name}:${uuidv4()}`;
     this.callForSubscribeAndAdvertise({
       op: "advertise",
       id: this.advertiseId,
@@ -251,10 +251,9 @@ export default class Topic<T> extends EventEmitter<{
       this.advertise();
     }
 
-    this.ros.idCounter++;
     const call = {
       op: "publish",
-      id: "publish:" + this.name + ":" + this.ros.idCounter.toString(),
+      id: `publish:${this.name}:${uuidv4()}`,
       topic: this.name,
       msg: message,
       latch: this.latch,

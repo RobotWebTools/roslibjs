@@ -55,8 +55,8 @@ export default class ActionListener<
     // create the topics associated with actionlib
     const goalListener = new Topic<TGoal>({
       ros: this.ros,
-      name: this.serverName + "/goal",
-      messageType: this.actionName + "Goal",
+      name: `${this.serverName}/goal`,
+      messageType: `${this.actionName}Goal`,
     });
 
     const feedbackListener = new Topic<{
@@ -64,13 +64,13 @@ export default class ActionListener<
       feedback: TFeedback;
     }>({
       ros: this.ros,
-      name: this.serverName + "/feedback",
-      messageType: this.actionName + "Feedback",
+      name: `${this.serverName}/feedback`,
+      messageType: `${this.actionName}Feedback`,
     });
 
     const statusListener = new Topic<actionlib_msgs.GoalStatusArray>({
       ros: this.ros,
-      name: this.serverName + "/status",
+      name: `${this.serverName}/status`,
       messageType: "actionlib_msgs/GoalStatusArray",
     });
 
@@ -79,8 +79,8 @@ export default class ActionListener<
       result: TResult;
     }>({
       ros: this.ros,
-      name: this.serverName + "/result",
-      messageType: this.actionName + "Result",
+      name: `${this.serverName}/result`,
+      messageType: `${this.actionName}Result`,
     });
 
     goalListener.subscribe((goalMessage) => {

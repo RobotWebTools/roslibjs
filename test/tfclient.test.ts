@@ -11,7 +11,6 @@ describe("TFClient", function () {
        */
 
       const dummyROS = {
-        idCounter: 0,
         on: () => {},
         off: () => {},
         callOnConnection: () => {},

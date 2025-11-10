@@ -63,22 +63,22 @@ export default class SimpleActionServer<
     // create and advertise publishers
     this.feedbackPublisher = new Topic({
       ros: this.ros,
-      name: this.serverName + "/feedback",
-      messageType: this.actionName + "Feedback",
+      name: `${this.serverName}/feedback`,
+      messageType: `${this.actionName}Feedback`,
     });
     this.feedbackPublisher.advertise();
 
     const statusPublisher = new Topic({
       ros: this.ros,
-      name: this.serverName + "/status",
+      name: `${this.serverName}/status`,
       messageType: "actionlib_msgs/GoalStatusArray",
     });
     statusPublisher.advertise();
 
     this.resultPublisher = new Topic({
       ros: this.ros,
-      name: this.serverName + "/result",
-      messageType: this.actionName + "Result",
+      name: `${this.serverName}/result`,
+      messageType: `${this.actionName}Result`,
     });
     this.resultPublisher.advertise();
 
@@ -88,13 +88,13 @@ export default class SimpleActionServer<
       goal_id: actionlib_msgs.GoalID;
     }>({
       ros: this.ros,
-      name: this.serverName + "/goal",
-      messageType: this.actionName + "Goal",
+      name: `${this.serverName}/goal`,
+      messageType: `${this.actionName}Goal`,
     });
 
     const cancelListener = new Topic<actionlib_msgs.GoalID>({
       ros: this.ros,
-      name: this.serverName + "/cancel",
+      name: `${this.serverName}/cancel`,
       messageType: "actionlib_msgs/GoalID",
     });
 
