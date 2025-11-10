@@ -702,7 +702,7 @@ export default class Ros extends EventEmitter<
           }
         } else {
           // lookup the name
-          let sub: boolean | rosapi.TypeDef = false;
+          let sub: rosapi.TypeDef | undefined = undefined;
           for (const hint of hints) {
             if (hint.type === fieldType) {
               sub = hint;
