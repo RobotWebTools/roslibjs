@@ -26,7 +26,7 @@ export default class Topic<T> extends EventEmitter<{
   unsubscribe: undefined;
   unadvertise: undefined;
 }> {
-  waitForReconnect: boolean | undefined = undefined;
+  waitForReconnect = false;
   reconnectFunc: (() => void) | undefined = undefined;
   isAdvertised = false;
   ros: Ros;
