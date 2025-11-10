@@ -3,6 +3,7 @@ export type {
   TransportFactory,
   TransportOptions,
 } from "./Ros.js";
+export type { RequiredSocketInterface } from "./SocketAdapter.js";
 export { default as Ros } from "./Ros.js";
 export { default as Topic } from "./Topic.js";
 export { default as Param } from "./Param.js";
