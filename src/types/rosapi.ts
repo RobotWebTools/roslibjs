@@ -30,34 +30,56 @@ export namespace rosapi {
     name: string;
     default?: string;
   }
-  interface GetParamResponseFailed {
+  interface GetParamResponsePreJazzy {
+    value: string;
+  }
+  interface GetParamResponseFailedPostJazzy {
     value: never;
     successful: false;
     reason: string;
   }
-  interface GetParamResponseSuccess {
+  interface GetParamResponseSuccessPostJazzy {
     value: string;
     successful: true;
     reason: never;
   }
   export type GetParamResponse =
-    | GetParamResponseFailed
-    | GetParamResponseSuccess;
+    | GetParamResponsePreJazzy
+    | GetParamResponseFailedPostJazzy
+    | GetParamResponseSuccessPostJazzy;
   export interface SetParamRequest {
     name: string;
     value: string;
   }
-  export interface SetParamResponse {
-    successful: boolean;
+  type SetParamResponsePreJazzy = Record<never, never>;
+  interface FailedSetParamResponsePostJazzy {
+    successful: false;
     reason: string;
   }
+  interface SuccessfulSetParamResponsePostJazzy {
+    successful: true;
+    reason: never;
+  }
+  export type SetParamResponse =
+    | SetParamResponsePreJazzy
+    | FailedSetParamResponsePostJazzy
+    | SuccessfulSetParamResponsePostJazzy;
   export interface DeleteParamRequest {
     name: string;
   }
-  export interface DeleteParamResponse {
-    successful: boolean;
+  type DeleteParamResponsePreJazzy = Record<never, never>;
+  interface FailedDeleteParamResponsePostJazzy {
+    successful: false;
     reason: string;
   }
+  interface SuccessfulDeleteParamResponsePostJazzy {
+    successful: true;
+    reason: never;
+  }
+  export type DeleteParamResponse =
+    | DeleteParamResponsePreJazzy
+    | FailedDeleteParamResponsePostJazzy
+    | SuccessfulDeleteParamResponsePostJazzy;
   export type GetActionServersRequest = Record<never, never>;
   export interface GetActionServersResponse {
     action_servers: string[];
