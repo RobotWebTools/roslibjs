@@ -77,11 +77,11 @@ enum RTCDataChannelReadyState {
  * @class SocketAdapter
  */
 export default class SocketAdapter {
-  private onOpenCallback: (event: Event) => void;
-  private onCloseCallback: (event: Event) => void;
-  private onErrorCallback: (event: ErrorEvent) => void;
-  private onMessageCallback: (message: RosbridgeMessage) => void;
-  private decoder: Decoder | null;
+  onOpenCallback: (event: Event) => void;
+  onCloseCallback: (event: Event) => void;
+  onErrorCallback: (event: ErrorEvent) => void;
+  onMessageCallback: (message: RosbridgeMessage) => void;
+  decoder: Decoder | null;
   /**
    * Buffer Map for incoming message fragments
    */
