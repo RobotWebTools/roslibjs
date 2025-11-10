@@ -120,7 +120,7 @@ export default class SocketAdapter {
 
     if (!entry) {
       // Should not happen, signal error
-      throw new Error("Fragment buffer entry missing for id: " + id);
+      throw new Error(`Fragment buffer entry missing for id: ${id}`);
     }
     // Only accept fragments within the integer part of total
     if (num < totalInt) {

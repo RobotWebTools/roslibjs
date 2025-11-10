@@ -99,8 +99,9 @@ export default class Topic<T> extends EventEmitter<{
     ) {
       this.emit(
         "warning",
-        this.compression +
-          " compression is not supported. No compression will be used.",
+        `${
+          this.compression
+        } compression is not supported. No compression will be used.`,
       );
       this.compression = "none";
     }
@@ -109,7 +110,7 @@ export default class Topic<T> extends EventEmitter<{
     if (this.throttle_rate < 0) {
       this.emit(
         "warning",
-        this.throttle_rate.toString() + " is not allowed. Set to 0",
+        `${this.throttle_rate.toString()} is not allowed. Set to 0`,
       );
       this.throttle_rate = 0;
     }
@@ -153,7 +154,7 @@ export default class Topic<T> extends EventEmitter<{
       return;
     }
     this.ros.on(this.name, this.#messageCallback);
-    this.subscribeId = "subscribe:" + this.name + ":" + uuidv4();
+    this.subscribeId = `subscribe:${this.name}:${uuidv4()}`;
 
     this.callForSubscribeAndAdvertise({
       op: "subscribe",
@@ -205,7 +206,7 @@ export default class Topic<T> extends EventEmitter<{
     if (this.isAdvertised) {
       return;
     }
-    this.advertiseId = "advertise:" + this.name + ":" + uuidv4();
+    this.advertiseId = `advertise:${this.name}:${uuidv4()}`;
     this.callForSubscribeAndAdvertise({
       op: "advertise",
       id: this.advertiseId,
@@ -252,7 +253,7 @@ export default class Topic<T> extends EventEmitter<{
 
     const call = {
       op: "publish",
-      id: "publish:" + this.name + ":" + uuidv4(),
+      id: `publish:${this.name}:${uuidv4()}`,
       topic: this.name,
       msg: message,
       latch: this.latch,

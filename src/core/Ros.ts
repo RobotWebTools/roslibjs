@@ -174,7 +174,7 @@ export default class Ros extends EventEmitter<
       this.emit(message.id, message);
     } else if (isRosbridgeStatusMessage(message)) {
       if (message.id) {
-        this.emit("status:" + message.id, message);
+        this.emit(`status:${message.id}`, message);
       } else {
         this.emit("status", message);
       }
@@ -716,10 +716,7 @@ export default class Ros extends EventEmitter<
               typeDefDict[fieldName] = [subResult];
             }
           } else {
-            this.emit(
-              "error",
-              "Cannot find " + fieldType + " in decodeTypeDefs",
-            );
+            this.emit("error", `Cannot find ${fieldType} in decodeTypeDefs`);
           }
         }
       }

@@ -57,5 +57,5 @@ export default function decompressPng(
     callback(JSON.parse(jsonData));
   };
   // Sends the image data to load.
-  image.src = "data:image/png;base64," + data;
+  image.src = `data:image/png;base64,${data}`;
 }

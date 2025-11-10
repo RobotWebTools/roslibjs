@@ -74,7 +74,7 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
       return;
     }
 
-    const serviceCallId = "call_service:" + this.name + ":" + uuidv4();
+    const serviceCallId = `call_service:${this.name}:${uuidv4()}`;
 
     this.ros.once(serviceCallId, function (message) {
       if (isRosbridgeServiceResponseMessage<TResponse>(message)) {
