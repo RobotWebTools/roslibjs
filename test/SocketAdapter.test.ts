@@ -172,4 +172,74 @@ describe("SocketAdapter fragment handling", () => {
       expect(adapter.readyState).toBe(2);
     });
   });
+
+  describe("readystate helper methods", () => {
+    const assertIsConnecting = () => {
+      expect(adapter.isConnecting()).toBe(true);
+      expect(adapter.isOpen()).toBe(false);
+      expect(adapter.isClosing()).toBe(false);
+      expect(adapter.isClosed()).toBe(false);
+    };
+
+    const assertIsOpen = () => {
+      expect(adapter.isConnecting()).toBe(false);
+      expect(adapter.isOpen()).toBe(true);
+      expect(adapter.isClosing()).toBe(false);
+      expect(adapter.isClosed()).toBe(false);
+    };
+
+    const assertIsClosing = () => {
+      expect(adapter.isConnecting()).toBe(false);
+      expect(adapter.isOpen()).toBe(false);
+      expect(adapter.isClosing()).toBe(true);
+      expect(adapter.isClosed()).toBe(false);
+    };
+
+    const assertIsClosed = () => {
+      expect(adapter.isConnecting()).toBe(false);
+      expect(adapter.isOpen()).toBe(false);
+      expect(adapter.isClosing()).toBe(false);
+      expect(adapter.isClosed()).toBe(true);
+    };
+
+    it("returns true for isConnecting when socket is connecting", () => {
+      // @ts-expect-error -- normally readonly type being manipulated as a mock
+      mockSocket.readyState = 0; // WebSocket
+      assertIsConnecting();
+
+      // @ts-expect-error -- normally readonly type being manipulated as a mock
+      mockSocket.readyState = "connecting" as unknown; // RTCDataChannel
+      assertIsConnecting();
+    });
+
+    it("returns true for isOpen when socket is open", () => {
+      // @ts-expect-error -- normally readonly type being manipulated as a mock
+      mockSocket.readyState = 1; // WebSocket
+      assertIsOpen();
+
+      // @ts-expect-error -- normally readonly type being manipulated as a mock
+      mockSocket.readyState = "open" as unknown; // RTCDataChannel
+      assertIsOpen();
+    });
+
+    it("returns true for isClosing when socket is closing", () => {
+      // @ts-expect-error -- normally readonly type being manipulated as a mock
+      mockSocket.readyState = 2; // WebSocket
+      assertIsClosing();
+
+      // @ts-expect-error -- normally readonly type being manipulated as a mock
+      mockSocket.readyState = "closing" as unknown; // RTCDataChannel
+      assertIsClosing();
+    });
+
+    it("returns true for isClosed when socket is closed", () => {
+      // @ts-expect-error -- normally readonly type being manipulated as a mock
+      mockSocket.readyState = 3; // WebSocket
+      assertIsClosed();
+
+      // @ts-expect-error -- normally readonly type being manipulated as a mock
+      mockSocket.readyState = "closed" as unknown; // RTCDataChannel
+      assertIsClosed();
+    });
+  });
 });
