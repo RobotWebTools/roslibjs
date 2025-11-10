@@ -8,8 +8,9 @@ describe.skipIf(process.env.ROS_DISTRO !== "noetic")(
   function () {
     it("tf republisher", () =>
       new Promise<void>((done) => {
-        const ros = new ROSLIB.Ros();
-        ros.connect("ws://localhost:9090");
+        const ros = new ROSLIB.Ros({
+          url: "ws://localhost:9090",
+        });
 
         const tfClient = new ROSLIB.TFClient({
           ros: ros,

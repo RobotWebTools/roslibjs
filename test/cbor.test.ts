@@ -3,8 +3,11 @@ import CBOR from "cbor-js";
 import cborTypedArrayTagger from "../src/util/cborTypedArrayTags.js";
 
 /** Convert hex string to ArrayBuffer. */
-function hexToBuffer(hex) {
+function hexToBuffer(hex: string) {
   const tokens = hex.match(/[0-9a-fA-F]{2}/gi);
+  if (!tokens) {
+    throw new Error("No tokens matched!");
+  }
   const arr = tokens.map(function (t) {
     return parseInt(t, 16);
   });
@@ -16,7 +19,9 @@ describe("CBOR Typed Array Tagger", function () {
     const data = hexToBuffer("d84546010002000300");
     const msg = CBOR.decode(data, cborTypedArrayTagger);
 
-    expect(msg).to.be.a("Uint16Array");
+    if (!(msg instanceof Uint16Array)) {
+      throw new Error("Expected Uint16Array");
+    }
     expect(msg).to.have.lengthOf(3);
     expect(msg[0]).to.equal(1);
     expect(msg[1]).to.equal(2);
@@ -27,7 +32,9 @@ describe("CBOR Typed Array Tagger", function () {
     const data = hexToBuffer("d8464c010000000200000003000000");
     const msg = CBOR.decode(data, cborTypedArrayTagger);
 
-    expect(msg).to.be.a("Uint32Array");
+    if (!(msg instanceof Uint32Array)) {
+      throw new Error("Expected Uint32Array");
+    }
     expect(msg).to.have.lengthOf(3);
     expect(msg[0]).to.equal(1);
     expect(msg[1]).to.equal(2);
@@ -40,7 +47,9 @@ describe("CBOR Typed Array Tagger", function () {
     );
     const msg = CBOR.decode(data, cborTypedArrayTagger);
 
-    expect(msg).to.be.a("Array");
+    if (!Array.isArray(msg)) {
+      throw new Error("Expected Array");
+    }
     expect(msg).to.have.lengthOf(3);
     expect(msg[0]).to.equal(1);
     expect(msg[1]).to.equal(2);
@@ -51,7 +60,9 @@ describe("CBOR Typed Array Tagger", function () {
     const data = hexToBuffer("d8484301fe03");
     const msg = CBOR.decode(data, cborTypedArrayTagger);
 
-    expect(msg).to.be.a("Int8Array");
+    if (!(msg instanceof Int8Array)) {
+      throw new Error("Expected Int8Array");
+    }
     expect(msg).to.have.lengthOf(3);
     expect(msg[0]).to.equal(1);
     expect(msg[1]).to.equal(-2);
@@ -62,7 +73,9 @@ describe("CBOR Typed Array Tagger", function () {
     const data = hexToBuffer("d84d460100feff0300");
     const msg = CBOR.decode(data, cborTypedArrayTagger);
 
-    expect(msg).to.be.a("Int16Array");
+    if (!(msg instanceof Int16Array)) {
+      throw new Error("Expected Int16Array");
+    }
     expect(msg).to.have.lengthOf(3);
     expect(msg[0]).to.equal(1);
     expect(msg[1]).to.equal(-2);
@@ -73,7 +86,9 @@ describe("CBOR Typed Array Tagger", function () {
     const data = hexToBuffer("d84e4c01000000feffffff03000000");
     const msg = CBOR.decode(data, cborTypedArrayTagger);
 
-    expect(msg).to.be.a("Int32Array");
+    if (!(msg instanceof Int32Array)) {
+      throw new Error("Expected Int32Array");
+    }
     expect(msg).to.have.lengthOf(3);
     expect(msg[0]).to.equal(1);
     expect(msg[1]).to.equal(-2);
@@ -86,7 +101,9 @@ describe("CBOR Typed Array Tagger", function () {
     );
     const msg = CBOR.decode(data, cborTypedArrayTagger);
 
-    expect(msg).to.be.a("Array");
+    if (!Array.isArray(msg)) {
+      throw new Error("Expected Array");
+    }
     expect(msg).to.have.lengthOf(3);
     expect(msg[0]).to.equal(1);
     expect(msg[1]).to.equal(-2);
@@ -97,7 +114,9 @@ describe("CBOR Typed Array Tagger", function () {
     const data = hexToBuffer("d8554ccdcc8c3fcdcc0cc033335340");
     const msg = CBOR.decode(data, cborTypedArrayTagger);
 
-    expect(msg).to.be.a("Float32Array");
+    if (!(msg instanceof Float32Array)) {
+      throw new Error("Expected Float32Array");
+    }
     expect(msg).to.have.lengthOf(3);
     expect(msg[0]).to.be.closeTo(1.1, 1e-5);
     expect(msg[1]).to.be.closeTo(-2.2, 1e-5);
@@ -110,7 +129,9 @@ describe("CBOR Typed Array Tagger", function () {
     );
     const msg = CBOR.decode(data, cborTypedArrayTagger);
 
-    expect(msg).to.be.a("Float64Array");
+    if (!(msg instanceof Float64Array)) {
+      throw new Error("Expected Float64Array");
+    }
     expect(msg).to.have.lengthOf(3);
     expect(msg[0]).to.be.closeTo(1.1, 1e-5);
     expect(msg[1]).to.be.closeTo(-2.2, 1e-5);
@@ -121,7 +142,15 @@ describe("CBOR Typed Array Tagger", function () {
     const data = hexToBuffer("82d8484308fe05d84d460100feff0300");
     const msg = CBOR.decode(data, cborTypedArrayTagger);
 
-    expect(msg).to.be.a("Array");
+    if (!Array.isArray(msg)) {
+      throw new Error("Expected Array");
+    }
+    if (!(msg[0] instanceof Int8Array)) {
+      throw new Error("Expected Int8Array");
+    }
+    if (!(msg[1] instanceof Int16Array)) {
+      throw new Error("Expected Int16Array");
+    }
     expect(msg).to.have.lengthOf(2);
     expect(msg[0][0]).to.equal(8);
     expect(msg[0][1]).to.equal(-2);

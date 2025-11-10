@@ -20,7 +20,7 @@ function getRosDistro() {
   return process.env.ROS_DISTRO || "noetic";
 }
 
-async function waitForRosConnection(ros, timeout = 5000) {
+async function waitForRosConnection(ros: Ros, timeout = 5000) {
   return new Promise<void>((resolve, reject) => {
     const timeoutId = setTimeout(() => {
       reject(new Error("Timeout waiting for ROS connection"));
@@ -33,7 +33,7 @@ async function waitForRosConnection(ros, timeout = 5000) {
 
     ros.on("error", (error) => {
       clearTimeout(timeoutId);
-      reject(error);
+      reject(new Error(error));
     });
 
     // If already connected
@@ -47,7 +47,7 @@ async function waitForRosConnection(ros, timeout = 5000) {
 /**
  * Build the ROS test container
  */
-async function buildContainer(rosDistro) {
+async function buildContainer(rosDistro: string) {
   console.log(`Building ROS test container for ${rosDistro}...`);
 
   const stream = await docker.buildImage(
@@ -72,7 +72,7 @@ async function buildContainer(rosDistro) {
           resolve(res);
         }
       },
-      (event) => {
+      (event: { stream?: Uint8Array; errorDetail?: { message: string } }) => {
         if (event.stream) {
           process.stdout.write(event.stream);
         } else if (event.errorDetail) {
@@ -149,7 +149,7 @@ async function stopContainer() {
     await container.remove();
     console.log("Container stopped");
   } catch (error) {
-    console.error("Error stopping container:", error.message);
+    console.error("Error stopping container:", String(error));
   }
 }
 
@@ -162,7 +162,7 @@ async function getLogs() {
     const logs = await container.logs({ stdout: true, stderr: true });
     return logs.toString();
   } catch (error) {
-    return `Error getting logs: ${error.message}`;
+    return `Error getting logs: ${String(error)}`;
   }
 }
 

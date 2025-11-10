@@ -60,7 +60,7 @@ describe("Param setting", function () {
     await vi.waitFor(() => expect(callback).toHaveBeenCalled());
     const getParamsCallback = vi.fn();
     ros.getParams(getParamsCallback);
-    vi.waitFor(() =>
+    await vi.waitFor(() =>
       expect(getParamsCallback.mock.calls[0][0]).to.not.include(PARAM_NAME),
     );
   });

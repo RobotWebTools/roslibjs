@@ -219,7 +219,7 @@ export function isRosbridgeUnadvertiseActionMessage(
 export interface RosbridgeSendActionGoalMessage<TArgs = unknown>
   extends RosbridgeMessage {
   op: "send_action_goal";
-  id?: string;
+  id: string;
   action: string;
   action_type: string;
   args?: TArgs;

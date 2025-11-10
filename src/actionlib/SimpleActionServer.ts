@@ -7,6 +7,7 @@ import Ros from "../core/Ros.js";
 import Topic from "../core/Topic.js";
 import { EventEmitter } from "eventemitter3";
 import { actionlib_msgs } from "../types/actionlib_msgs.js";
+import { std_msgs } from "../types/std_msgs.js";
 
 /**
  * An actionlib action server client.
@@ -125,7 +126,7 @@ export default class SimpleActionServer<
      * helper function to determine ordering of timestamps
      * returns t1 < t2
      */
-    const isEarlier = function (t1, t2) {
+    const isEarlier = function (t1: std_msgs.time, t2: std_msgs.time) {
       if (t1.secs > t2.secs) {
         return false;
       } else if (t1.secs < t2.secs) {

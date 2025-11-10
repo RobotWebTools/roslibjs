@@ -1,19 +1,12 @@
 import { describe, it, expect } from "vitest";
 import * as ROSLIB from "../src/RosLib.js";
 
-function clone(x) {
-  const y = {};
-  for (const prop in x) {
-    if (Object.prototype.hasOwnProperty.call(x, prop)) {
-      y[prop] = typeof x[prop] === "object" ? clone(x[prop]) : x[prop];
-    }
-  }
-  return y;
-}
-
 describe("Math examples", function () {
-  let v1, q1, v2, q2;
-  let pos;
+  let v1: ROSLIB.Vector3,
+    q1: ROSLIB.Quaternion,
+    v2: ROSLIB.Vector3,
+    q2: ROSLIB.Quaternion;
+  let pos: ROSLIB.Pose;
   it("Vector3 example", function () {
     // Let's start by adding some vectors.
     v1 = new ROSLIB.Vector3({
@@ -26,7 +19,7 @@ describe("Math examples", function () {
     expect(v1).eql(v2);
 
     v1.add(v2);
-    expect(clone(v1)).eql({
+    expect(v1.clone()).eql({
       x: 2,
       y: 4,
       z: 6,
@@ -59,7 +52,7 @@ describe("Math examples", function () {
       position: v1,
       orientation: q1,
     });
-    expect(clone(pos)).to.eql(clone({ position: v1, orientation: q1 }));
+    expect(pos.clone()).to.eql({ position: v1, orientation: q1 });
   });
 
   it("Transform example", function () {

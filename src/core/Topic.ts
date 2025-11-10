@@ -127,7 +127,8 @@ export default class Topic<T> extends EventEmitter<{
         this.ros.on("close", this.reconnectFunc);
       };
     } else {
-      this.callForSubscribeAndAdvertise = this.ros.callOnConnection;
+      this.callForSubscribeAndAdvertise = (msg) =>
+        this.ros.callOnConnection(msg);
     }
   }
 

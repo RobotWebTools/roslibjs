@@ -19,12 +19,12 @@ export default class Goal<
   TResult = unknown,
 > extends EventEmitter<{
   timeout: void;
-  status: actionlib_msgs.GoalStatus;
+  status: [actionlib_msgs.GoalStatus];
   feedback: [TFeedback];
   result: [TResult];
 }> {
   isFinished = false;
-  status = undefined;
+  status?: actionlib_msgs.GoalStatus = undefined;
   result?: TResult = undefined;
   feedback?: TFeedback = undefined;
   // Create a random ID

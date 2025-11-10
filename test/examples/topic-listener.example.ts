@@ -5,13 +5,13 @@ const ros = new ROSLIB.Ros({
   url: "ws://localhost:9090",
 });
 
-function format(msg) {
+function format(msg: string) {
   return { data: msg };
 }
 const messages = ["1", "2", "3", "4"].map(format);
 
 describe("Topics Example", function () {
-  function createAndStreamTopic(topicName) {
+  function createAndStreamTopic(topicName: string) {
     const topic = ros.Topic({
       name: topicName,
       messageType: "std_msgs/String",

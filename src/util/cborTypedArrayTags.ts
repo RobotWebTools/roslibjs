@@ -24,7 +24,7 @@ function decodeUint64LE(bytes: Uint8Array) {
   const buffer = bytes.buffer.slice(offset, offset + byteLen);
   const uint32View = new Uint32Array(buffer);
 
-  const arr = new Array(arrLen);
+  const arr = new Array<number>(arrLen);
   for (let i = 0; i < arrLen; i++) {
     const si = i * 2;
     const lo = uint32View[si];
@@ -50,7 +50,7 @@ function decodeInt64LE(bytes: Uint8Array) {
   const uint32View = new Uint32Array(buffer);
   const int32View = new Int32Array(buffer);
 
-  const arr = new Array(arrLen);
+  const arr = new Array<number>(arrLen);
   for (let i = 0; i < arrLen; i++) {
     const si = i * 2;
     const lo = uint32View[si];
@@ -66,12 +66,25 @@ function decodeInt64LE(bytes: Uint8Array) {
  * @param bytes
  * @param ArrayType - Desired output array type
  */
-function decodeNativeArray(bytes: Uint8Array, ArrayType: ArrayConstructor) {
+function decodeNativeArray(
+  bytes: Uint8Array<ArrayBuffer>,
+  ArrayType: TypedArrayConstructor,
+) {
   const byteLen = bytes.byteLength;
   const offset = bytes.byteOffset;
   const buffer = bytes.buffer.slice(offset, offset + byteLen);
   return new ArrayType(buffer);
 }
+
+type TypedArrayConstructor =
+  | Uint8ArrayConstructor
+  | Uint16ArrayConstructor
+  | Uint32ArrayConstructor
+  | Int8ArrayConstructor
+  | Int16ArrayConstructor
+  | Int32ArrayConstructor
+  | Float32ArrayConstructor
+  | Float64ArrayConstructor;
 
 /**
  * Supports a subset of draft CBOR typed array tags:
@@ -79,7 +92,7 @@ function decodeNativeArray(bytes: Uint8Array, ArrayType: ArrayConstructor) {
  *
  * Only supports little-endian tags for now.
  */
-const nativeArrayTypes = {
+const nativeArrayTypes: Record<number, TypedArrayConstructor> = {
   64: Uint8Array,
   69: Uint16Array,
   70: Uint32Array,
@@ -93,7 +106,7 @@ const nativeArrayTypes = {
 /**
  * We can also decode 64-bit integer arrays, since ROS has these types.
  */
-const conversionArrayTypes = {
+const conversionArrayTypes: Record<number, (bytes: Uint8Array) => number[]> = {
   71: decodeUint64LE,
   79: decodeInt64LE,
 };
@@ -103,7 +116,10 @@ const conversionArrayTypes = {
  * @param data
  * @param tag
  */
-export default function cborTypedArrayTagger(data: Uint8Array, tag: number) {
+export default function cborTypedArrayTagger(
+  data: Uint8Array<ArrayBuffer>,
+  tag: number,
+) {
   if (tag in nativeArrayTypes) {
     const arrayType = nativeArrayTypes[tag];
     return decodeNativeArray(data, arrayType);

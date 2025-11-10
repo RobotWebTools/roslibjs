@@ -117,7 +117,7 @@ export default class BaseTFClient {
         cbs: [],
       };
       if (!this.republisherUpdateRequested) {
-        setTimeout(this.updateGoal.bind(this), this.updateDelay);
+        setTimeout(() => this.updateGoal(), this.updateDelay);
         this.republisherUpdateRequested = true;
       }
     }

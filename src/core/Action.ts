@@ -8,6 +8,8 @@ import {
   isRosbridgeActionFeedbackMessage,
   isRosbridgeActionResultMessage,
   isRosbridgeCancelActionGoalMessage,
+  isRosbridgeSendActionGoalMessage,
+  RosbridgeSendActionGoalMessage,
 } from "../types/protocol.ts";
 import Ros from "./Ros.js";
 
@@ -124,7 +126,15 @@ export default class Action<
 
     this.#actionCallback = actionCallback;
     this.#cancelCallback = cancelCallback;
-    this.ros.on(this.name, this.#executeAction.bind(this));
+    this.ros.on(this.name, (msg) => {
+      if (isRosbridgeSendActionGoalMessage(msg)) {
+        this.#executeAction.bind(this);
+      } else {
+        throw new Error(
+          "Received unrelated message on Action server event stream!",
+        );
+      }
+    });
     this.ros.callOnConnection({
       op: "advertise_action",
       type: this.actionType,
@@ -156,7 +166,7 @@ export default class Action<
    * @param rosbridgeRequest.id - The ID of the action goal.
    * @param rosbridgeRequest.args - The arguments of the action goal.
    */
-  #executeAction(rosbridgeRequest: { id: string; args: TGoal }) {
+  #executeAction(rosbridgeRequest: RosbridgeSendActionGoalMessage<TGoal>) {
     const id = rosbridgeRequest.id;
 
     // If a cancellation callback exists, call it when a cancellation event is emitted.
@@ -173,7 +183,13 @@ export default class Action<
 
     // Call the action goal execution function provided.
     if (this.#actionCallback) {
-      this.#actionCallback(rosbridgeRequest.args, id);
+      if (rosbridgeRequest.args) {
+        this.#actionCallback(rosbridgeRequest.args, id);
+      } else {
+        throw new Error(
+          "Received Action goal with no arguments! This should never happen, because rosbridge should fill in blanks!",
+        );
+      }
     }
   }
 

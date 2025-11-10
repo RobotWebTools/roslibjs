@@ -19,9 +19,7 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
    * Stores a reference to the most recent service callback advertised so it can be removed from the EventEmitter during un-advertisement
    */
   #serviceCallback:
-    | ((
-        rosbridgeRequest: RosbridgeCallServiceMessage<TRequest>,
-      ) => void | Promise<void>)
+    | ((rosbridgeRequest: RosbridgeCallServiceMessage<TRequest>) => void)
     | null = null;
   isAdvertised = false;
   /**
@@ -112,10 +110,10 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
   ): Promise<void> {
     // Queue this operation to prevent race conditions
     this.#operationQueue = this.#operationQueue
-      .then(async () => {
+      .then(() => {
         // If already advertised, unadvertise first
         if (this.isAdvertised) {
-          await this.#doUnadvertise();
+          this.#doUnadvertise();
         }
 
         // Store the new callback for removal during un-advertisement
@@ -165,7 +163,7 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
   /**
    * Internal method to perform unadvertisement without queueing
    */
-  async #doUnadvertise() {
+  #doUnadvertise() {
     if (!this.isAdvertised || this.#pendingUnadvertise) {
       return;
     }
@@ -202,8 +200,8 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
   async unadvertise(): Promise<void> {
     // Queue this operation to prevent race conditions
     this.#operationQueue = this.#operationQueue
-      .then(async () => {
-        await this.#doUnadvertise();
+      .then(() => {
+        this.#doUnadvertise();
       })
       .catch((err) => {
         this.emit("error", err);
@@ -222,30 +220,32 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
   ): Promise<void> {
     // Queue this operation to prevent race conditions
     this.#operationQueue = this.#operationQueue
-      .then(async () => {
+      .then(() => {
         // If already advertised, unadvertise first
         if (this.isAdvertised) {
-          await this.#doUnadvertise();
+          this.#doUnadvertise();
         }
 
-        this.#serviceCallback = async (rosbridgeRequest) => {
-          try {
-            this.ros.callOnConnection({
-              op: "service_response",
-              service: this.name,
-              result: true,
-              values: await callback(rosbridgeRequest.args),
-              id: rosbridgeRequest.id,
-            } satisfies RosbridgeServiceResponseMessage<TResponse>);
-          } catch (err) {
-            this.ros.callOnConnection({
-              op: "service_response",
-              service: this.name,
-              result: false,
-              values: String(err),
-              id: rosbridgeRequest.id,
-            } satisfies RosbridgeServiceResponseMessage<TResponse>);
-          }
+        this.#serviceCallback = (rosbridgeRequest) => {
+          (async () => {
+            try {
+              this.ros.callOnConnection({
+                op: "service_response",
+                service: this.name,
+                result: true,
+                values: await callback(rosbridgeRequest.args),
+                id: rosbridgeRequest.id,
+              } satisfies RosbridgeServiceResponseMessage<TResponse>);
+            } catch (err) {
+              this.ros.callOnConnection({
+                op: "service_response",
+                service: this.name,
+                result: false,
+                values: String(err),
+                id: rosbridgeRequest.id,
+              } satisfies RosbridgeServiceResponseMessage<TResponse>);
+            }
+          })().catch(console.error);
         };
         this.ros.on(this.name, this.#serviceCallback);
         this.ros.callOnConnection({

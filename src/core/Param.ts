@@ -49,8 +49,7 @@ export default class Param<T = unknown> {
         if (result.successful === false) {
           failedCallback(result.reason);
         } else {
-          const value = JSON.parse(result.value);
-          callback(value);
+          callback(JSON.parse(result.value) as T);
         }
       },
       failedCallback,
