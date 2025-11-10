@@ -11,7 +11,10 @@ export default tseslint.config(
   {
     // Linting rules for TS files, should be combined with the base config when migration is complete
     files: ["**/*.{js,jsx,ts,tsx,cjs}"],
-    extends: [...tseslint.configs.recommended, ...tseslint.configs.stylistic],
+    extends: [
+      ...tseslint.configs.recommendedTypeChecked,
+      ...tseslint.configs.stylistic,
+    ],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
