@@ -16,9 +16,17 @@ import BaseTFClient from "./BaseTFClient.js";
  * A TF Client that listens to TFs from tf2_web_republisher.
  */
 export default class TFClient extends BaseTFClient {
-  currentGoal: Goal<tf2_web_republisher.TFSubscriptionGoal> | false = false;
+  currentGoal:
+    | Goal<
+        tf2_web_republisher.TFSubscriptionGoal,
+        tf2_web_republisher.TFSubscriptionFeedback
+      >
+    | false = false;
   currentTopic: Topic<tf2_msgs.TFMessage> | false = false;
-  actionClient: ActionClient<tf2_web_republisher.TFSubscriptionGoal>;
+  actionClient: ActionClient<
+    tf2_web_republisher.TFSubscriptionGoal,
+    tf2_web_republisher.TFSubscriptionFeedback
+  >;
   #subscribeCB: ((tf: tf2_msgs.TFMessage) => void) | undefined = undefined;
   #isDisposed = false;
 
@@ -63,12 +71,14 @@ export default class TFClient extends BaseTFClient {
     if (this.currentGoal) {
       this.currentGoal.cancel();
     }
-    this.currentGoal = new Goal<tf2_web_republisher.TFSubscriptionGoal>({
+    this.currentGoal = new Goal({
       actionClient: this.actionClient,
       goalMessage: goalMessage,
     });
 
-    this.currentGoal.on("feedback", this.processTFArray.bind(this));
+    this.currentGoal.on("feedback", (feedback) => {
+      this.processTFArray(feedback);
+    });
     this.currentGoal.send();
 
     this.republisherUpdateRequested = false;
@@ -102,8 +112,9 @@ export default class TFClient extends BaseTFClient {
       name: response.topic_name,
       messageType: "tf2_web_republisher/TFArray",
     });
-    this.#subscribeCB = this.processTFArray.bind(this);
-    // @ts-expect-error Function was bound above
+    this.#subscribeCB = (response) => {
+      this.processTFArray(response);
+    };
     this.currentTopic.subscribe(this.#subscribeCB);
   }
 

@@ -9,6 +9,17 @@ import {
 } from "../types/protocol.js";
 import { deserialize } from "bson";
 
+export type RequiredSocketInterface = Pick<
+  WebSocket | RTCDataChannel | import("ws").WebSocket,
+  | "onmessage"
+  | "onclose"
+  | "onerror"
+  | "onopen"
+  | "readyState"
+  | "send"
+  | "close"
+>;
+
 /**
  * Socket adapter that provides unified event handling for WebSocket and RTCDataChannel.
  * Handles transport-level concerns like fragmentation, encoding/decoding, and delegates
@@ -19,7 +30,7 @@ import { deserialize } from "bson";
 export default class SocketAdapter {
   onOpenCallback: (event: Event) => void;
   onCloseCallback: (event: Event) => void;
-  onErrorCallback: (event: Event) => void;
+  onErrorCallback: (event: ErrorEvent) => void;
   onMessageCallback: (message: RosbridgeMessage) => void;
   decoder:
     | ((data: unknown, callback: (message: RosbridgeMessage) => void) => void)
@@ -41,7 +52,7 @@ export default class SocketAdapter {
    * @param [options.decoder] - Optional decoder function
    */
   constructor(
-    private socket: WebSocket | RTCDataChannel | import("ws").WebSocket,
+    private socket: RequiredSocketInterface,
     {
       onOpen,
       onClose,
@@ -51,9 +62,9 @@ export default class SocketAdapter {
     }: {
       onOpen: (event: Event) => void;
       onClose: (event: Event) => void;
-      onError: (event: Event) => void;
+      onError: (event: ErrorEvent) => void;
       onMessage: (message: RosbridgeMessage) => void;
-      decoder: ((data, callback: (error, result) => void) => void) | null;
+      decoder?: ((data, callback: (error, result) => void) => void) | null;
     },
   ) {
     this.onOpenCallback = onOpen;
@@ -62,10 +73,18 @@ export default class SocketAdapter {
     this.onMessageCallback = onMessage;
     this.decoder = decoder;
 
-    this.socket.onopen = (e: Event) => onOpen(e);
-    this.socket.onclose = (e: Event) => onClose(e);
-    this.socket.onerror = (e: Event) => onError(e);
-    this.socket.onmessage = (e: MessageEvent) => this.onmessage(e);
+    this.socket.onopen = (e: Event) => {
+      onOpen(e);
+    };
+    this.socket.onclose = (e: Event) => {
+      onClose(e);
+    };
+    this.socket.onerror = (e: ErrorEvent) => {
+      onError(e);
+    };
+    this.socket.onmessage = (e: MessageEvent) => {
+      this.onmessage(e);
+    };
   }
 
   handleMessage(message: RosbridgeMessage) {
@@ -113,7 +132,7 @@ export default class SocketAdapter {
     // If all integer fragments received, reconstruct and process
     if (entry.received === totalInt) {
       const fullData = entry.fragments.join("");
-      let message;
+      let message: unknown;
       try {
         message = JSON.parse(fullData);
       } catch {
@@ -122,7 +141,11 @@ export default class SocketAdapter {
         return;
       }
       this.fragmentBuffer.delete(id);
-      this.handleMessage(message);
+      if (isRosbridgeMessage(message)) {
+        this.handleMessage(message);
+      } else {
+        throw new Error("Received invalid rosbridge message!");
+      }
     }
   }
 
@@ -133,18 +156,18 @@ export default class SocketAdapter {
     if (isRosbridgePngMessage(message)) {
       // If in Node.js..
       if (typeof window === "undefined") {
-        import("../util/decompressPng.js").then(
-          ({ default: decompressPng }) => {
+        import("../util/decompressPng.js")
+          .then(({ default: decompressPng }) => {
             decompressPng(message.data, callback);
-          },
-        );
+          })
+          .catch(console.error);
       } else {
         // if in browser..
-        import("../util/shim/decompressPng.js").then(
-          ({ default: decompressPng }) => {
+        import("../util/shim/decompressPng.js")
+          .then(({ default: decompressPng }) => {
             decompressPng(message.data, callback);
-          },
-        );
+          })
+          .catch(console.error);
       }
     } else {
       callback(message);
@@ -208,14 +231,29 @@ export default class SocketAdapter {
       });
     } else if (typeof Blob !== "undefined" && data.data instanceof Blob) {
       this.decodeBSON(data.data, (message) => {
-        this.handlePng(message, this.handleMessage.bind(this));
+        this.handlePng(message, (msg) => {
+          this.handleMessage(msg);
+        });
       });
     } else if (data.data instanceof ArrayBuffer) {
       const decoded = CBOR.decode(data.data, typedArrayTagger);
-      this.handleMessage(decoded);
+      if (isRosbridgeMessage(decoded)) {
+        this.handleMessage(decoded);
+      } else {
+        throw new Error("Received invalid rosbridge message!");
+      }
     } else {
-      const message = JSON.parse(typeof data === "string" ? data : data.data);
-      this.handlePng(message, this.handleMessage.bind(this));
+      const message: unknown = JSON.parse(
+        String(typeof data === "string" ? data : data.data),
+      );
+
+      if (isRosbridgeMessage(message)) {
+        this.handlePng(message, (msg) => {
+          this.handleMessage(msg);
+        });
+      } else {
+        throw new Error("Received invalid rosbridge message!");
+      }
     }
   }
 }

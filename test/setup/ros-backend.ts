@@ -17,10 +17,11 @@ const docker = new Docker();
  * Get ROS distro from environment or default to noetic
  */
 function getRosDistro() {
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- this might be an empty string, not undefined.
   return process.env.ROS_DISTRO || "noetic";
 }
 
-async function waitForRosConnection(ros, timeout = 5000) {
+async function waitForRosConnection(ros: Ros, timeout = 5000) {
   return new Promise<void>((resolve, reject) => {
     const timeoutId = setTimeout(() => {
       reject(new Error("Timeout waiting for ROS connection"));
@@ -33,7 +34,7 @@ async function waitForRosConnection(ros, timeout = 5000) {
 
     ros.on("error", (error) => {
       clearTimeout(timeoutId);
-      reject(error);
+      reject(new Error(error));
     });
 
     // If already connected
@@ -47,7 +48,7 @@ async function waitForRosConnection(ros, timeout = 5000) {
 /**
  * Build the ROS test container
  */
-async function buildContainer(rosDistro) {
+async function buildContainer(rosDistro: string) {
   console.log(`Building ROS test container for ${rosDistro}...`);
 
   const stream = await docker.buildImage(
@@ -72,7 +73,7 @@ async function buildContainer(rosDistro) {
           resolve(res);
         }
       },
-      (event) => {
+      (event: { stream?: Uint8Array; errorDetail?: { message: string } }) => {
         if (event.stream) {
           process.stdout.write(event.stream);
         } else if (event.errorDetail) {
@@ -88,7 +89,7 @@ async function buildContainer(rosDistro) {
 /**
  * Start the ROS backend container
  */
-async function startContainer(rosDistro) {
+async function startContainer(rosDistro: string) {
   console.log("Starting ROS backend container...");
 
   // Stop and remove existing container if it exists
@@ -111,7 +112,7 @@ async function startContainer(rosDistro) {
   });
 
   await container.start();
-  console.log(`Container started on port ${CONTAINER_PORT}`);
+  console.log(`Container started on port ${CONTAINER_PORT.toString()}`);
 }
 
 /**
@@ -125,7 +126,7 @@ async function waitForBackend() {
   while (Date.now() - startTime < MAX_WAIT_TIME) {
     try {
       await waitForRosConnection(
-        new Ros({ url: `ws://localhost:${CONTAINER_PORT}` }),
+        new Ros({ url: `ws://localhost:${CONTAINER_PORT.toString()}` }),
       );
       console.log("ROS backend is ready");
       return true;
@@ -149,7 +150,7 @@ async function stopContainer() {
     await container.remove();
     console.log("Container stopped");
   } catch (error) {
-    console.error("Error stopping container:", error.message);
+    console.error("Error stopping container:", String(error));
   }
 }
 
@@ -162,7 +163,7 @@ async function getLogs() {
     const logs = await container.logs({ stdout: true, stderr: true });
     return logs.toString();
   } catch (error) {
-    return `Error getting logs: ${error.message}`;
+    return `Error getting logs: ${String(error)}`;
   }
 }
 

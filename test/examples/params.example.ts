@@ -27,19 +27,25 @@ describe("Param setting", function () {
   it("Param.get", { retry: 3 }, async () => {
     const callback = vi.fn();
     param.get(callback);
-    await vi.waitFor(() => expect(callback).toHaveBeenCalledWith(true));
+    await vi.waitFor(() => {
+      expect(callback).toHaveBeenCalledWith(true);
+    });
   });
 
   it("Param.set w/ callback", async () => {
     const callback = vi.fn();
     param.set(false, callback);
-    await vi.waitFor(() => expect(callback).toHaveBeenCalled());
+    await vi.waitFor(() => {
+      expect(callback).toHaveBeenCalled();
+    });
   });
 
   it("Param.get", async () => {
     const callback = vi.fn();
     param.get(callback);
-    await vi.waitFor(() => expect(callback).toHaveBeenCalledWith(false));
+    await vi.waitFor(() => {
+      expect(callback).toHaveBeenCalledWith(false);
+    });
   });
 
   // Known issue with getting params being able to hang in Humble because it had no timeout.
@@ -57,10 +63,12 @@ describe("Param setting", function () {
   it.skipIf(process.env.ROS_DISTRO !== "noetic")("Param.delete", async () => {
     const callback = vi.fn();
     param.delete(callback);
-    await vi.waitFor(() => expect(callback).toHaveBeenCalled());
+    await vi.waitFor(() => {
+      expect(callback).toHaveBeenCalled();
+    });
     const getParamsCallback = vi.fn();
     ros.getParams(getParamsCallback);
-    vi.waitFor(() =>
+    await vi.waitFor(() =>
       expect(getParamsCallback.mock.calls[0][0]).to.not.include(PARAM_NAME),
     );
   });

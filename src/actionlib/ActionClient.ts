@@ -24,7 +24,7 @@ export default class ActionClient<
   TFeedback = unknown,
   TResult = unknown,
 > extends EventEmitter<{
-  timeout: void;
+  timeout: undefined;
 }> {
   goals: Partial<Record<string, Goal<TGoal>>> = {};
   /** flag to check if a status has been received */

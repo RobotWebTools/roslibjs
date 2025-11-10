@@ -1,5 +1,5 @@
 import { it, describe, expect, vi } from "vitest";
-import { Service, Ros } from "../";
+import { Service, Ros } from "../src/RosLib";
 
 describe("Service", () => {
   const ros = new Ros({
@@ -12,12 +12,12 @@ describe("Service", () => {
       serviceType: "std_srvs/Trigger",
       name: "/test_service",
     });
-    await server.advertiseAsync(async () => {
-      return {
+    await server.advertiseAsync(async () =>
+      Promise.resolve({
         success: true,
         message: "foo",
-      };
-    });
+      }),
+    );
     const client = new Service({
       ros,
       serviceType: "std_srvs/Trigger",
@@ -140,22 +140,22 @@ describe("Service", () => {
     });
 
     // First advertisement
-    await server.advertiseAsync(async () => {
-      return {
+    await server.advertiseAsync(async () =>
+      Promise.resolve({
         success: true,
         message: "first",
-      };
-    });
+      }),
+    );
 
     expect(server.isAdvertised).toBe(true);
 
     // Re-advertise with different callback - should not throw
-    await server.advertiseAsync(async () => {
-      return {
+    await server.advertiseAsync(async () =>
+      Promise.resolve({
         success: true,
         message: "second",
-      };
-    });
+      }),
+    );
 
     expect(server.isAdvertised).toBe(true);
 

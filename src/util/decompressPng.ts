@@ -17,13 +17,13 @@ export default function decompressPng(
   data: string,
   callback: (data: unknown) => void,
 ) {
-  const buffer = new Buffer(data, "base64");
+  const buffer = Buffer.from(data, "base64");
 
   pngparse.parse(buffer, function (err, data) {
-    if (err) {
-      console.warn("Cannot process PNG encoded message ");
+    if (err || !(data instanceof Object) || !("data" in data)) {
+      throw new Error("Cannot process PNG encoded message ");
     } else {
-      const jsonData = data.data.toString();
+      const jsonData = String(data.data);
       callback(JSON.parse(jsonData));
     }
   });

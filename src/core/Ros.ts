@@ -25,6 +25,10 @@ import SimpleActionServer from "../actionlib/SimpleActionServer.js";
 import { EventEmitter } from "eventemitter3";
 import { rosapi } from "../types/rosapi.ts";
 
+function isRTCPeerDataChannel(obj: unknown): obj is RTCPeerConnection {
+  return obj?.constructor.name === "RTCDataChannel";
+}
+
 /**
  * Manages connection to the server and all interactions with ROS.
  *
@@ -48,7 +52,13 @@ export default class Ros extends EventEmitter<
   idCounter = 0;
   isConnected = false;
   transportLibrary: "websocket" | RTCPeerConnection;
-  transportOptions;
+  transportOptions: {
+    decoder?: (message: unknown) => unknown;
+    encoder?: (
+      message: unknown,
+      callback: (encodedMessage: string) => void,
+    ) => unknown;
+  };
   /**
    * @param [options]
    * @param [options.url] - The WebSocket URL for rosbridge. Can be specified later with `connect`.
@@ -71,7 +81,7 @@ export default class Ros extends EventEmitter<
 
     // begin by checking if a URL was given
     if (url) {
-      this.connect(url);
+      this.connect(url).catch(console.error);
     }
   }
   /**
@@ -82,14 +92,14 @@ export default class Ros extends EventEmitter<
   async #createTransport(
     url: string,
   ): Promise<WebSocket | RTCDataChannel | import("ws").WebSocket | null> {
-    if (this.transportLibrary.constructor.name === "RTCPeerConnection") {
-      // @ts-expect-error -- this is kinda wild. `this.transportLibrary` can either be a string or an RTCDataChannel. This needs fixing.
+    if (isRTCPeerDataChannel(this.transportLibrary)) {
       const dataChannel = this.transportLibrary.createDataChannel(
         url,
+        // @ts-expect-error -- why are the options for an RTC channel conflated with the options for roslibjs's bespoke socket adapter??
         this.transportOptions,
       );
       return dataChannel;
-    } else if (this.transportLibrary === "websocket") {
+    } else {
       // browsers, Deno, and Bun support WebSockets natively
       if (typeof WebSocket === "function") {
         if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
@@ -108,8 +118,6 @@ export default class Ros extends EventEmitter<
         }
         return null; // Already connected
       }
-    } else {
-      throw "Unknown transportLibrary: " + this.transportLibrary.toString();
     }
   }
 
@@ -133,7 +141,7 @@ export default class Ros extends EventEmitter<
         this.emit("close", event);
       },
       onError: (event) => {
-        this.emit("error", String(event));
+        this.emit("error", String(event.error));
       },
       onMessage: (message) => {
         this.#handleMessage(message);
@@ -239,13 +247,15 @@ export default class Ros extends EventEmitter<
    *
    * @param message - The message to be sent.
    */
-  callOnConnection<TMessage extends RosbridgeMessage>(message: TMessage) {
+  callOnConnection = (message: unknown) => {
     if (this.transportOptions.encoder) {
-      this.transportOptions.encoder(message, this.sendEncodedMessage);
+      this.transportOptions.encoder(message, (msg) => {
+        this.sendEncodedMessage(msg);
+      });
     } else {
       this.sendEncodedMessage(JSON.stringify(message));
     }
-  }
+  };
   /**
    * Send a set_level request to the server.
    *
@@ -673,14 +683,17 @@ export default class Ros extends EventEmitter<
    * @param defs - Array of type_def dictionary.
    */
   decodeTypeDefs(defs: rosapi.TypeDef[]) {
-    const decodeTypeDefsRec = (theType, hints) => {
+    const decodeTypeDefsRec = (
+      theType: rosapi.TypeDef,
+      hints: rosapi.TypeDef[],
+    ) => {
       // calls itself recursively to resolve type definition using hints.
       const typeDefDict = {};
       for (let i = 0; i < theType.fieldnames.length; i++) {
         const arrayLen = theType.fieldarraylen[i];
         const fieldName = theType.fieldnames[i];
         const fieldType = theType.fieldtypes[i];
-        if (fieldType.indexOf("/") === -1) {
+        if (!fieldType.includes("/")) {
           // check the fieldType includes '/' or not
           if (arrayLen === -1) {
             typeDefDict[fieldName] = fieldType;
@@ -689,9 +702,9 @@ export default class Ros extends EventEmitter<
           }
         } else {
           // lookup the name
-          let sub = false;
+          let sub: boolean | rosapi.TypeDef = false;
           for (const hint of hints) {
-            if (hint.type.toString() === fieldType.toString()) {
+            if (hint.type === fieldType) {
               sub = hint;
               break;
             }

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Connecting to ROS
-import ROSLIB from "roslib";
+import ROSLIB from "../src/index";
 
 const ros = new ROSLIB.Ros({
   url: "ws://localhost:9090",

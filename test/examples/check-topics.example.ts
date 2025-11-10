@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import * as ROSLIB from "../../src/RosLib.js";
+import { rosapi } from "../../src/types/rosapi.js";
 
 const expectedTopics = ["/listener"];
 
@@ -9,13 +10,14 @@ describe("Example topics are live", function () {
   });
 
   it("getTopics", async () => {
-    const callback = vi.fn();
+    const callback = vi.fn((res: rosapi.TopicsResponse) => {
+      for (const topic of expectedTopics) {
+        expect(res.topics).to.contain(topic);
+      }
+    });
     ros.getTopics(callback);
     await vi.waitFor(() => {
       expect(callback).toHaveBeenCalledOnce();
-      for (const topic of expectedTopics) {
-        expect(callback.mock.calls[0][0].topics).to.contain(topic);
-      }
     });
   });
 
@@ -25,33 +27,35 @@ describe("Example topics are live", function () {
   });
 
   it("doesn't automatically advertise the topic", async () => {
-    const callback = vi.fn();
+    const callback = vi.fn((res: rosapi.TopicsResponse) => {
+      expect(res.topics).not.to.contain("/some_test_topic");
+    });
     ros.getTopics(callback);
     await vi.waitFor(() => {
       expect(callback).toHaveBeenCalledOnce();
-      expect(callback.mock.calls[0][0].topics).not.to.contain(
-        "/some_test_topic",
-      );
     });
     example.advertise();
   });
 
   it("advertise broadcasts the topic", async () => {
-    const callback = vi.fn();
+    const callback = vi.fn((res: rosapi.TopicsResponse) => {
+      expect(res.topics).to.contain("/some_test_topic");
+    });
     ros.getTopics(callback);
     await vi.waitFor(() => {
       expect(callback).toHaveBeenCalledOnce();
-      expect(callback.mock.calls[0][0].topics).to.contain("/some_test_topic");
     });
     example.unadvertise();
   });
 
   it("unadvertise will end the topic (if it's the last around)", async () => {
-    const callback = vi.fn();
-    ros.getTopics(callback);
-    vi.waitFor(function () {
-      expect(callback).toHaveBeenCalledOnce();
-      expect(callback.mock.calls[0][0]).not.to.contain("/some_test_topic");
+    const callback = vi.fn<(res: rosapi.TopicsResponse) => void>();
+    await vi.waitFor(function () {
+      ros.getTopics(callback);
+      expect(callback).toHaveBeenCalled();
+      expect(callback.mock.calls.at(-1)?.at(0)?.topics).not.to.contain(
+        "/some_test_topic",
+      );
     }, 15000);
-  });
+  }, 15000);
 });

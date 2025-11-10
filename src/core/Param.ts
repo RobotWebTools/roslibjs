@@ -46,11 +46,10 @@ export default class Param<T = unknown> {
     paramClient.callService(
       request,
       function (result) {
-        if (result.successful === false) {
+        if ("successful" in result && !result.successful) {
           failedCallback(result.reason);
         } else {
-          const value = JSON.parse(result.value);
-          callback(value);
+          callback(JSON.parse(result.value) as T);
         }
       },
       failedCallback,
@@ -85,7 +84,7 @@ export default class Param<T = unknown> {
     paramClient.callService(
       request,
       function (result) {
-        if (result.successful === false) {
+        if ("successful" in result && !result.successful) {
           failedCallback(result.reason);
         } else if (callback) {
           callback(result);
@@ -120,7 +119,7 @@ export default class Param<T = unknown> {
     paramClient.callService(
       request,
       function (result) {
-        if (result.successful === false) {
+        if ("successful" in result && !result.successful) {
           failedCallback(result.reason);
         } else {
           callback(result);

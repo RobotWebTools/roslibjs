@@ -76,7 +76,7 @@ export default class BaseTFClient {
   processTFArray(tf: tf2_msgs.TFMessage) {
     tf.transforms.forEach((transform) => {
       let frameID = transform.child_frame_id;
-      if (frameID[0] === "/") {
+      if (frameID.startsWith("/")) {
         frameID = frameID.substring(1);
       }
       const info = this.frameInfos[frameID];
@@ -86,7 +86,9 @@ export default class BaseTFClient {
           rotation: transform.transform.rotation,
         });
         info.transform = tf;
-        info.cbs.forEach((cb) => cb(tf));
+        info.cbs.forEach((cb) => {
+          cb(tf);
+        });
       }
     }, this);
   }
@@ -117,7 +119,9 @@ export default class BaseTFClient {
         cbs: [],
       };
       if (!this.republisherUpdateRequested) {
-        setTimeout(this.updateGoal.bind(this), this.updateDelay);
+        setTimeout(() => {
+          this.updateGoal();
+        }, this.updateDelay);
         this.republisherUpdateRequested = true;
       }
     }
@@ -143,12 +147,13 @@ export default class BaseTFClient {
     }
     const info = this.frameInfos[frameID];
     // eslint-disable-next-line no-var -- literally what even is going on here
-    for (var cbs = info?.cbs || [], idx = cbs.length; idx--; ) {
+    for (var cbs = info?.cbs ?? [], idx = cbs.length; idx--; ) {
       if (cbs[idx] === callback) {
         cbs.splice(idx, 1);
       }
     }
     if (!callback || cbs.length === 0) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- TODO: refactor this to not cause runtime errors if you have a frame like "prototype" that would make JavaScript explode if you deleted it from an object
       delete this.frameInfos[frameID];
     }
   }

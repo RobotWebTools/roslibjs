@@ -32,8 +32,9 @@ describe("Topics Example", function () {
         return; // Skip our own published message
       }
 
-      if (messages1Copy.length) {
-        example.publish(messages1Copy.shift()!);
+      const nextMessage = messages1Copy.shift();
+      if (nextMessage) {
+        example.publish(nextMessage);
       }
     });
 
@@ -42,15 +43,17 @@ describe("Topics Example", function () {
         return; // Skip our own published message
       }
 
-      if (messages2Copy.length) {
-        example2.publish(messages2Copy.shift()!);
+      const nextMessage = messages2Copy.shift();
+      if (nextMessage) {
+        example2.publish(nextMessage);
       }
     });
 
     example.subscribe(example1Callback);
     example2.subscribe(example2Callback);
 
-    // Start the conversation
+    // Start the conversationc
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- this is the first shift, we know it's there
     example.publish(messages1Copy.shift()!);
 
     // Wait for all expected calls to complete

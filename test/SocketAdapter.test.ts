@@ -1,15 +1,23 @@
 import { it, describe, expect, beforeEach, vi } from "vitest";
-import SocketAdapter from "../src/core/SocketAdapter.js";
+import SocketAdapter, {
+  RequiredSocketInterface,
+} from "../src/core/SocketAdapter.js";
+import { Ros } from "../src/index.js";
+import {
+  isRosbridgePublishMessage,
+  RosbridgeMessage,
+} from "../src/types/protocol.js";
 
 describe("SocketAdapter fragment handling", () => {
-  let client;
-  let adapter;
-  let mockSocket;
+  let client: Pick<Ros, "emit" | "transportOptions" | "isConnected">;
+  let adapter: SocketAdapter;
+  let mockSocket: RequiredSocketInterface;
 
   beforeEach(() => {
     client = {
       emit: vi.fn(),
       transportOptions: {},
+      isConnected: false,
     };
 
     // Create mock WebSocket
@@ -24,21 +32,21 @@ describe("SocketAdapter fragment handling", () => {
     };
 
     const options = {
-      onOpen: (event) => {
+      onOpen: (event: Event) => {
         client.isConnected = true;
         client.emit("connection", event);
       },
-      onClose: (event) => {
+      onClose: (event: Event) => {
         client.isConnected = false;
         client.emit("close", event);
       },
-      onError: (event) => {
-        client.emit("error", event);
+      onError: (event: ErrorEvent) => {
+        client.emit("error", String(event.error));
       },
-      onMessage: (message) => {
+      onMessage: (message: RosbridgeMessage) => {
         // Simulate Ros.js message handling
-        if (message.op === "publish") {
-          client.emit(message.topic, message.msg);
+        if (isRosbridgePublishMessage(message)) {
+          client.emit(message.topic, message);
         }
       },
     };
@@ -47,9 +55,10 @@ describe("SocketAdapter fragment handling", () => {
     vi.clearAllMocks();
   });
 
-  function sendFragment(id, total, fragments) {
+  function sendFragment(id: string, total: number, fragments: unknown[]) {
     for (let i = 0; i < fragments.length; i++) {
       // Simulate socket receiving a message
+      // @ts-expect-error -- mock unhappy about `this` context mismatch
       mockSocket.onmessage({
         data: JSON.stringify({
           op: "fragment",
@@ -69,7 +78,7 @@ describe("SocketAdapter fragment handling", () => {
     const json = JSON.stringify(msg);
     const fragments = [json.slice(0, 10), json.slice(10, 20), json.slice(20)];
     sendFragment(id, total, fragments);
-    expect(client.emit).toHaveBeenCalledWith("foo", { data: 42 });
+    expect(client.emit).toHaveBeenCalledWith("foo", msg);
     expect(client.emit).toHaveBeenCalledTimes(1);
   });
 
@@ -80,7 +89,7 @@ describe("SocketAdapter fragment handling", () => {
     const json = JSON.stringify(msg);
     const fragments = [json.slice(0, 10), json.slice(10)];
     sendFragment(id, total, fragments);
-    expect(client.emit).toHaveBeenCalledWith("bar", { data: 99 });
+    expect(client.emit).toHaveBeenCalledWith("bar", msg);
     expect(client.emit).toHaveBeenCalledTimes(1);
   });
 
@@ -91,7 +100,7 @@ describe("SocketAdapter fragment handling", () => {
     const json = JSON.stringify(msg);
     const fragments = [json.slice(0, 10), json.slice(10), "extra"];
     sendFragment(id, total, fragments);
-    expect(client.emit).toHaveBeenCalledWith("baz", { data: 7 });
+    expect(client.emit).toHaveBeenCalledWith("baz", msg);
     expect(client.emit).toHaveBeenCalledTimes(1);
   });
 
@@ -106,7 +115,8 @@ describe("SocketAdapter fragment handling", () => {
   });
 
   it("ignores malformed fragments", () => {
-    mockSocket.onmessage({
+    // @ts-expect-error -- mock unhappy about `this` context mismatch
+    mockSocket.onmessage?.({
       data: JSON.stringify({ op: "fragment", id: "bad" }),
     });
     expect(client.emit).not.toHaveBeenCalled();
@@ -114,22 +124,28 @@ describe("SocketAdapter fragment handling", () => {
 
   describe("socket event handling", () => {
     it("handles socket open event", () => {
-      mockSocket.onopen({ type: "open" });
+      // @ts-expect-error -- mock unhappy about `this` context mismatch
+      mockSocket.onopen?.({ type: "open" });
       expect(client.isConnected).toBe(true);
       expect(client.emit).toHaveBeenCalledWith("connection", { type: "open" });
     });
 
     it("handles socket close event", () => {
       client.isConnected = true;
-      mockSocket.onclose({ type: "close" });
+      // @ts-expect-error -- mock unhappy about `this` context mismatch
+      mockSocket.onclose?.({ type: "close" });
       expect(client.isConnected).toBe(false);
       expect(client.emit).toHaveBeenCalledWith("close", { type: "close" });
     });
 
     it("handles socket error event", () => {
-      const errorEvent = { type: "error", message: "Connection failed" };
-      mockSocket.onerror(errorEvent);
-      expect(client.emit).toHaveBeenCalledWith("error", errorEvent);
+      const errorEvent = { error: new Error("Connection failed") };
+      // @ts-expect-error -- mock unhappy about `this` context mismatch
+      mockSocket.onerror?.(errorEvent);
+      expect(client.emit).toHaveBeenCalledWith(
+        "error",
+        "Error: Connection failed",
+      );
     });
   });
 
@@ -141,6 +157,7 @@ describe("SocketAdapter fragment handling", () => {
     });
 
     it("does not send data when socket is closed", () => {
+      // @ts-expect-error -- normally readonly type being manipulated as a mock
       mockSocket.readyState = 3; // WebSocket.CLOSED
       const testData = "test message";
       adapter.send(testData);
@@ -153,6 +170,7 @@ describe("SocketAdapter fragment handling", () => {
     });
 
     it("returns socket readyState", () => {
+      // @ts-expect-error -- normally readonly type being manipulated as a mock
       mockSocket.readyState = 2; // WebSocket.CLOSING
       expect(adapter.readyState).toBe(2);
     });

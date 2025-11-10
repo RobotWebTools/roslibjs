@@ -5,7 +5,11 @@ export interface RosbridgeMessage {
 export function isRosbridgeMessage(
   message: unknown,
 ): message is RosbridgeMessage {
-  return message instanceof Object && typeof message["op"] === "string";
+  return (
+    message instanceof Object &&
+    "op" in message &&
+    typeof message.op === "string"
+  );
 }
 
 export interface RosbridgeStatusMessage extends RosbridgeMessage {
@@ -219,7 +223,7 @@ export function isRosbridgeUnadvertiseActionMessage(
 export interface RosbridgeSendActionGoalMessage<TArgs = unknown>
   extends RosbridgeMessage {
   op: "send_action_goal";
-  id?: string;
+  id: string;
   action: string;
   action_type: string;
   args?: TArgs;
