@@ -30,7 +30,7 @@ export default tseslint.config(
       "no-cond-assign": 0,
       "no-eq-null": 0,
       strict: 0,
-      "prettier/prettier": 2,
+      "prettier/prettier": [2, { endOfLine: "auto" }],
       "no-proto": 2,
       // Disabled to allow namespaced ROS message types since that's how we think about message types in ROS
       "@typescript-eslint/no-namespace": 0,
