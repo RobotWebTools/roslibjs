@@ -12,6 +12,7 @@ import {
   RosbridgeSendActionGoalMessage,
 } from "../types/protocol.ts";
 import Ros from "./Ros.js";
+import { v4 as uuidv4 } from "uuid";
 
 /**
  * A ROS 2 action client.
@@ -67,7 +68,7 @@ export default class Action<
       return;
     }
 
-    const actionGoalId = `send_action_goal:${this.name}:${(++this.ros.idCounter).toString()}`;
+    const actionGoalId = `send_action_goal:${this.name}:${uuidv4()}`;
 
     this.ros.on(actionGoalId, function (message) {
       if (isRosbridgeActionResultMessage<TResult>(message)) {

@@ -49,7 +49,6 @@ export default class Ros extends EventEmitter<
 > {
   /** @type {import('./SocketAdapter.js').default | null} */
   socket: import("./SocketAdapter.js").default | null = null;
-  idCounter = 0;
   isConnected = false;
   transportLibrary: "websocket" | RTCPeerConnection;
   transportOptions: {

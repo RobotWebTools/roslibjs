@@ -6,6 +6,7 @@
 import { EventEmitter } from "eventemitter3";
 import ActionClient from "./ActionClient";
 import { actionlib_msgs } from "../types/actionlib_msgs";
+import { v4 as uuidv4 } from "uuid";
 
 /**
  * An actionlib goal that is associated with an action server.
@@ -28,7 +29,7 @@ export default class Goal<
   result?: TResult = undefined;
   feedback?: TFeedback = undefined;
   // Create a random ID
-  goalID = `goal_${Math.random().toString()}_${new Date().getTime().toString()}`;
+  goalID = `goal_${uuidv4()}`;
   actionClient: ActionClient<TGoal, TFeedback, TResult>;
   goalMessage: { goal: TGoal; goal_id: actionlib_msgs.GoalID };
   /**

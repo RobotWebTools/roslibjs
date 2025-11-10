@@ -10,6 +10,7 @@ import {
   RosbridgeServiceResponseMessage,
 } from "../types/protocol.ts";
 import Ros from "./Ros.js";
+import { v4 as uuidv4 } from "uuid";
 
 /**
  * A ROS service client.
@@ -73,8 +74,7 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
       return;
     }
 
-    const serviceCallId =
-      "call_service:" + this.name + ":" + (++this.ros.idCounter).toString();
+    const serviceCallId = "call_service:" + this.name + ":" + uuidv4();
 
     this.ros.once(serviceCallId, function (message) {
       if (isRosbridgeServiceResponseMessage<TResponse>(message)) {
