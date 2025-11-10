@@ -38,7 +38,7 @@ export default class SimpleActionServer<
     result?: TResult;
     status: actionlib_msgs.GoalStatus;
   }>;
-  statusPublisher: Topic<actionlib_msgs.GoalStatusArray>;
+  statusPublisher?: Topic<actionlib_msgs.GoalStatusArray>;
   statusMessage: actionlib_msgs.GoalStatusArray;
   /**
    * @param options

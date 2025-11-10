@@ -42,13 +42,13 @@
     "strictBuiltinIteratorReturn": true /* Built-in iterators are instantiated with a 'TReturn' type of 'undefined' instead of 'any'. */,
     "useUnknownInCatchVariables": true /* Default catch clause variables as `unknown` instead of `any`. */,
     "strictFunctionTypes": true /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */,
+    "strictPropertyInitialization": true /* Check for class properties that are declared but not set in the constructor. */,
+    "noImplicitOverride": true /* Ensure overriding members in derived classes are marked with an override modifier. */,
 
     /* Rules to be enabled */
     "exactOptionalPropertyTypes": false /* Differentiate between undefined and not present when type checking */,
     "noImplicitAny": false /* Enable error reporting for expressions and declarations with an implied 'any' type. */,
-    "noImplicitOverride": false /* Ensure overriding members in derived classes are marked with an override modifier. */,
     "noUncheckedIndexedAccess": false /* Add `undefined` to a type when accessed using an index. */,
-    "strictPropertyInitialization": false /* Check for class properties that are declared but not set in the constructor. */,
 
     "types": ["@types/node"]
   },

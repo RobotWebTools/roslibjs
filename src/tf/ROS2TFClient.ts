@@ -12,7 +12,7 @@ export default class ROS2TFClient extends BaseTFClient {
     tf2_web_republisher.TFSubscriptionFeedback,
     tf2_web_republisher.TFSubscriptionResult
   >;
-  currentGoal: tf2_web_republisher.TFSubscriptionGoal;
+  currentGoal?: tf2_web_republisher.TFSubscriptionGoal;
 
   constructor(options: ConstructorParameters<typeof BaseTFClient>[0]) {
     super(options);
@@ -31,7 +31,7 @@ export default class ROS2TFClient extends BaseTFClient {
    * Create and send a new goal (or service request) to the tf2_web_republisher
    * based on the current list of TFs.
    */
-  updateGoal() {
+  override updateGoal() {
     const goalMessage = {
       source_frames: Object.keys(this.frameInfos),
       target_frame: this.fixedFrame,
