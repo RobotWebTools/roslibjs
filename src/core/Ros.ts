@@ -35,7 +35,7 @@ export type TransportLibrary =
   | RTCPeerConnection
   | TransportFactory;
 
-export interface RTCTransportOptions extends RTCDataChannelInit {
+export interface TransportOptions extends RTCDataChannelInit {
   /**
    * Hook to handle outgoing socket message and encode it.
    */
@@ -81,7 +81,7 @@ export default class Ros extends EventEmitter<
   socket: SocketAdapter | null = null;
   isConnected = false;
   transportLibrary: TransportLibrary;
-  transportOptions: RTCTransportOptions;
+  transportOptions: TransportOptions;
   /**
    * @param [options]
    * @param [options.url] - The WebSocket URL for rosbridge. Can be specified later with `connect`.
@@ -95,7 +95,7 @@ export default class Ros extends EventEmitter<
   }: {
     url?: string;
     transportLibrary?: TransportLibrary;
-    transportOptions?: RTCTransportOptions;
+    transportOptions?: TransportOptions;
   } = {}) {
     super();
 
