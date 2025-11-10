@@ -3,7 +3,8 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-import socketAdapter from "./SocketAdapter.js";
+import type { RequiredSocketInterface } from "./SocketAdapter.js";
+import SocketAdapter from "./SocketAdapter.js";
 import type { RosbridgeMessage } from "../types/protocol.js";
 import {
   isRosbridgeActionFeedbackMessage,
@@ -24,11 +25,40 @@ import ActionClient from "../actionlib/ActionClient.js";
 import SimpleActionServer from "../actionlib/SimpleActionServer.js";
 import { EventEmitter } from "eventemitter3";
 import type { rosapi } from "../types/rosapi.ts";
-import type { WebSocket as WsWebSocket } from "ws";
 
 function isRTCPeerDataChannel(obj: unknown): obj is RTCPeerConnection {
   return obj?.constructor.name === "RTCDataChannel";
 }
+
+export type TransportLibrary =
+  | "websocket"
+  | RTCPeerConnection
+  | TransportFactory;
+
+export interface RTCTransportOptions extends RTCDataChannelInit {
+  /**
+   * Hook to handle outgoing socket message and encode it.
+   */
+  encoder?: (
+    message: unknown,
+    callback: (encodedMessage: string) => void,
+  ) => unknown;
+  /**
+   * Hook to handle incoming socket message and decode it.
+   */
+  decoder?: (message: unknown) => unknown;
+}
+
+/**
+ * Function that is called whenever a new transport is needed.
+ * For example, to connect a websocket to the rosbridge server.
+ */
+export type TransportFactory = (
+  /**
+   * The WebSocket URL for rosbridge.
+   */
+  url: string,
+) => Promise<RequiredSocketInterface>;
 
 /**
  * Manages connection to the server and all interactions with ROS.
@@ -48,21 +78,15 @@ export default class Ros extends EventEmitter<
     // Any dynamically-named event should correspond to a rosbridge protocol message
   } & Record<string, [RosbridgeMessage]>
 > {
-  socket: socketAdapter | null = null;
+  socket: SocketAdapter | null = null;
   isConnected = false;
-  transportLibrary: "websocket" | RTCPeerConnection;
-  transportOptions: {
-    decoder?: (message: unknown) => unknown;
-    encoder?: (
-      message: unknown,
-      callback: (encodedMessage: string) => void,
-    ) => unknown;
-  };
+  transportLibrary: TransportLibrary;
+  transportOptions: RTCTransportOptions;
   /**
    * @param [options]
    * @param [options.url] - The WebSocket URL for rosbridge. Can be specified later with `connect`.
    * @param [options.transportLibrary='websocket'] - 'websocket', or an RTCPeerConnection instance controlling how the connection is created in `connect`.
-   * @param [options.transportOptions={}] - The options to use when creating a connection. Currently only used if `transportLibrary` is RTCPeerConnection.
+   * @param [options.transportOptions={}] - The options to use when creating a connection.
    */
   constructor({
     url,
@@ -70,8 +94,8 @@ export default class Ros extends EventEmitter<
     transportOptions = {},
   }: {
     url?: string;
-    transportLibrary?: "websocket" | RTCPeerConnection;
-    transportOptions?: object;
+    transportLibrary?: TransportLibrary;
+    transportOptions?: RTCTransportOptions;
   } = {}) {
     super();
 
@@ -88,49 +112,59 @@ export default class Ros extends EventEmitter<
    * @param url - WebSocket URL or RTCDataChannel label for rosbridge.
    * @returns The created transport
    */
-  async #createTransport(
-    url: string,
-  ): Promise<WebSocket | RTCDataChannel | WsWebSocket | null> {
+  async #createTransport(url: string): Promise<RequiredSocketInterface> {
     if (isRTCPeerDataChannel(this.transportLibrary)) {
       const dataChannel = this.transportLibrary.createDataChannel(
         url,
-        // @ts-expect-error -- why are the options for an RTC channel conflated with the options for roslibjs's bespoke socket adapter??
         this.transportOptions,
       );
       return dataChannel;
-    } else {
-      // browsers, Deno, and Bun support WebSockets natively
-      if (typeof WebSocket === "function") {
-        if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
-          const sock = new WebSocket(url);
-          sock.binaryType = "arraybuffer";
-          return sock;
-        }
-        return null; // Already connected
-      } else {
-        // if in Node.js, import ws to replace WebSocket API
-        const ws = await import("ws");
-        if (!this.socket || this.socket.readyState === ws.WebSocket.CLOSED) {
-          const sock = new ws.WebSocket(url);
-          sock.binaryType = "arraybuffer";
-          return sock;
-        }
-        return null; // Already connected
-      }
     }
-  }
 
+    // Custom factory function to create a transport.
+    if (typeof this.transportLibrary === "function") {
+      return this.transportLibrary(url);
+    }
+
+    // Browsers, Deno, Bun, and Node 22+ support WebSockets natively
+    if (typeof WebSocket === "function") {
+      const sock = new WebSocket(url);
+      sock.binaryType = "arraybuffer";
+      return sock;
+    }
+
+    // If in Node.js, import ws to replace WebSocket API
+    const ws = await import("ws");
+    const sock = new ws.WebSocket(url);
+    sock.binaryType = "arraybuffer";
+    return sock;
+  }
+  /**
+   * Check if we need to create a new transport.
+   */
+  #checkIfNeedNewTransport(): boolean {
+    // For backwards compatibility, a new RTC transport was always created
+    if (isRTCPeerDataChannel(this.transportLibrary)) {
+      return true;
+    }
+    // Should we create a new transport if the socket is closing, too?
+    if (!this.socket || this.socket.isClosed()) {
+      return true;
+    }
+    // Socket isn't closed, keep using it
+    return false;
+  }
   /**
    * @param url - WebSocket URL or RTCDataChannel label for rosbridge.
    */
   async connect(url: string) {
-    const transport = await this.#createTransport(url);
-
-    if (!transport) {
+    if (!this.#checkIfNeedNewTransport()) {
       return; // Already connected
     }
 
-    this.socket = new socketAdapter(transport, {
+    const transport = await this.#createTransport(url);
+
+    this.socket = new SocketAdapter(transport, {
       onOpen: (event) => {
         this.isConnected = true;
         this.emit("connection", event);
