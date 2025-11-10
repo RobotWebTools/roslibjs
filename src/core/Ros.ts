@@ -693,7 +693,7 @@ export default class Ros extends EventEmitter<
         const arrayLen = theType.fieldarraylen[i];
         const fieldName = theType.fieldnames[i];
         const fieldType = theType.fieldtypes[i];
-        if (fieldType.indexOf("/") === -1) {
+        if (!fieldType.includes("/")) {
           // check the fieldType includes '/' or not
           if (arrayLen === -1) {
             typeDefDict[fieldName] = fieldType;

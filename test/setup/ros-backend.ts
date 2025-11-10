@@ -17,6 +17,7 @@ const docker = new Docker();
  * Get ROS distro from environment or default to noetic
  */
 function getRosDistro() {
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- this might be an empty string, not undefined.
   return process.env.ROS_DISTRO || "noetic";
 }
 

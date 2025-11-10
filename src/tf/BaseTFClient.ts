@@ -76,7 +76,7 @@ export default class BaseTFClient {
   processTFArray(tf: tf2_msgs.TFMessage) {
     tf.transforms.forEach((transform) => {
       let frameID = transform.child_frame_id;
-      if (frameID[0] === "/") {
+      if (frameID.startsWith("/")) {
         frameID = frameID.substring(1);
       }
       const info = this.frameInfos[frameID];
@@ -143,7 +143,7 @@ export default class BaseTFClient {
     }
     const info = this.frameInfos[frameID];
     // eslint-disable-next-line no-var -- literally what even is going on here
-    for (var cbs = info?.cbs || [], idx = cbs.length; idx--; ) {
+    for (var cbs = info?.cbs ?? [], idx = cbs.length; idx--; ) {
       if (cbs[idx] === callback) {
         cbs.splice(idx, 1);
       }
