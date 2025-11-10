@@ -5,10 +5,13 @@
 
 import { EventEmitter } from "eventemitter3";
 import type {
-  RosbridgeCallServiceMessage,
+  RosbridgeMessage,
   RosbridgeServiceResponseMessage,
 } from "../types/protocol.ts";
-import { isRosbridgeServiceResponseMessage } from "../types/protocol.ts";
+import {
+  isRosbridgeCallServiceMessage,
+  isRosbridgeServiceResponseMessage,
+} from "../types/protocol.ts";
 import type Ros from "./Ros.js";
 import { v4 as uuidv4 } from "uuid";
 
@@ -19,9 +22,8 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
   /**
    * Stores a reference to the most recent service callback advertised so it can be removed from the EventEmitter during un-advertisement
    */
-  #serviceCallback:
-    | ((rosbridgeRequest: RosbridgeCallServiceMessage<TRequest>) => void)
-    | null = null;
+  #serviceCallback: ((rosbridgeRequest: RosbridgeMessage) => void) | null =
+    null;
   isAdvertised = false;
   /**
    * Queue for serializing advertise/unadvertise operations to prevent race conditions
@@ -118,6 +120,11 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
 
         // Store the new callback for removal during un-advertisement
         this.#serviceCallback = (rosbridgeRequest) => {
+          if (!isRosbridgeCallServiceMessage<TRequest>(rosbridgeRequest)) {
+            throw new Error(
+              `Invalid message received on service channel: ${JSON.stringify(rosbridgeRequest)}`,
+            );
+          }
           const response = {};
           let success: boolean;
           try {
@@ -227,6 +234,11 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
         }
 
         this.#serviceCallback = (rosbridgeRequest) => {
+          if (!isRosbridgeCallServiceMessage<TRequest>(rosbridgeRequest)) {
+            throw new Error(
+              `Invalid message received on service channel: ${JSON.stringify(rosbridgeRequest)}`,
+            );
+          }
           (async () => {
             try {
               this.ros.callOnConnection({

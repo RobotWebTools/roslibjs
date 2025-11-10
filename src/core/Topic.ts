@@ -6,10 +6,11 @@
 import { EventEmitter } from "eventemitter3";
 import Service from "./Service.js";
 import type Ros from "./Ros.js";
-import type {
-  RosbridgeAdvertiseMessage,
-  RosbridgePublishMessage,
-  RosbridgeSubscribeMessage,
+import {
+  isRosbridgePublishMessage,
+  type RosbridgeAdvertiseMessage,
+  type RosbridgeMessage,
+  type RosbridgeSubscribeMessage,
 } from "../types/protocol.ts";
 import type { rosapi } from "../types/rosapi.ts";
 import { v4 as uuidv4 } from "uuid";
@@ -138,8 +139,14 @@ export default class Topic<T> extends EventEmitter<{
     }
   }
 
-  #messageCallback = (data: RosbridgePublishMessage<T>) => {
-    this.emit("message", data.msg);
+  #messageCallback = (data: RosbridgeMessage) => {
+    if (isRosbridgePublishMessage<T>(data)) {
+      this.emit("message", data.msg);
+    } else {
+      throw new Error(
+        `Unexpected message on topic channel: ${JSON.stringify(data)}`,
+      );
+    }
   };
   /**
    * Every time a message is published for the given topic, the callback
