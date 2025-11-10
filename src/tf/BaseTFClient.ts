@@ -1,7 +1,7 @@
 import Transform from "../math/Transform.js";
-import Ros from "../core/Ros.js";
-import { tf2_msgs } from "../types/tf2_msgs.js";
-import { std_msgs } from "../types/std_msgs.js";
+import type Ros from "../core/Ros.js";
+import type { tf2_msgs } from "../types/tf2_msgs.js";
+import type { std_msgs } from "../types/std_msgs.js";
 
 /**
  * Base class for TF Clients that provides common functionality.

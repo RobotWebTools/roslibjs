@@ -1,4 +1,4 @@
-import { tf2_web_republisher } from "../types/tf2_web_republisher.js";
+import type { tf2_web_republisher } from "../types/tf2_web_republisher.js";
 import Action from "../core/Action.js";
 import BaseTFClient from "./BaseTFClient.js";
 

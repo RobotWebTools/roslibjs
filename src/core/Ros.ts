@@ -4,6 +4,7 @@
  */
 
 import socketAdapter from "./SocketAdapter.js";
+import type { RosbridgeMessage } from "../types/protocol.js";
 import {
   isRosbridgeActionFeedbackMessage,
   isRosbridgeActionResultMessage,
@@ -13,7 +14,6 @@ import {
   isRosbridgeSendActionGoalMessage,
   isRosbridgeServiceResponseMessage,
   isRosbridgeStatusMessage,
-  RosbridgeMessage,
 } from "../types/protocol.js";
 
 import Topic from "./Topic.js";
@@ -23,7 +23,8 @@ import TFClient from "../tf/TFClient";
 import ActionClient from "../actionlib/ActionClient.js";
 import SimpleActionServer from "../actionlib/SimpleActionServer.js";
 import { EventEmitter } from "eventemitter3";
-import { rosapi } from "../types/rosapi.ts";
+import type { rosapi } from "../types/rosapi.ts";
+import type { WebSocket as WsWebSocket } from "ws";
 
 function isRTCPeerDataChannel(obj: unknown): obj is RTCPeerConnection {
   return obj?.constructor.name === "RTCDataChannel";
@@ -47,8 +48,7 @@ export default class Ros extends EventEmitter<
     // Any dynamically-named event should correspond to a rosbridge protocol message
   } & Record<string, [RosbridgeMessage]>
 > {
-  /** @type {import('./SocketAdapter.js').default | null} */
-  socket: import("./SocketAdapter.js").default | null = null;
+  socket: socketAdapter | null = null;
   isConnected = false;
   transportLibrary: "websocket" | RTCPeerConnection;
   transportOptions: {
@@ -90,7 +90,7 @@ export default class Ros extends EventEmitter<
    */
   async #createTransport(
     url: string,
-  ): Promise<WebSocket | RTCDataChannel | import("ws").WebSocket | null> {
+  ): Promise<WebSocket | RTCDataChannel | WsWebSocket | null> {
     if (isRTCPeerDataChannel(this.transportLibrary)) {
       const dataChannel = this.transportLibrary.createDataChannel(
         url,

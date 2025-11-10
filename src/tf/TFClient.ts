@@ -7,8 +7,8 @@ import ActionClient from "../actionlib/ActionClient.js";
 import Goal from "../actionlib/Goal.js";
 
 import Topic from "../core/Topic.js";
-import { tf2_msgs } from "../types/tf2_msgs.js";
-import { tf2_web_republisher } from "../types/tf2_web_republisher.js";
+import type { tf2_msgs } from "../types/tf2_msgs.js";
+import type { tf2_web_republisher } from "../types/tf2_web_republisher.js";
 
 import BaseTFClient from "./BaseTFClient.js";
 

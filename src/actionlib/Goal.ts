@@ -4,8 +4,8 @@
  */
 
 import { EventEmitter } from "eventemitter3";
-import ActionClient from "./ActionClient";
-import { actionlib_msgs } from "../types/actionlib_msgs";
+import type ActionClient from "./ActionClient";
+import type { actionlib_msgs } from "../types/actionlib_msgs";
 import { v4 as uuidv4 } from "uuid";
 
 /**

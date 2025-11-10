@@ -4,7 +4,8 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import { DOMParser, Element, MIME_TYPE } from "@xmldom/xmldom";
+import type { Element } from "@xmldom/xmldom";
+import { DOMParser, MIME_TYPE } from "@xmldom/xmldom";
 import UrdfMaterial from "./UrdfMaterial.js";
 import UrdfLink from "./UrdfLink.js";
 import UrdfJoint from "./UrdfJoint.js";
