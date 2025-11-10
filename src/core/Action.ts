@@ -4,14 +4,14 @@
  */
 
 import { GoalStatus } from "./GoalStatus.ts";
+import type { RosbridgeSendActionGoalMessage } from "../types/protocol.ts";
 import {
   isRosbridgeActionFeedbackMessage,
   isRosbridgeActionResultMessage,
   isRosbridgeCancelActionGoalMessage,
   isRosbridgeSendActionGoalMessage,
-  RosbridgeSendActionGoalMessage,
 } from "../types/protocol.ts";
-import Ros from "./Ros.js";
+import type Ros from "./Ros.js";
 import { v4 as uuidv4 } from "uuid";
 
 /**

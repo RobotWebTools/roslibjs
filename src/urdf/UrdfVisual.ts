@@ -4,7 +4,7 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import { Element } from "@xmldom/xmldom";
+import type { Element } from "@xmldom/xmldom";
 import Pose from "../math/Pose.js";
 import UrdfCylinder from "./UrdfCylinder.js";
 import UrdfBox from "./UrdfBox.js";

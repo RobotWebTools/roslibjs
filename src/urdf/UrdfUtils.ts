@@ -1,5 +1,5 @@
 /********** Utility Methods for parsing Joint **********/
-import { Element, Node } from "@xmldom/xmldom";
+import type { Element, Node } from "@xmldom/xmldom";
 import { Pose, Quaternion, Vector3 } from "../math/index.js";
 import { UrdfAttrs } from "./UrdfTypes.js";
 

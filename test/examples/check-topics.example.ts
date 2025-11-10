@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import * as ROSLIB from "../../src/RosLib.js";
-import { rosapi } from "../../src/types/rosapi.js";
+import type { rosapi } from "../../src/types/rosapi.js";
 
 const expectedTopics = ["/listener"];
 

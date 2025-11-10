@@ -1,4 +1,4 @@
-import { Element } from "@xmldom/xmldom";
+import type { Element } from "@xmldom/xmldom";
 
 export enum UrdfType {
   SPHERE = 0,

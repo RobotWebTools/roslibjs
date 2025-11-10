@@ -5,13 +5,13 @@
 
 import { EventEmitter } from "eventemitter3";
 import Service from "./Service.js";
-import Ros from "./Ros.js";
-import {
+import type Ros from "./Ros.js";
+import type {
   RosbridgeAdvertiseMessage,
   RosbridgePublishMessage,
   RosbridgeSubscribeMessage,
 } from "../types/protocol.ts";
-import { rosapi } from "../types/rosapi.ts";
+import type { rosapi } from "../types/rosapi.ts";
 import { v4 as uuidv4 } from "uuid";
 
 /**

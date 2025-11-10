@@ -5,7 +5,7 @@
 import Vector3, { type IVector3 } from "./Vector3.js";
 import Quaternion, { type IQuaternion } from "./Quaternion.js";
 import { type ITransform } from "./Transform.js";
-import { PartialNullable } from "../types/interface-types.js";
+import type { PartialNullable } from "../types/interface-types.js";
 
 export interface IPose {
   /**
