@@ -21,6 +21,10 @@ function getRosDistro() {
   return process.env.ROS_DISTRO || "noetic";
 }
 
+function getBsonOnlyMode() {
+  return process.env.BSON_ONLY_MODE === "true";
+}
+
 async function waitForRosConnection(ros: Ros, timeout = 5000) {
   return new Promise<void>((resolve, reject) => {
     const timeoutId = setTimeout(() => {
@@ -48,7 +52,7 @@ async function waitForRosConnection(ros: Ros, timeout = 5000) {
 /**
  * Build the ROS test container
  */
-async function buildContainer(rosDistro: string) {
+async function buildContainer(rosDistro: string, bsonOnlyMode: boolean) {
   console.log(`Building ROS test container for ${rosDistro}...`);
 
   const stream = await docker.buildImage(
@@ -58,7 +62,10 @@ async function buildContainer(rosDistro: string) {
     },
     {
       t: `roslibjs-test:${rosDistro}`,
-      buildargs: { ROS_DISTRO: rosDistro },
+      buildargs: {
+        ROS_DISTRO: rosDistro,
+        BSON_ONLY_MODE: bsonOnlyMode.toString(),
+      },
       version: "2",
     },
   );
@@ -172,10 +179,12 @@ async function getLogs() {
  */
 export async function setupBackend() {
   const rosDistro = getRosDistro();
+  const bsonOnlyMode = getBsonOnlyMode();
   console.log(`Using ROS distro: ${rosDistro}`);
+  console.log(`BSON only mode: ${bsonOnlyMode.toString()}`);
 
   // Build container
-  await buildContainer(rosDistro);
+  await buildContainer(rosDistro, bsonOnlyMode);
 
   // Start container
   await startContainer(rosDistro);

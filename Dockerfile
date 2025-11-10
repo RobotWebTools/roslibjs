@@ -1,5 +1,8 @@
 ARG ROS_DISTRO=noetic
 FROM ros:${ROS_DISTRO}-ros-base
+ARG BSON_ONLY_MODE=false
+
+ENV BSON_ONLY_MODE=${BSON_ONLY_MODE}
 
 # Copy package.xml and install ROS dependencies
 COPY package.xml /workspace/

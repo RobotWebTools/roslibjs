@@ -12,7 +12,7 @@ defaults:
 
 jobs:
   ci:
-    name: ${{ matrix.ros_distro }} (node ${{ matrix.node_version }})
+    name: ${{ matrix.ros_distro }} (node ${{ matrix.node_version }}) (bson ${{ matrix.bson_only_mode }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -23,8 +23,12 @@ jobs:
           - jazzy
           - kilted
         node_version: [20, 22, 24]
+        bson_only_mode:
+          - true
+          - false
     env:
       ROS_DISTRO: ${{ matrix.ros_distro }}
+      BSON_ONLY_MODE: ${{ matrix.bson_only_mode }}
     steps:
       - uses: actions/checkout@v5
 
