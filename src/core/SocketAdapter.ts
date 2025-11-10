@@ -25,6 +25,51 @@ export type RequiredSocketInterface = Pick<
 >;
 
 /**
+ * A decoder provides custom decoding logic for socket messages.
+ * The primary use case is for RTC data channel sockets.
+ */
+type Decoder = (
+  /**
+   * The raw message data from the socket.
+   */
+  data: unknown,
+  /**
+   * Invoked with the decoded RosbridgeMessage object.
+   */
+  callback: (message: RosbridgeMessage) => void,
+) => void;
+
+/**
+ * Not all runtimes will have native WebSocket classes or
+ * using the 'ws' package, so can't reliably reference them
+ * so created our own enum for type safety.
+ *
+ * https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/readyState
+ * https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel/readyState
+ */
+enum WebSocketReadyState {
+  CONNECTING = 0,
+  OPEN = 1,
+  CLOSING = 2,
+  CLOSED = 3,
+}
+
+/**
+ * Not all runtimes will have native WebSocket classes or
+ * using the 'ws' package, so can't reliably reference them
+ * so created our own enum for type safety.
+ *
+ * https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/readyState
+ * https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel/readyState
+ */
+enum RTCDataChannelReadyState {
+  CONNECTING = "connecting",
+  OPEN = "open",
+  CLOSING = "closing",
+  CLOSED = "closed",
+}
+
+/**
  * Socket adapter that provides unified event handling for WebSocket and RTCDataChannel.
  * Handles transport-level concerns like fragmentation, encoding/decoding, and delegates
  * message processing to provided callbacks.
@@ -32,17 +77,15 @@ export type RequiredSocketInterface = Pick<
  * @class SocketAdapter
  */
 export default class SocketAdapter {
-  onOpenCallback: (event: Event) => void;
-  onCloseCallback: (event: Event) => void;
-  onErrorCallback: (event: ErrorEvent) => void;
-  onMessageCallback: (message: RosbridgeMessage) => void;
-  decoder:
-    | ((data: unknown, callback: (message: RosbridgeMessage) => void) => void)
-    | null;
+  private onOpenCallback: (event: Event) => void;
+  private onCloseCallback: (event: Event) => void;
+  private onErrorCallback: (event: ErrorEvent) => void;
+  private onMessageCallback: (message: RosbridgeMessage) => void;
+  private decoder: Decoder | null;
   /**
    * Buffer Map for incoming message fragments
    */
-  fragmentBuffer = new Map<
+  private fragmentBuffer = new Map<
     string,
     { fragments: string[]; received: number; total: number }
   >();
@@ -68,7 +111,7 @@ export default class SocketAdapter {
       onClose: (event: Event) => void;
       onError: (event: ErrorEvent | RTCErrorEvent) => void;
       onMessage: (message: RosbridgeMessage) => void;
-      decoder?: ((data, callback: (error, result) => void) => void) | null;
+      decoder?: Decoder | null;
     },
   ) {
     this.onOpenCallback = onOpen;
@@ -189,11 +232,7 @@ export default class SocketAdapter {
    * Send data through the socket
    */
   send(data: string | ArrayBuffer | Blob) {
-    // Check readyState for both WebSocket and RTCDataChannel
-    const isOpen =
-      this.socket.readyState === 1 || // WebSocket.OPEN
-      this.socket.readyState === "open"; // RTCDataChannel 'open'
-    if (isOpen) {
+    if (this.isOpen()) {
       // @ts-expect-error -- WebSocket and RTCDataChannel have compatible send methods in practice
       this.socket.send(data);
     }
@@ -210,8 +249,36 @@ export default class SocketAdapter {
    * Get the current connection state
    * @returns The socket ready state
    */
-  get readyState(): number | string {
+  get readyState(): RequiredSocketInterface["readyState"] {
     return this.socket.readyState;
+  }
+
+  isConnecting(): boolean {
+    return (
+      this.readyState === WebSocketReadyState.CONNECTING ||
+      this.readyState === RTCDataChannelReadyState.CONNECTING
+    );
+  }
+
+  isOpen(): boolean {
+    return (
+      this.readyState === WebSocketReadyState.OPEN ||
+      this.readyState === RTCDataChannelReadyState.OPEN
+    );
+  }
+
+  isClosing(): boolean {
+    return (
+      this.readyState === WebSocketReadyState.CLOSING ||
+      this.readyState === RTCDataChannelReadyState.CLOSING
+    );
+  }
+
+  isClosed(): boolean {
+    return (
+      this.readyState === WebSocketReadyState.CLOSED ||
+      this.readyState === RTCDataChannelReadyState.CLOSED
+    );
   }
 
   /**
