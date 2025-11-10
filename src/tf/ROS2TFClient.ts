@@ -9,8 +9,8 @@ export default class ROS2TFClient extends BaseTFClient {
   goal_id: string;
   actionClient: Action<
     tf2_web_republisher.TFSubscriptionGoal,
-    tf2_web_republisher.TFSubscriptionResult,
-    tf2_web_republisher.TFSubscriptionFeedback
+    tf2_web_republisher.TFSubscriptionFeedback,
+    tf2_web_republisher.TFSubscriptionResult
   >;
   currentGoal?: tf2_web_republisher.TFSubscriptionGoal;
 

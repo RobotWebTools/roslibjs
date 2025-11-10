@@ -65,7 +65,7 @@ export default class SocketAdapter {
     }: {
       onOpen: (event: Event) => void;
       onClose: (event: Event) => void;
-      onError: (event: ErrorEvent) => void;
+      onError: (event: ErrorEvent | RTCErrorEvent) => void;
       onMessage: (message: RosbridgeMessage) => void;
       decoder?: ((data, callback: (error, result) => void) => void) | null;
     },
@@ -82,7 +82,7 @@ export default class SocketAdapter {
     this.socket.onclose = (e: Event) => {
       onClose(e);
     };
-    this.socket.onerror = (e: ErrorEvent) => {
+    this.socket.onerror = (e: ErrorEvent | RTCErrorEvent) => {
       onError(e);
     };
     this.socket.onmessage = (e: MessageEvent) => {
@@ -157,18 +157,25 @@ export default class SocketAdapter {
     callback: (message: RosbridgeMessage) => void,
   ) {
     if (isRosbridgePngMessage(message)) {
+      const pngCallback = (data: unknown) => {
+        if (isRosbridgeMessage(data)) {
+          callback(data);
+        } else {
+          throw new Error("Decompressed PNG data was invalid!");
+        }
+      };
       // If in Node.js..
       if (typeof window === "undefined") {
         import("../util/decompressPng.js")
           .then(({ default: decompressPng }) => {
-            decompressPng(message.data, callback);
+            decompressPng(message.data, pngCallback);
           })
           .catch(console.error);
       } else {
         // if in browser..
         import("../util/shim/decompressPng.js")
           .then(({ default: decompressPng }) => {
-            decompressPng(message.data, callback);
+            decompressPng(message.data, pngCallback);
           })
           .catch(console.error);
       }

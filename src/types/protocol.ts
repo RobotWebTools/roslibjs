@@ -88,9 +88,9 @@ export interface RosbridgePublishMessage<TMessage = unknown>
   msg: TMessage;
 }
 
-export function isRosbridgePublishMessage(
+export function isRosbridgePublishMessage<T>(
   message: RosbridgeMessage,
-): message is RosbridgePublishMessage {
+): message is RosbridgePublishMessage<T> {
   return message.op === "publish";
 }
 
@@ -161,9 +161,9 @@ export interface RosbridgeCallServiceMessage<TArgs = undefined>
   timeout?: number;
 }
 
-export function isRosbridgeCallServiceMessage(
+export function isRosbridgeCallServiceMessage<T>(
   message: RosbridgeMessage,
-): message is RosbridgeCallServiceMessage {
+): message is RosbridgeCallServiceMessage<T> {
   return message.op === "call_service";
 }
 
