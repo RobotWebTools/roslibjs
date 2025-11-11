@@ -81,4 +81,4 @@ roslibjs is released with a BSD license. For full terms and conditions, see the 
 
 ## Authors
 
-See the [AUTHORS.md](AUTHORS.md) file for a full list of contributors.
+See the `contributors` section of the [package.json](package.json) file for a full list of contributors.
