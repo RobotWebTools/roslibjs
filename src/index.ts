@@ -4,7 +4,7 @@
  */
 
 /** @description Library version */
-export const REVISION = "1.4.1";
+export const REVISION = import.meta.env.VITE_ROSLIBJS_VERSION;
 export * from "./core/index.js";
 export * from "./actionlib/index.js";
 export * from "./math/index.js";
