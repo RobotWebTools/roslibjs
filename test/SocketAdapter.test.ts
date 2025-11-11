@@ -1,7 +1,7 @@
 import { it, describe, expect, beforeEach, vi } from "vitest";
 import type { RequiredSocketInterface } from "../src/core/SocketAdapter.js";
 import SocketAdapter from "../src/core/SocketAdapter.js";
-import type { Ros } from "../src/index.js";
+import type Ros from "../src/core/Ros.js";
 import type { RosbridgeMessage } from "../src/types/protocol.js";
 import { isRosbridgePublishMessage } from "../src/types/protocol.js";
 
