@@ -6,12 +6,14 @@ import checker from "vite-plugin-checker";
 export default defineConfig({
   plugins: [
     dts({
-      tsconfigPath: "tsconfig.build.json",
+      tsconfigPath: "tsconfig.json",
       insertTypesEntry: true,
+      // Only generate types for our actual source code, obv
+      include: ["src"],
     }),
     checker({
       typescript: {
-        tsconfigPath: "./tsconfig.build.json",
+        tsconfigPath: "./tsconfig.json",
       },
       eslint: {
         lintCommand: "eslint .",

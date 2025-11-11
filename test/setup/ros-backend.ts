@@ -18,7 +18,7 @@ const docker = new Docker();
  */
 function getRosDistro() {
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- this might be an empty string, not undefined.
-  return process.env.ROS_DISTRO || "noetic";
+  return process.env["ROS_DISTRO"] || "noetic";
 }
 
 async function waitForRosConnection(ros: Ros, timeout = 5000) {
