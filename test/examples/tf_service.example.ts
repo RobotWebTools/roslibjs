@@ -3,7 +3,7 @@ import * as ROSLIB from "../../src/RosLib.js";
 
 // Noetic is the only version of ROS 1 we support, so we skip based on distro name
 // instead of adding extra plumbing for ROS_VERSION.
-describe.skipIf(process.env.ROS_DISTRO !== "noetic")(
+describe.skipIf(process.env["ROS_DISTRO"] !== "noetic")(
   "ROS 1 TF2 Republisher Service Example",
   function () {
     it("tf republisher", () =>

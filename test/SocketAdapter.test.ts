@@ -37,7 +37,7 @@ describe("SocketAdapter fragment handling", () => {
         client.isConnected = false;
         client.emit("close", event);
       },
-      onError: (event: ErrorEvent) => {
+      onError: (event: ErrorEvent | RTCErrorEvent) => {
         client.emit("error", String(event.error));
       },
       onMessage: (message: RosbridgeMessage) => {

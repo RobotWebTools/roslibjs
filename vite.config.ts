@@ -8,6 +8,8 @@ export default defineConfig({
     dts({
       tsconfigPath: "tsconfig.json",
       insertTypesEntry: true,
+      // Only generate types for our actual source code, obv
+      include: ["src"],
     }),
     checker({
       typescript: {

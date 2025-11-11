@@ -88,54 +88,70 @@ describe("URDF", function () {
       });
 
       // Check all the visual elements
-      expect(urdfModel.links.link1.visuals.length).to.equal(1);
-      if (!(urdfModel.links.link1.visuals[0]?.geometry instanceof UrdfSphere)) {
+      expect(urdfModel.links["link1"].visuals.length).to.equal(1);
+      if (
+        !(urdfModel.links["link1"].visuals[0]?.geometry instanceof UrdfSphere)
+      ) {
         throw new Error("Expected geometry to be an instance of UrdfSphere");
       }
-      expect(urdfModel.links.link1.visuals[0]?.geometry?.radius).to.equal(1.0);
-      if (!(urdfModel.links.link2.visuals[0]?.geometry instanceof UrdfBox)) {
+      expect(urdfModel.links["link1"].visuals[0]?.geometry?.radius).to.equal(
+        1.0,
+      );
+      if (!(urdfModel.links["link2"].visuals[0]?.geometry instanceof UrdfBox)) {
         throw new Error("Expected geometry to be an instance of UrdfBox");
       }
-      expect(urdfModel.links.link2.visuals[0]?.geometry?.dimension?.x).to.equal(
-        0.5,
-      );
-      expect(urdfModel.links.link2.visuals[0]?.geometry?.dimension?.y).to.equal(
-        0.5,
-      );
-      expect(urdfModel.links.link2.visuals[0]?.geometry?.dimension?.z).to.equal(
-        0.5,
-      );
+      expect(
+        urdfModel.links["link2"].visuals[0]?.geometry?.dimension?.x,
+      ).to.equal(0.5);
+      expect(
+        urdfModel.links["link2"].visuals[0]?.geometry?.dimension?.y,
+      ).to.equal(0.5);
+      expect(
+        urdfModel.links["link2"].visuals[0]?.geometry?.dimension?.z,
+      ).to.equal(0.5);
       if (
-        !(urdfModel.links.link3.visuals[0]?.geometry instanceof UrdfCylinder)
+        !(urdfModel.links["link3"].visuals[0]?.geometry instanceof UrdfCylinder)
       ) {
         throw new Error("Expected geometry to be an instance of UrdfCylinder");
       }
-      expect(urdfModel.links.link3.visuals[0]?.geometry?.length).to.equal(2.0);
-      expect(urdfModel.links.link3.visuals[0]?.geometry?.radius).to.equal(0.2);
-
-      expect(urdfModel.links.link4.visuals.length).to.equal(1);
-      expect(urdfModel.links.link4.visuals[0]?.material?.name).to.equal("red");
-      expect(urdfModel.links.link4.visuals[0]?.material?.color?.r).to.equal(
-        1.0,
+      expect(urdfModel.links["link3"].visuals[0]?.geometry?.length).to.equal(
+        2.0,
       );
-      expect(urdfModel.links.link4.visuals[0]?.material?.color?.g).to.equal(0);
-      expect(urdfModel.links.link4.visuals[0]?.material?.color?.b).to.equal(0);
-      expect(urdfModel.links.link4.visuals[0]?.material?.color?.a).to.equal(
-        1.0,
+      expect(urdfModel.links["link3"].visuals[0]?.geometry?.radius).to.equal(
+        0.2,
       );
 
-      expect(urdfModel.links.link5.visuals.length).to.equal(2);
-      expect(urdfModel.links.link5.visuals[0]?.material?.name).to.equal("blue");
-      expect(urdfModel.links.link5.visuals[0]?.material?.color?.r).to.equal(
-        0.0,
+      expect(urdfModel.links["link4"].visuals.length).to.equal(1);
+      expect(urdfModel.links["link4"].visuals[0]?.material?.name).to.equal(
+        "red",
       );
-      expect(urdfModel.links.link5.visuals[0]?.material?.color?.g).to.equal(
-        0.0,
-      );
-      expect(urdfModel.links.link5.visuals[0]?.material?.color?.b).to.equal(
+      expect(urdfModel.links["link4"].visuals[0]?.material?.color?.r).to.equal(
         1.0,
       );
-      expect(urdfModel.links.link5.visuals[0]?.material?.color?.a).to.equal(
+      expect(urdfModel.links["link4"].visuals[0]?.material?.color?.g).to.equal(
+        0,
+      );
+      expect(urdfModel.links["link4"].visuals[0]?.material?.color?.b).to.equal(
+        0,
+      );
+      expect(urdfModel.links["link4"].visuals[0]?.material?.color?.a).to.equal(
+        1.0,
+      );
+
+      expect(urdfModel.links["link5"].visuals.length).to.equal(2);
+      expect(urdfModel.links["link5"].visuals[0]?.material?.name).to.equal(
+        "blue",
+      );
+      expect(urdfModel.links["link5"].visuals[0]?.material?.color?.r).to.equal(
+        0.0,
+      );
+      expect(urdfModel.links["link5"].visuals[0]?.material?.color?.g).to.equal(
+        0.0,
+      );
+      expect(urdfModel.links["link5"].visuals[0]?.material?.color?.b).to.equal(
+        1.0,
+      );
+      expect(urdfModel.links["link5"].visuals[0]?.material?.color?.a).to.equal(
         1.0,
       );
     });
