@@ -22,8 +22,8 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.RWT_BOT_PAT }}
-          publish_dir: doc
+          publish_dir: docs
           destination_dir: .
           enable_jekyll: false
           force_orphan: false  # So we keep the doc history
-          commit_message: JSDoc ${{ github.event.release.name }}
+          commit_message: Typedoc ${{ github.event.release.name }}

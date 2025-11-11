@@ -29,8 +29,8 @@
     "eslint-plugin-prettier": "^5.5.4",
     "globals": "^16.0.0",
     "jiti": "^2.6.1",
-    "jsdoc": "^4.0.2",
     "jsdom": "^27.0.0",
+    "typedoc": "^0.28.14",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.39.0",
     "vite": "^7.0.0",
@@ -57,7 +57,7 @@
   },
   "scripts": {
     "build": "vite build",
-    "doc": "jsdoc -r -c jsdoc_conf.json -d ./doc .",
+    "doc": "typedoc src/index.ts",
     "lint": "eslint .",
     "test": "vitest",
     "prepublishOnly": "npm run test",

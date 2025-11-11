@@ -1,6 +1,6 @@
 .idea
 .vagrant
-doc
+docs
 node_modules
 *.out
 *.log
