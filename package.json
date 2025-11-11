@@ -78,5 +78,42 @@
     "robot"
   ],
   "types": "dist/RosLib.d.ts",
-  "author": "Robot Webtools Team <robot-web-tools@googlegroups.com> (https://robotwebtools.github.io)"
+  "author": "Robot Webtools Team <robot-web-tools@googlegroups.com> (https://robotwebtools.github.io)",
+  "contributors": [
+    {
+      "name": "Russell Toris",
+      "email": "rctoris@wpi.edu",
+      "url": "http://users.wpi.edu/~rctoris/"
+    },
+    {
+      "name": "Jihoon Lee",
+      "email": "jihoonlee.in@gmail.com"
+    },
+    {
+      "name": "Brandon Alexander",
+      "email": "balexander@willowgarage.com"
+    },
+    {
+      "name": "David Gossow",
+      "email": "dgossow@willowgarage.com"
+    },
+    {
+      "name": "Benjamin Pitzer",
+      "email": "ben.pitzer@gmail.com"
+    },
+    {
+      "name": "Matthijs van der Burgh",
+      "email": "MatthijsBurgh@outlook.com",
+      "url": "https://github.com/MatthijsBurgh"
+    },
+    {
+      "name": "Graeme Yeates",
+      "email": "yeatesgraeme@gmail.com"
+    },
+    {
+      "name": "Ezra Brooks",
+      "email": "ezra@brooks.cx",
+      "url": "https://github.com/EzraBrooks"
+    }
+  ]
 }
