@@ -3,11 +3,11 @@
  * @author David V. Lu!! - davidvlu@gmail.com
  */
 
-import { UrdfAttrs, type UrdfDefaultOptions } from "./UrdfTypes.js";
-import Pose from "../math/Pose.js";
-import Vector3 from "../math/Vector3.js";
-import { parseUrdfOrigin } from "./UrdfUtils.js";
-import type { Nullable } from "../types/interface-types.js";
+import { UrdfAttrs, type UrdfDefaultOptions } from "./UrdfTypes.ts";
+import Pose from "../math/Pose.ts";
+import Vector3 from "../math/Vector3.ts";
+import { parseUrdfOrigin } from "./UrdfUtils.ts";
+import type { Nullable } from "../types/interface-types.ts";
 
 /**
  * A Joint element in a URDF.

@@ -5,10 +5,10 @@ import type {
   ITransport,
   ITransportFactory,
   TransportEvent,
-} from "../src/core/transport/Transport.js";
-import { WebSocketTransportFactory } from "../src/core/transport/WebSocketTransportFactory.js";
-import Ros from "../src/core/Ros.js";
-import type { RosbridgeMessage } from "../src/types/protocol.js";
+} from "../src/core/transport/Transport.ts";
+import { WebSocketTransportFactory } from "../src/core/transport/WebSocketTransportFactory.ts";
+import Ros from "../src/core/Ros.ts";
+import type { RosbridgeMessage } from "../src/types/protocol.ts";
 
 describe("Ros", function () {
   let mockRosUrl: string;

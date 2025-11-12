@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import * as ROSLIB from "../../src/RosLib.js";
+import * as ROSLIB from "../../src/RosLib.ts";
 
 // Noetic is the only version of ROS 1 we support, so we skip based on distro name
 // instead of adding extra plumbing for ROS_VERSION.

@@ -3,8 +3,8 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
-import Vector3, { type IVector3 } from "./Vector3.js";
-import Quaternion, { type IQuaternion } from "./Quaternion.js";
+import Vector3, { type IVector3 } from "./Vector3.ts";
+import Quaternion, { type IQuaternion } from "./Quaternion.ts";
 
 export interface ITransform {
   /**

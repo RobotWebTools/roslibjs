@@ -3,7 +3,7 @@
  * This file sets up and tears down the ROS backend container for all tests
  */
 
-import { setupBackend, teardownBackend } from "./ros-backend.js";
+import { setupBackend, teardownBackend } from "./ros-backend.ts";
 
 // Global setup - runs once before all tests
 export async function setup() {

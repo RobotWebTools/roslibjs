@@ -3,12 +3,11 @@
  * @author Laura Lindzey - lindzey@gmail.com
  */
 
-import type Ros from "../core/Ros.js";
-import Topic from "../core/Topic.js";
+import type Ros from "../core/Ros.ts";
+import Topic from "../core/Topic.ts";
 import { EventEmitter } from "eventemitter3";
-import type { actionlib_msgs } from "../types/actionlib_msgs.js";
-import type { std_msgs } from "../types/std_msgs.js";
-
+import type { actionlib_msgs } from "../types/actionlib_msgs.ts";
+import type { std_msgs } from "../types/std_msgs.ts";
 /**
  * An actionlib action server client.
  *

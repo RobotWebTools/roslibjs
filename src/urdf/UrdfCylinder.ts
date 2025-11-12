@@ -4,7 +4,7 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import { type UrdfDefaultOptions, UrdfType, UrdfAttrs } from "./UrdfTypes.js";
+import { type UrdfDefaultOptions, UrdfType, UrdfAttrs } from "./UrdfTypes.ts";
 
 /**
  * A Cylinder element in a URDF.

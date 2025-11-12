@@ -1,5 +1,5 @@
-import type { RosbridgeMessage } from "../../types/protocol.js";
-import { AbstractTransport } from "./Transport.js";
+import type { RosbridgeMessage } from "../../types/protocol.ts";
+import { AbstractTransport } from "./Transport.ts";
 
 /**
  * Uses the native `WebSocket` class to send and receive messages.

@@ -4,7 +4,7 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import { UrdfAttrs, type UrdfDefaultOptions, UrdfType } from "./UrdfTypes.js";
+import { UrdfAttrs, type UrdfDefaultOptions, UrdfType } from "./UrdfTypes.ts";
 
 /**
  * A Sphere element in a URDF.

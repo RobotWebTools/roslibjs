@@ -1,4 +1,4 @@
-import type { geometry_msgs } from "./geometry_msgs";
+import type { geometry_msgs } from "./geometry_msgs.ts";
 
 export namespace tf2_msgs {
   export interface TFMessage {

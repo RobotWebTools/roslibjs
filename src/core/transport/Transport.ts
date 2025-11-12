@@ -1,19 +1,19 @@
-import EventEmitter from "eventemitter3";
+import { EventEmitter } from "eventemitter3";
 import type {
   RosbridgePngMessage,
   RosbridgeMessage,
   RosbridgeFragmentMessage,
   RosbridgeMessageBase,
-} from "../../types/protocol.js";
+} from "../../types/protocol.ts";
 import {
   isRosbridgeFragmentMessage,
   isRosbridgeMessage,
   isRosbridgePngMessage,
-} from "../../types/protocol.js";
+} from "../../types/protocol.ts";
 import { deserialize } from "bson";
 import CBOR from "cbor-js";
-import typedArrayTagger from "../../util/cborTypedArrayTags.js";
-import decompressPng from "../../util/decompressPng.js";
+import typedArrayTagger from "../../util/cborTypedArrayTags.ts";
+import decompressPng from "../../util/decompressPng.ts";
 
 /**
  * Because transport implementations may have different event types
