@@ -165,7 +165,10 @@ export default class SocketAdapter {
         }
       };
       // If in Node.js..
-      if (typeof window === "undefined") {
+      if (
+        navigator.userAgent.includes("Node.js") ||
+        navigator.userAgent.includes("jsdom")
+      ) {
         import("../util/decompressPng.js")
           .then(({ default: decompressPng }) => {
             decompressPng(message.data, pngCallback);
