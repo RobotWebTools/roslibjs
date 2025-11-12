@@ -1,17 +1,17 @@
 /**
- * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-/** @description Library version */
+/** Library version */
 export const REVISION = import.meta.env.VITE_ROSLIBJS_VERSION;
 
 // Core exports
-export { default as Ros } from "./core/Ros.js";
+export { default as Ros, type TypeDefDict } from "./core/Ros.js";
 export { default as Topic } from "./core/Topic.js";
 export { default as Param } from "./core/Param.js";
 export { default as Service } from "./core/Service.js";
 export { default as Action } from "./core/Action.js";
+export { type GoalStatus } from "./core/GoalStatus.js";
 
 // Core Transport exports
 export {
@@ -45,6 +45,7 @@ export { default as UrdfCylinder } from "./urdf/UrdfCylinder.js";
 export { default as UrdfLink } from "./urdf/UrdfLink.js";
 export { default as UrdfMaterial } from "./urdf/UrdfMaterial.js";
 export { default as UrdfMesh } from "./urdf/UrdfMesh.js";
+export { default as UrdfJoint } from "./urdf/UrdfJoint.js";
 export {
   default as UrdfModel,
   type UrdfModelOptions,
@@ -61,3 +62,11 @@ export {
   type UrdfDefaultOptions,
 } from "./urdf/UrdfTypes.js";
 export { isElement, parseUrdfOrigin } from "./urdf/UrdfUtils.js";
+
+// Only export the types Typedoc requires you to export - those are our API. Anything else is internal.
+export type { rosapi } from "./types/rosapi";
+export type { actionlib_msgs } from "./types/actionlib_msgs";
+export type { std_msgs } from "./types/std_msgs";
+export type { tf2_msgs } from "./types/tf2_msgs";
+export type { geometry_msgs } from "./types/geometry_msgs";
+export type { RosbridgeMessage } from "./types/protocol.js";

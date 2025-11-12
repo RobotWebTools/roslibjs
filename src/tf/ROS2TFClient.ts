@@ -6,21 +6,20 @@ import BaseTFClient from "./BaseTFClient.js";
  * A TF Client that listens to TFs from tf2_web_republisher using ROS2 actions.
  */
 export default class ROS2TFClient extends BaseTFClient {
-  goal_id: string;
-  actionClient: Action<
+  #goalId: string;
+  #actionClient: Action<
     tf2_web_republisher.TFSubscriptionGoal,
     tf2_web_republisher.TFSubscriptionFeedback,
     tf2_web_republisher.TFSubscriptionResult
   >;
-  currentGoal?: tf2_web_republisher.TFSubscriptionGoal;
 
   constructor(options: ConstructorParameters<typeof BaseTFClient>[0]) {
     super(options);
 
-    this.goal_id = "";
+    this.#goalId = "";
 
     // Create an Action Client for ROS2
-    this.actionClient = new Action({
+    this.#actionClient = new Action({
       ros: this.ros,
       name: this.serverName,
       actionType: "tf2_web_republisher_interfaces/TFSubscription",
@@ -40,12 +39,11 @@ export default class ROS2TFClient extends BaseTFClient {
       rate: this.rate,
     };
 
-    if (this.goal_id !== "") {
-      this.actionClient.cancelGoal(this.goal_id);
+    if (this.#goalId !== "") {
+      this.#actionClient.cancelGoal(this.#goalId);
     }
-    this.currentGoal = goalMessage;
 
-    const id = this.actionClient.sendGoal(
+    const id = this.#actionClient.sendGoal(
       goalMessage,
       () => {},
       (feedback: tf2_web_republisher.TFSubscriptionFeedback) => {
@@ -53,7 +51,7 @@ export default class ROS2TFClient extends BaseTFClient {
       },
     );
     if (typeof id === "string") {
-      this.goal_id = id;
+      this.#goalId = id;
     }
 
     this.republisherUpdateRequested = false;
@@ -63,8 +61,8 @@ export default class ROS2TFClient extends BaseTFClient {
    * Unsubscribe and unadvertise all topics associated with this TFClient.
    */
   dispose() {
-    if (this.goal_id !== "") {
-      this.actionClient.cancelGoal(this.goal_id);
+    if (this.#goalId !== "") {
+      this.#actionClient.cancelGoal(this.#goalId);
     }
   }
 }

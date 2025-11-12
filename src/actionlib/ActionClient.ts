@@ -36,17 +36,17 @@ export default class ActionClient<
   omitFeedback?: boolean;
   omitStatus?: boolean;
   omitResult?: boolean;
-  feedbackListener: Topic<{
+  #feedbackListener: Topic<{
     status: actionlib_msgs.GoalStatus;
     feedback: TFeedback;
   }>;
-  statusListener: Topic<actionlib_msgs.GoalStatusArray>;
-  resultListener: Topic<{
+  #statusListener: Topic<actionlib_msgs.GoalStatusArray>;
+  #resultListener: Topic<{
     status: actionlib_msgs.GoalStatus;
     result: TResult;
   }>;
   goalTopic: Topic<{ goal: TGoal; goal_id: actionlib_msgs.GoalID }>;
-  cancelTopic: Topic<Partial<actionlib_msgs.GoalID>>;
+  #cancelTopic: Topic<Partial<actionlib_msgs.GoalID>>;
   /**
    * @param options
    * @param options.ros - The ROSLIB.Ros connection handle.
@@ -84,19 +84,19 @@ export default class ActionClient<
     this.omitResult = omitResult;
 
     // create the topics associated with actionlib
-    this.feedbackListener = new Topic({
+    this.#feedbackListener = new Topic({
       ros: this.ros,
       name: `${this.serverName}/feedback`,
       messageType: `${this.actionName}Feedback`,
     });
 
-    this.statusListener = new Topic({
+    this.#statusListener = new Topic({
       ros: this.ros,
       name: `${this.serverName}/status`,
       messageType: "actionlib_msgs/GoalStatusArray",
     });
 
-    this.resultListener = new Topic({
+    this.#resultListener = new Topic({
       ros: this.ros,
       name: `${this.serverName}/result`,
       messageType: `${this.actionName}Result`,
@@ -108,7 +108,7 @@ export default class ActionClient<
       messageType: `${this.actionName}Goal`,
     });
 
-    this.cancelTopic = new Topic({
+    this.#cancelTopic = new Topic({
       ros: this.ros,
       name: `${this.serverName}/cancel`,
       messageType: "actionlib_msgs/GoalID",
@@ -116,11 +116,11 @@ export default class ActionClient<
 
     // advertise the goal and cancel topics
     this.goalTopic.advertise();
-    this.cancelTopic.advertise();
+    this.#cancelTopic.advertise();
 
     // subscribe to the status topic
     if (!this.omitStatus) {
-      this.statusListener.subscribe((statusMessage) => {
+      this.#statusListener.subscribe((statusMessage) => {
         this.receivedStatus = true;
         statusMessage.status_list.forEach((status) => {
           const goal = this.goals[status.goal_id.id];
@@ -133,7 +133,7 @@ export default class ActionClient<
 
     // subscribe the the feedback topic
     if (!this.omitFeedback) {
-      this.feedbackListener.subscribe((feedbackMessage) => {
+      this.#feedbackListener.subscribe((feedbackMessage) => {
         const goal = this.goals[feedbackMessage.status.goal_id.id];
         if (goal) {
           goal.emit("status", feedbackMessage.status);
@@ -144,7 +144,7 @@ export default class ActionClient<
 
     // subscribe to the result topic
     if (!this.omitResult) {
-      this.resultListener.subscribe((resultMessage) => {
+      this.#resultListener.subscribe((resultMessage) => {
         const goal = this.goals[resultMessage.status.goal_id.id];
 
         if (goal) {
@@ -166,24 +166,26 @@ export default class ActionClient<
   /**
    * Cancel all goals associated with this ActionClient.
    */
-  cancel() {
-    const cancelMessage = {};
-    this.cancelTopic.publish(cancelMessage);
+  cancel(id?: string) {
+    const cancelMessage = {
+      id,
+    };
+    this.#cancelTopic.publish(cancelMessage);
   }
   /**
    * Unsubscribe and unadvertise all topics associated with this ActionClient.
    */
   dispose() {
     this.goalTopic.unadvertise();
-    this.cancelTopic.unadvertise();
+    this.#cancelTopic.unadvertise();
     if (!this.omitStatus) {
-      this.statusListener.unsubscribe();
+      this.#statusListener.unsubscribe();
     }
     if (!this.omitFeedback) {
-      this.feedbackListener.unsubscribe();
+      this.#feedbackListener.unsubscribe();
     }
     if (!this.omitResult) {
-      this.resultListener.unsubscribe();
+      this.#resultListener.unsubscribe();
     }
   }
 }

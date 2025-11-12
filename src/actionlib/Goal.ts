@@ -94,9 +94,6 @@ export default class Goal<
    * Cancel the current goal.
    */
   cancel() {
-    const cancelMessage = {
-      id: this.goalID,
-    };
-    this.actionClient.cancelTopic.publish(cancelMessage);
+    this.actionClient.cancel(this.goalID);
   }
 }

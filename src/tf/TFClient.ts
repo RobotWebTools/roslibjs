@@ -6,8 +6,6 @@
 import ActionClient from "../actionlib/ActionClient.js";
 import Goal from "../actionlib/Goal.js";
 
-import Topic from "../core/Topic.js";
-import type { tf2_msgs } from "../types/tf2_msgs.js";
 import type { tf2_web_republisher } from "../types/tf2_web_republisher.js";
 
 import BaseTFClient from "./BaseTFClient.js";
@@ -16,19 +14,16 @@ import BaseTFClient from "./BaseTFClient.js";
  * A TF Client that listens to TFs from tf2_web_republisher.
  */
 export default class TFClient extends BaseTFClient {
-  currentGoal:
+  #currentGoal:
     | Goal<
         tf2_web_republisher.TFSubscriptionGoal,
         tf2_web_republisher.TFSubscriptionFeedback
       >
     | false = false;
-  currentTopic: Topic<tf2_msgs.TFMessage> | false = false;
-  actionClient: ActionClient<
+  #actionClient: ActionClient<
     tf2_web_republisher.TFSubscriptionGoal,
     tf2_web_republisher.TFSubscriptionFeedback
   >;
-  #subscribeCB: ((tf: tf2_msgs.TFMessage) => void) | undefined = undefined;
-  #isDisposed = false;
 
   /**
    * @param options
@@ -46,7 +41,7 @@ export default class TFClient extends BaseTFClient {
     super(options);
 
     // Create an Action Client
-    this.actionClient = new ActionClient({
+    this.#actionClient = new ActionClient({
       ros: this.ros,
       serverName: this.serverName,
       actionName: "tf2_web_republisher/TFSubscriptionAction",
@@ -68,64 +63,26 @@ export default class TFClient extends BaseTFClient {
       rate: this.rate,
     };
 
-    if (this.currentGoal) {
-      this.currentGoal.cancel();
+    if (this.#currentGoal) {
+      this.#currentGoal.cancel();
     }
-    this.currentGoal = new Goal({
-      actionClient: this.actionClient,
+    this.#currentGoal = new Goal({
+      actionClient: this.#actionClient,
       goalMessage: goalMessage,
     });
 
-    this.currentGoal.on("feedback", (feedback) => {
+    this.#currentGoal.on("feedback", (feedback) => {
       this.processTFArray(feedback);
     });
-    this.currentGoal.send();
+    this.#currentGoal.send();
 
     this.republisherUpdateRequested = false;
-  }
-
-  /**
-   * Process the service response and subscribe to the tf republisher
-   * topic.
-   *
-   * @param response - The service response containing the topic name.
-   */
-  processResponse(response: tf2_web_republisher.RepublishTFsResponse) {
-    /*
-     * Do not setup a topic subscription if already disposed. Prevents a race condition where
-     * The dispose() function is called before the service call receives a response.
-     */
-    if (this.#isDisposed) {
-      return;
-    }
-
-    /*
-     * if we subscribed to a topic before, unsubscribe so
-     * the republisher stops publishing it
-     */
-    if (this.currentTopic) {
-      this.currentTopic.unsubscribe(this.#subscribeCB);
-    }
-
-    this.currentTopic = new Topic<tf2_msgs.TFMessage>({
-      ros: this.ros,
-      name: response.topic_name,
-      messageType: "tf2_web_republisher/TFArray",
-    });
-    this.#subscribeCB = (response) => {
-      this.processTFArray(response);
-    };
-    this.currentTopic.subscribe(this.#subscribeCB);
   }
 
   /**
    * Unsubscribe and unadvertise all topics associated with this TFClient.
    */
   dispose() {
-    this.#isDisposed = true;
-    this.actionClient.dispose();
-    if (this.currentTopic) {
-      this.currentTopic.unsubscribe(this.#subscribeCB);
-    }
+    this.#actionClient.dispose();
   }
 }

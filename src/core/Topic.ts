@@ -40,7 +40,7 @@ export default class Topic<T> extends EventEmitter<{
   queue_size: number;
   queue_length: number;
   reconnect_on_close: boolean;
-  callForSubscribeAndAdvertise: (
+  #callForSubscribeAndAdvertise: (
     message: RosbridgeSubscribeMessage | RosbridgeAdvertiseMessage,
   ) => void;
   subscribeId: string | null = null;
@@ -117,7 +117,7 @@ export default class Topic<T> extends EventEmitter<{
     }
 
     if (this.reconnect_on_close) {
-      this.callForSubscribeAndAdvertise = (message) => {
+      this.#callForSubscribeAndAdvertise = (message) => {
         this.ros.callOnConnection(message);
 
         this.waitForReconnect = false;
@@ -133,7 +133,7 @@ export default class Topic<T> extends EventEmitter<{
         this.ros.on("close", this.reconnectFunc);
       };
     } else {
-      this.callForSubscribeAndAdvertise = (msg) => {
+      this.#callForSubscribeAndAdvertise = (msg) => {
         this.ros.callOnConnection(msg);
       };
     }
@@ -163,7 +163,7 @@ export default class Topic<T> extends EventEmitter<{
     this.ros.on(this.name, this.#messageCallback);
     this.subscribeId = `subscribe:${this.name}:${uuidv4()}`;
 
-    this.callForSubscribeAndAdvertise({
+    this.#callForSubscribeAndAdvertise({
       op: "subscribe",
       id: this.subscribeId,
       type: this.messageType,
@@ -214,7 +214,7 @@ export default class Topic<T> extends EventEmitter<{
       return;
     }
     this.advertiseId = `advertise:${this.name}:${uuidv4()}`;
-    this.callForSubscribeAndAdvertise({
+    this.#callForSubscribeAndAdvertise({
       op: "advertise",
       id: this.advertiseId,
       type: this.messageType,
