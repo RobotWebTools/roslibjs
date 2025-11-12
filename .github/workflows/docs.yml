@@ -1,6 +1,10 @@
 name: Docs Deployment
 
 on:
+  pull_request:
+  push:
+    branches:
+      - develop
   release:
     types: [released]
 
@@ -20,6 +24,7 @@ jobs:
         run: npm run doc
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
+        if: github.event_name == 'release'
         with:
           github_token: ${{ secrets.RWT_BOT_PAT }}
           publish_dir: docs
