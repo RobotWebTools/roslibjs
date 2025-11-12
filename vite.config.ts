@@ -2,6 +2,7 @@ import { resolve } from "path";
 import { defineConfig } from "vitest/config";
 import dts from "vite-plugin-dts";
 import checker from "vite-plugin-checker";
+import { externalizeDeps } from "vite-plugin-externalize-deps";
 
 export default defineConfig({
   plugins: [
@@ -20,6 +21,7 @@ export default defineConfig({
         useFlatConfig: true,
       },
     }),
+    externalizeDeps(),
   ],
   build: {
     lib: {
@@ -28,16 +30,7 @@ export default defineConfig({
       name: "ROSLIB",
       // the proper extensions will be added
       fileName: "RosLib",
-    },
-    rollupOptions: {
-      /*
-       * make sure to externalize deps that shouldn't be bundled
-       * into your library
-       */
-      external: ["eventemitter3", "ws", "src/util/decompressPng.js"],
-      output: {
-        globals: { eventemitter3: "EventEmitter3" },
-      },
+      formats: ["es"],
     },
     // Keep synchronized with minimum engine specified in CI & package.json
     target: "node18",
