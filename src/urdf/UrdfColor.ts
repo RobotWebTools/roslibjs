@@ -5,7 +5,6 @@
  */
 
 import { UrdfAttrs, type UrdfDefaultOptions } from "./UrdfTypes.js";
-import type { Optional } from "../types/interface-types.js";
 
 /**
  * A Color element in a URDF.
@@ -30,9 +29,7 @@ export default class UrdfColor {
 
   constructor({ xml }: UrdfDefaultOptions) {
     // Parse the xml string
-    const rgba: Optional<string[]> = xml
-      .getAttribute(UrdfAttrs.Rgba)
-      ?.split(" ");
+    const rgba = xml.getAttribute(UrdfAttrs.Rgba)?.split(" ");
     if (!(rgba?.[0] && rgba[1] && rgba[2] && rgba[3])) {
       return;
     }

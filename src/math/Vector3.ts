@@ -4,7 +4,6 @@
  */
 
 import { type IQuaternion } from "./Quaternion.js";
-import { type PartialNullable } from "../types/interface-types.js";
 
 export interface IVector3 {
   /**
@@ -29,7 +28,7 @@ export default class Vector3 implements IVector3 {
   y: number;
   z: number;
 
-  constructor(options?: PartialNullable<IVector3> | null) {
+  constructor(options?: Partial<IVector3> | null) {
     this.x = options?.x ?? 0;
     this.y = options?.y ?? 0;
     this.z = options?.z ?? 0;

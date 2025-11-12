@@ -5,7 +5,6 @@
 import Vector3, { type IVector3 } from "./Vector3.js";
 import Quaternion, { type IQuaternion } from "./Quaternion.js";
 import { type ITransform } from "./Transform.js";
-import type { PartialNullable } from "../types/interface-types.js";
 
 export interface IPose {
   /**
@@ -25,7 +24,7 @@ export default class Pose implements IPose {
   position: Vector3;
   orientation: Quaternion;
 
-  constructor(options?: PartialNullable<IPose>) {
+  constructor(options?: Partial<IPose>) {
     this.position = new Vector3(options?.position);
     this.orientation = new Quaternion(options?.orientation);
   }

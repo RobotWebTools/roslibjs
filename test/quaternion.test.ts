@@ -17,8 +17,13 @@ describe("Quaternion", function () {
       expect(q.z).to.equal(0);
       expect(q.w).to.equal(1);
     });
-    it("should return an identity quaternion when null is specified", function () {
-      const q = new ROSLIB.Quaternion({ x: null, y: null, z: null, w: null });
+    it("should return an identity quaternion when params are undefined", function () {
+      const q = new ROSLIB.Quaternion({
+        x: undefined,
+        y: undefined,
+        z: undefined,
+        w: undefined,
+      });
       expect(q.x).to.equal(0);
       expect(q.y).to.equal(0);
       expect(q.z).to.equal(0);

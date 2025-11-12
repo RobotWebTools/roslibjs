@@ -1,8 +1,6 @@
 /**
- * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
  */
-import { type PartialNullable } from "../types/interface-types.js";
 
 export interface IQuaternion {
   /**
@@ -35,7 +33,7 @@ export default class Quaternion implements IQuaternion {
   z: number;
   w: number;
 
-  constructor(options?: PartialNullable<IQuaternion> | null) {
+  constructor(options?: Partial<IQuaternion> | null) {
     this.x = options?.x ?? 0;
     this.y = options?.y ?? 0;
     this.z = options?.z ?? 0;

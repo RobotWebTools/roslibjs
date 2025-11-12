@@ -7,16 +7,15 @@ import { UrdfAttrs, type UrdfDefaultOptions } from "./UrdfTypes.js";
 import Pose from "../math/Pose.js";
 import Vector3 from "../math/Vector3.js";
 import { parseUrdfOrigin } from "./UrdfUtils.js";
-import type { Nullable } from "../types/interface-types.js";
 
 /**
  * A Joint element in a URDF.
  */
 export default class UrdfJoint {
   name: string;
-  type: Nullable<string>;
-  parent: Nullable<string> = null;
-  child: Nullable<string> = null;
+  type: string | null;
+  parent: string | null = null;
+  child: string | null = null;
   minval = NaN;
   maxval = NaN;
   origin: Pose = new Pose();
