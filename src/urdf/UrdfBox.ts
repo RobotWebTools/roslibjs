@@ -4,7 +4,7 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import { Vector3 } from "../math/index.js";
+import Vector3 from "../math/Vector3.js";
 import { UrdfAttrs, UrdfType, type UrdfDefaultOptions } from "./UrdfTypes.js";
 import type { Optional, Nullable } from "../types/interface-types.js";
 
