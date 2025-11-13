@@ -36,7 +36,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     permissions:
       actions: read # to read the artifact from the previous job
+      # pages and id-token required to deploy to GitHub Pages
       pages: write
+      id-token: write
     if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Deploy to GitHub Pages
