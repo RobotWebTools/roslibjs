@@ -3,6 +3,7 @@
  * @author Ramon Wijnands - rayman747@hotmail.com
  */
 
+import type { DecodedPng } from "fast-png";
 import { decode } from "fast-png";
 import { Buffer } from "buffer";
 
@@ -27,10 +28,10 @@ export default function decompressPng(data: string): unknown {
   }
 }
 
-function tryDecodeBuffer(buffer: Buffer) {
+function tryDecodeBuffer(buffer: Buffer): DecodedPng {
   try {
     return decode(buffer);
   } catch (error) {
-    throw new Error("Error decoding buffer", { cause: error });
+    throw new Error("Error decoding PNG buffer", { cause: error });
   }
 }

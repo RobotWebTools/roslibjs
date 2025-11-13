@@ -1,3 +1,7 @@
+/**
+ * https://github.com/RobotWebTools/rosbridge_suite/blob/ros2/ROSBRIDGE_PROTOCOL.md
+ */
+
 export interface RosbridgeMessage {
   op: string;
 }
@@ -23,6 +27,18 @@ export function isRosbridgeStatusMessage(
   message: RosbridgeMessage,
 ): message is RosbridgeStatusMessage {
   return message.op === "status";
+}
+
+export interface RosbridgeSetStatusLevelMessage extends RosbridgeMessage {
+  op: "set_level";
+  id?: string;
+  level: string;
+}
+
+export function isRosbridgeSetStatusLevelMessage(
+  message: RosbridgeMessage,
+): message is RosbridgeSetStatusLevelMessage {
+  return message.op === "set_level";
 }
 
 export interface RosbridgeFragmentMessage extends RosbridgeMessage {
