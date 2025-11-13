@@ -75,20 +75,25 @@ export abstract class AbstractTransport
   /**
    * Decodes a raw message received from the transport
    * and emits it as a RosbridgeMessage over the "message" event.
+   * If an error occurs, it is emitted as an "error" event.
    *
    * The default implementation handles multiple compression formats
    * and fragment messages. Subclasses may override this method to provide
    * custom handling of raw messages and when to emit messages.
    */
   protected handleRawMessage(data: unknown): void {
-    if (isRosbridgeMessage(data)) {
-      this.handleRosbridgeMessage(data);
-    } else if (typeof Blob !== "undefined" && data instanceof Blob) {
-      this.handleBsonMessage(data);
-    } else if (data instanceof ArrayBuffer) {
-      this.handleCborMessage(data);
-    } else {
-      this.handleJsonMessage(String(data));
+    try {
+      if (isRosbridgeMessage(data)) {
+        this.handleRosbridgeMessage(data);
+      } else if (typeof Blob !== "undefined" && data instanceof Blob) {
+        this.handleBsonMessage(data);
+      } else if (data instanceof ArrayBuffer) {
+        this.handleCborMessage(data);
+      } else {
+        this.handleJsonMessage(String(data));
+      }
+    } catch (error) {
+      this.emit("error", error);
     }
   }
 
@@ -191,7 +196,7 @@ export abstract class AbstractTransport
         if (isRosbridgeMessage(data)) {
           this.handleRosbridgeMessage(data);
         } else {
-          throw new Error("Decoded BSON data was invalid!");
+          this.emit("error", new Error("Decoded BSON data was invalid!"));
         }
       }
     };
