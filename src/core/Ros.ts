@@ -145,6 +145,17 @@ export default class Ros extends EventEmitter<
     }
   }
 
+  /**
+   * Send an authorization request to the server.
+   *
+   * @param mac - MAC (hash) string given by the trusted source.
+   * @param client - IP of the client.
+   * @param dest - IP of the destination.
+   * @param rand - Random string given by the trusted source.
+   * @param t - Time of the authorization request.
+   * @param level - User level as a string given by the client.
+   * @param end - End time of the client's session.
+   */
   public authenticate(
     mac: string,
     client: string,
