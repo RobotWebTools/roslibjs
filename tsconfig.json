@@ -53,7 +53,7 @@
 
     /* Rules to be enabled */
     "exactOptionalPropertyTypes": false /* Differentiate between undefined and not present when type checking */,
-    "noImplicitAny": false /* Enable error reporting for expressions and declarations with an implied 'any' type. */,
+    "noImplicitAny": true /* Enable error reporting for expressions and declarations with an implied 'any' type. */,
 
     "types": ["@types/node"]
   },
