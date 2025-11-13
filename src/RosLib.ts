@@ -12,6 +12,13 @@ export { default as Topic } from "./core/Topic.js";
 export { default as Param } from "./core/Param.js";
 export { default as Service } from "./core/Service.js";
 export { default as Action } from "./core/Action.js";
+export {
+  type ITransport,
+  type ITransportFactory,
+  type TransportEvent,
+  AbstractTransport,
+  WebSocketTransportFactory,
+} from "./core/Transport.js";
 
 // ActionLib exports
 export { default as ActionClient } from "./actionlib/ActionClient.js";

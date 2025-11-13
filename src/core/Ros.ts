@@ -3,9 +3,10 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-import type { RequiredSocketInterface } from "./SocketAdapter.js";
-import SocketAdapter from "./SocketAdapter.js";
-import type { RosbridgeMessage } from "../types/protocol.js";
+import type {
+  RosbridgeMessage,
+  RosbridgeSetStatusLevelMessage,
+} from "../types/protocol.js";
 import {
   isRosbridgeActionFeedbackMessage,
   isRosbridgeActionResultMessage,
@@ -25,169 +26,98 @@ import ActionClient from "../actionlib/ActionClient.js";
 import SimpleActionServer from "../actionlib/SimpleActionServer.js";
 import { EventEmitter } from "eventemitter3";
 import type { rosapi } from "../types/rosapi.ts";
-
-function isRTCPeerDataChannel(obj: unknown): obj is RTCPeerConnection {
-  return obj?.constructor.name === "RTCDataChannel";
-}
-
-export type TransportLibrary =
-  | "websocket"
-  | RTCPeerConnection
-  | TransportFactory;
-
-export interface TransportOptions extends RTCDataChannelInit {
-  /**
-   * Hook to handle outgoing socket message and encode it.
-   */
-  encoder?: (
-    message: unknown,
-    callback: (encodedMessage: string) => void,
-  ) => unknown;
-  /**
-   * Hook to handle incoming socket message and decode it.
-   */
-  decoder?: (message: unknown) => unknown;
-}
+import type {
+  ITransport,
+  ITransportFactory,
+  TransportEvent,
+} from "./Transport.js";
+import { WebSocketTransportFactory } from "./Transport.js";
 
 /**
- * Function that is called whenever a new transport is needed.
- * For example, to connect a websocket to the rosbridge server.
- */
-export type TransportFactory = (
-  /**
-   * The WebSocket URL for rosbridge.
-   */
-  url: string,
-) => Promise<RequiredSocketInterface>;
-
-/**
- * Manages connection to the server and all interactions with ROS.
+ * Manages connection to the rosbridge server and all interactions with ROS.
  *
  * Emits the following events:
+ *  * 'open'  - Connected to the rosbridge server.
+ *  * 'close' - Disconnected to the rosbridge server.
  *  * 'error' - There was an error with ROS.
- *  * 'connection' - Connected to the WebSocket server.
- *  * 'close' - Disconnected to the WebSocket server.
  *  * &#60;topicName&#62; - A message came from rosbridge with the given topic name.
  *  * &#60;serviceID&#62; - A service response came from rosbridge with the given ID.
  */
 export default class Ros extends EventEmitter<
   {
-    error: [string];
-    connection: [Event];
-    close: [Event];
+    open: [TransportEvent];
+    close: [TransportEvent];
+    error: [TransportEvent];
     // Any dynamically-named event should correspond to a rosbridge protocol message
   } & Record<string, [RosbridgeMessage]>
 > {
-  socket: SocketAdapter | null = null;
-  isConnected = false;
-  transportLibrary: TransportLibrary;
-  transportOptions: TransportOptions;
-  /**
-   * @param [options]
-   * @param [options.url] - The WebSocket URL for rosbridge. Can be specified later with `connect`.
-   * @param [options.transportLibrary='websocket'] - 'websocket', or an RTCPeerConnection instance controlling how the connection is created in `connect`.
-   * @param [options.transportOptions={}] - The options to use when creating a connection.
-   */
+  // private write, public read via getter method
+  #isConnected: boolean;
+
+  private transport?: ITransport;
+  private transportFactory: ITransportFactory;
+
   constructor({
     url,
-    transportLibrary = "websocket",
-    transportOptions = {},
+    transportFactory = new WebSocketTransportFactory(),
   }: {
+    /**
+     * The rosbridge server URL. Can be specified later with `connect`.
+     * If specified, then will immediately try to connect to the server.
+     */
     url?: string;
-    transportLibrary?: TransportLibrary;
-    transportOptions?: TransportOptions;
+    /**
+     * The factory to use to create a transport.
+     * Defaults to a WebSocket transport factory.
+     */
+    transportFactory?: ITransportFactory;
   } = {}) {
     super();
 
-    this.transportLibrary = transportLibrary;
-    this.transportOptions = transportOptions;
+    this.#isConnected = false;
+    this.transportFactory = transportFactory;
 
-    // begin by checking if a URL was given
     if (url) {
       this.connect(url).catch(console.error);
     }
   }
-  /**
-   * Create the appropriate transport based on transport library configuration
-   * @param url - WebSocket URL or RTCDataChannel label for rosbridge.
-   * @returns The created transport
-   */
-  async #createTransport(url: string): Promise<RequiredSocketInterface> {
-    if (isRTCPeerDataChannel(this.transportLibrary)) {
-      const dataChannel = this.transportLibrary.createDataChannel(
-        url,
-        this.transportOptions,
-      );
-      return dataChannel;
-    }
 
-    // Custom factory function to create a transport.
-    if (typeof this.transportLibrary === "function") {
-      return this.transportLibrary(url);
-    }
-
-    // Browsers, Deno, Bun, and Node 22+ support WebSockets natively
-    if (typeof WebSocket === "function") {
-      const sock = new WebSocket(url);
-      sock.binaryType = "arraybuffer";
-      return sock;
-    }
-
-    // If in Node.js, import ws to replace WebSocket API
-    const ws = await import("ws");
-    const sock = new ws.WebSocket(url);
-    sock.binaryType = "arraybuffer";
-    return sock;
+  public isConnected(): boolean {
+    return this.#isConnected;
   }
-  /**
-   * Check if we need to create a new transport.
-   */
-  #checkIfNeedNewTransport(): boolean {
-    // For backwards compatibility, a new RTC transport was always created
-    if (isRTCPeerDataChannel(this.transportLibrary)) {
-      return true;
-    }
-    // Should we create a new transport if the socket is closing, too?
-    if (!this.socket || this.socket.isClosed()) {
-      return true;
-    }
-    // Socket isn't closed, keep using it
-    return false;
-  }
-  /**
-   * @param url - WebSocket URL or RTCDataChannel label for rosbridge.
-   */
-  async connect(url: string) {
-    if (!this.#checkIfNeedNewTransport()) {
+
+  public async connect(url: string): Promise<void> {
+    if (this.transport && !this.transport.isClosed()) {
       return; // Already connected
     }
 
-    const transport = await this.#createTransport(url);
+    const transport = await this.transportFactory.createTransport(url);
+    this.transport = transport;
 
-    this.socket = new SocketAdapter(transport, {
-      onOpen: (event) => {
-        this.isConnected = true;
-        this.emit("connection", event);
-      },
-      onClose: (event) => {
-        this.isConnected = false;
-        this.emit("close", event);
-      },
-      onError: (event) => {
-        this.emit("error", String(event.error));
-      },
-      onMessage: (message) => {
-        this.#handleMessage(message);
-      },
-      decoder: this.transportOptions.decoder,
+    transport.on("open", (event: TransportEvent) => {
+      this.#isConnected = true;
+      this.emit("open", event);
+    });
+
+    transport.on("close", (event: TransportEvent) => {
+      this.#isConnected = false;
+      this.emit("close", event);
+    });
+
+    transport.on("error", (event: TransportEvent) => {
+      this.emit("error", event);
+    });
+
+    transport.on("message", (message: RosbridgeMessage) => {
+      this.handleMessage(message);
     });
   }
 
-  /**
-   * Handle processed messages from SocketAdapter
-   * @param message
-   */
-  #handleMessage(message: RosbridgeMessage) {
+  public close() {
+    this.transport?.close();
+  }
+
+  private handleMessage(message: RosbridgeMessage) {
     if (isRosbridgePublishMessage(message)) {
       this.emit(message.topic, message);
     } else if (isRosbridgeServiceResponseMessage(message)) {
@@ -214,26 +144,8 @@ export default class Ros extends EventEmitter<
       }
     }
   }
-  /**
-   * Disconnect from the WebSocket server.
-   */
-  close() {
-    if (this.socket) {
-      this.socket.close();
-    }
-  }
-  /**
-   * Send an authorization request to the server.
-   *
-   * @param mac - MAC (hash) string given by the trusted source.
-   * @param client - IP of the client.
-   * @param dest - IP of the destination.
-   * @param rand - Random string given by the trusted source.
-   * @param t - Time of the authorization request.
-   * @param level - User level as a string given by the client.
-   * @param end - End time of the client's session.
-   */
-  authenticate(
+
+  public authenticate(
     mac: string,
     client: string,
     dest: string,
@@ -256,61 +168,46 @@ export default class Ros extends EventEmitter<
     // send the request
     this.callOnConnection(auth);
   }
+
   /**
-   * Send an encoded message over the WebSocket.
-   *
-   * @param messageEncoded - The encoded message to be sent.
+   * Sends the message to the transport.
+   * If not connected, queues the message to send once reconnected.
    */
-  sendEncodedMessage(messageEncoded: string) {
-    if (!this.isConnected) {
-      this.once("connection", () => {
-        if (this.socket !== null) {
-          this.socket.send(messageEncoded);
-        }
-      });
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+  public callOnConnection<T extends RosbridgeMessage = RosbridgeMessage>(
+    message: T,
+  ) {
+    if (this.isConnected()) {
+      this.transport?.send(message);
     } else {
-      if (this.socket !== null) {
-        this.socket.send(messageEncoded);
-      }
+      this.once("open", () => {
+        this.transport?.send(message);
+      });
     }
   }
-  /**
-   * Send the message over the WebSocket, but queue the message up if not yet
-   * connected.
-   *
-   * @param message - The message to be sent.
-   */
-  callOnConnection = (message: unknown) => {
-    if (this.transportOptions.encoder) {
-      this.transportOptions.encoder(message, (msg) => {
-        this.sendEncodedMessage(msg);
-      });
-    } else {
-      this.sendEncodedMessage(JSON.stringify(message));
-    }
-  };
+
   /**
    * Send a set_level request to the server.
    *
    * @param level - Status level (none, error, warning, info).
    * @param [id] - Operation ID to change status level on.
    */
-  setStatusLevel(level: string, id?: number) {
-    const levelMsg = {
+  public setStatusLevel(level: string, id?: string) {
+    const levelMsg: RosbridgeSetStatusLevelMessage = {
       op: "set_level",
-      level: level,
-      id: id,
+      level,
+      id,
     };
-
     this.callOnConnection(levelMsg);
   }
+
   /**
    * Retrieve a list of action servers in ROS as an array of string.
    *
    * @param callback - Function with the following params:
    * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getActionServers(
+  public getActionServers(
     callback: (actionservers: string[]) => void,
     failedCallback: (error: string) => void = console.error,
   ) {
@@ -334,13 +231,14 @@ export default class Ros extends EventEmitter<
       },
     );
   }
+
   /**
    * Retrieve a list of topics in ROS as an array.
    *
    * @param callback - Function with the following params:
    * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getTopics(
+  public getTopics(
     callback: (result: rosapi.TopicsResponse) => void,
     failedCallback: (error: string) => void = console.error,
   ) {
@@ -364,6 +262,7 @@ export default class Ros extends EventEmitter<
       },
     );
   }
+
   /**
    * Retrieve a list of topics in ROS as an array of a specific type.
    *
@@ -371,7 +270,7 @@ export default class Ros extends EventEmitter<
    * @param callback - Function with the following params:
    * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getTopicsForType(
+  public getTopicsForType(
     topicType: string,
     callback: (topics: string[]) => void,
     failedCallback: (error: string) => void = console.error,
@@ -405,7 +304,7 @@ export default class Ros extends EventEmitter<
    * @param callback - Function with the following params:
    * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getServices(
+  public getServices(
     callback: (services: string[]) => void,
     failedCallback: (error: string) => void = console.error,
   ) {
@@ -429,6 +328,7 @@ export default class Ros extends EventEmitter<
       },
     );
   }
+
   /**
    * Retrieve a list of services in ROS as an array as specific type.
    *
@@ -436,7 +336,7 @@ export default class Ros extends EventEmitter<
    * @param callback - Function with the following params:
    * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getServicesForType(
+  public getServicesForType(
     serviceType: string,
     callback: (services: string[]) => void,
     failedCallback: (error: string) => void = console.error,
@@ -463,6 +363,7 @@ export default class Ros extends EventEmitter<
       },
     );
   }
+
   /**
    * Retrieve the details of a ROS service request.
    *
@@ -470,7 +371,7 @@ export default class Ros extends EventEmitter<
    * @param callback - Function with the following params:
    * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getServiceRequestDetails(
+  public getServiceRequestDetails(
     type: string,
     callback: (result: rosapi.ServiceRequestDetailsResponse) => void,
     failedCallback: (error: string) => void = console.error,
@@ -497,6 +398,7 @@ export default class Ros extends EventEmitter<
       },
     );
   }
+
   /**
    * Retrieve the details of a ROS service response.
    *
@@ -504,7 +406,7 @@ export default class Ros extends EventEmitter<
    * @param callback - Function with the following params:
    * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getServiceResponseDetails(
+  public getServiceResponseDetails(
     type: string,
     callback: (result: rosapi.ServiceResponseDetailsResponse) => void,
     failedCallback: (error: string) => void = console.error,
@@ -531,13 +433,14 @@ export default class Ros extends EventEmitter<
       },
     );
   }
+
   /**
    * Retrieve a list of active node names in ROS.
    *
    * @param callback - Function with the following params:
    * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getNodes(
+  public getNodes(
     callback: (result: string[]) => void,
     failedCallback: (error: string) => void = console.error,
   ) {
@@ -558,12 +461,13 @@ export default class Ros extends EventEmitter<
       },
     );
   }
+
   /**
    * Retrieve a list of subscribed topics, publishing topics and services of a specific node.
    *
    * @param node - Name of the node.
    */
-  getNodeDetails(
+  public getNodeDetails(
     node: string,
     callback: (result: rosapi.NodeDetailsResponse) => void,
     failedCallback: (error: string) => void = console.error,
@@ -579,13 +483,14 @@ export default class Ros extends EventEmitter<
 
     nodesClient.callService({ node }, callback, failedCallback);
   }
+
   /**
    * Retrieve a list of parameter names from the ROS Parameter Server.
    *
    * @param callback - Function with the following params:
    * @param failedCallback - The callback function when the service call failed with params:
    */
-  getParams(
+  public getParams(
     callback: (names: string[]) => void,
     failedCallback: (error: string) => void = console.error,
   ) {
@@ -608,6 +513,7 @@ export default class Ros extends EventEmitter<
       },
     );
   }
+
   /**
    * Retrieve the type of a ROS topic.
    *
@@ -615,7 +521,7 @@ export default class Ros extends EventEmitter<
    * @param callback - Function with the following params:
    * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getTopicType(
+  public getTopicType(
     topic: string,
     callback: (type: string) => void,
     failedCallback: (error: string) => void = console.error,
@@ -642,6 +548,7 @@ export default class Ros extends EventEmitter<
       },
     );
   }
+
   /**
    * Retrieve the type of a ROS service.
    *
@@ -649,7 +556,7 @@ export default class Ros extends EventEmitter<
    * @param callback - Function with the following params:
    * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getServiceType(
+  public getServiceType(
     service: string,
     callback: (type: string) => void,
     failedCallback: (error: string) => void = console.error,
@@ -676,6 +583,7 @@ export default class Ros extends EventEmitter<
       },
     );
   }
+
   /**
    * Retrieve the details of a ROS message.
    *
@@ -683,7 +591,7 @@ export default class Ros extends EventEmitter<
    * @param callback - Function with the following params:
    * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getMessageDetails(
+  public getMessageDetails(
     message: string,
     callback: (typedefs: rosapi.TypeDef[]) => void,
     failedCallback: (error: string) => void = console.error,
@@ -710,12 +618,13 @@ export default class Ros extends EventEmitter<
       },
     );
   }
+
   /**
    * Decode a typedef array into a dictionary like `rosmsg show foo/bar`.
    *
    * @param defs - Array of type_def dictionary.
    */
-  decodeTypeDefs(defs: rosapi.TypeDef[]) {
+  public decodeTypeDefs(defs: rosapi.TypeDef[]) {
     const decodeTypeDefsRec = (
       theType: rosapi.TypeDef,
       hints: rosapi.TypeDef[],
@@ -759,6 +668,7 @@ export default class Ros extends EventEmitter<
 
     return decodeTypeDefsRec(defs[0], defs);
   }
+
   /**
    * @callback getTopicsAndRawTypesCallback
    * @param {Object} result - The result object with the following params:
@@ -776,7 +686,7 @@ export default class Ros extends EventEmitter<
    * @param callback - Function with the following params:
    * @param [failedCallback] - The callback function when the service call failed with params:
    */
-  getTopicsAndRawTypes(
+  public getTopicsAndRawTypes(
     callback: (result: rosapi.TopicsAndRawTypesResponse) => void,
     failedCallback: (error: string) => void = console.error,
   ) {
@@ -800,13 +710,20 @@ export default class Ros extends EventEmitter<
       },
     );
   }
-  Topic<T>(options: Omit<ConstructorParameters<typeof Topic<T>>[0], "ros">) {
+
+  public Topic<T>(
+    options: Omit<ConstructorParameters<typeof Topic<T>>[0], "ros">,
+  ) {
     return new Topic<T>({ ros: this, ...options });
   }
-  Param<T>(options: Omit<ConstructorParameters<typeof Param<T>>[0], "ros">) {
+
+  public Param<T>(
+    options: Omit<ConstructorParameters<typeof Param<T>>[0], "ros">,
+  ) {
     return new Param<T>({ ros: this, ...options });
   }
-  Service<TRequest, TResponse>(
+
+  public Service<TRequest, TResponse>(
     options: Omit<
       ConstructorParameters<typeof Service<TRequest, TResponse>>[0],
       "ros"
@@ -814,10 +731,14 @@ export default class Ros extends EventEmitter<
   ) {
     return new Service<TRequest, TResponse>({ ros: this, ...options });
   }
-  TFClient(options: Omit<ConstructorParameters<typeof TFClient>[0], "ros">) {
+
+  public TFClient(
+    options: Omit<ConstructorParameters<typeof TFClient>[0], "ros">,
+  ) {
     return new TFClient({ ros: this, ...options });
   }
-  ActionClient<TGoal, TFeedback, TResult>(
+
+  public ActionClient<TGoal, TFeedback, TResult>(
     options: Omit<
       ConstructorParameters<typeof ActionClient<TGoal, TFeedback, TResult>>[0],
       "ros"
@@ -828,7 +749,8 @@ export default class Ros extends EventEmitter<
       ...options,
     });
   }
-  SimpleActionServer<TGoal, TFeedback, TResult>(
+
+  public SimpleActionServer<TGoal, TFeedback, TResult>(
     options: Omit<
       ConstructorParameters<
         typeof SimpleActionServer<TGoal, TFeedback, TResult>
