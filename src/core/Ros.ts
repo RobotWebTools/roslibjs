@@ -173,7 +173,7 @@ export default class Ros extends EventEmitter<
    * Sends the message to the transport.
    * If not connected, queues the message to send once reconnected.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- to broaden argument type to any RosbridgeMessage variant
   public callOnConnection<T extends RosbridgeMessage = RosbridgeMessage>(
     message: T,
   ) {
