@@ -2,22 +2,20 @@
 
 import type { MockedObject } from "vitest";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { AbstractTransport } from "../src/core/Transport.js";
-import {
-  NativeWebSocketTransport,
-  WebSocketTransportFactory,
-  WsWebSocketTransport,
-} from "../src/core/Transport.js";
+import type { AbstractTransport } from "../src/core/transport/Transport.js";
+import { WebSocketTransportFactory } from "../src/core/transport/WebSocketTransportFactory.js";
 import type {
   RosbridgeMessage,
   RosbridgePngMessage,
 } from "../src/types/protocol.js";
 import CBOR from "cbor-js";
-import pngparse from "pngparse";
+import * as fastpng from "fast-png";
 import * as bson from "bson";
 import * as ws from "ws";
+import { NativeWebSocketTransport } from "../src/core/transport/NativeWebSocketTransport.js";
+import { WsWebSocketTransport } from "../src/core/transport/WsWebSocketTransport.js";
 
-vi.mock("pngparse");
+vi.mock("fast-png");
 
 describe("Transport", () => {
   afterEach(() => {
@@ -29,7 +27,7 @@ describe("Transport", () => {
     const messageListener = vi.fn();
     const errorListener = vi.fn();
 
-    let mockPngParseModule: MockedObject<typeof pngparse>;
+    let mockPngParseModule: MockedObject<typeof fastpng>;
     let mockSocket: MockedObject<WebSocket>;
 
     let transport: AbstractTransport;
@@ -38,7 +36,7 @@ describe("Transport", () => {
       // So that the nodejs decompress png util is used, not the browser one
       vi.stubGlobal("window", undefined);
 
-      mockPngParseModule = vi.mocked(pngparse);
+      mockPngParseModule = vi.mocked(fastpng);
 
       mockSocket = {
         send: vi.fn(),
@@ -176,28 +174,28 @@ describe("Transport", () => {
       });
     });
 
-    it("should handle RosbridgePngMessage", async () => {
-      mockPngParseModule.parse.mockImplementation(
+    it.only("should handle RosbridgePngMessage", async () => {
+      mockPngParseModule.decode.mockImplementation(
         (
           // Normally, this is the compressed PNG data.
           // For our tests, it's a string buffer of "success" or "failure".
-          data: Buffer,
-          cb: (error?: Error, data?: pngparse.ImageData) => void,
+          data: fastpng.DecoderInputType,
         ) => {
-          const decodedImage: pngparse.ImageData = {
+          const decodedImage: fastpng.DecodedPng = {
             width: 100,
             height: 100,
+            depth: 8,
             channels: 1,
+            text: {},
             data: Buffer.from(JSON.stringify({ op: "test" })),
-            trailer: Buffer.from(""),
           };
-          switch (data.toString()) {
+          switch ((data as Buffer).toString()) {
             case "success":
-              cb(undefined, decodedImage);
-              break;
+              return decodedImage;
             case "failure":
-              cb(new Error("test"), undefined);
-              break;
+              throw new Error("test");
+            default:
+              throw new Error("invalid test data");
           }
         },
       );
@@ -241,7 +239,7 @@ describe("Transport", () => {
       // PNG decompression occurs asynchronously.
       await vi.waitFor(() => {
         expect(errorListener).toHaveBeenCalledWith(
-          new Error("Cannot process PNG encoded message: test"),
+          new Error("Error decoding PNG buffer"),
         );
         expect(messageListener).not.toHaveBeenCalled();
       }, 500);

@@ -3,17 +3,16 @@ import type {
   RosbridgePngMessage,
   RosbridgeMessage,
   RosbridgeFragmentMessage,
-} from "../types/protocol.js";
+} from "../../types/protocol.js";
 import {
   isRosbridgeFragmentMessage,
   isRosbridgeMessage,
   isRosbridgePngMessage,
-} from "../types/protocol.js";
-import * as ws from "ws";
+} from "../../types/protocol.js";
 import { deserialize } from "bson";
 import CBOR from "cbor-js";
-import typedArrayTagger from "../util/cborTypedArrayTags.js";
-import decompressPng from "../util/decompressPng.js";
+import typedArrayTagger from "../../util/cborTypedArrayTags.js";
+import decompressPng from "../../util/decompressPng.js";
 
 /**
  * Because transport implementations may have different event types
@@ -22,6 +21,12 @@ import decompressPng from "../util/decompressPng.js";
  */
 export type TransportEvent = unknown;
 
+/**
+ * Abstraction responsible for sending and receiving messages
+ * between the client and the rosbridge server.
+ *
+ * Inspired by the WebSocket API, which is the default reference implementation.
+ */
 export interface ITransport {
   on(
     event: "open" | "close" | "error",
@@ -40,8 +45,16 @@ export interface ITransport {
   isClosed(): boolean;
 }
 
+/**
+ * Invoked when the roslib needs a new transport, such as
+ * when (re)connecting to the rosbridge server.
+ */
 export type ITransportFactory = (url: string) => Promise<ITransport>;
 
+/**
+ * Abstract base class for all transport implementations.
+ * Provides a default implementation for decoding raw rosbridge messages.
+ */
 export abstract class AbstractTransport
   extends EventEmitter<{
     open: [TransportEvent];
@@ -227,132 +240,3 @@ export abstract class AbstractTransport
     }
   }
 }
-
-export class NativeWebSocketTransport extends AbstractTransport {
-  private socket: WebSocket;
-
-  constructor(socket: WebSocket) {
-    super();
-    this.socket = socket;
-    this.registerEventListeners();
-  }
-
-  public send(message: RosbridgeMessage): void {
-    this.socket.send(JSON.stringify(message));
-  }
-
-  public close(): void {
-    this.socket.close();
-  }
-
-  public isConnecting(): boolean {
-    return this.socket.readyState === WebSocket.CONNECTING;
-  }
-
-  public isOpen(): boolean {
-    return this.socket.readyState === WebSocket.OPEN;
-  }
-
-  public isClosing(): boolean {
-    return this.socket.readyState === WebSocket.CLOSING;
-  }
-
-  public isClosed(): boolean {
-    return this.socket.readyState === WebSocket.CLOSED;
-  }
-
-  private registerEventListeners(): void {
-    this.socket.onopen = (event: Event) => {
-      this.emit("open", event);
-    };
-
-    this.socket.onclose = (event: CloseEvent) => {
-      this.emit("close", event);
-    };
-
-    this.socket.onerror = (event: Event) => {
-      this.emit("error", event);
-    };
-
-    this.socket.onmessage = (event: MessageEvent) => {
-      this.handleRawMessage(event.data);
-    };
-  }
-}
-
-export class WsWebSocketTransport extends AbstractTransport {
-  private socket: ws.WebSocket;
-
-  constructor(socket: ws.WebSocket) {
-    super();
-    this.socket = socket;
-    this.registerEventListeners();
-  }
-
-  public send(message: RosbridgeMessage): void {
-    this.socket.send(JSON.stringify(message));
-  }
-
-  public close(): void {
-    this.socket.close();
-  }
-
-  public isConnecting(): boolean {
-    return this.socket.readyState === ws.WebSocket.CONNECTING;
-  }
-
-  public isOpen(): boolean {
-    return this.socket.readyState === ws.WebSocket.OPEN;
-  }
-
-  public isClosing(): boolean {
-    return this.socket.readyState === ws.WebSocket.CLOSING;
-  }
-
-  public isClosed(): boolean {
-    return this.socket.readyState === ws.WebSocket.CLOSED;
-  }
-
-  private registerEventListeners(): void {
-    this.socket.onopen = (event: ws.Event) => {
-      this.emit("open", event);
-    };
-
-    this.socket.onclose = (event: ws.CloseEvent) => {
-      this.emit("close", event);
-    };
-
-    this.socket.onerror = (event: ws.ErrorEvent) => {
-      this.emit("error", event);
-    };
-
-    this.socket.onmessage = (event: ws.MessageEvent) => {
-      this.handleRawMessage(event.data);
-    };
-  }
-}
-
-/**
- * A transport factory that uses WebSockets to send and receive messages.
- * Will use the native `WebSocket` class if available, otherwise falls back
- * to the `ws` package.
- *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
- * @see https://github.com/websockets/ws
- */
-export const WebSocketTransportFactory: ITransportFactory = async (
-  url: string,
-): Promise<ITransport> => {
-  // Browsers, Deno, Bun, and Node 22+ support WebSockets natively
-  if (typeof WebSocket === "function") {
-    const socket = new WebSocket(url);
-    socket.binaryType = "arraybuffer";
-    return new NativeWebSocketTransport(socket);
-  }
-
-  // If in Node.js, import ws to replace WebSocket API
-  const ws = await import("ws");
-  const socket = new ws.WebSocket(url);
-  socket.binaryType = "arraybuffer";
-  return new WsWebSocketTransport(socket);
-};

@@ -5,8 +5,8 @@ import type {
   ITransport,
   ITransportFactory,
   TransportEvent,
-} from "../src/core/Transport.js";
-import { WebSocketTransportFactory } from "../src/core/Transport.js";
+} from "../src/core/transport/Transport.js";
+import { WebSocketTransportFactory } from "../src/core/transport/WebSocketTransportFactory.js";
 import Ros from "../src/core/Ros.js";
 import type { RosbridgeMessage } from "../src/types/protocol.js";
 

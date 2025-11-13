@@ -30,8 +30,8 @@ import type {
   ITransport,
   ITransportFactory,
   TransportEvent,
-} from "./Transport.js";
-import { WebSocketTransportFactory } from "./Transport.js";
+} from "./transport/Transport.js";
+import { WebSocketTransportFactory } from "./transport/WebSocketTransportFactory.ts";
 
 /**
  * Manages connection to the rosbridge server and all interactions with ROS.
