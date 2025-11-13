@@ -2,13 +2,20 @@
 
 import type { MockedObject } from "vitest";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { AbstractTransport } from "../src/core/Transport.js";
 import {
   NativeWebSocketTransport,
   WebSocketTransportFactory,
   WsWebSocketTransport,
 } from "../src/core/Transport.js";
 import * as ws from "ws";
-import type { RosbridgeMessage } from "../src/types/protocol.js";
+import type {
+  RosbridgeMessage,
+  RosbridgePngMessage,
+} from "../src/types/protocol.js";
+import pngparse from "pngparse";
+
+vi.mock("pngparse");
 
 describe("Transport", () => {
   afterEach(() => {
@@ -17,7 +24,140 @@ describe("Transport", () => {
   });
 
   describe("AbstractTransport", () => {
-    it.todo("todo");
+    let mockPngParseModule: MockedObject<typeof pngparse>;
+    let mockSocket: MockedObject<WebSocket>;
+    let transport: AbstractTransport;
+
+    beforeEach(() => {
+      // So that the nodejs decompress png util is used, not the browser one
+      vi.stubGlobal("window", undefined);
+
+      mockPngParseModule = vi.mocked(pngparse);
+
+      mockSocket = {
+        send: vi.fn(),
+        close: vi.fn(),
+        readyState: WebSocket.OPEN,
+        onopen: null,
+        onclose: null,
+        onerror: null,
+        onmessage: null,
+      } as unknown as MockedObject<WebSocket>;
+
+      transport = new NativeWebSocketTransport(mockSocket);
+    });
+
+    it("should handle RosbridgeMessage", () => {
+      const messageListener = vi.fn();
+
+      transport.on("message", messageListener);
+
+      const message: RosbridgeMessage = {
+        op: "test",
+      };
+
+      const messageEvent: Partial<MessageEvent> = {
+        type: "message",
+        data: JSON.stringify(message),
+      };
+
+      mockSocket.onmessage?.(messageEvent as MessageEvent);
+
+      expect(messageListener).toHaveBeenCalledWith(message);
+    });
+
+    it("should handle RosbridgeFragmentMessage", () => {
+      // TODO
+    });
+
+    it("should handle RosbridgePngMessage", async () => {
+      mockPngParseModule.parse.mockImplementation(
+        (
+          // Normally, this is the compressed PNG data.
+          // For our tests, it's a string buffer of "success" or "failure".
+          data: Buffer,
+          cb: (error?: Error, data?: pngparse.ImageData) => void,
+        ) => {
+          const decodedImage: pngparse.ImageData = {
+            width: 100,
+            height: 100,
+            channels: 1,
+            data: Buffer.from(JSON.stringify({ op: "test" })),
+            trailer: Buffer.from(""),
+          };
+          switch (data.toString()) {
+            case "success":
+              cb(undefined, decodedImage);
+              break;
+            case "failure":
+              cb(new Error("test"), undefined);
+              break;
+          }
+        },
+      );
+
+      const messageListener = vi.fn();
+      const errorListener = vi.fn();
+
+      transport.on("message", messageListener);
+      transport.on("error", errorListener);
+
+      // Obviously these are not real PNG encoded messages.
+      // But they're good enough for mocking responses in our tests.
+      const successMessage: RosbridgePngMessage = {
+        op: "png",
+        data: Buffer.from("success").toString("base64"),
+      };
+
+      const failureMessage: RosbridgePngMessage = {
+        op: "png",
+        data: Buffer.from("failure").toString("base64"),
+      };
+
+      // -- SUCCESS -- //
+
+      mockSocket.onmessage?.({
+        type: "message",
+        data: JSON.stringify(successMessage),
+      } as MessageEvent);
+
+      // Wait for the message to be processed.
+      // PNG decompression occurs asynchronously.
+      await vi.waitFor(() => {
+        expect(errorListener).not.toHaveBeenCalled();
+        expect(messageListener).toHaveBeenCalledWith({ op: "test" });
+      }, 500);
+
+      vi.clearAllMocks();
+
+      // -- FAILURE -- //
+
+      mockSocket.onmessage?.({
+        type: "message",
+        data: JSON.stringify(failureMessage),
+      } as MessageEvent);
+
+      // Wait for the message to be processed.
+      // PNG decompression occurs asynchronously.
+      await vi.waitFor(() => {
+        expect(errorListener).toHaveBeenCalledWith(
+          new Error("Cannot process PNG encoded message: test"),
+        );
+        expect(messageListener).not.toHaveBeenCalled();
+      }, 500);
+    });
+
+    it("should handle BSON message", () => {
+      // TODO
+    });
+
+    it("should handle CBOR message", () => {
+      // TODO
+    });
+
+    it("should handle JSON message", () => {
+      // TODO
+    });
   });
 
   describe("NativeWebSocketTransport", () => {
