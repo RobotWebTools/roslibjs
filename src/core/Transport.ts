@@ -156,12 +156,13 @@ export abstract class AbstractTransport
       let message: unknown;
       try {
         message = JSON.parse(fullData);
-      } catch {
-        // Failed to parse, ignore
+      } catch (error) {
+        throw new Error("Fragments did not form a valid JSON message!", {
+          cause: error,
+        });
+      } finally {
         this.#fragmentBuffer.delete(id);
-        return;
       }
-      this.#fragmentBuffer.delete(id);
       if (isRosbridgeMessage(message)) {
         this.handleRosbridgeMessage(message);
       } else {
