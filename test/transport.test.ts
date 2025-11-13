@@ -8,12 +8,14 @@ import {
   WebSocketTransportFactory,
   WsWebSocketTransport,
 } from "../src/core/Transport.js";
-import * as ws from "ws";
 import type {
   RosbridgeMessage,
   RosbridgePngMessage,
 } from "../src/types/protocol.js";
+import CBOR from "cbor-js";
 import pngparse from "pngparse";
+import * as bson from "bson";
+import * as ws from "ws";
 
 vi.mock("pngparse");
 
@@ -24,8 +26,12 @@ describe("Transport", () => {
   });
 
   describe("AbstractTransport", () => {
+    const messageListener = vi.fn();
+    const errorListener = vi.fn();
+
     let mockPngParseModule: MockedObject<typeof pngparse>;
     let mockSocket: MockedObject<WebSocket>;
+
     let transport: AbstractTransport;
 
     beforeEach(() => {
@@ -45,13 +51,12 @@ describe("Transport", () => {
       } as unknown as MockedObject<WebSocket>;
 
       transport = new NativeWebSocketTransport(mockSocket);
+
+      transport.on("message", messageListener);
+      transport.on("error", errorListener);
     });
 
     it("should handle RosbridgeMessage", () => {
-      const messageListener = vi.fn();
-
-      transport.on("message", messageListener);
-
       const message: RosbridgeMessage = {
         op: "test",
       };
@@ -66,8 +71,109 @@ describe("Transport", () => {
       expect(messageListener).toHaveBeenCalledWith(message);
     });
 
-    it("should handle RosbridgeFragmentMessage", () => {
-      // TODO
+    describe("should handle RosbridgeFragmentMessage", () => {
+      const sendFragment = (
+        id: string,
+        total: number,
+        fragments: unknown[],
+      ) => {
+        for (let i = 0; i < fragments.length; i++) {
+          mockSocket.onmessage?.({
+            type: "message",
+            data: JSON.stringify({
+              op: "fragment",
+              id,
+              data: fragments[i],
+              num: i,
+              total,
+            }),
+          } as MessageEvent);
+        }
+      };
+
+      it("reassembles fragments and emits message", () => {
+        const id = "test1";
+        const total = 3;
+        const msg = { op: "publish", topic: "foo", msg: { data: 42 } };
+        const json = JSON.stringify(msg);
+        const fragments = [
+          json.slice(0, 10),
+          json.slice(10, 20),
+          json.slice(20),
+        ];
+        sendFragment(id, total, fragments);
+        expect(messageListener).toHaveBeenCalledWith(msg);
+        expect(messageListener).toHaveBeenCalledTimes(1);
+        expect(errorListener).toHaveBeenCalledTimes(0);
+      });
+
+      it("handles float total by using integer part", () => {
+        const id = "test2";
+        const total = 2.9;
+        const msg = { op: "publish", topic: "bar", msg: { data: 99 } };
+        const json = JSON.stringify(msg);
+        const fragments = [json.slice(0, 10), json.slice(10)];
+        sendFragment(id, total, fragments);
+        expect(messageListener).toHaveBeenCalledWith(msg);
+        expect(messageListener).toHaveBeenCalledTimes(1);
+        expect(errorListener).toHaveBeenCalledTimes(0);
+      });
+
+      it("handles extra fragments beyond integer total", () => {
+        const id = "test3";
+        const total = 2.1;
+        const msg = { op: "publish", topic: "baz", msg: { data: 7 } };
+        const json = JSON.stringify(msg);
+        const fragments = [json.slice(0, 10), json.slice(10), "extra"];
+        sendFragment(id, total, fragments);
+        expect(messageListener).toHaveBeenCalledWith(msg);
+        expect(messageListener).toHaveBeenCalledTimes(1);
+        expect(errorListener).toHaveBeenCalledTimes(0);
+      });
+
+      it("does not emit if fragments are missing", () => {
+        const id = "test4";
+        const total = 2;
+        const msg = { op: "publish", topic: "qux", msg: { data: 123 } };
+        const json = JSON.stringify(msg);
+        const fragments = [json.slice(0, 10)]; // missing one fragment
+        sendFragment(id, total, fragments);
+        expect(messageListener).toHaveBeenCalledTimes(0);
+        expect(errorListener).toHaveBeenCalledTimes(0);
+      });
+
+      it("ignores malformed fragments", () => {
+        mockSocket.onmessage?.({
+          type: "message",
+          data: JSON.stringify({ op: "fragment", id: "bad" }),
+        } as MessageEvent);
+        expect(messageListener).toHaveBeenCalledTimes(0);
+        expect(errorListener).toHaveBeenCalledTimes(0);
+      });
+
+      it("emits error when reassembled message is invalid", () => {
+        const id = "test5";
+        const total = 1;
+        const fragments = ['{ "foo": "bar" }'];
+        sendFragment(id, total, fragments);
+        expect(messageListener).toHaveBeenCalledTimes(0);
+        expect(errorListener).toHaveBeenCalledTimes(1);
+        expect(errorListener).toHaveBeenCalledWith(
+          new Error("Received invalid rosbridge message!"),
+        );
+      });
+
+      it("emits error when reassembled message is invalid JSON", () => {
+        const id = "test6";
+        const total = 1;
+        const fragments = ["{ not valid json }"];
+        sendFragment(id, total, fragments);
+        expect(messageListener).toHaveBeenCalledTimes(0);
+        expect(errorListener).toHaveBeenCalledTimes(1);
+        expect(errorListener).toHaveBeenCalledWith(
+          new Error("Fragments did not form a valid JSON message!"),
+        );
+      });
     });
 
     it("should handle RosbridgePngMessage", async () => {
@@ -95,12 +201,6 @@ describe("Transport", () => {
           }
         },
       );
-
-      const messageListener = vi.fn();
-      const errorListener = vi.fn();
-
-      transport.on("message", messageListener);
-      transport.on("error", errorListener);
 
       // Obviously these are not real PNG encoded messages.
       // But they're good enough for mocking responses in our tests.
@@ -147,16 +247,110 @@ describe("Transport", () => {
       }, 500);
     });
 
-    it("should handle BSON message", () => {
-      // TODO
+    it("should handle BSON message", async () => {
+      const goodBsonData = bson.serialize({ op: "test" });
+      const successMessage = new Blob([Buffer.from(goodBsonData)]);
+
+      const badBsonData = bson.serialize({ foo: "bar" });
+      const failureMessage = new Blob([Buffer.from(badBsonData)]);
+
+      // -- SUCCESS -- //
+
+      mockSocket.onmessage?.({
+        type: "message",
+        data: successMessage,
+      } as MessageEvent);
+
+      // Wait for the message to be processed.
+      // BSON decompression occurs asynchronously.
+      await vi.waitFor(() => {
+        expect(errorListener).not.toHaveBeenCalled();
+        expect(messageListener).toHaveBeenCalledWith({ op: "test" });
+      }, 500);
+
+      vi.clearAllMocks();
+
+      // -- FAILURE -- //
+
+      mockSocket.onmessage?.({
+        type: "message",
+        data: failureMessage,
+      } as MessageEvent);
+
+      // Wait for the message to be processed.
+      // BSON decompression occurs asynchronously.
+      await vi.waitFor(() => {
+        expect(errorListener).toHaveBeenCalledWith(
+          new Error("Decoded BSON data was invalid!"),
+        );
+        expect(messageListener).not.toHaveBeenCalled();
+      }, 500);
     });
 
-    it("should handle CBOR message", () => {
-      // TODO
+    it("should handle CBOR message", async () => {
+      const successMessage = CBOR.encode({ op: "test" });
+      const failureMessage = CBOR.encode({ foo: "bar" });
+
+      // -- SUCCESS -- //
+
+      mockSocket.onmessage?.({
+        type: "message",
+        data: successMessage,
+      } as MessageEvent);
+
+      // Wait for the message to be processed.
+      // CBOR decompression occurs asynchronously.
+      await vi.waitFor(() => {
+        expect(errorListener).not.toHaveBeenCalled();
+        expect(messageListener).toHaveBeenCalledWith({ op: "test" });
+      }, 500);
+
+      vi.clearAllMocks();
+
+      // -- FAILURE -- //
+
+      mockSocket.onmessage?.({
+        type: "message",
+        data: failureMessage,
+      } as MessageEvent);
+
+      // Wait for the message to be processed.
+      // CBOR decompression occurs asynchronously.
+      await vi.waitFor(() => {
+        expect(errorListener).toHaveBeenCalledWith(
+          new Error("Decoded CBOR data was invalid!"),
+        );
+        expect(messageListener).not.toHaveBeenCalled();
+      }, 500);
     });
 
     it("should handle JSON message", () => {
-      // TODO
+      const successMessage = JSON.stringify({ op: "test" });
+      const failureMessage = JSON.stringify({ foo: "bar" });
+
+      // -- SUCCESS -- //
+
+      mockSocket.onmessage?.({
+        type: "message",
+        data: successMessage,
+      } as MessageEvent);
+
+      expect(errorListener).not.toHaveBeenCalled();
+      expect(messageListener).toHaveBeenCalledWith({ op: "test" });
+
+      vi.clearAllMocks();
+
+      // -- FAILURE -- //
+
+      mockSocket.onmessage?.({
+        type: "message",
+        data: failureMessage,
+      } as MessageEvent);
+
+      expect(errorListener).toHaveBeenCalledWith(
+        new Error("Received invalid rosbridge message!"),
+      );
+      expect(messageListener).not.toHaveBeenCalled();
     });
   });
 
