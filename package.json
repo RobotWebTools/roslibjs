@@ -7,12 +7,10 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/RosLib.umd.cjs",
   "module": "./dist/RosLib.js",
   "exports": {
     ".": {
-      "import": "./dist/RosLib.js",
-      "require": "./dist/RosLib.umd.cjs"
+      "import": "./dist/RosLib.js"
     }
   },
   "type": "module",
@@ -36,6 +34,7 @@
     "vite": "^7.0.0",
     "vite-plugin-checker": "^0.11.0",
     "vite-plugin-dts": "^4.0.2",
+    "vite-plugin-externalize-deps": "^0.10.0",
     "vitest": "^4.0.3",
     "vitest-fail-on-console": "^0.10.1"
   },
