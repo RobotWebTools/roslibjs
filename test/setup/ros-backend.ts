@@ -18,7 +18,7 @@ const docker = new Docker();
  */
 function getRosDistro() {
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- this might be an empty string, not undefined.
-  return process.env["ROS_DISTRO"] || "noetic";
+  return (process.env["ROS_DISTRO"] ||= "noetic");
 }
 
 async function waitForRosConnection(ros: Ros, timeout = 5000) {
@@ -27,18 +27,22 @@ async function waitForRosConnection(ros: Ros, timeout = 5000) {
       reject(new Error("Timeout waiting for ROS connection"));
     }, timeout);
 
-    ros.on("connection", () => {
+    ros.on("open", () => {
       clearTimeout(timeoutId);
       resolve();
     });
 
-    ros.on("error", (error) => {
+    ros.on("error", (event) => {
       clearTimeout(timeoutId);
-      reject(new Error(error));
+      if (event && typeof event === "object" && "error" in event) {
+        reject(new Error(String(event.error)));
+      } else {
+        reject(new Error("Unknown error"));
+      }
     });
 
     // If already connected
-    if (ros.isConnected) {
+    if (ros.isConnected()) {
       clearTimeout(timeoutId);
       resolve();
     }

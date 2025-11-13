@@ -13,6 +13,15 @@ export { default as Param } from "./core/Param.js";
 export { default as Service } from "./core/Service.js";
 export { default as Action } from "./core/Action.js";
 
+// Core Transport exports
+export {
+  AbstractTransport,
+  type ITransport,
+  type ITransportFactory,
+  type TransportEvent,
+} from "./core/transport/Transport.js";
+export { WebSocketTransportFactory } from "./core/transport/WebSocketTransportFactory.js";
+
 // ActionLib exports
 export { default as ActionClient } from "./actionlib/ActionClient.js";
 export { default as ActionListener } from "./actionlib/ActionListener.js";
