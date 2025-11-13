@@ -40,9 +40,7 @@ export interface ITransport {
   isClosed(): boolean;
 }
 
-export interface ITransportFactory {
-  createTransport(url: string): Promise<ITransport>;
-}
+export type ITransportFactory = (url: string) => Promise<ITransport>;
 
 export abstract class AbstractTransport
   extends EventEmitter<{
@@ -342,19 +340,19 @@ export class WsWebSocketTransport extends AbstractTransport {
  * @see https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
  * @see https://github.com/websockets/ws
  */
-export class WebSocketTransportFactory implements ITransportFactory {
-  public async createTransport(url: string): Promise<ITransport> {
-    // Browsers, Deno, Bun, and Node 22+ support WebSockets natively
-    if (typeof WebSocket === "function") {
-      const socket = new WebSocket(url);
-      socket.binaryType = "arraybuffer";
-      return new NativeWebSocketTransport(socket);
-    }
-
-    // If in Node.js, import ws to replace WebSocket API
-    const ws = await import("ws");
-    const socket = new ws.WebSocket(url);
+export const WebSocketTransportFactory: ITransportFactory = async (
+  url: string,
+): Promise<ITransport> => {
+  // Browsers, Deno, Bun, and Node 22+ support WebSockets natively
+  if (typeof WebSocket === "function") {
+    const socket = new WebSocket(url);
     socket.binaryType = "arraybuffer";
-    return new WsWebSocketTransport(socket);
+    return new NativeWebSocketTransport(socket);
   }
-}
+
+  // If in Node.js, import ws to replace WebSocket API
+  const ws = await import("ws");
+  const socket = new ws.WebSocket(url);
+  socket.binaryType = "arraybuffer";
+  return new WsWebSocketTransport(socket);
+};

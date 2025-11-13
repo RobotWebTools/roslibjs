@@ -98,9 +98,7 @@ describe("Ros", function () {
       isClosed: vi.fn(),
     };
 
-    mockTransportFactory = {
-      createTransport: vi.fn().mockReturnValue(mockTransport),
-    };
+    mockTransportFactory = vi.fn().mockReturnValue(mockTransport);
   });
 
   afterEach(() => {
@@ -113,7 +111,7 @@ describe("Ros", function () {
       const ros = new Ros();
 
       // @ts-expect-error -- spying on private property
-      expect(ros.transportFactory).toBeInstanceOf(WebSocketTransportFactory);
+      expect(ros.transportFactory).toBe(WebSocketTransportFactory);
     });
 
     it("creates a transport using a factory function", async () => {
@@ -123,9 +121,7 @@ describe("Ros", function () {
 
       await ros.connect(mockRosUrl);
 
-      expect(mockTransportFactory.createTransport).toHaveBeenCalledWith(
-        mockRosUrl,
-      );
+      expect(mockTransportFactory).toHaveBeenCalledWith(mockRosUrl);
     });
 
     it("does not create a new transport if the socket is not closed", async () => {
@@ -135,13 +131,13 @@ describe("Ros", function () {
 
       // always creates a new transport the first time
       await ros.connect(mockRosUrl);
-      expect(mockTransportFactory.createTransport).toHaveBeenCalledTimes(1);
+      expect(mockTransportFactory).toHaveBeenCalledTimes(1);
 
       vi.clearAllMocks();
 
       // socket is not closed so no new transport is created
       await ros.connect(mockRosUrl);
-      expect(mockTransportFactory.createTransport).toHaveBeenCalledTimes(0);
+      expect(mockTransportFactory).toHaveBeenCalledTimes(0);
     });
 
     it("creates a new transport if the socket is closed", async () => {
@@ -151,7 +147,7 @@ describe("Ros", function () {
 
       // always creates a new transport the first time
       await ros.connect(mockRosUrl);
-      expect(mockTransportFactory.createTransport).toHaveBeenCalledTimes(1);
+      expect(mockTransportFactory).toHaveBeenCalledTimes(1);
 
       vi.clearAllMocks();
 
@@ -159,7 +155,7 @@ describe("Ros", function () {
 
       // socket is closed so a new transport is created
       await ros.connect(mockRosUrl);
-      expect(mockTransportFactory.createTransport).toHaveBeenCalledTimes(1);
+      expect(mockTransportFactory).toHaveBeenCalledTimes(1);
     });
   });
 

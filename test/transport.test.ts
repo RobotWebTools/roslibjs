@@ -650,9 +650,7 @@ describe("Transport", () => {
       vi.stubGlobal("WebSocket", WebSocket);
       expect(typeof WebSocket).toBe("function");
 
-      const factory = new WebSocketTransportFactory();
-
-      const transport = await factory.createTransport("ws://localhost:9090");
+      const transport = await WebSocketTransportFactory("ws://localhost:9090");
 
       expect(transport).toBeInstanceOf(NativeWebSocketTransport);
     });
@@ -661,9 +659,7 @@ describe("Transport", () => {
       vi.stubGlobal("WebSocket", undefined);
       expect(typeof WebSocket).toBe("undefined");
 
-      const factory = new WebSocketTransportFactory();
-
-      const transport = await factory.createTransport("ws://localhost:9090");
+      const transport = await WebSocketTransportFactory("ws://localhost:9090");
 
       expect(transport).toBeInstanceOf(WsWebSocketTransport);
     });

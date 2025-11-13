@@ -59,7 +59,7 @@ export default class Ros extends EventEmitter<
 
   constructor({
     url,
-    transportFactory = new WebSocketTransportFactory(),
+    transportFactory = WebSocketTransportFactory,
   }: {
     /**
      * The rosbridge server URL. Can be specified later with `connect`.
@@ -91,7 +91,7 @@ export default class Ros extends EventEmitter<
       return; // Already connected
     }
 
-    const transport = await this.transportFactory.createTransport(url);
+    const transport = await this.transportFactory(url);
     this.transport = transport;
 
     transport.on("open", (event: TransportEvent) => {
