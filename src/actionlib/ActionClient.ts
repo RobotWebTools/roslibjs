@@ -45,7 +45,7 @@ export default class ActionClient<
     status: actionlib_msgs.GoalStatus;
     result: TResult;
   }>;
-  goalTopic: Topic<{ goal: TGoal; goal_id: actionlib_msgs.GoalID }>;
+  #goalTopic: Topic<{ goal: TGoal; goal_id: actionlib_msgs.GoalID }>;
   #cancelTopic: Topic<Partial<actionlib_msgs.GoalID>>;
   /**
    * @param options
@@ -102,7 +102,7 @@ export default class ActionClient<
       messageType: `${this.actionName}Result`,
     });
 
-    this.goalTopic = new Topic({
+    this.#goalTopic = new Topic({
       ros: this.ros,
       name: `${this.serverName}/goal`,
       messageType: `${this.actionName}Goal`,
@@ -115,7 +115,7 @@ export default class ActionClient<
     });
 
     // advertise the goal and cancel topics
-    this.goalTopic.advertise();
+    this.#goalTopic.advertise();
     this.#cancelTopic.advertise();
 
     // subscribe to the status topic
@@ -172,11 +172,16 @@ export default class ActionClient<
     };
     this.#cancelTopic.publish(cancelMessage);
   }
+
+  sendGoal(goal: { goal: TGoal; goal_id: actionlib_msgs.GoalID }) {
+    this.#goalTopic.publish(goal);
+  }
+
   /**
    * Unsubscribe and unadvertise all topics associated with this ActionClient.
    */
   dispose() {
-    this.goalTopic.unadvertise();
+    this.#goalTopic.unadvertise();
     this.#cancelTopic.unadvertise();
     if (!this.omitStatus) {
       this.#statusListener.unsubscribe();

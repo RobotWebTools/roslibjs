@@ -81,7 +81,7 @@ export default class Goal<
    * @param [timeout] - A timeout length for the goal's result.
    */
   send(timeout?: number) {
-    this.actionClient.goalTopic.publish(this.goalMessage);
+    this.actionClient.sendGoal(this.goalMessage);
     if (timeout) {
       setTimeout(() => {
         if (!this.isFinished) {
