@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import * as ROSLIB from "../../src/RosLib.js";
 
 const ros = new ROSLIB.Ros({
@@ -45,4 +45,22 @@ describe("Topics Example", function () {
 
       topic.on("unsubscribe", done);
     }));
-}, 1000);
+
+  // TODO: reenable when rosbridge is fixed in ROS 2
+  it.skip("Listening to a PNG-compressed topic", async () => {
+    const topic = ros.Topic<{ data: string }>({
+      name: "/png_test",
+      messageType: "std_msgs/String",
+      compression: "png",
+    });
+    const callback = vi.fn();
+    topic.subscribe(callback);
+
+    topic.publish({ data: "some message that will be PNG-compressed" });
+    await vi.waitFor(() => {
+      expect(callback).toHaveBeenCalledWith({
+        data: "some message that will be PNG-compressed",
+      });
+    });
+  });
+});

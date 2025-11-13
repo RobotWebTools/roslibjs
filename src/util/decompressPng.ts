@@ -3,7 +3,10 @@
  * @author Ramon Wijnands - rayman747@hotmail.com
  */
 
-import pngparse from "pngparse";
+import { decode } from "fast-png";
+import { Buffer } from "buffer";
+
+const textDecoder = new TextDecoder();
 
 /**
  * If a message was compressed as a PNG image (a compression hack since
@@ -11,20 +14,23 @@ import pngparse from "pngparse";
  * the "image" as a Base64 string.
  *
  * @param data - An object containing the PNG data.
- * @param callback - Function with the following params:
  */
-export default function decompressPng(
-  data: string,
-  callback: (data: unknown) => void,
-) {
+export default function decompressPng(data: string): unknown {
   const buffer = Buffer.from(data, "base64");
 
-  pngparse.parse(buffer, function (err, data) {
-    if (err || !(data instanceof Object) || !("data" in data)) {
-      throw new Error("Cannot process PNG encoded message ");
-    } else {
-      const jsonData = String(data.data);
-      callback(JSON.parse(jsonData));
-    }
-  });
+  const decoded = tryDecodeBuffer(buffer);
+
+  try {
+    return JSON.parse(textDecoder.decode(decoded.data));
+  } catch (error) {
+    throw new Error("Error parsing PNG JSON contents", { cause: error });
+  }
+}
+
+function tryDecodeBuffer(buffer: Buffer) {
+  try {
+    return decode(buffer);
+  } catch (error) {
+    throw new Error("Error decoding buffer", { cause: error });
+  }
 }

@@ -11,6 +11,7 @@ import {
 } from "../types/protocol.js";
 import { deserialize } from "bson";
 import type { WebSocket as WsWebSocket } from "ws";
+import decompressPng from "../util/decompressPng.js";
 
 export type RequiredSocketInterface = Pick<
   WebSocket | RTCDataChannel | WsWebSocket,
@@ -157,27 +158,11 @@ export default class SocketAdapter {
     callback: (message: RosbridgeMessage) => void,
   ) {
     if (isRosbridgePngMessage(message)) {
-      const pngCallback = (data: unknown) => {
-        if (isRosbridgeMessage(data)) {
-          callback(data);
-        } else {
-          throw new Error("Decompressed PNG data was invalid!");
-        }
-      };
-      // If in Node.js..
-      if (typeof window === "undefined") {
-        import("../util/decompressPng.js")
-          .then(({ default: decompressPng }) => {
-            decompressPng(message.data, pngCallback);
-          })
-          .catch(console.error);
+      const decoded = decompressPng(message.data);
+      if (isRosbridgeMessage(decoded)) {
+        callback(decoded);
       } else {
-        // if in browser..
-        import("../util/shim/decompressPng.js")
-          .then(({ default: decompressPng }) => {
-            decompressPng(message.data, pngCallback);
-          })
-          .catch(console.error);
+        throw new Error("Received invalid message in PNG data!");
       }
     } else {
       callback(message);
