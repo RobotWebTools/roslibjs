@@ -46,7 +46,8 @@ describe("Topics Example", function () {
       topic.on("unsubscribe", done);
     }));
 
-  it("Listening to a PNG-compressed topic", async () => {
+  // TODO: reenable when rosbridge is fixed in ROS 2
+  it.skip("Listening to a PNG-compressed topic", async () => {
     const topic = ros.Topic<{ data: string }>({
       name: "/png_test",
       messageType: "std_msgs/String",
