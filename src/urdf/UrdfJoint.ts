@@ -31,17 +31,17 @@ export default class UrdfJoint {
     this.type = xml.getAttribute(UrdfAttrs.Type);
 
     const parents = xml.getElementsByTagName(UrdfAttrs.Parent);
-    if (parents.length > 0) {
+    if (parents[0]) {
       this.parent = parents[0].getAttribute(UrdfAttrs.Link);
     }
 
     const children = xml.getElementsByTagName(UrdfAttrs.Child);
-    if (children.length > 0) {
+    if (children[0]) {
       this.child = children[0].getAttribute(UrdfAttrs.Link);
     }
 
     const limits = xml.getElementsByTagName(UrdfAttrs.Limit);
-    if (limits.length > 0) {
+    if (limits[0]) {
       this.minval = parseFloat(
         limits[0].getAttribute(UrdfAttrs.Lower) ?? "NaN",
       );
@@ -52,12 +52,12 @@ export default class UrdfJoint {
 
     // Origin
     const origins = xml.getElementsByTagName(UrdfAttrs.Origin);
-    if (origins.length > 0) {
+    if (origins[0]) {
       this.origin = parseUrdfOrigin(origins[0]);
     }
 
     const axis = xml.getElementsByTagName(UrdfAttrs.Axis);
-    if (axis.length > 0) {
+    if (axis[0]) {
       const xyzValue = axis[0].getAttribute(UrdfAttrs.Xyz)?.split(" ");
       if (!xyzValue || xyzValue.length !== 3) {
         throw new Error(

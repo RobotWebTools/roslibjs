@@ -29,6 +29,9 @@ function decodeUint64LE(bytes: Uint8Array) {
     const si = i * 2;
     const lo = uint32View[si];
     const hi = uint32View[si + 1];
+    if (lo === undefined || hi === undefined) {
+      throw new Error("Invalid byte array");
+    }
     arr[i] = lo + UPPER32 * hi;
   }
 
@@ -55,6 +58,9 @@ function decodeInt64LE(bytes: Uint8Array) {
     const si = i * 2;
     const lo = uint32View[si];
     const hi = int32View[si + 1];
+    if (lo === undefined || hi === undefined) {
+      throw new Error("Invalid byte array");
+    }
     arr[i] = lo + UPPER32 * hi;
   }
 
@@ -120,12 +126,12 @@ export default function cborTypedArrayTagger(
   data: Uint8Array<ArrayBuffer>,
   tag: number,
 ) {
-  if (tag in nativeArrayTypes) {
-    const arrayType = nativeArrayTypes[tag];
+  const arrayType = nativeArrayTypes[tag];
+  if (arrayType) {
     return decodeNativeArray(data, arrayType);
   }
   if (tag in conversionArrayTypes) {
-    return conversionArrayTypes[tag](data);
+    return conversionArrayTypes[tag]?.(data);
   }
   return data;
 }

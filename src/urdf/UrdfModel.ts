@@ -72,8 +72,9 @@ export default class UrdfModel {
             break;
           }
 
-          if (this.materials[material.name].isLink()) {
-            this.materials[material.name].assign(material);
+          const existingMaterial = this.materials[material.name];
+          if (existingMaterial?.isLink()) {
+            existingMaterial.assign(material);
           } else {
             console.warn(`Material ${material.name} is not unique.`);
           }
@@ -95,8 +96,9 @@ export default class UrdfModel {
               continue;
             }
 
-            if (Object.hasOwn(this.materials, mat.name)) {
-              item.material = this.materials[mat.name];
+            const material = this.materials[mat.name];
+            if (material) {
+              item.material = material;
             } else {
               this.materials[mat.name] = mat;
             }
