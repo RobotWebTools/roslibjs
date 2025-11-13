@@ -21,13 +21,13 @@ export default class UrdfMaterial {
 
     // Texture
     const textures = xml.getElementsByTagName(UrdfAttrs.Texture);
-    if (textures.length > 0) {
+    if (textures[0]) {
       this.textureFilename = textures[0].getAttribute(UrdfAttrs.Filename);
     }
 
     // Color
     const colors = xml.getElementsByTagName(UrdfAttrs.Color);
-    if (colors.length > 0) {
+    if (colors[0]) {
       // Parse the RBGA string
       this.color = new UrdfColor({
         xml: colors[0],

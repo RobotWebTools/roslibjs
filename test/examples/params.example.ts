@@ -57,7 +57,7 @@ describe("Param setting", function () {
       ros.getParams(callback);
       await vi.waitFor(() => {
         expect(callback).toHaveBeenCalledOnce();
-        expect(callback.mock.calls[0][0]).to.include(PARAM_NAME);
+        expect(callback.mock.calls[0]?.[0]).to.include(PARAM_NAME);
       });
     },
   );
@@ -74,7 +74,7 @@ describe("Param setting", function () {
       const getParamsCallback = vi.fn();
       ros.getParams(getParamsCallback);
       await vi.waitFor(() =>
-        expect(getParamsCallback.mock.calls[0][0]).to.not.include(PARAM_NAME),
+        expect(getParamsCallback.mock.calls[0]?.[0]).to.not.include(PARAM_NAME),
       );
     },
   );

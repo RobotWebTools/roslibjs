@@ -33,7 +33,7 @@ export default class UrdfColor {
     const rgba: Optional<string[]> = xml
       .getAttribute(UrdfAttrs.Rgba)
       ?.split(" ");
-    if (rgba?.length !== 4) {
+    if (!(rgba?.[0] && rgba[1] && rgba[2] && rgba[3])) {
       return;
     }
 

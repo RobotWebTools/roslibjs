@@ -11,7 +11,7 @@ export function parseUrdfOrigin(originElement: Element): Pose {
     .getAttribute(UrdfAttrs.Xyz)
     ?.split(" ");
   let position: Vector3 = new Vector3();
-  if (xyz?.length === 3) {
+  if (xyz?.[0] && xyz[1] && xyz[2]) {
     position = new Vector3({
       x: parseFloat(xyz[0]),
       y: parseFloat(xyz[1]),
@@ -22,7 +22,7 @@ export function parseUrdfOrigin(originElement: Element): Pose {
   // Check the RPY
   const rpy = originElement.getAttribute(UrdfAttrs.Rpy)?.split(" ");
   let orientation = new Quaternion();
-  if (rpy?.length === 3) {
+  if (rpy?.[0] && rpy[1] && rpy[2]) {
     // Convert from RPY
     const roll = parseFloat(rpy[0]);
     const pitch = parseFloat(rpy[1]);

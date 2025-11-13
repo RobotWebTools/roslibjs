@@ -49,11 +49,11 @@
     "strictFunctionTypes": true /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */,
     "strictPropertyInitialization": true /* Check for class properties that are declared but not set in the constructor. */,
     "noImplicitOverride": true /* Ensure overriding members in derived classes are marked with an override modifier. */,
+    "noUncheckedIndexedAccess": true /* Add `undefined` to a type when accessed using an index. */,
 
     /* Rules to be enabled */
     "exactOptionalPropertyTypes": false /* Differentiate between undefined and not present when type checking */,
     "noImplicitAny": false /* Enable error reporting for expressions and declarations with an implied 'any' type. */,
-    "noUncheckedIndexedAccess": false /* Add `undefined` to a type when accessed using an index. */,
 
     "types": ["@types/node"]
   },

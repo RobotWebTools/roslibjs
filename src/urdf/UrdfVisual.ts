@@ -63,19 +63,19 @@ export default class UrdfVisual {
 
     // Origin
     const origins = xml.getElementsByTagName(UrdfAttrs.Origin);
-    if (origins.length > 0) {
+    if (origins[0]) {
       this.origin = parseUrdfOrigin(origins[0]);
     }
 
     // Geometry
     const geoms = xml.getElementsByTagName(UrdfAttrs.Geometry);
-    if (geoms.length > 0) {
+    if (geoms[0]) {
       this.geometry = parseUrdfGeometry(geoms[0]);
     }
 
     // Material
     const materials = xml.getElementsByTagName(UrdfAttrs.Material);
-    if (materials.length > 0) {
+    if (materials[0]) {
       this.material = new UrdfMaterial({
         xml: materials[0],
       });

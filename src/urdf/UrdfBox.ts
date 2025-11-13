@@ -22,7 +22,7 @@ export default class UrdfBox {
     const size: Optional<string[]> = xml
       .getAttribute(UrdfAttrs.Size)
       ?.split(" ");
-    if (size?.length !== 3) {
+    if (!(size?.[0] && size[1] && size[2])) {
       return;
     }
 
