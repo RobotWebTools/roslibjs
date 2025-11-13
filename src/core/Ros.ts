@@ -33,6 +33,10 @@ import type {
 } from "./transport/Transport.js";
 import { WebSocketTransportFactory } from "./transport/WebSocketTransportFactory.ts";
 
+interface TypeDefDict {
+  [key: string]: string | string[] | TypeDefDict | TypeDefDict[];
+}
+
 /**
  * Manages connection to the rosbridge server and all interactions with ROS.
  *
@@ -641,7 +645,7 @@ export default class Ros extends EventEmitter<
       hints: rosapi.TypeDef[],
     ) => {
       // calls itself recursively to resolve type definition using hints.
-      const typeDefDict = {};
+      const typeDefDict: TypeDefDict = {};
       for (let i = 0; i < theType.fieldnames.length; i++) {
         const arrayLen = theType.fieldarraylen[i];
         const fieldName = theType.fieldnames[i];
