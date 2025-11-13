@@ -31,19 +31,6 @@ export default defineConfig(
       "@typescript-eslint/no-empty-function": 0,
       "prefer-template": 2,
       "@typescript-eslint/consistent-type-imports": 2,
-      // Disabled to allow some variables to be explicitly ignored
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        {
-          vars: "all",
-          args: "after-used",
-          argsIgnorePattern: "^_",
-          varsIgnorePattern: "^_",
-          caughtErrorsIgnorePattern: "^_",
-          destructuredArrayIgnorePattern: "^_",
-          ignoreRestSiblings: true,
-        },
-      ],
     },
   },
   {
