@@ -174,7 +174,7 @@ describe("Transport", () => {
       });
     });
 
-    it.only("should handle RosbridgePngMessage", async () => {
+    it("should handle RosbridgePngMessage", async () => {
       mockPngParseModule.decode.mockImplementation(
         (
           // Normally, this is the compressed PNG data.
