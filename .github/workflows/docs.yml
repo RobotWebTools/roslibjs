@@ -7,10 +7,10 @@ on:
       - develop
   release:
     types: [released]
+  workflow_dispatch:
 
 jobs:
-  docs:
-    name: Docs Deployment
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -22,13 +22,23 @@ jobs:
         run: npm ci
       - name: Generate docs
         run: npm run doc
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
-        if: github.event_name == 'release'
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.RWT_BOT_PAT }}
-          publish_dir: docs
-          destination_dir: .
-          enable_jekyll: false
-          force_orphan: false  # So we keep the doc history
-          commit_message: Typedoc ${{ github.event.release.name }}
+          path: docs/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      actions: read # to read the artifact from the previous job
+      pages: write
+    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
