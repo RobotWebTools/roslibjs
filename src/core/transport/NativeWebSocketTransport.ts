@@ -1,5 +1,5 @@
-import type { RosbridgeMessage } from "../../types/protocol.js";
 import { AbstractTransport } from "./Transport.js";
+import type { BridgeProtoOp } from "../../types/protocol.js";
 
 /**
  * Uses the native `WebSocket` class to send and receive messages.
@@ -15,7 +15,7 @@ export class NativeWebSocketTransport extends AbstractTransport {
     this.registerEventListeners();
   }
 
-  public send(message: RosbridgeMessage): void {
+  public send(message: BridgeProtoOp): void {
     this.socket.send(JSON.stringify(message));
   }
 

@@ -4,16 +4,16 @@
  */
 
 import { EventEmitter } from "eventemitter3";
-import type {
-  RosbridgeMessage,
-  RosbridgeServiceResponseMessage,
-} from "../types/protocol.ts";
-import {
-  isRosbridgeCallServiceMessage,
-  isRosbridgeServiceResponseMessage,
-} from "../types/protocol.ts";
 import type Ros from "./Ros.js";
 import { v4 as uuidv4 } from "uuid";
+import {
+  type AnyServiceOp,
+  isServiceResponseSuccess,
+  type CallServiceOp,
+  type IncomingCallServiceOp,
+} from "../types/protocol.js";
+import type { ServiceCallIdString } from "../types/emitted_events.js";
+
 
 /**
  * A ROS service client.
@@ -76,23 +76,28 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
       return;
     }
 
-    const serviceCallId = `call_service:${this.name}:${uuidv4()}`;
+    const serviceCallId: ServiceCallIdString = `call_service:${this.name}:${uuidv4()}`;
 
-    this.ros.once(serviceCallId, function (message) {
-      if (isRosbridgeServiceResponseMessage<TResponse>(message)) {
-        if (!message.result) {
-          failedCallback(message.values ?? "");
-        } else {
-          callback?.(message.values);
+    this.ros.once(
+      serviceCallId,
+      (message: AnyServiceOp<TRequest, TResponse>) => {
+        if (message.op !== "service_response") {
+          return;
         }
-      }
-    });
 
-    const call = {
+        if (isServiceResponseSuccess<TResponse>(message)) {
+          callback?.(message.values);
+          return;
+        }
+
+        failedCallback(message.values ?? "");
+      },
+    );
+
+    const call: CallServiceOp<TRequest> = {
       op: "call_service",
       id: serviceCallId,
       service: this.name,
-      type: this.serviceType,
       args: request,
       timeout: timeout,
     };

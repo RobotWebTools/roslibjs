@@ -3,19 +3,12 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-import type {
-  RosbridgeMessage,
-  RosbridgeSetStatusLevelMessage,
-} from "../types/protocol.js";
 import {
-  isRosbridgeActionFeedbackMessage,
-  isRosbridgeActionResultMessage,
-  isRosbridgeCallServiceMessage,
-  isRosbridgeCancelActionGoalMessage,
-  isRosbridgePublishMessage,
-  isRosbridgeSendActionGoalMessage,
-  isRosbridgeServiceResponseMessage,
-  isRosbridgeStatusMessage,
+  type BridgeProtoOp,
+  isBridgeProtoOp,
+  type SetStatusLevelOp,
+  type BridgeStatusLevel,
+  type AuthOp,
 } from "../types/protocol.js";
 
 import Topic from "./Topic.js";
@@ -106,7 +99,7 @@ export default class Ros extends EventEmitter<RosEventTypes> {
       this.emit("error", event);
     });
 
-    transport.on("message", (message: RosbridgeMessage) => {
+    transport.on("message", (message: BridgeProtoOp) => {
       this.handleMessage(message);
     });
   }
@@ -115,26 +108,31 @@ export default class Ros extends EventEmitter<RosEventTypes> {
     this.transport?.close();
   }
 
-  private handleMessage(message: RosbridgeMessage) {
-    if (isRosbridgePublishMessage(message)) {
+  private handleMessage(message: unknown) {
+    if (!isBridgeProtoOp(message)) {
+      console.error("Received non-BridgeProtoOp message:", message);
+      return;
+    }
+
+    if (message.op === "publish") {
       this.emit(message.topic, message);
-    } else if (isRosbridgeServiceResponseMessage(message)) {
+    } else if (message.op === "service_response") {
       if (message.id) {
         this.emit(message.id, message);
       } else {
         console.error("Received service response without ID");
       }
-    } else if (isRosbridgeCallServiceMessage(message)) {
+    } else if (message.op === "call_service") {
       this.emit(message.service, message);
-    } else if (isRosbridgeSendActionGoalMessage(message)) {
+    } else if (message.op === "send_action_goal") {
       this.emit(message.action, message);
-    } else if (isRosbridgeCancelActionGoalMessage(message)) {
+    } else if (message.op === "cancel_action_goal") {
       this.emit(message.id, message);
-    } else if (isRosbridgeActionFeedbackMessage(message)) {
+    } else if (message.op === "action_feedback") {
       this.emit(message.id, message);
-    } else if (isRosbridgeActionResultMessage(message)) {
+    } else if (message.op === "action_result") {
       this.emit(message.id, message);
-    } else if (isRosbridgeStatusMessage(message)) {
+    } else if (message.op === "status") {
       if (message.id) {
         this.emit(`status:${message.id}`, message);
       } else {
@@ -159,12 +157,12 @@ export default class Ros extends EventEmitter<RosEventTypes> {
     client: string,
     dest: string,
     rand: string,
-    t: object,
+    t: number,
     level: string,
-    end: object,
+    end: number,
   ) {
     // create the request
-    const auth = {
+    const auth: AuthOp = {
       op: "auth",
       mac: mac,
       client: client,
@@ -182,10 +180,7 @@ export default class Ros extends EventEmitter<RosEventTypes> {
    * Sends the message to the transport.
    * If not connected, queues the message to send once reconnected.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- to broaden argument type to any RosbridgeMessage variant
-  public callOnConnection<T extends RosbridgeMessage = RosbridgeMessage>(
-    message: T,
-  ) {
+  public callOnConnection(message: BridgeProtoOp) {
     if (this.isConnected()) {
       this.transport?.send(message);
     } else {
@@ -201,8 +196,8 @@ export default class Ros extends EventEmitter<RosEventTypes> {
    * @param level - Status level (none, error, warning, info).
    * @param [id] - Operation ID to change status level on.
    */
-  public setStatusLevel(level: string, id?: string) {
-    const levelMsg: RosbridgeSetStatusLevelMessage = {
+  public setStatusLevel(level: BridgeStatusLevel, id?: string) {
+    const levelMsg: SetStatusLevelOp = {
       op: "set_level",
       level,
       id,

@@ -1,5 +1,5 @@
 import * as ws from "ws";
-import type { RosbridgeMessage } from "../../types/protocol.js";
+import type { BridgeProtoOp } from "../../types/protocol.js";
 import { AbstractTransport } from "./Transport.js";
 
 /**
@@ -16,7 +16,7 @@ export class WsWebSocketTransport extends AbstractTransport {
     this.registerEventListeners();
   }
 
-  public send(message: RosbridgeMessage): void {
+  public send(message: BridgeProtoOp): void {
     this.socket.send(JSON.stringify(message));
   }
 

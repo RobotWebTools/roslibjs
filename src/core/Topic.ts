@@ -6,14 +6,17 @@
 import { EventEmitter } from "eventemitter3";
 import Service from "./Service.js";
 import type Ros from "./Ros.js";
-import {
-  isRosbridgePublishMessage,
-  type RosbridgeAdvertiseMessage,
-  type RosbridgeMessage,
-  type RosbridgeSubscribeMessage,
-} from "../types/protocol.ts";
 import type { rosapi } from "../types/rosapi.ts";
 import { v4 as uuidv4 } from "uuid";
+import {
+  type BridgeCompressionType,
+  type SubscribeOp,
+  type AdvertiseOp,
+  type BridgeProtoOp,
+  isValidBridgeCompression,
+  type PublishOp,
+} from "../types/protocol.js";
+
 
 /**
  * Publish and/or subscribe to a topic in ROS.
@@ -34,7 +37,7 @@ export default class Topic<T> extends EventEmitter<{
   ros: Ros;
   name: string;
   messageType: string;
-  compression: string;
+  compression: BridgeCompressionType;
   throttle_rate: number;
   latch: boolean;
   queue_size: number;
@@ -91,18 +94,10 @@ export default class Topic<T> extends EventEmitter<{
     this.reconnect_on_close = reconnect_on_close;
 
     // Check for valid compression types
-    if (
-      this.compression &&
-      this.compression !== "png" &&
-      this.compression !== "cbor" &&
-      this.compression !== "cbor-raw" &&
-      this.compression !== "none"
-    ) {
+    if (!isValidBridgeCompression(this.compression)) {
       this.emit(
         "warning",
-        `${
-          this.compression
-        } compression is not supported. No compression will be used.`,
+        `${compression} compression is not supported. No compression will be used.`,
       );
       this.compression = "none";
     }
@@ -139,14 +134,13 @@ export default class Topic<T> extends EventEmitter<{
     }
   }
 
-  #messageCallback = (data: RosbridgeMessage) => {
-    if (isRosbridgePublishMessage<T>(data)) {
-      this.emit("message", data.msg);
-    } else {
+  #messageCallback = (data: BridgeProtoOp<T>) => {
+    if (data.op !== "publish") {
       throw new Error(
         `Unexpected message on topic channel: ${JSON.stringify(data)}`,
       );
     }
+    this.emit("message", data.msg);
   };
   /**
    * Every time a message is published for the given topic, the callback
@@ -258,7 +252,7 @@ export default class Topic<T> extends EventEmitter<{
       this.advertise();
     }
 
-    const call = {
+    const call: PublishOp<T> = {
       op: "publish",
       id: `publish:${this.name}:${uuidv4()}`,
       topic: this.name,

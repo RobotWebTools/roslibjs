@@ -4,15 +4,17 @@
  */
 
 import { GoalStatus } from "./GoalStatus.ts";
-import type { RosbridgeSendActionGoalMessage } from "../types/protocol.ts";
-import {
-  isRosbridgeActionFeedbackMessage,
-  isRosbridgeActionResultMessage,
-  isRosbridgeCancelActionGoalMessage,
-  isRosbridgeSendActionGoalMessage,
-} from "../types/protocol.ts";
 import type Ros from "./Ros.js";
 import { v4 as uuidv4 } from "uuid";
+import type { ActionIdString } from "../types/emitted_events.js";
+import type {
+  AnyActionOp,
+  SendActionGoalOp,
+  CancelActionGoalOp,
+  ActionFeedbackOp,
+  ActionResultSuccessOp,
+  ActionResultFailedOp,
+} from "../types/protocol.js";
 
 /**
  * A ROS 2 action client.
@@ -68,21 +70,24 @@ export default class Action<
       return;
     }
 
-    const actionGoalId = `send_action_goal:${this.name}:${uuidv4()}`;
+    const actionGoalId: ActionIdString = `send_action_goal:${this.name}:${uuidv4()}`;
 
-    this.ros.on(actionGoalId, function (message) {
-      if (isRosbridgeActionResultMessage<TResult>(message)) {
-        if (!message.result) {
-          failedCallback(message.values ?? "");
-        } else {
-          resultCallback(message.values);
+    this.ros.on(
+      actionGoalId,
+      (message: AnyActionOp<TGoal, TFeedback, TResult>) => {
+        if (message.op === "action_result") {
+          if (!message.result) {
+            failedCallback(message.values ?? "");
+          } else {
+            resultCallback(message.values);
+          }
+        } else if (message.op === "action_feedback") {
+          feedbackCallback?.(message.values);
         }
-      } else if (isRosbridgeActionFeedbackMessage<TFeedback>(message)) {
-        feedbackCallback?.(message.values);
-      }
-    });
+      },
+    );
 
-    const call = {
+    const call: SendActionGoalOp<TGoal> = {
       op: "send_action_goal",
       id: actionGoalId,
       action: this.name,
@@ -101,7 +106,7 @@ export default class Action<
    * @param id - The ID of the action goal to cancel.
    */
   cancelGoal(id: string) {
-    const call = {
+    const call: CancelActionGoalOp = {
       op: "cancel_action_goal",
       id: id,
       action: this.name,
@@ -166,16 +171,13 @@ export default class Action<
    * @param rosbridgeRequest.id - The ID of the action goal.
    * @param rosbridgeRequest.args - The arguments of the action goal.
    */
-  #executeAction(rosbridgeRequest: RosbridgeSendActionGoalMessage<TGoal>) {
+  #executeAction(rosbridgeRequest: SendActionGoalOp<TGoal>) {
     const id = rosbridgeRequest.id;
 
     // If a cancellation callback exists, call it when a cancellation event is emitted.
     if (typeof id === "string") {
-      this.ros.on(id, (message) => {
-        if (
-          isRosbridgeCancelActionGoalMessage(message) &&
-          this.#cancelCallback
-        ) {
+      this.ros.on(id, (message: AnyActionOp<TGoal, TFeedback, TResult>) => {
+        if (message.op === "cancel_action_goal" && this.#cancelCallback) {
           this.#cancelCallback(id);
         }
       });
@@ -183,13 +185,12 @@ export default class Action<
 
     // Call the action goal execution function provided.
     if (this.#actionCallback) {
-      if (rosbridgeRequest.args) {
-        this.#actionCallback(rosbridgeRequest.args, id);
-      } else {
+      if (!rosbridgeRequest.args) {
         throw new Error(
           "Received Action goal with no arguments! This should never happen, because rosbridge should fill in blanks!",
         );
       }
+      this.#actionCallback(rosbridgeRequest.args, id);
     }
   }
 
@@ -200,7 +201,7 @@ export default class Action<
    * @param feedback - The feedback to send.
    */
   sendFeedback(id: string, feedback: TFeedback) {
-    const call = {
+    const call: ActionFeedbackOp<TFeedback> = {
       op: "action_feedback",
       id: id,
       action: this.name,
@@ -216,7 +217,7 @@ export default class Action<
    * @param result - The result to set.
    */
   setSucceeded(id: string, result: TResult) {
-    const call = {
+    const call: ActionResultSuccessOp<TResult> = {
       op: "action_result",
       id: id,
       action: this.name,
@@ -234,7 +235,7 @@ export default class Action<
    * @param result - The result to set.
    */
   setCanceled(id: string, result: TResult) {
-    const call = {
+    const call: ActionResultSuccessOp<TResult> = {
       op: "action_result",
       id: id,
       action: this.name,
@@ -251,7 +252,7 @@ export default class Action<
    * @param id - The action goal ID.
    */
   setFailed(id: string) {
-    const call = {
+    const call: ActionResultFailedOp = {
       op: "action_result",
       id: id,
       action: this.name,

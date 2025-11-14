@@ -1,18 +1,14 @@
 import EventEmitter from "eventemitter3";
-import type {
-  RosbridgePngMessage,
-  RosbridgeMessage,
-  RosbridgeFragmentMessage,
-} from "../../types/protocol.js";
-import {
-  isRosbridgeFragmentMessage,
-  isRosbridgeMessage,
-  isRosbridgePngMessage,
-} from "../../types/protocol.js";
 import { deserialize } from "bson";
 import CBOR from "cbor-js";
 import typedArrayTagger from "../../util/cborTypedArrayTags.js";
 import decompressPng from "../../util/decompressPng.js";
+import {
+  type BridgeProtoOp,
+  type FragmentOp,
+  isBridgeProtoOp,
+  type PngOp,
+} from "../../types/protocol.js";
 
 /**
  * Because transport implementations may have different event types
@@ -33,9 +29,9 @@ export interface ITransport {
     listener: (event: TransportEvent) => void,
   ): this;
 
-  on(event: "message", listener: (message: RosbridgeMessage) => void): this;
+  on(event: "message", listener: (message: BridgeProtoOp) => void): this;
 
-  send(message: RosbridgeMessage): void;
+  send(message: BridgeProtoOp): void;
 
   close(): void;
 
@@ -60,7 +56,7 @@ export abstract class AbstractTransport
     open: [TransportEvent];
     close: [TransportEvent];
     error: [TransportEvent];
-    message: [RosbridgeMessage];
+    message: [BridgeProtoOp];
   }>
   implements ITransport
 {
@@ -68,7 +64,7 @@ export abstract class AbstractTransport
    * Buffer Map for incoming message fragments.
    */
   #fragmentBuffer = new Map<
-    RosbridgeFragmentMessage["id"],
+    FragmentOp["id"],
     {
       fragments: string[];
       received: number;
@@ -76,7 +72,7 @@ export abstract class AbstractTransport
     }
   >();
 
-  abstract send(message: RosbridgeMessage): void;
+  abstract send(message: BridgeProtoOp): void;
   abstract close(): void;
   abstract isConnecting(): boolean;
   abstract isOpen(): boolean;
@@ -94,7 +90,7 @@ export abstract class AbstractTransport
    */
   protected handleRawMessage(data: unknown): void {
     try {
-      if (isRosbridgeMessage(data)) {
+      if (isBridgeProtoOp(data)) {
         this.handleRosbridgeMessage(data);
       } else if (typeof Blob !== "undefined" && data instanceof Blob) {
         this.handleBsonMessage(data);
@@ -114,10 +110,10 @@ export abstract class AbstractTransport
    * If the message is a PNG, it is decompressed and reprocessed.
    * Otherwise, the message is emitted.
    */
-  private handleRosbridgeMessage(message: RosbridgeMessage) {
-    if (isRosbridgeFragmentMessage(message)) {
+  private handleRosbridgeMessage(message: BridgeProtoOp) {
+    if (message.op === "fragment") {
       this.handleRosbridgeFragmentMessage(message);
-    } else if (isRosbridgePngMessage(message)) {
+    } else if (message.op === "png") {
       this.handleRosbridgePngMessage(message);
     } else {
       this.emit("message", message);
@@ -128,7 +124,7 @@ export abstract class AbstractTransport
    * Appends a fragment to the current fragment buffer for the message id.
    * If all fragments are received, the message is reconstructed and processed.
    */
-  private handleRosbridgeFragmentMessage(fragment: RosbridgeFragmentMessage) {
+  private handleRosbridgeFragmentMessage(fragment: FragmentOp) {
     const { id, data, num, total } = fragment;
     if (
       !id ||
@@ -174,7 +170,7 @@ export abstract class AbstractTransport
       } finally {
         this.#fragmentBuffer.delete(id);
       }
-      if (isRosbridgeMessage(message)) {
+      if (isBridgeProtoOp(message)) {
         this.handleRosbridgeMessage(message);
       } else {
         throw new Error("Received invalid rosbridge message!");
@@ -186,9 +182,9 @@ export abstract class AbstractTransport
    * Decompresses a PNG image expecting the result to be a RosbridgeMessage.
    * It is one technique for compressing JSON data.
    */
-  private handleRosbridgePngMessage(message: RosbridgePngMessage) {
+  private handleRosbridgePngMessage(message: PngOp) {
     const decoded = decompressPng(message.data);
-    if (isRosbridgeMessage(decoded)) {
+    if (isBridgeProtoOp(decoded)) {
       this.handleRosbridgeMessage(decoded);
     } else {
       throw new Error("Decompressed PNG data was invalid!");
@@ -205,7 +201,7 @@ export abstract class AbstractTransport
       if (reader.result instanceof ArrayBuffer) {
         const uint8Array = new Uint8Array(reader.result);
         const data: unknown = deserialize(uint8Array);
-        if (isRosbridgeMessage(data)) {
+        if (isBridgeProtoOp(data)) {
           this.handleRosbridgeMessage(data);
         } else {
           this.emit("error", new Error("Decoded BSON data was invalid!"));
@@ -221,7 +217,7 @@ export abstract class AbstractTransport
    */
   private handleCborMessage(cbor: ArrayBuffer) {
     const data: unknown = CBOR.decode(cbor, typedArrayTagger);
-    if (isRosbridgeMessage(data)) {
+    if (isBridgeProtoOp(data)) {
       this.handleRosbridgeMessage(data);
     } else {
       throw new Error("Decoded CBOR data was invalid!");
@@ -233,7 +229,7 @@ export abstract class AbstractTransport
    */
   private handleJsonMessage(json: string) {
     const message: unknown = JSON.parse(json);
-    if (isRosbridgeMessage(message)) {
+    if (isBridgeProtoOp(message)) {
       this.handleRosbridgeMessage(message);
     } else {
       throw new Error("Received invalid rosbridge message!");
