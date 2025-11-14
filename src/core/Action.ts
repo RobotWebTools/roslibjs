@@ -125,7 +125,7 @@ export default class Action<
     this.#actionCallback = actionCallback;
     this.#cancelCallback = cancelCallback;
     this.ros.on(this.name, (msg) => {
-      if (isRosbridgeSendActionGoalMessage(msg)) {
+      if (isRosbridgeSendActionGoalMessage<TGoal>(msg)) {
         this.#executeAction(msg);
       } else {
         throw new Error(

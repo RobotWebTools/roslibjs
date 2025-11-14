@@ -260,9 +260,9 @@ export interface RosbridgeSendActionGoalMessage<TArgs = unknown>
   compression?: string;
 }
 
-export function isRosbridgeSendActionGoalMessage(
+export function isRosbridgeSendActionGoalMessage<TArgs = unknown>(
   message: RosbridgeMessageBase,
-): message is RosbridgeSendActionGoalMessage {
+): message is RosbridgeSendActionGoalMessage<TArgs> {
   return message.op === "send_action_goal";
 }
 
