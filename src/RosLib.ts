@@ -6,11 +6,12 @@
 export const REVISION = import.meta.env.VITE_ROSLIBJS_VERSION;
 
 // Core exports
-export { default as Ros } from "./core/Ros.js";
+export { default as Ros, type TypeDefDict } from "./core/Ros.js";
 export { default as Topic } from "./core/Topic.js";
 export { default as Param } from "./core/Param.js";
 export { default as Service } from "./core/Service.js";
 export { default as Action } from "./core/Action.js";
+export { type GoalStatus } from "./core/GoalStatus.js";
 
 // Core Transport exports
 export {
@@ -53,6 +54,7 @@ export {
   default as UrdfVisual,
   type UrdfGeometryLike,
 } from "./urdf/UrdfVisual.js";
+export { default as UrdfJoint } from "./urdf/UrdfJoint.js";
 
 export {
   UrdfAttrs,
@@ -60,3 +62,20 @@ export {
   type UrdfDefaultOptions,
 } from "./urdf/UrdfTypes.js";
 export { isElement, parseUrdfOrigin } from "./urdf/UrdfUtils.js";
+
+// only export the types that typedoc requires us to export - those are our public interfaces
+export { type actionlib_msgs } from "./types/actionlib_msgs.js";
+export { type tf2_web_republisher } from "./types/tf2_web_republisher.js";
+export { type rosapi } from "./types/rosapi.js";
+export { type std_msgs } from "./types/std_msgs.js";
+export { type tf2_msgs } from "./types/tf2_msgs.js";
+export { type geometry_msgs } from "./types/geometry_msgs.js";
+export type { Nullable, PartialNullable } from "./types/interface-types.js";
+export {
+  type RosbridgeMessage,
+  isRosbridgeMessage,
+  type RosbridgeAdvertiseMessage,
+  isRosbridgeAdvertiseMessage,
+  type RosbridgeSubscribeMessage,
+  isRosbridgeSubscribeMessage,
+} from "./types/protocol.js";
