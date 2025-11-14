@@ -57,7 +57,7 @@
   },
   "scripts": {
     "build": "vite build",
-    "doc": "typedoc src/RosLib.ts",
+    "doc": "typedoc src/RosLib.ts --treatWarningsAsErrors",
     "lint": "eslint .",
     "test": "vitest",
     "prepublishOnly": "npm run test",

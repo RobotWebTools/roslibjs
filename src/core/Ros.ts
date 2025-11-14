@@ -33,7 +33,7 @@ import type {
 } from "./transport/Transport.js";
 import { WebSocketTransportFactory } from "./transport/WebSocketTransportFactory.ts";
 
-interface TypeDefDict {
+export interface TypeDefDict {
   [key: string]: string | string[] | TypeDefDict | TypeDefDict[];
 }
 

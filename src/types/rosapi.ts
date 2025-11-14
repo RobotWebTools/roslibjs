@@ -30,15 +30,15 @@ export namespace rosapi {
     name: string;
     default?: string;
   }
-  interface GetParamResponsePreJazzy {
+  export interface GetParamResponsePreJazzy {
     value: string;
   }
-  interface GetParamResponseFailedPostJazzy {
+  export interface GetParamResponseFailedPostJazzy {
     value: never;
     successful: false;
     reason: string;
   }
-  interface GetParamResponseSuccessPostJazzy {
+  export interface GetParamResponseSuccessPostJazzy {
     value: string;
     successful: true;
     reason: never;
@@ -51,12 +51,12 @@ export namespace rosapi {
     name: string;
     value: string;
   }
-  type SetParamResponsePreJazzy = Record<never, never>;
-  interface FailedSetParamResponsePostJazzy {
+  export type SetParamResponsePreJazzy = Record<never, never>;
+  export interface FailedSetParamResponsePostJazzy {
     successful: false;
     reason: string;
   }
-  interface SuccessfulSetParamResponsePostJazzy {
+  export interface SuccessfulSetParamResponsePostJazzy {
     successful: true;
     reason: never;
   }
@@ -67,12 +67,12 @@ export namespace rosapi {
   export interface DeleteParamRequest {
     name: string;
   }
-  type DeleteParamResponsePreJazzy = Record<never, never>;
-  interface FailedDeleteParamResponsePostJazzy {
+  export type DeleteParamResponsePreJazzy = Record<never, never>;
+  export interface FailedDeleteParamResponsePostJazzy {
     successful: false;
     reason: string;
   }
-  interface SuccessfulDeleteParamResponsePostJazzy {
+  export interface SuccessfulDeleteParamResponsePostJazzy {
     successful: true;
     reason: never;
   }
