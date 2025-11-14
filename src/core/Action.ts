@@ -139,14 +139,14 @@ export default class Action<
 
     this.#actionCallback = actionCallback;
     this.#cancelCallback = cancelCallback;
-    this.ros.on(this.name, (msg) => {
-      if (isRosbridgeSendActionGoalMessage(msg)) {
-        this.#executeAction.bind(this);
-      } else {
+    this.ros.on(this.name, (msg: AnyActionOp<TGoal, TFeedback, TResult>) => {
+      if (msg.op !== "send_action_goal") {
         throw new Error(
           "Received unrelated message on Action server event stream!",
         );
       }
+
+      this.#executeAction(msg);
     });
     this.ros.callOnConnection({
       op: "advertise_action",
