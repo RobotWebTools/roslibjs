@@ -5,6 +5,7 @@
 
 import type {
   RosbridgeMessage,
+  RosbridgeMessageBase,
   RosbridgeSetStatusLevelMessage,
 } from "../types/protocol.js";
 import {
@@ -121,7 +122,7 @@ export default class Ros extends EventEmitter<
     this.transport?.close();
   }
 
-  private handleMessage(message: RosbridgeMessage) {
+  private handleMessage(message: RosbridgeMessageBase) {
     if (isRosbridgePublishMessage(message)) {
       this.emit(message.topic, message);
     } else if (isRosbridgeServiceResponseMessage(message)) {
@@ -165,12 +166,12 @@ export default class Ros extends EventEmitter<
     client: string,
     dest: string,
     rand: string,
-    t: object,
+    t: number,
     level: string,
-    end: object,
+    end: number,
   ) {
-    // create the request
-    const auth = {
+    // send the request
+    this.callOnConnection({
       op: "auth",
       mac: mac,
       client: client,
@@ -179,19 +180,14 @@ export default class Ros extends EventEmitter<
       t: t,
       level: level,
       end: end,
-    };
-    // send the request
-    this.callOnConnection(auth);
+    });
   }
 
   /**
    * Sends the message to the transport.
    * If not connected, queues the message to send once reconnected.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- to broaden argument type to any RosbridgeMessage variant
-  public callOnConnection<T extends RosbridgeMessage = RosbridgeMessage>(
-    message: T,
-  ) {
+  public callOnConnection(message: RosbridgeMessage) {
     if (this.isConnected()) {
       this.transport?.send(message);
     } else {
@@ -207,7 +203,10 @@ export default class Ros extends EventEmitter<
    * @param level - Status level (none, error, warning, info).
    * @param [id] - Operation ID to change status level on.
    */
-  public setStatusLevel(level: string, id?: string) {
+  public setStatusLevel(
+    level: RosbridgeSetStatusLevelMessage["level"],
+    id?: string,
+  ) {
     const levelMsg: RosbridgeSetStatusLevelMessage = {
       op: "set_level",
       level,

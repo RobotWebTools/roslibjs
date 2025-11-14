@@ -2,13 +2,13 @@
  * https://github.com/RobotWebTools/rosbridge_suite/blob/ros2/ROSBRIDGE_PROTOCOL.md
  */
 
-export interface RosbridgeMessage {
+export interface RosbridgeMessageBase {
   op: string;
 }
 
 export function isRosbridgeMessage(
   message: unknown,
-): message is RosbridgeMessage {
+): message is RosbridgeMessageBase {
   return (
     message instanceof Object &&
     "op" in message &&
@@ -16,7 +16,18 @@ export function isRosbridgeMessage(
   );
 }
 
-export interface RosbridgeStatusMessage extends RosbridgeMessage {
+export interface RosbridgeAuthMessage extends RosbridgeMessageBase {
+  op: "auth";
+  mac: string;
+  client: string;
+  dest: string;
+  rand: string;
+  t: number;
+  level: string;
+  end: number;
+}
+
+export interface RosbridgeStatusMessage extends RosbridgeMessageBase {
   op: "status";
   id?: string;
   level: string;
@@ -24,24 +35,24 @@ export interface RosbridgeStatusMessage extends RosbridgeMessage {
 }
 
 export function isRosbridgeStatusMessage(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeStatusMessage {
   return message.op === "status";
 }
 
-export interface RosbridgeSetStatusLevelMessage extends RosbridgeMessage {
+export interface RosbridgeSetStatusLevelMessage extends RosbridgeMessageBase {
   op: "set_level";
   id?: string;
-  level: string;
+  level: "info" | "warning" | "error" | "none";
 }
 
 export function isRosbridgeSetStatusLevelMessage(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeSetStatusLevelMessage {
   return message.op === "set_level";
 }
 
-export interface RosbridgeFragmentMessage extends RosbridgeMessage {
+export interface RosbridgeFragmentMessage extends RosbridgeMessageBase {
   op: "fragment";
   id: string;
   data: string;
@@ -50,12 +61,12 @@ export interface RosbridgeFragmentMessage extends RosbridgeMessage {
 }
 
 export function isRosbridgeFragmentMessage(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeFragmentMessage {
   return message.op === "fragment";
 }
 
-export interface RosbridgePngMessage extends RosbridgeMessage {
+export interface RosbridgePngMessage extends RosbridgeMessageBase {
   op: "png";
   id?: string;
   data: string;
@@ -64,12 +75,12 @@ export interface RosbridgePngMessage extends RosbridgeMessage {
 }
 
 export function isRosbridgePngMessage(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgePngMessage {
   return message.op === "png";
 }
 
-export interface RosbridgeAdvertiseMessage extends RosbridgeMessage {
+export interface RosbridgeAdvertiseMessage extends RosbridgeMessageBase {
   op: "advertise";
   id?: string;
   type: string;
@@ -79,25 +90,25 @@ export interface RosbridgeAdvertiseMessage extends RosbridgeMessage {
 }
 
 export function isRosbridgeAdvertiseMessage(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeAdvertiseMessage {
   return message.op === "advertise";
 }
 
-export interface RosbridgeUnadvertiseMessage extends RosbridgeMessage {
+export interface RosbridgeUnadvertiseMessage extends RosbridgeMessageBase {
   op: "unadvertise";
   id?: string;
   topic: string;
 }
 
 export function isRosbridgeUnadvertiseMessage(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeUnadvertiseMessage {
   return message.op === "unadvertise";
 }
 
 export interface RosbridgePublishMessage<TMessage = unknown>
-  extends RosbridgeMessage {
+  extends RosbridgeMessageBase {
   op: "publish";
   id?: string;
   topic: string;
@@ -105,12 +116,12 @@ export interface RosbridgePublishMessage<TMessage = unknown>
 }
 
 export function isRosbridgePublishMessage<T>(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgePublishMessage<T> {
   return message.op === "publish";
 }
 
-export interface RosbridgeSubscribeMessage extends RosbridgeMessage {
+export interface RosbridgeSubscribeMessage extends RosbridgeMessageBase {
   op: "subscribe";
   id?: string;
   topic: string;
@@ -122,48 +133,49 @@ export interface RosbridgeSubscribeMessage extends RosbridgeMessage {
 }
 
 export function isRosbridgeSubscribeMessage(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeSubscribeMessage {
   return message.op === "subscribe";
 }
 
-export interface RosbridgeUnsubscribeMessage extends RosbridgeMessage {
+export interface RosbridgeUnsubscribeMessage extends RosbridgeMessageBase {
   op: "unsubscribe";
   id?: string;
   topic: string;
 }
 
 export function isRosbridgeUnsubscribeMessage(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeUnsubscribeMessage {
   return message.op === "unsubscribe";
 }
 
-export interface RosbridgeAdvertiseServiceMessage extends RosbridgeMessage {
+export interface RosbridgeAdvertiseServiceMessage extends RosbridgeMessageBase {
   op: "advertise_service";
   type: string;
   service: string;
 }
 
 export function isRosbridgeAdvertiseServiceMessage(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeAdvertiseServiceMessage {
   return message.op === "advertise_service";
 }
 
-export interface RosbridgeUnadvertiseServiceMessage extends RosbridgeMessage {
+export interface RosbridgeUnadvertiseServiceMessage
+  extends RosbridgeMessageBase {
   op: "unadvertise_service";
   service: string;
 }
 
 export function isRosbridgeUnadvertiseServiceMessage(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeUnadvertiseServiceMessage {
   return message.op === "unadvertise_service";
 }
 
-export interface RosbridgeCallServiceMessage<TArgs = undefined>
-  extends RosbridgeMessage {
+export interface RosbridgeCallServiceMessage<TArgs = unknown>
+  extends RosbridgeMessageBase {
   op: "call_service";
   id?: string;
   service: string;
@@ -178,16 +190,15 @@ export interface RosbridgeCallServiceMessage<TArgs = undefined>
 }
 
 export function isRosbridgeCallServiceMessage<T>(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeCallServiceMessage<T> {
   return message.op === "call_service";
 }
 
-interface BaseRosbridgeServiceResponseMessage extends RosbridgeMessage {
+interface BaseRosbridgeServiceResponseMessage extends RosbridgeMessageBase {
   op: "service_response";
   id?: string;
   service: string;
-  result: boolean;
 }
 
 /** If the service call failed, `values` will be a string error message. */
@@ -197,47 +208,48 @@ interface FailedRosbridgeServiceResponseMessage
   result: false;
 }
 
-interface SuccessfulRosbridgeServiceResponseMessage<TValues = undefined>
+interface SuccessfulRosbridgeServiceResponseMessage<TValues = unknown>
   extends BaseRosbridgeServiceResponseMessage {
   values: TValues;
   result: true;
 }
 
-export type RosbridgeServiceResponseMessage<TValues = undefined> =
+export type RosbridgeServiceResponseMessage<TValues = unknown> =
   | FailedRosbridgeServiceResponseMessage
   | SuccessfulRosbridgeServiceResponseMessage<TValues>;
 
 export function isRosbridgeServiceResponseMessage<T>(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeServiceResponseMessage<T> {
   return message.op === "service_response";
 }
 
-export interface RosbridgeAdvertiseActionMessage extends RosbridgeMessage {
+export interface RosbridgeAdvertiseActionMessage extends RosbridgeMessageBase {
   op: "advertise_action";
   type: string;
   action: string;
 }
 
 export function isRosbridgeAdvertiseActionMessage(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeAdvertiseActionMessage {
   return message.op === "advertise_action";
 }
 
-export interface RosbridgeUnadvertiseActionMessage extends RosbridgeMessage {
+export interface RosbridgeUnadvertiseActionMessage
+  extends RosbridgeMessageBase {
   op: "unadvertise_action";
   action: string;
 }
 
 export function isRosbridgeUnadvertiseActionMessage(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeUnadvertiseActionMessage {
   return message.op === "unadvertise_action";
 }
 
 export interface RosbridgeSendActionGoalMessage<TArgs = unknown>
-  extends RosbridgeMessage {
+  extends RosbridgeMessageBase {
   op: "send_action_goal";
   id: string;
   action: string;
@@ -249,25 +261,25 @@ export interface RosbridgeSendActionGoalMessage<TArgs = unknown>
 }
 
 export function isRosbridgeSendActionGoalMessage(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeSendActionGoalMessage {
   return message.op === "send_action_goal";
 }
 
-export interface RosbridgeCancelActionGoalMessage extends RosbridgeMessage {
+export interface RosbridgeCancelActionGoalMessage extends RosbridgeMessageBase {
   op: "cancel_action_goal";
   id: string;
   action: string;
 }
 
 export function isRosbridgeCancelActionGoalMessage(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeCancelActionGoalMessage {
   return message.op === "cancel_action_goal";
 }
 
 export interface RosbridgeActionFeedbackMessage<TFeedback = unknown>
-  extends RosbridgeMessage {
+  extends RosbridgeMessageBase {
   op: "action_feedback";
   id: string;
   action: string;
@@ -275,12 +287,12 @@ export interface RosbridgeActionFeedbackMessage<TFeedback = unknown>
 }
 
 export function isRosbridgeActionFeedbackMessage<TFeedback = unknown>(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeActionFeedbackMessage<TFeedback> {
   return message.op === "action_feedback";
 }
 
-interface RosbridgeActionResultMessageBase extends RosbridgeMessage {
+interface RosbridgeActionResultMessageBase extends RosbridgeMessageBase {
   op: "action_result";
   id: string;
   action: string;
@@ -304,12 +316,12 @@ export type RosbridgeActionResultMessage<TResultValues = unknown> =
   | SuccessfulRosbridgeActionResultMessage<TResultValues>;
 
 export function isRosbridgeActionResultMessage<TResultValues = unknown>(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeActionResultMessage<TResultValues> {
   return message.op === "action_result";
 }
 
-export interface RosbridgeActionStatusMessage extends RosbridgeMessage {
+export interface RosbridgeActionStatusMessage extends RosbridgeMessageBase {
   op: "action_status";
   id: string;
   action: string;
@@ -317,7 +329,29 @@ export interface RosbridgeActionStatusMessage extends RosbridgeMessage {
 }
 
 export function isRosbridgeActionStatusMessage(
-  message: RosbridgeMessage,
+  message: RosbridgeMessageBase,
 ): message is RosbridgeActionStatusMessage {
   return message.op === "action_status";
 }
+
+export type RosbridgeMessage =
+  | RosbridgeAuthMessage
+  | RosbridgeStatusMessage
+  | RosbridgeSetStatusLevelMessage
+  | RosbridgeFragmentMessage
+  | RosbridgePngMessage
+  | RosbridgeAdvertiseMessage
+  | RosbridgeUnadvertiseMessage
+  | RosbridgePublishMessage
+  | RosbridgeSubscribeMessage
+  | RosbridgeUnsubscribeMessage
+  | RosbridgeAdvertiseServiceMessage
+  | RosbridgeUnadvertiseServiceMessage
+  | RosbridgeCallServiceMessage
+  | RosbridgeServiceResponseMessage
+  | RosbridgeAdvertiseActionMessage
+  | RosbridgeUnadvertiseActionMessage
+  | RosbridgeSendActionGoalMessage
+  | RosbridgeCancelActionGoalMessage
+  | RosbridgeActionFeedbackMessage
+  | RosbridgeActionResultMessage;

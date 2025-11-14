@@ -229,10 +229,13 @@ describe("Ros", function () {
       publishMockTransportEvent("open", new Event("open"));
 
       const rosOnceSpy = vi.spyOn(ros, "once");
-      ros.callOnConnection({ op: "test" });
+      ros.callOnConnection({ op: "set_level", level: "info" });
 
       expect(rosOnceSpy).not.toHaveBeenCalled();
-      expect(mockTransport.send).toHaveBeenCalledWith({ op: "test" });
+      expect(mockTransport.send).toHaveBeenCalledWith({
+        op: "set_level",
+        level: "info",
+      });
     });
 
     it("queues the message to send once connected", async () => {
@@ -242,7 +245,7 @@ describe("Ros", function () {
 
       // When disconnected, the message is queued to send
       const rosOnceSpy = vi.spyOn(ros, "once");
-      ros.callOnConnection({ op: "test" });
+      ros.callOnConnection({ op: "set_level", level: "info" });
 
       expect(rosOnceSpy).toHaveBeenCalledWith("open", expect.any(Function));
       expect(mockTransport.send).not.toHaveBeenCalled();
@@ -251,7 +254,10 @@ describe("Ros", function () {
       await ros.connect(mockRosUrl);
       publishMockTransportEvent("open", new Event("open"));
 
-      expect(mockTransport.send).toHaveBeenCalledWith({ op: "test" });
+      expect(mockTransport.send).toHaveBeenCalledWith({
+        op: "set_level",
+        level: "info",
+      });
     });
   });
 });

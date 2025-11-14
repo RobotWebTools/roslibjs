@@ -258,14 +258,12 @@ export default class Topic<T> extends EventEmitter<{
       this.advertise();
     }
 
-    const call = {
+    this.ros.callOnConnection({
       op: "publish",
       id: `publish:${this.name}:${uuidv4()}`,
       topic: this.name,
       msg: message,
-      latch: this.latch,
-    };
-    this.ros.callOnConnection(call);
+    });
   }
 
   /**
