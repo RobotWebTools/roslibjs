@@ -110,57 +110,20 @@ export default class Service<
 
     this.ros.callOnConnection(call);
   }
+
   /**
-   * Advertise the service. This turns the Service object from a client
-   * into a server. The callback will be called with every request
-   * that's made on this service.
-   *
-   * @param callback This works similarly to the callback for a C++ service in that you should take care not to overwrite the response object.
-   *  Instead, only modify the values within.
+   * Common logic for advertising a service
    */
-  async advertise(
-    callback: (request: TRequest, response: Partial<TResponse>) => boolean,
+  #advertiseWithCallback(
+    callbackWrapper: (bridgeMessage: AnyServiceOp<TRequest, TResponse>) => void,
   ): Promise<void> {
-    // Queue this operation to prevent race conditions
     this.#operationQueue = this.#operationQueue
       .then(() => {
-        // If already advertised, unadvertise first
         if (this.isAdvertised) {
           this.#doUnadvertise();
         }
 
-        // Store the new callback for removal during un-advertisement
-        this.#serviceCallback = (rosbridgeRequest) => {
-          if (!isRosbridgeCallServiceMessage<TRequest>(rosbridgeRequest)) {
-            throw new Error(
-              `Invalid message received on service channel: ${JSON.stringify(rosbridgeRequest)}`,
-            );
-          }
-          const response = {};
-          let success: boolean;
-          try {
-            success = callback(rosbridgeRequest.args, response);
-          } catch {
-            success = false;
-          }
-
-          if (success) {
-            this.ros.callOnConnection({
-              op: "service_response",
-              service: this.name,
-              values: response,
-              result: success,
-              id: rosbridgeRequest.id,
-            } satisfies RosbridgeServiceResponseMessage<Partial<TResponse>>);
-          } else {
-            this.ros.callOnConnection({
-              op: "service_response",
-              service: this.name,
-              result: success,
-              id: rosbridgeRequest.id,
-            } satisfies RosbridgeServiceResponseMessage<Partial<TResponse>>);
-          }
-        };
+        this.#serviceCallback = callbackWrapper;
 
         this.ros.on(this.name, this.#serviceCallback);
         this.ros.callOnConnection({
@@ -176,6 +139,53 @@ export default class Service<
       });
 
     return this.#operationQueue;
+  }
+
+  /**
+   * Advertise the service. This turns the Service object from a client
+   * into a server. The callback will be called with every request
+   * that's made on this service.
+   *
+   * @param callback This works similarly to the callback for a C++ service in that you should take care not to overwrite the response object.
+   *  Instead, only modify the values within.
+   */
+  advertise(
+    callback: (request: TRequest, response: Partial<TResponse>) => boolean,
+  ): Promise<void> {
+    return this.#advertiseWithCallback((bridgeMessage) => {
+      if (bridgeMessage.op !== "call_service") {
+        throw new Error(
+          `Invalid message received on service channel: ${JSON.stringify(bridgeMessage)}`,
+        );
+      }
+
+      const request = bridgeMessage as IncomingCallServiceOp<TRequest>;
+      const response: Partial<TResponse> = {};
+
+      let success: boolean;
+      try {
+        success = callback(request.args, response);
+      } catch {
+        success = false;
+      }
+
+      if (success) {
+        this.ros.callOnConnection({
+          op: "service_response",
+          service: this.name,
+          values: response,
+          result: success,
+          id: request.id,
+        });
+      } else {
+        this.ros.callOnConnection({
+          op: "service_response",
+          service: this.name,
+          result: success,
+          id: request.id,
+        });
+      }
+    });
   }
 
   /**
@@ -233,56 +243,37 @@ export default class Service<
    * An alternate form of Service advertisement that supports a modern Promise-based interface for use with async/await.
    * @param callback An asynchronous callback processing the request and returning a response.
    */
-  async advertiseAsync(
+  advertiseAsync(
     callback: (request: TRequest) => Promise<TResponse>,
   ): Promise<void> {
-    // Queue this operation to prevent race conditions
-    this.#operationQueue = this.#operationQueue
-      .then(() => {
-        // If already advertised, unadvertise first
-        if (this.isAdvertised) {
-          this.#doUnadvertise();
+    return this.#advertiseWithCallback((bridgeMessage) => {
+      if (bridgeMessage.op !== "call_service") {
+        throw new Error(
+          `Invalid message received on service channel: ${JSON.stringify(bridgeMessage)}`,
+        );
+      }
+
+      const request = bridgeMessage as IncomingCallServiceOp<TRequest>;
+
+      (async () => {
+        try {
+          this.ros.callOnConnection({
+            op: "service_response",
+            service: this.name,
+            result: true,
+            values: await callback(request.args),
+            id: request.id,
+          });
+        } catch (err) {
+          this.ros.callOnConnection({
+            op: "service_response",
+            service: this.name,
+            result: false,
+            values: String(err),
+            id: request.id,
+          });
         }
-
-        this.#serviceCallback = (rosbridgeRequest) => {
-          if (!isRosbridgeCallServiceMessage<TRequest>(rosbridgeRequest)) {
-            throw new Error(
-              `Invalid message received on service channel: ${JSON.stringify(rosbridgeRequest)}`,
-            );
-          }
-          (async () => {
-            try {
-              this.ros.callOnConnection({
-                op: "service_response",
-                service: this.name,
-                result: true,
-                values: await callback(rosbridgeRequest.args),
-                id: rosbridgeRequest.id,
-              } satisfies RosbridgeServiceResponseMessage<TResponse>);
-            } catch (err) {
-              this.ros.callOnConnection({
-                op: "service_response",
-                service: this.name,
-                result: false,
-                values: String(err),
-                id: rosbridgeRequest.id,
-              } satisfies RosbridgeServiceResponseMessage<TResponse>);
-            }
-          })().catch(console.error);
-        };
-        this.ros.on(this.name, this.#serviceCallback);
-        this.ros.callOnConnection({
-          op: "advertise_service",
-          type: this.serviceType,
-          service: this.name,
-        });
-        this.isAdvertised = true;
-      })
-      .catch((err: unknown) => {
-        this.emit("error", err);
-        throw err;
-      });
-
-    return this.#operationQueue;
+      })().catch(console.error);
+    });
   }
 }
