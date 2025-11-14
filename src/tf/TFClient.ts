@@ -16,13 +16,11 @@ import BaseTFClient from "./BaseTFClient.js";
  * A TF Client that listens to TFs from tf2_web_republisher.
  */
 export default class TFClient extends BaseTFClient {
-  currentGoal:
-    | Goal<
-        tf2_web_republisher.TFSubscriptionGoal,
-        tf2_web_republisher.TFSubscriptionFeedback
-      >
-    | false = false;
-  currentTopic: Topic<tf2_msgs.TFMessage> | false = false;
+  currentGoal?: Goal<
+    tf2_web_republisher.TFSubscriptionGoal,
+    tf2_web_republisher.TFSubscriptionFeedback
+  >;
+  currentTopic?: Topic<tf2_msgs.TFMessage>;
   actionClient: ActionClient<
     tf2_web_republisher.TFSubscriptionGoal,
     tf2_web_republisher.TFSubscriptionFeedback
