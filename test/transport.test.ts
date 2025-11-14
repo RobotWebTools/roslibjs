@@ -4,16 +4,13 @@ import type { MockedObject } from "vitest";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AbstractTransport } from "../src/core/transport/Transport.js";
 import { WebSocketTransportFactory } from "../src/core/transport/WebSocketTransportFactory.js";
-import type {
-  RosbridgeMessage,
-  RosbridgePngMessage,
-} from "../src/types/protocol.js";
 import CBOR from "cbor-js";
 import * as fastpng from "fast-png";
 import * as bson from "bson";
 import * as ws from "ws";
 import { NativeWebSocketTransport } from "../src/core/transport/NativeWebSocketTransport.js";
 import { WsWebSocketTransport } from "../src/core/transport/WsWebSocketTransport.js";
+import type { BridgeProtoOp } from "../src/types/protocol.js";
 
 vi.mock("fast-png");
 
@@ -55,9 +52,9 @@ describe("Transport", () => {
     });
 
     it("should handle RosbridgeMessage", () => {
-      const message: RosbridgeMessage = {
+      const message = {
         op: "test",
-      };
+      } as unknown as BridgeProtoOp;
 
       const messageEvent: Partial<MessageEvent> = {
         type: "message",
@@ -202,12 +199,12 @@ describe("Transport", () => {
 
       // Obviously these are not real PNG encoded messages.
       // But they're good enough for mocking responses in our tests.
-      const successMessage: RosbridgePngMessage = {
+      const successMessage = {
         op: "png",
         data: Buffer.from("success").toString("base64"),
       };
 
-      const failureMessage: RosbridgePngMessage = {
+      const failureMessage = {
         op: "png",
         data: Buffer.from("failure").toString("base64"),
       };
@@ -370,7 +367,7 @@ describe("Transport", () => {
     it("should send messages as JSON", () => {
       const transport = new NativeWebSocketTransport(mockSocket);
 
-      transport.send({ op: "test" });
+      transport.send({ op: "test" } as unknown as BridgeProtoOp);
 
       expect(mockSocket.send).toHaveBeenCalledWith(
         JSON.stringify({ op: "test" }),
@@ -482,9 +479,9 @@ describe("Transport", () => {
 
       transport.on("message", messageListener);
 
-      const message: RosbridgeMessage = {
+      const message = {
         op: "test",
-      };
+      } as unknown as BridgeProtoOp;
 
       const messageEvent: Partial<MessageEvent> = {
         type: "message",
@@ -515,7 +512,7 @@ describe("Transport", () => {
     it("should send messages as JSON", () => {
       const transport = new WsWebSocketTransport(mockSocket);
 
-      transport.send({ op: "test" });
+      transport.send({ op: "test" } as unknown as BridgeProtoOp);
 
       expect(mockSocket.send).toHaveBeenCalledWith(
         JSON.stringify({ op: "test" }),
@@ -627,9 +624,9 @@ describe("Transport", () => {
 
       transport.on("message", messageListener);
 
-      const message: RosbridgeMessage = {
+      const message = {
         op: "test",
-      };
+      } as unknown as BridgeProtoOp;
 
       const messageEvent: ws.MessageEvent = {
         type: "message",

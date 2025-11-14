@@ -8,7 +8,7 @@ import type {
 } from "../src/core/transport/Transport.js";
 import { WebSocketTransportFactory } from "../src/core/transport/WebSocketTransportFactory.js";
 import Ros from "../src/core/Ros.js";
-import type { RosbridgeMessage } from "../src/types/protocol.js";
+import type { BridgeProtoOp } from "../src/types/protocol.js";
 
 describe("Ros", function () {
   let mockRosUrl: string;
@@ -19,7 +19,7 @@ describe("Ros", function () {
     open: ((event: TransportEvent) => void)[];
     close: ((event: TransportEvent) => void)[];
     error: ((event: TransportEvent) => void)[];
-    message: ((event: RosbridgeMessage) => void)[];
+    message: ((event: BridgeProtoOp) => void)[];
   };
 
   const publishMockTransportEvent = (event: string, value: unknown) => {
@@ -51,7 +51,7 @@ describe("Ros", function () {
         break;
       case "message":
         mockTransportListeners.message.forEach((listener) => {
-          listener(value as RosbridgeMessage);
+          listener(value as BridgeProtoOp);
         });
         break;
     }
@@ -64,7 +64,7 @@ describe("Ros", function () {
       open: new Array<(event: TransportEvent) => void>(),
       close: new Array<(event: TransportEvent) => void>(),
       error: new Array<(event: TransportEvent) => void>(),
-      message: new Array<(event: RosbridgeMessage) => void>(),
+      message: new Array<(event: BridgeProtoOp) => void>(),
     };
 
     mockTransport = {
@@ -229,7 +229,10 @@ describe("Ros", function () {
       publishMockTransportEvent("open", new Event("open"));
 
       const rosOnceSpy = vi.spyOn(ros, "once");
-      ros.callOnConnection({ op: "test" });
+
+      // Coerce this message to be a valid bridge operation (it's not)
+      // Needs to be cast because type checking will catch it otherwise
+      ros.callOnConnection({ op: "test" } as unknown as BridgeProtoOp);
 
       expect(rosOnceSpy).not.toHaveBeenCalled();
       expect(mockTransport.send).toHaveBeenCalledWith({ op: "test" });
@@ -242,7 +245,10 @@ describe("Ros", function () {
 
       // When disconnected, the message is queued to send
       const rosOnceSpy = vi.spyOn(ros, "once");
-      ros.callOnConnection({ op: "test" });
+
+      // Coerce this message to be a valid bridge operation (it's not)
+      // Needs to be cast because type checking will catch it otherwise
+      ros.callOnConnection({ op: "test" } as unknown as BridgeProtoOp);
 
       expect(rosOnceSpy).toHaveBeenCalledWith("open", expect.any(Function));
       expect(mockTransport.send).not.toHaveBeenCalled();

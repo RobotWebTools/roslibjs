@@ -12,7 +12,7 @@ const messages = ["1", "2", "3", "4"].map(format);
 
 describe("Topics Example", function () {
   function createAndStreamTopic(topicName: string) {
-    const topic = ros.Topic({
+    const topic = ros.Topic<{ data: string }>({
       name: topicName,
       messageType: "std_msgs/String",
     });
@@ -20,7 +20,11 @@ describe("Topics Example", function () {
 
     function emit() {
       setTimeout(function () {
-        topic.publish(messages[idx++]);
+        const msg = messages[idx++];
+        if (!msg) {
+          return;
+        }
+        topic.publish(msg);
         if (idx < messages.length) {
           emit();
         } else {

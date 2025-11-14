@@ -1,6 +1,13 @@
 import { describe, it, expect } from "vitest";
 import * as ROSLIB from "../../src/RosLib.js";
 
+interface FibonacciGoal {
+  order: number;
+}
+interface FibonacciResult {
+  sequence: number[];
+}
+
 // Noetic is the only version of ROS 1 we support, so we skip based on distro name
 // instead of adding extra plumbing for ROS_VERSION.
 describe.skipIf(process.env["ROS_DISTRO"] !== "noetic")(
@@ -18,7 +25,11 @@ describe.skipIf(process.env["ROS_DISTRO"] !== "noetic")(
            * ----------------
            */
 
-          const fibonacciClient = new ROSLIB.ActionClient({
+          const fibonacciClient = new ROSLIB.ActionClient<
+            FibonacciGoal,
+            FibonacciResult,
+            FibonacciResult
+          >({
             ros: ros,
             serverName: "/fibonacci",
             actionName: "actionlib_tutorials/FibonacciAction",
