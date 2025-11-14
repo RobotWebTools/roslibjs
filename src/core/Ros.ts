@@ -32,6 +32,7 @@ import type {
   TransportEvent,
 } from "./transport/Transport.js";
 import { WebSocketTransportFactory } from "./transport/WebSocketTransportFactory.ts";
+import type { RosEventTypes } from "../types/emitted_events.js";
 
 interface TypeDefDict {
   [key: string]: string | string[] | TypeDefDict | TypeDefDict[];
@@ -47,14 +48,7 @@ interface TypeDefDict {
  *  * &#60;topicName&#62; - A message came from rosbridge with the given topic name.
  *  * &#60;serviceID&#62; - A service response came from rosbridge with the given ID.
  */
-export default class Ros extends EventEmitter<
-  {
-    open: [TransportEvent];
-    close: [TransportEvent];
-    error: [TransportEvent];
-    // Any dynamically-named event should correspond to a rosbridge protocol message
-  } & Record<string, [RosbridgeMessage]>
-> {
+export default class Ros extends EventEmitter<RosEventTypes> {
   // private write, public read via getter method
   #isConnected: boolean;
 
