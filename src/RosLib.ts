@@ -1,9 +1,8 @@
 /**
- * @fileOverview
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-/** @description Library version */
+/** Library version */
 export const REVISION = import.meta.env.VITE_ROSLIBJS_VERSION;
 
 // Core exports
