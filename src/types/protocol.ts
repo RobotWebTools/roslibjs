@@ -180,7 +180,7 @@ export interface RosbridgeCallServiceMessage<TArgs = unknown>
   id?: string;
   service: string;
   /**
-   * @todo this should be deeply partial when *outgoing*, because rosbridge will "fill in the blanks",
+   * TODO this should be deeply partial when *outgoing*, because rosbridge will "fill in the blanks",
    * but it's not partial when *incoming* - need to figure out a way to represent this.
    */
   args: TArgs;
@@ -202,13 +202,13 @@ interface BaseRosbridgeServiceResponseMessage extends RosbridgeMessageBase {
 }
 
 /** If the service call failed, `values` will be a string error message. */
-interface FailedRosbridgeServiceResponseMessage
+export interface FailedRosbridgeServiceResponseMessage
   extends BaseRosbridgeServiceResponseMessage {
   values?: string;
   result: false;
 }
 
-interface SuccessfulRosbridgeServiceResponseMessage<TValues = unknown>
+export interface SuccessfulRosbridgeServiceResponseMessage<TValues = unknown>
   extends BaseRosbridgeServiceResponseMessage {
   values: TValues;
   result: true;
@@ -299,13 +299,13 @@ interface RosbridgeActionResultMessageBase extends RosbridgeMessageBase {
   status: number;
 }
 
-interface FailedRosbridgeActionResultMessage
+export interface FailedRosbridgeActionResultMessage
   extends RosbridgeActionResultMessageBase {
   result: false;
   values?: string;
 }
 
-interface SuccessfulRosbridgeActionResultMessage<TResultValues = unknown>
+export interface SuccessfulRosbridgeActionResultMessage<TResultValues = unknown>
   extends RosbridgeActionResultMessageBase {
   values: TResultValues;
   result: true;
