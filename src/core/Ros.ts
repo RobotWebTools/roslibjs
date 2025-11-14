@@ -724,7 +724,7 @@ export default class Ros extends EventEmitter<RosEventTypes> {
     );
   }
 
-  public Topic<T>(
+  public Topic<T extends object>(
     options: Omit<ConstructorParameters<typeof Topic<T>>[0], "ros">,
   ) {
     return new Topic<T>({ ros: this, ...options });
@@ -736,7 +736,7 @@ export default class Ros extends EventEmitter<RosEventTypes> {
     return new Param<T>({ ros: this, ...options });
   }
 
-  public Service<TRequest, TResponse>(
+  public Service<TRequest extends object, TResponse extends object>(
     options: Omit<
       ConstructorParameters<typeof Service<TRequest, TResponse>>[0],
       "ros"
@@ -751,7 +751,11 @@ export default class Ros extends EventEmitter<RosEventTypes> {
     return new TFClient({ ros: this, ...options });
   }
 
-  public ActionClient<TGoal, TFeedback, TResult>(
+  public ActionClient<
+    TGoal extends object,
+    TFeedback extends object,
+    TResult extends object,
+  >(
     options: Omit<
       ConstructorParameters<typeof ActionClient<TGoal, TFeedback, TResult>>[0],
       "ros"

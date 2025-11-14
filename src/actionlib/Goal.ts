@@ -15,9 +15,9 @@ import { v4 as uuidv4 } from "uuid";
  *  * 'timeout' - If a timeout occurred while sending a goal.
  */
 export default class Goal<
-  TGoal,
-  TFeedback = unknown,
-  TResult = unknown,
+  TGoal = never,
+  TFeedback = never,
+  TResult = never,
 > extends EventEmitter<{
   timeout: undefined;
   status: [actionlib_msgs.GoalStatus];

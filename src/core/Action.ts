@@ -16,35 +16,43 @@ import type {
   ActionResultFailedOp,
 } from "../types/protocol.js";
 
+type ActionCallback<TGoal extends object> = (
+  goal: TGoal,
+  id: string | undefined,
+) => void;
+type ActionCancelCallback = (id: string) => void;
+
+interface ActionOptions {
+  /**
+   * The ROSLIB.Ros connection handle.
+   */
+  ros: Ros;
+  /**
+   * The action name, like '/fibonacci'.
+   */
+  name: string;
+  /**
+   * The action type, like 'example_interfaces/Fibonacci'.
+   */
+  actionType: string;
+}
+
 /**
  * A ROS 2 action client.
  */
 export default class Action<
-  TGoal = unknown,
-  TFeedback = unknown,
-  TResult = unknown,
+  TGoal extends object = object,
+  TFeedback extends object = object,
+  TResult extends object = object,
 > {
   isAdvertised = false;
-  #actionCallback: ((goal: TGoal, id: string) => void) | null = null;
-  #cancelCallback: ((id: string) => void) | null = null;
+  #actionCallback: ActionCallback<TGoal> | null = null;
+  #cancelCallback: ActionCancelCallback | null = null;
   ros: Ros;
   name: string;
   actionType: string;
-  /**
-   * @param options
-   * @param options.ros - The ROSLIB.Ros connection handle.
-   * @param options.name - The action name, like '/fibonacci'.
-   * @param options.actionType - The action type, like 'example_interfaces/Fibonacci'.
-   */
-  constructor({
-    ros,
-    name,
-    actionType,
-  }: {
-    ros: Ros;
-    name: string;
-    actionType: string;
-  }) {
+
+  constructor({ ros, name, actionType }: ActionOptions) {
     this.ros = ros;
     this.name = name;
     this.actionType = actionType;
@@ -122,8 +130,8 @@ export default class Action<
    * @param cancelCallback - A callback function to execute when the action is canceled.
    */
   advertise(
-    actionCallback: (goal: TGoal, id: string) => void,
-    cancelCallback: (id: string) => void,
+    actionCallback: ActionCallback<TGoal>,
+    cancelCallback: ActionCancelCallback,
   ) {
     if (this.isAdvertised || typeof actionCallback !== "function") {
       return;

@@ -17,6 +17,17 @@ import {
   type PublishOp,
 } from "../types/protocol.js";
 
+interface TopicOptions {
+  ros: Ros;
+  name: string;
+  messageType: string;
+  compression?: BridgeCompressionType;
+  throttle_rate?: number;
+  queue_size?: number;
+  latch?: boolean;
+  queue_length?: number;
+  reconnect_on_close?: boolean;
+}
 
 /**
  * Publish and/or subscribe to a topic in ROS.
@@ -25,7 +36,7 @@ import {
  *  * 'warning' - If there are any warning during the Topic creation.
  *  * 'message' - The message data from rosbridge.
  */
-export default class Topic<T> extends EventEmitter<{
+export default class Topic<T extends object> extends EventEmitter<{
   message: [T];
   warning: [string];
   unsubscribe: undefined;
@@ -43,9 +54,7 @@ export default class Topic<T> extends EventEmitter<{
   queue_size: number;
   queue_length: number;
   reconnect_on_close: boolean;
-  callForSubscribeAndAdvertise: (
-    message: RosbridgeSubscribeMessage | RosbridgeAdvertiseMessage,
-  ) => void;
+  callForSubscribeAndAdvertise: (message: SubscribeOp | AdvertiseOp) => void;
   subscribeId: string | null = null;
   advertiseId?: string;
   /**
@@ -70,17 +79,7 @@ export default class Topic<T> extends EventEmitter<{
     queue_size = 100,
     queue_length = 0,
     reconnect_on_close = true,
-  }: {
-    ros: Ros;
-    name: string;
-    messageType: string;
-    compression?: string;
-    throttle_rate?: number;
-    queue_size?: number;
-    latch?: boolean;
-    queue_length?: number;
-    reconnect_on_close?: boolean;
-  }) {
+  }: TopicOptions) {
     super();
 
     this.ros = ros;

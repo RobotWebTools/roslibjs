@@ -20,7 +20,7 @@ import type { actionlib_msgs } from "../types/actionlib_msgs.js";
  *
  */
 export default class ActionListener<
-  TGoal,
+  TGoal extends object,
   TFeedback,
   TResult,
 > extends EventEmitter<{

@@ -14,16 +14,22 @@ import {
 } from "../types/protocol.js";
 import type { ServiceCallIdString } from "../types/emitted_events.js";
 
+type ServiceMessageHandler<
+  TRequest extends object,
+  TResponse extends object,
+> = (request: AnyServiceOp<TRequest, TResponse>) => void;
 
 /**
  * A ROS service client.
  */
-export default class Service<TRequest, TResponse> extends EventEmitter {
+export default class Service<
+  TRequest extends object,
+  TResponse extends object,
+> extends EventEmitter {
   /**
    * Stores a reference to the most recent service callback advertised so it can be removed from the EventEmitter during un-advertisement
    */
-  #serviceCallback: ((rosbridgeRequest: RosbridgeMessage) => void) | null =
-    null;
+  #serviceCallback: ServiceMessageHandler<TRequest, TResponse> | null = null;
   isAdvertised = false;
   /**
    * Queue for serializing advertise/unadvertise operations to prevent race conditions

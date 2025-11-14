@@ -20,13 +20,13 @@ import type Goal from "./Goal.js";
  *
  */
 export default class ActionClient<
-  TGoal = unknown,
-  TFeedback = unknown,
-  TResult = unknown,
+  TGoal = never,
+  TFeedback = never,
+  TResult = never,
 > extends EventEmitter<{
   timeout: undefined;
 }> {
-  goals: Partial<Record<string, Goal<TGoal>>> = {};
+  goals: Partial<Record<string, Goal<TGoal, TFeedback, TResult>>> = {};
   /** flag to check if a status has been received */
   receivedStatus = false;
   ros: Ros;
