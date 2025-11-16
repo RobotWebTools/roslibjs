@@ -4,10 +4,7 @@
  */
 
 import { EventEmitter } from "eventemitter3";
-import type {
-  RosbridgeMessage,
-  RosbridgeServiceResponseMessage,
-} from "../types/protocol.ts";
+import type { RosbridgeMessage } from "../types/protocol.ts";
 import {
   isRosbridgeCallServiceMessage,
   isRosbridgeServiceResponseMessage,
@@ -88,16 +85,13 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
       }
     });
 
-    const call = {
+    this.ros.callOnConnection({
       op: "call_service",
       id: serviceCallId,
       service: this.name,
-      type: this.serviceType,
       args: request,
       timeout: timeout,
-    };
-
-    this.ros.callOnConnection(call);
+    });
   }
   /**
    * Advertise the service. This turns the Service object from a client
@@ -125,7 +119,8 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
               `Invalid message received on service channel: ${JSON.stringify(rosbridgeRequest)}`,
             );
           }
-          const response = {};
+          // @ts-expect-error -- TypeScript doesn't have a way to handle the out-parameter model used here.
+          const response: TResponse = {};
           let success: boolean;
           try {
             success = callback(rosbridgeRequest.args, response);
@@ -140,14 +135,14 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
               values: response,
               result: success,
               id: rosbridgeRequest.id,
-            } satisfies RosbridgeServiceResponseMessage<Partial<TResponse>>);
+            });
           } else {
             this.ros.callOnConnection({
               op: "service_response",
               service: this.name,
               result: success,
               id: rosbridgeRequest.id,
-            } satisfies RosbridgeServiceResponseMessage<Partial<TResponse>>);
+            });
           }
         };
 
@@ -247,7 +242,7 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
                 result: true,
                 values: await callback(rosbridgeRequest.args),
                 id: rosbridgeRequest.id,
-              } satisfies RosbridgeServiceResponseMessage<TResponse>);
+              });
             } catch (err) {
               this.ros.callOnConnection({
                 op: "service_response",
@@ -255,7 +250,7 @@ export default class Service<TRequest, TResponse> extends EventEmitter {
                 result: false,
                 values: String(err),
                 id: rosbridgeRequest.id,
-              } satisfies RosbridgeServiceResponseMessage<TResponse>);
+              });
             }
           })().catch(console.error);
         };

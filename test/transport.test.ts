@@ -56,7 +56,8 @@ describe("Transport", () => {
 
     it("should handle RosbridgeMessage", () => {
       const message: RosbridgeMessage = {
-        op: "test",
+        op: "set_level",
+        level: "info",
       };
 
       const messageEvent: Partial<MessageEvent> = {
@@ -370,10 +371,10 @@ describe("Transport", () => {
     it("should send messages as JSON", () => {
       const transport = new NativeWebSocketTransport(mockSocket);
 
-      transport.send({ op: "test" });
+      transport.send({ op: "set_level", level: "info" });
 
       expect(mockSocket.send).toHaveBeenCalledWith(
-        JSON.stringify({ op: "test" }),
+        JSON.stringify({ op: "set_level", level: "info" }),
       );
     });
 
@@ -483,7 +484,8 @@ describe("Transport", () => {
       transport.on("message", messageListener);
 
       const message: RosbridgeMessage = {
-        op: "test",
+        op: "set_level",
+        level: "info",
       };
 
       const messageEvent: Partial<MessageEvent> = {
@@ -515,10 +517,10 @@ describe("Transport", () => {
     it("should send messages as JSON", () => {
       const transport = new WsWebSocketTransport(mockSocket);
 
-      transport.send({ op: "test" });
+      transport.send({ op: "set_level", level: "info" });
 
       expect(mockSocket.send).toHaveBeenCalledWith(
-        JSON.stringify({ op: "test" }),
+        JSON.stringify({ op: "set_level", level: "info" }),
       );
     });
 
@@ -628,7 +630,8 @@ describe("Transport", () => {
       transport.on("message", messageListener);
 
       const message: RosbridgeMessage = {
-        op: "test",
+        op: "set_level",
+        level: "info",
       };
 
       const messageEvent: ws.MessageEvent = {

@@ -82,15 +82,14 @@ export default class Action<
       }
     });
 
-    const call = {
+    this.ros.callOnConnection({
       op: "send_action_goal",
       id: actionGoalId,
       action: this.name,
       action_type: this.actionType,
       args: goal,
       feedback: true,
-    };
-    this.ros.callOnConnection(call);
+    });
 
     return actionGoalId;
   }
@@ -101,12 +100,11 @@ export default class Action<
    * @param id - The ID of the action goal to cancel.
    */
   cancelGoal(id: string) {
-    const call = {
+    this.ros.callOnConnection({
       op: "cancel_action_goal",
       id: id,
       action: this.name,
-    };
-    this.ros.callOnConnection(call);
+    });
   }
 
   /**
@@ -200,13 +198,12 @@ export default class Action<
    * @param feedback - The feedback to send.
    */
   sendFeedback(id: string, feedback: TFeedback) {
-    const call = {
+    this.ros.callOnConnection({
       op: "action_feedback",
       id: id,
       action: this.name,
       values: feedback,
-    };
-    this.ros.callOnConnection(call);
+    });
   }
 
   /**
@@ -216,15 +213,14 @@ export default class Action<
    * @param result - The result to set.
    */
   setSucceeded(id: string, result: TResult) {
-    const call = {
+    this.ros.callOnConnection({
       op: "action_result",
       id: id,
       action: this.name,
       values: result,
       status: GoalStatus.STATUS_SUCCEEDED,
       result: true,
-    };
-    this.ros.callOnConnection(call);
+    });
   }
 
   /**
@@ -234,15 +230,14 @@ export default class Action<
    * @param result - The result to set.
    */
   setCanceled(id: string, result: TResult) {
-    const call = {
+    this.ros.callOnConnection({
       op: "action_result",
       id: id,
       action: this.name,
       values: result,
       status: GoalStatus.STATUS_CANCELED,
       result: true,
-    };
-    this.ros.callOnConnection(call);
+    });
   }
 
   /**
@@ -251,13 +246,12 @@ export default class Action<
    * @param id - The action goal ID.
    */
   setFailed(id: string) {
-    const call = {
+    this.ros.callOnConnection({
       op: "action_result",
       id: id,
       action: this.name,
       status: GoalStatus.STATUS_ABORTED,
       result: false,
-    };
-    this.ros.callOnConnection(call);
+    });
   }
 }

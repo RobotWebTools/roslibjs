@@ -3,6 +3,7 @@ import type {
   RosbridgePngMessage,
   RosbridgeMessage,
   RosbridgeFragmentMessage,
+  RosbridgeMessageBase,
 } from "../../types/protocol.js";
 import {
   isRosbridgeFragmentMessage,
@@ -60,7 +61,7 @@ export abstract class AbstractTransport
     open: [TransportEvent];
     close: [TransportEvent];
     error: [TransportEvent];
-    message: [RosbridgeMessage];
+    message: [RosbridgeMessageBase];
   }>
   implements ITransport
 {
@@ -114,7 +115,7 @@ export abstract class AbstractTransport
    * If the message is a PNG, it is decompressed and reprocessed.
    * Otherwise, the message is emitted.
    */
-  private handleRosbridgeMessage(message: RosbridgeMessage) {
+  private handleRosbridgeMessage(message: RosbridgeMessageBase) {
     if (isRosbridgeFragmentMessage(message)) {
       this.handleRosbridgeFragmentMessage(message);
     } else if (isRosbridgePngMessage(message)) {
