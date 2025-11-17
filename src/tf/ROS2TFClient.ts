@@ -1,6 +1,6 @@
-import type { tf2_web_republisher } from "../types/tf2_web_republisher.js";
-import Action from "../core/Action.js";
-import BaseTFClient from "./BaseTFClient.js";
+import type { tf2_web_republisher } from "../types/tf2_web_republisher.ts";
+import Action from "../core/Action.ts";
+import BaseTFClient from "./BaseTFClient.ts";
 
 /**
  * A TF Client that listens to TFs from tf2_web_republisher using ROS2 actions.

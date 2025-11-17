@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import * as ROSLIB from "../src/RosLib.js";
+import * as ROSLIB from "../src/RosLib.ts";
 
 import { DOMParser } from "@xmldom/xmldom";
-import { UrdfBox, UrdfCylinder, UrdfSphere } from "../src/RosLib.js";
+import { UrdfBox, UrdfCylinder, UrdfSphere } from "../src/RosLib.ts";
 
 const sample_urdf = function () {
   return (

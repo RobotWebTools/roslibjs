@@ -1,5 +1,5 @@
 import { describe, it, expect, afterAll, vi } from "vitest";
-import * as ROSLIB from "../../src/RosLib.js";
+import * as ROSLIB from "../../src/RosLib.ts";
 
 describe("Topics Example", function () {
   const ros = new ROSLIB.Ros({

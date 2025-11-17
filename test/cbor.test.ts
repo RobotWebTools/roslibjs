@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import CBOR from "cbor-js";
-import cborTypedArrayTagger from "../src/util/cborTypedArrayTags.js";
+import cborTypedArrayTagger from "../src/util/cborTypedArrayTags.ts";
 
 /** Convert hex string to ArrayBuffer. */
 function hexToBuffer(hex: string) {

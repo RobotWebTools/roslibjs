@@ -2,7 +2,7 @@
  * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
  */
-import { type PartialNullable } from "../types/interface-types.js";
+import { type PartialNullable } from "../types/interface-types.ts";
 
 export interface IQuaternion {
   /**

@@ -2,10 +2,10 @@
  * @fileOverview
  * @author David Gossow - dgossow@willowgarage.com
  */
-import Vector3, { type IVector3 } from "./Vector3.js";
-import Quaternion, { type IQuaternion } from "./Quaternion.js";
-import { type ITransform } from "./Transform.js";
-import type { PartialNullable } from "../types/interface-types.js";
+import Vector3, { type IVector3 } from "./Vector3.ts";
+import Quaternion, { type IQuaternion } from "./Quaternion.ts";
+import { type ITransform } from "./Transform.ts";
+import type { PartialNullable } from "../types/interface-types.ts";
 
 export interface IPose {
   /**

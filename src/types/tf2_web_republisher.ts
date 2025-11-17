@@ -1,5 +1,5 @@
-import type { geometry_msgs } from "./geometry_msgs";
-import type { std_msgs } from "./std_msgs";
+import type { geometry_msgs } from "./geometry_msgs.ts";
+import type { std_msgs } from "./std_msgs.ts";
 
 export namespace tf2_web_republisher {
   export interface RepublishTFsRequest extends TFSubscriptionGoal {

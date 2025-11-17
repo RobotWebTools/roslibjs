@@ -5,14 +5,14 @@
  */
 
 import type { Element } from "@xmldom/xmldom";
-import Pose from "../math/Pose.js";
-import UrdfCylinder from "./UrdfCylinder.js";
-import UrdfBox from "./UrdfBox.js";
-import UrdfMaterial from "./UrdfMaterial.js";
-import UrdfMesh from "./UrdfMesh.js";
-import UrdfSphere from "./UrdfSphere.js";
-import { UrdfAttrs, type UrdfDefaultOptions } from "./UrdfTypes.js";
-import { isElement, parseUrdfOrigin } from "./UrdfUtils.js";
+import Pose from "../math/Pose.ts";
+import UrdfCylinder from "./UrdfCylinder.ts";
+import UrdfBox from "./UrdfBox.ts";
+import UrdfMaterial from "./UrdfMaterial.ts";
+import UrdfMesh from "./UrdfMesh.ts";
+import UrdfSphere from "./UrdfSphere.ts";
+import { UrdfAttrs, type UrdfDefaultOptions } from "./UrdfTypes.ts";
+import { isElement, parseUrdfOrigin } from "./UrdfUtils.ts";
 
 export type UrdfGeometryLike = UrdfMesh | UrdfSphere | UrdfBox | UrdfCylinder;
 

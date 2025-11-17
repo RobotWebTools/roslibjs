@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import * as ROSLIB from "../src/RosLib.js";
+import * as ROSLIB from "../src/RosLib.ts";
 
 describe("Quaternion", function () {
   describe("creation", function () {

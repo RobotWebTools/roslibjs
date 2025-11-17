@@ -11,7 +11,7 @@ import {
   isRosbridgeCancelActionGoalMessage,
   isRosbridgeSendActionGoalMessage,
 } from "../types/protocol.ts";
-import type Ros from "./Ros.js";
+import type Ros from "./Ros.ts";
 import { v4 as uuidv4 } from "uuid";
 
 /**

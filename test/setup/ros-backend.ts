@@ -4,7 +4,7 @@
  */
 
 import Docker from "dockerode";
-import Ros from "../../src/core/Ros.js";
+import Ros from "../../src/core/Ros.ts";
 
 const CONTAINER_NAME = "roslibjs-test-backend";
 const CONTAINER_PORT = 9090;

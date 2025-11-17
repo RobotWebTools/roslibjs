@@ -6,11 +6,11 @@
 
 import type { Element } from "@xmldom/xmldom";
 import { DOMParser, MIME_TYPE } from "@xmldom/xmldom";
-import UrdfMaterial from "./UrdfMaterial.js";
-import UrdfLink from "./UrdfLink.js";
-import UrdfJoint from "./UrdfJoint.js";
-import { isElement } from "./UrdfUtils.js";
-import { UrdfAttrs } from "./UrdfTypes.js";
+import UrdfMaterial from "./UrdfMaterial.ts";
+import UrdfLink from "./UrdfLink.ts";
+import UrdfJoint from "./UrdfJoint.ts";
+import { isElement } from "./UrdfUtils.ts";
+import { UrdfAttrs } from "./UrdfTypes.ts";
 
 /*
  * See https://developer.mozilla.org/docs/XPathResult#Constants

@@ -7,7 +7,7 @@ import type {
   RosbridgeMessage,
   RosbridgeMessageBase,
   RosbridgeSetStatusLevelMessage,
-} from "../types/protocol.js";
+} from "../types/protocol.ts";
 import {
   isRosbridgeActionFeedbackMessage,
   isRosbridgeActionResultMessage,
@@ -17,21 +17,21 @@ import {
   isRosbridgeSendActionGoalMessage,
   isRosbridgeServiceResponseMessage,
   isRosbridgeStatusMessage,
-} from "../types/protocol.js";
+} from "../types/protocol.ts";
 
-import Topic from "./Topic.js";
-import Service from "./Service.js";
-import Param from "./Param.js";
-import TFClient from "../tf/TFClient";
-import ActionClient from "../actionlib/ActionClient.js";
-import SimpleActionServer from "../actionlib/SimpleActionServer.js";
+import Topic from "./Topic.ts";
+import Service from "./Service.ts";
+import Param from "./Param.ts";
+import TFClient from "../tf/TFClient.ts";
+import ActionClient from "../actionlib/ActionClient.ts";
+import SimpleActionServer from "../actionlib/SimpleActionServer.ts";
 import { EventEmitter } from "eventemitter3";
 import type { rosapi } from "../types/rosapi.ts";
 import type {
   ITransport,
   ITransportFactory,
   TransportEvent,
-} from "./transport/Transport.js";
+} from "./transport/Transport.ts";
 import { WebSocketTransportFactory } from "./transport/WebSocketTransportFactory.ts";
 
 export interface TypeDefDict {

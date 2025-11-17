@@ -3,11 +3,11 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import type Ros from "../core/Ros.js";
-import Topic from "../core/Topic.js";
+import type Ros from "../core/Ros.ts";
+import Topic from "../core/Topic.ts";
 import { EventEmitter } from "eventemitter3";
-import type { actionlib_msgs } from "../types/actionlib_msgs.js";
-import type Goal from "./Goal.js";
+import type { actionlib_msgs } from "../types/actionlib_msgs.ts";
+import type Goal from "./Goal.ts";
 
 /**
  * An actionlib action client.

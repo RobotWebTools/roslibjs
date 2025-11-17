@@ -1,9 +1,9 @@
 /********** Utility Methods for parsing Joint **********/
 import type { Element, Node } from "@xmldom/xmldom";
-import Pose from "../math/Pose.js";
-import Quaternion from "../math/Quaternion.js";
-import Vector3 from "../math/Vector3.js";
-import { UrdfAttrs } from "./UrdfTypes.js";
+import Pose from "../math/Pose.ts";
+import Quaternion from "../math/Quaternion.ts";
+import Vector3 from "../math/Vector3.ts";
+import { UrdfAttrs } from "./UrdfTypes.ts";
 
 export function parseUrdfOrigin(originElement: Element): Pose {
   // Check the XYZ
