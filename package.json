@@ -20,6 +20,7 @@
     "@types/dockerode": "^3.3.45",
     "@types/node": "^24.0.1",
     "@types/ws": "^8.5.10",
+    "changelog-maker": "^4.4.5",
     "dockerode": "^4.0.9",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.8",
@@ -62,7 +63,8 @@
     "lint": "eslint .",
     "test": "vitest",
     "prepublishOnly": "npm run test",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "make-changelog": "changelog-maker RobotWebTools roslibjs --markdown | cat - CHANGELOG.md > NEW_CHANGELOG.md && mv NEW_CHANGELOG.md CHANGELOG.md"
   },
   "repository": {
     "type": "git",

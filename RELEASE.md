@@ -2,11 +2,9 @@
 
 ## 0. Make sure that the releasing module is compatible with other RWT modules
 
-## 1. Generate CHANGELOG using [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator)
+## 1. Generate CHANGELOG using `npm run make-changelog`
 
-```bash
-docker run -it --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator -u robotwebtools -p <PACKAGE_NAME> --usernames-as-github-logins --simple-list --no-issues --date-format "%Y-%m-%d %H:%M %z" -t <YOUR_GITHUB_TOKEN>
-```
+* (and clean it up by hand a little bit until we figure out how to make it substitute in-line)
 
 ## 2. Bump a new version
 
