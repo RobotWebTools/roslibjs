@@ -7,6 +7,9 @@ on:
 permissions:
   contents: read
   id-token: write # Required to authenticate with npm
+  # Required for the docs deployment job
+  actions: read
+  pages: write
 
 jobs:
   docs:
