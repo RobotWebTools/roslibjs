@@ -36,9 +36,6 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci
 
-      - name: Build JavaScript library
-        run: npm run build
-
       - name: Run tests
         run: npm test
 
