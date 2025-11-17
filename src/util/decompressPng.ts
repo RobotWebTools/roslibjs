@@ -5,7 +5,6 @@
 
 import type { DecodedPng } from "fast-png";
 import { decode } from "fast-png";
-import { Buffer } from "buffer";
 
 const textDecoder = new TextDecoder();
 
@@ -17,7 +16,7 @@ const textDecoder = new TextDecoder();
  * @param data - An object containing the PNG data.
  */
 export default function decompressPng(data: string): unknown {
-  const buffer = Buffer.from(data, "base64");
+  const buffer = Uint8Array.from(atob(data), (char) => char.charCodeAt(0));
 
   const decoded = tryDecodeBuffer(buffer);
 
@@ -28,7 +27,7 @@ export default function decompressPng(data: string): unknown {
   }
 }
 
-function tryDecodeBuffer(buffer: Buffer): DecodedPng {
+function tryDecodeBuffer(buffer: Uint8Array): DecodedPng {
   try {
     return decode(buffer);
   } catch (error) {

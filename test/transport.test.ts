@@ -190,7 +190,7 @@ describe("Transport", () => {
             text: {},
             data: Buffer.from(JSON.stringify({ op: "test" })),
           };
-          switch ((data as Buffer).toString()) {
+          switch (new TextDecoder().decode(data)) {
             case "success":
               return decodedImage;
             case "failure":
