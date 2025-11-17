@@ -1,0 +1,6 @@
+{
+  "name": "@robot-web-tools/workspace",
+  "workspaces": [
+    "packages/*"
+  ]
+}
