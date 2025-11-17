@@ -125,8 +125,8 @@ export default class Action<
     this.#actionCallback = actionCallback;
     this.#cancelCallback = cancelCallback;
     this.ros.on(this.name, (msg) => {
-      if (isRosbridgeSendActionGoalMessage(msg)) {
-        this.#executeAction.bind(this);
+      if (isRosbridgeSendActionGoalMessage<TGoal>(msg)) {
+        this.#executeAction(msg);
       } else {
         throw new Error(
           "Received unrelated message on Action server event stream!",

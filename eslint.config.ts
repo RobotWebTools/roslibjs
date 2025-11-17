@@ -31,6 +31,14 @@ export default defineConfig(
       "@typescript-eslint/no-empty-function": 0,
       "prefer-template": 2,
       "@typescript-eslint/consistent-type-imports": 2,
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "CallExpression[callee.property.name='bind']",
+          message:
+            "Prefer arrow functions over invoking Function.prototype.bind",
+        },
+      ],
     },
   },
   {
