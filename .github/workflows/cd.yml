@@ -1,0 +1,29 @@
+name: CD
+
+on:
+  release:
+    types: [released]
+
+permissions:
+  contents: read
+  id-token: write # Required to authenticate with npm
+
+jobs:
+  docs:
+    uses: ./.github/workflows/docs.yml
+    secrets: inherit
+    with:
+      deploy: true
+
+  publish:
+    environment: npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts
+          registry-url: "https://registry.npmjs.org"
+      - run: npm ci
+      - run: npm run build
+      - run: npm publish

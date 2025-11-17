@@ -1,13 +1,21 @@
 name: Docs Deployment
 
 on:
-  pull_request:
-  push:
-    branches:
-      - develop
-  release:
-    types: [released]
   workflow_dispatch:
+    inputs:
+      deploy:
+        description: "Deploy to GitHub Pages"
+        required: true
+        type: boolean
+        default: false
+
+  workflow_call:
+    inputs:
+      deploy:
+        description: "Deploy to GitHub Pages"
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -39,7 +47,7 @@ jobs:
       # pages and id-token required to deploy to GitHub Pages
       pages: write
       id-token: write
-    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+    if: inputs.deploy
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
