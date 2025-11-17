@@ -27,7 +27,7 @@ async function waitForRosConnection(ros: Ros, timeout = 5000) {
       reject(new Error("Timeout waiting for ROS connection"));
     }, timeout);
 
-    ros.on("open", () => {
+    ros.on("connection", () => {
       clearTimeout(timeoutId);
       resolve();
     });
