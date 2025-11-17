@@ -41,3 +41,9 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+  docs:
+    uses: ./.github/workflows/docs.yml
+    secrets: inherit
+    with:
+      deploy: false
