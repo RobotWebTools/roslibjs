@@ -28,9 +28,9 @@ jobs:
           node-version: "lts/*"
           registry-url: "https://registry.npmjs.org"
       - run: npm ci
-      - run: npm run build
-      - run: npm publish
+      - run: npm run build --workspaces --if-present
+      - run: npm publish --workspaces
         if: "!github.event.release.prerelease"
       # npm requires explicitly specifying a "tag" like `next` if the semantic version is a prerelease like `2.0.0-alpha1`
-      - run: npm publish --tag next
+      - run: npm publish --workspaces --tag next
         if: github.event.release.prerelease

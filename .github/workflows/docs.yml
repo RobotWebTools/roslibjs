@@ -29,12 +29,12 @@ jobs:
       - name: Install
         run: npm ci
       - name: Generate docs
-        run: npm run doc
+        run: npm run doc --workspace packages/roslib
       - name: Upload static files as artifact
         id: deployment
         uses: actions/upload-pages-artifact@v4
         with:
-          path: docs/
+          path: packages/roslib/docs/
 
   deploy:
     needs: build
