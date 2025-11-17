@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import * as ROSLIB from "../../src/RosLib.js";
+import * as ROSLIB from "../../src/RosLib.ts";
 
 const ros = new ROSLIB.Ros({
   url: "ws://localhost:9090",

@@ -3,9 +3,9 @@
  * @author Brandon Alexander - baalexander@gmail.com
  */
 
-import type { rosapi } from "../types/rosapi.js";
-import type Ros from "./Ros.js";
-import Service from "./Service.js";
+import type { rosapi } from "../types/rosapi.ts";
+import type Ros from "./Ros.ts";
+import Service from "./Service.ts";
 
 /**
  * A ROS parameter.

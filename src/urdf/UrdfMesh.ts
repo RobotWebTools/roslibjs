@@ -4,9 +4,9 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import Vector3 from "../math/Vector3.js";
-import { UrdfAttrs, type UrdfDefaultOptions, UrdfType } from "./UrdfTypes.js";
-import type { Nullable, Optional } from "../types/interface-types.js";
+import Vector3 from "../math/Vector3.ts";
+import { UrdfAttrs, type UrdfDefaultOptions, UrdfType } from "./UrdfTypes.ts";
+import type { Nullable, Optional } from "../types/interface-types.ts";
 
 /**
  * A Mesh element in a URDF.

@@ -8,8 +8,8 @@
       "DOM",
       "DOM.Iterable"
     ] /* Specify library files to be included in the compilation. */,
-    "module": "esnext" /* Specify what module code is generated. */,
-    "moduleResolution": "bundler",
+    "module": "NodeNext" /* Specify what module code is generated. */,
+    "moduleResolution": "NodeNext",
 
     /* JavaScript Support */
     "allowJs": false /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */,
@@ -23,6 +23,7 @@
     "declaration": true /* Generate .d.ts files from TypeScript and JavaScript files in your project. */,
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
 
     /* Module Options */
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,

@@ -2,18 +2,18 @@
 
 import type { MockedObject } from "vitest";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { AbstractTransport } from "../src/core/transport/Transport.js";
-import { WebSocketTransportFactory } from "../src/core/transport/WebSocketTransportFactory.js";
+import type { AbstractTransport } from "../src/core/transport/Transport.ts";
+import { WebSocketTransportFactory } from "../src/core/transport/WebSocketTransportFactory.ts";
 import type {
   RosbridgeMessage,
   RosbridgePngMessage,
-} from "../src/types/protocol.js";
+} from "../src/types/protocol.ts";
 import CBOR from "cbor-js";
 import * as fastpng from "fast-png";
 import * as bson from "bson";
 import * as ws from "ws";
-import { NativeWebSocketTransport } from "../src/core/transport/NativeWebSocketTransport.js";
-import { WsWebSocketTransport } from "../src/core/transport/WsWebSocketTransport.js";
+import { NativeWebSocketTransport } from "../src/core/transport/NativeWebSocketTransport.ts";
+import { WsWebSocketTransport } from "../src/core/transport/WsWebSocketTransport.ts";
 
 vi.mock("fast-png");
 

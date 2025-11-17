@@ -3,14 +3,14 @@
  * @author David Gossow - dgossow@willowgarage.com
  */
 
-import ActionClient from "../actionlib/ActionClient.js";
-import Goal from "../actionlib/Goal.js";
+import ActionClient from "../actionlib/ActionClient.ts";
+import Goal from "../actionlib/Goal.ts";
 
-import Topic from "../core/Topic.js";
-import type { tf2_msgs } from "../types/tf2_msgs.js";
-import type { tf2_web_republisher } from "../types/tf2_web_republisher.js";
+import Topic from "../core/Topic.ts";
+import type { tf2_msgs } from "../types/tf2_msgs.ts";
+import type { tf2_web_republisher } from "../types/tf2_web_republisher.ts";
 
-import BaseTFClient from "./BaseTFClient.js";
+import BaseTFClient from "./BaseTFClient.ts";
 
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.

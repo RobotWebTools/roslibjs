@@ -4,8 +4,8 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import { UrdfAttrs, type UrdfDefaultOptions } from "./UrdfTypes.js";
-import type { Optional } from "../types/interface-types.js";
+import { UrdfAttrs, type UrdfDefaultOptions } from "./UrdfTypes.ts";
+import type { Optional } from "../types/interface-types.ts";
 
 /**
  * A Color element in a URDF.

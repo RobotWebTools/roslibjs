@@ -4,8 +4,8 @@
  */
 
 import { EventEmitter } from "eventemitter3";
-import Service from "./Service.js";
-import type Ros from "./Ros.js";
+import Service from "./Service.ts";
+import type Ros from "./Ros.ts";
 import {
   isRosbridgePublishMessage,
   type RosbridgeAdvertiseMessage,

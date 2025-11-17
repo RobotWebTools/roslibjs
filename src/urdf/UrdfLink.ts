@@ -4,8 +4,8 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import UrdfVisual from "./UrdfVisual.js";
-import { UrdfAttrs, type UrdfDefaultOptions } from "./UrdfTypes.js";
+import UrdfVisual from "./UrdfVisual.ts";
+import { UrdfAttrs, type UrdfDefaultOptions } from "./UrdfTypes.ts";
 
 /**
  * A Link element in a URDF.

@@ -4,9 +4,9 @@
  * @author Russell Toris - rctoris@wpi.edu
  */
 
-import UrdfColor from "./UrdfColor.js";
-import { UrdfAttrs, type UrdfDefaultOptions } from "./UrdfTypes.js";
-import type { Nullable } from "../types/interface-types.js";
+import UrdfColor from "./UrdfColor.ts";
+import { UrdfAttrs, type UrdfDefaultOptions } from "./UrdfTypes.ts";
+import type { Nullable } from "../types/interface-types.ts";
 
 /**
  * A Material element in a URDF.

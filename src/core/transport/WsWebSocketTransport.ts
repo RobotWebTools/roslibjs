@@ -1,6 +1,6 @@
 import * as ws from "ws";
-import type { RosbridgeMessage } from "../../types/protocol.js";
-import { AbstractTransport } from "./Transport.js";
+import type { RosbridgeMessage } from "../../types/protocol.ts";
+import { AbstractTransport } from "./Transport.ts";
 
 /**
  * Uses the `ws` package to send and receive messages.

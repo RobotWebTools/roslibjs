@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { DOMParser } from "@xmldom/xmldom";
-import UrdfJoint from "../src/urdf/UrdfJoint";
+import UrdfJoint from "../src/urdf/UrdfJoint.ts";
 
 describe("UrdfJoint", () => {
   it("should parse axis correctly from URDF", () => {

@@ -4,6 +4,7 @@ import tseslint from "typescript-eslint";
 import globals from "globals";
 import jsdoc from "eslint-plugin-jsdoc";
 import prettier from "eslint-plugin-prettier";
+import importPlugin from "eslint-plugin-import";
 
 export default defineConfig(
   eslint.configs.recommended,
@@ -22,6 +23,7 @@ export default defineConfig(
     },
     plugins: {
       prettier,
+      import: importPlugin,
     },
     rules: {
       "prettier/prettier": [2, { endOfLine: "auto" }],
@@ -39,6 +41,7 @@ export default defineConfig(
             "Prefer arrow functions over invoking Function.prototype.bind",
         },
       ],
+      "import/extensions": 2,
     },
   },
   {
