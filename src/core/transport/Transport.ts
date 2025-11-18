@@ -11,8 +11,7 @@ import {
   isRosbridgePngMessage,
 } from "../../types/protocol.ts";
 import { deserialize } from "bson";
-import CBOR from "cbor-js";
-import typedArrayTagger from "../../util/cborTypedArrayTags.ts";
+import { decode } from "cbor2";
 import decompressPng from "../../util/decompressPng.ts";
 
 /**
@@ -221,7 +220,7 @@ export abstract class AbstractTransport
    * It is one technique for compressing JSON data.
    */
   private handleCborMessage(cbor: ArrayBuffer) {
-    const data: unknown = CBOR.decode(cbor, typedArrayTagger);
+    const data: unknown = decode(new Uint8Array(cbor));
     if (isRosbridgeMessage(data)) {
       this.handleRosbridgeMessage(data);
     } else {

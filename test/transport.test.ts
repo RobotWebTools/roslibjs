@@ -8,7 +8,7 @@ import type {
   RosbridgeMessage,
   RosbridgePngMessage,
 } from "../src/types/protocol.ts";
-import CBOR from "cbor-js";
+import { encode } from "cbor2";
 import * as fastpng from "fast-png";
 import * as bson from "bson";
 import * as ws from "ws";
@@ -287,8 +287,9 @@ describe("Transport", () => {
     });
 
     it("should handle CBOR message", async () => {
-      const successMessage = CBOR.encode({ op: "test" });
-      const failureMessage = CBOR.encode({ foo: "bar" });
+      // CBOR data comes as ArrayBuffer from WebSocket, not Uint8Array
+      const successMessage = encode({ op: "test" }).buffer;
+      const failureMessage = encode({ foo: "bar" }).buffer;
 
       // -- SUCCESS -- //
 
