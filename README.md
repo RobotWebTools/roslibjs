@@ -4,8 +4,6 @@
 
 ## The Standard ROS JavaScript Library
 
-For full documentation see the [ROS wiki](http://wiki.ros.org/roslibjs).
-
 [JSDoc](https://robotwebtools.github.io/roslibjs) can be found on the Robot Web Tools website.
 
 This project is released as part of the [Robot Web Tools](https://robotwebtools.github.io/) effort.
@@ -21,8 +19,7 @@ npm install roslib
 ## Troubleshooting
 
 1. Check that connection is established. You can listen to error and
-   connection events to report them to console. See
-   examples/simple.html for a complete example:
+   connection events to report them to console.
 
    ```js
    ros.on("error", function (error) {
@@ -32,6 +29,8 @@ npm install roslib
      console.log("Connection made!");
    });
    ```
+
+   Try running `npm run examples` for some complete examples!
 
 2. Check that you have the websocket server is running on
    port 9090. Something like this should do:
