@@ -21,7 +21,7 @@ export default defineConfig({
         useFlatConfig: true,
       },
     }),
-    externalizeDeps(),
+    externalizeDeps({ except: ["@xmldom/xmldom"] }),
   ],
   build: {
     lib: {
