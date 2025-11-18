@@ -2,7 +2,7 @@
   "name": "roslib",
   "homepage": "https://robotwebtools.github.io",
   "description": "The standard ROS Javascript Library",
-  "version": "2.0.0-alpha6",
+  "version": "2.0.0-alpha7",
   "license": "BSD-2-Clause",
   "files": [
     "dist"
@@ -43,7 +43,6 @@
   "dependencies": {
     "@xmldom/xmldom": "^0.9.8",
     "bson": "^7.0.0",
-    "buffer": "^6.0.3",
     "cbor2": "^2.0.1",
     "eventemitter3": "^5.0.1",
     "fast-png": "^7.0.1",
