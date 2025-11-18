@@ -69,19 +69,41 @@ export default class Action<
     }
 
     const actionGoalId = `send_action_goal:${this.name}:${uuidv4()}`;
-
-    this.ros.on(actionGoalId, function (message) {
+    this.ros.on(actionGoalId, (message) => {
       if (isRosbridgeActionResultMessage<TResult>(message)) {
-        if (!message.result) {
-          failedCallback(message.values ?? "");
+        const status = message.status as GoalStatus;
+
+        // Check status code instead of result field to properly handle STATUS_CANCELED
+        if (status === GoalStatus.STATUS_SUCCEEDED) {
+          resultCallback(message.values as TResult);
         } else {
-          resultCallback(message.values);
+          const baseError =
+            typeof message.values === "string" ? message.values : "";
+
+          let errorMessage: string;
+          switch (status) {
+            case GoalStatus.STATUS_CANCELED:
+              errorMessage = `Action was canceled${baseError ? `: ${baseError}` : ""}`;
+              break;
+            case GoalStatus.STATUS_ABORTED:
+              errorMessage = `Action was aborted${baseError ? `: ${baseError}` : ""}`;
+              break;
+            case GoalStatus.STATUS_CANCELING:
+              errorMessage = `Action is canceling${baseError ? `: ${baseError}` : ""}`;
+              break;
+            case GoalStatus.STATUS_UNKNOWN:
+              errorMessage = `Action status unknown${baseError ? `: ${baseError}` : ""}`;
+              break;
+            default:
+              errorMessage = `Action failed with status ${String(status)}${baseError ? `: ${baseError}` : ""}`;
+          }
+
+          failedCallback(errorMessage);
         }
       } else if (isRosbridgeActionFeedbackMessage<TFeedback>(message)) {
         feedbackCallback?.(message.values);
       }
     });
-
     this.ros.callOnConnection({
       op: "send_action_goal",
       id: actionGoalId,
