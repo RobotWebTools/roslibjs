@@ -6,4 +6,5 @@ node_modules
 *.log
 *.tar.gz
 dist
+importmap.js
 .DS_Store
