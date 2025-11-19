@@ -42,7 +42,7 @@ async function waitForRosConnection(ros: Ros, timeout = 5000) {
     });
 
     // If already connected
-    if (ros.isConnected()) {
+    if (ros.isConnected) {
       clearTimeout(timeoutId);
       resolve();
     }

@@ -87,7 +87,7 @@ export default class Ros extends EventEmitter<
     }
   }
 
-  public isConnected(): boolean {
+  public get isConnected(): boolean {
     return this.#isConnected;
   }
 
@@ -188,7 +188,7 @@ export default class Ros extends EventEmitter<
    * If not connected, queues the message to send once reconnected.
    */
   public callOnConnection(message: RosbridgeMessage) {
-    if (this.isConnected()) {
+    if (this.isConnected) {
       this.transport?.send(message);
     } else {
       this.once("connection", () => {

@@ -165,7 +165,7 @@ describe("Ros", function () {
         transportFactory: mockTransportFactory,
       });
 
-      expect(ros.isConnected()).toBe(false);
+      expect(ros.isConnected).toBe(false);
     });
 
     it("returns true when connected", async () => {
@@ -176,7 +176,7 @@ describe("Ros", function () {
       await ros.connect(mockRosUrl);
       publishMockTransportEvent("open", new Event("open"));
 
-      expect(ros.isConnected()).toBe(true);
+      expect(ros.isConnected).toBe(true);
     });
 
     it("returns false when disconnected", async () => {
@@ -188,7 +188,7 @@ describe("Ros", function () {
 
       mockTransport.close();
 
-      expect(ros.isConnected()).toBe(false);
+      expect(ros.isConnected).toBe(false);
     });
   });
 
@@ -204,7 +204,7 @@ describe("Ros", function () {
       ros.close();
 
       expect(mockTransport.close).toHaveBeenCalled();
-      expect(ros.isConnected()).toBe(false);
+      expect(ros.isConnected).toBe(false);
     });
 
     it("does not close the transport if it is already closed", () => {
@@ -215,7 +215,7 @@ describe("Ros", function () {
       ros.close();
 
       expect(mockTransport.close).not.toHaveBeenCalled();
-      expect(ros.isConnected()).toBe(false);
+      expect(ros.isConnected).toBe(false);
     });
   });
 
