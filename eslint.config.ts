@@ -70,6 +70,6 @@ export default defineConfig(
     },
   },
   {
-    ignores: ["dist", "docs"],
+    ignores: ["dist", "docs", "importmap.js"],
   },
 );

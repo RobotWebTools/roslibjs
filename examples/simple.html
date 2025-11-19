@@ -1,189 +1,197 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-<meta charset="utf-8" />
-<script src="https://unpkg.com/eventemitter3@latest/dist/eventemitter3.umd.min.js"></script>
-<script src="../dist/RosLib.umd.cjs"></script>
+  <head>
+    <meta charset="utf-8" />
+    <script src="../importmap.js"></script>
 
-<script>
-  // Connecting to ROS
-  // -----------------
-  var ros = new ROSLIB.Ros();
+    <script type="module">
+      import * as ROSLIB from "roslib";
+      // Connecting to ROS
+      // -----------------
+      var ros = new ROSLIB.Ros();
 
-  // If there is an error on the backend, an 'error' emit will be emitted.
-  ros.on('error', function(error) {
-    document.getElementById('connecting').style.display = 'none';
-    document.getElementById('connected').style.display = 'none';
-    document.getElementById('closed').style.display = 'none';
-    document.getElementById('error').style.display = 'inline';
-    console.log(error);
-  });
+      // If there is an error on the backend, an 'error' emit will be emitted.
+      ros.on("error", function (error) {
+        document.getElementById("connecting").style.display = "none";
+        document.getElementById("connected").style.display = "none";
+        document.getElementById("closed").style.display = "none";
+        document.getElementById("error").style.display = "inline";
+        console.log(error);
+      });
 
-  // Find out exactly when we made a connection.
-  ros.on('connection', function() {
-    console.log('Connection made!');
-    document.getElementById('connecting').style.display = 'none';
-    document.getElementById('error').style.display = 'none';
-    document.getElementById('closed').style.display = 'none';
-    document.getElementById('connected').style.display = 'inline';
-  });
+      // Find out exactly when we made a connection.
+      ros.on("connection", function () {
+        console.log("Connection made!");
+        document.getElementById("connecting").style.display = "none";
+        document.getElementById("error").style.display = "none";
+        document.getElementById("closed").style.display = "none";
+        document.getElementById("connected").style.display = "inline";
+      });
 
-  ros.on('close', function() {
-    console.log('Connection closed.');
-    document.getElementById('connecting').style.display = 'none';
-    document.getElementById('connected').style.display = 'none';
-    document.getElementById('closed').style.display = 'inline';
-  });
+      ros.on("close", function () {
+        console.log("Connection closed.");
+        document.getElementById("connecting").style.display = "none";
+        document.getElementById("connected").style.display = "none";
+        document.getElementById("closed").style.display = "inline";
+      });
 
-  // Create a connection to the rosbridge WebSocket server.
-  ros.connect('ws://localhost:9090');
+      // Create a connection to the rosbridge WebSocket server.
+      ros.connect("ws://localhost:9090");
 
-  // Publishing a Topic
-  // ------------------
+      // Publishing a Topic
+      // ------------------
 
-  // First, we create a Topic object with details of the topic's name and message type.
-  var cmdVel = new ROSLIB.Topic({
-    ros : ros,
-    name : '/cmd_vel',
-    messageType : 'geometry_msgs/Twist'
-  });
+      // First, we create a Topic object with details of the topic's name and message type.
+      var cmdVel = new ROSLIB.Topic({
+        ros: ros,
+        name: "/cmd_vel",
+        messageType: "geometry_msgs/Twist",
+      });
 
-  // Then we create the payload to be published. The object we pass in to ros.Message matches the
-  // fields defined in the geometry_msgs/Twist.msg definition.
-  var twist = {
-    linear : {
-      x : 0.1,
-      y : 0.2,
-      z : 0.3
-    },
-    angular : {
-      x : -0.1,
-      y : -0.2,
-      z : -0.3
-    }
-  };
+      // Then we create the payload to be published. The object we pass in to ros.Message matches the
+      // fields defined in the geometry_msgs/Twist.msg definition.
+      var twist = {
+        linear: {
+          x: 0.1,
+          y: 0.2,
+          z: 0.3,
+        },
+        angular: {
+          x: -0.1,
+          y: -0.2,
+          z: -0.3,
+        },
+      };
 
-  // And finally, publish.
-  cmdVel.publish(twist);
+      // And finally, publish.
+      cmdVel.publish(twist);
 
-  // Subscribing to a Topic
-  // ----------------------
+      // Subscribing to a Topic
+      // ----------------------
 
-  // Like when publishing a topic, we first create a Topic object with details of the topic's name
-  // and message type. Note that we can call publish or subscribe on the same topic object.
-  var listener = new ROSLIB.Topic({
-    ros : ros,
-    name : '/listener',
-    messageType : 'std_msgs/String'
-  });
+      // Like when publishing a topic, we first create a Topic object with details of the topic's name
+      // and message type. Note that we can call publish or subscribe on the same topic object.
+      var listener = new ROSLIB.Topic({
+        ros: ros,
+        name: "/listener",
+        messageType: "std_msgs/String",
+      });
 
-  // Then we add a callback to be called every time a message is published on this topic.
-  listener.subscribe(function(message) {
-    console.log('Received message on ' + listener.name + ': ' + message.data);
+      // Then we add a callback to be called every time a message is published on this topic.
+      listener.subscribe(function (message) {
+        console.log(
+          "Received message on " + listener.name + ": " + message.data,
+        );
 
-    // If desired, we can unsubscribe from the topic as well.
-    listener.unsubscribe();
-  });
+        // If desired, we can unsubscribe from the topic as well.
+        listener.unsubscribe();
+      });
 
-  // Calling a service
-  // -----------------
+      // Calling a service
+      // -----------------
 
-  // First, we create a Service client with details of the service's name and service type.
-  var addTwoIntsClient = new ROSLIB.Service({
-    ros : ros,
-    name : '/add_two_ints',
-    serviceType : 'rospy_tutorials/AddTwoInts'
-  });
+      // First, we create a Service client with details of the service's name and service type.
+      var addTwoIntsClient = new ROSLIB.Service({
+        ros: ros,
+        name: "/add_two_ints",
+        serviceType: "rospy_tutorials/AddTwoInts",
+      });
 
-  // Then we create a Service Request. The object we pass in to ROSLIB.ServiceRequest matches the
-  // fields defined in the rospy_tutorials AddTwoInts.srv file.
-  var request = {
-    a : 1,
-    b : 2
-  };
+      // Then we create a Service Request. The object we pass in to ROSLIB.ServiceRequest matches the
+      // fields defined in the rospy_tutorials AddTwoInts.srv file.
+      var request = {
+        a: 1,
+        b: 2,
+      };
 
-  // Finally, we call the /add_two_ints service and get back the results in the callback. The result
-  // is a ROSLIB.ServiceResponse object.
-  addTwoIntsClient.callService(request, function(result) {
-    console.log('Result for service call on ' + addTwoIntsClient.name + ': ' + result.sum);
-  });
+      // Finally, we call the /add_two_ints service and get back the results in the callback. The result
+      // is a ROSLIB.ServiceResponse object.
+      addTwoIntsClient.callService(request, function (result) {
+        console.log(
+          "Result for service call on " +
+            addTwoIntsClient.name +
+            ": " +
+            result.sum,
+        );
+      });
 
-  // Advertising a Service
-  // ---------------------
+      // Advertising a Service
+      // ---------------------
 
-  // The Service object does double duty for both calling and advertising services
-  var setBoolServer = new ROSLIB.Service({
-    ros : ros,
-    name : '/set_bool',
-    serviceType : 'std_srvs/SetBool'
-  });
+      // The Service object does double duty for both calling and advertising services
+      var setBoolServer = new ROSLIB.Service({
+        ros: ros,
+        name: "/set_bool",
+        serviceType: "std_srvs/SetBool",
+      });
 
-  // Use the advertise() method to indicate that we want to provide this service
-  setBoolServer.advertise(function(request, response) {
-    console.log('Received service request on ' + setBoolServer.name + ': ' + request.data);
-    response['success'] = true;
-    response['message'] = 'Set successfully';
-    return true;
-  });
+      // Use the advertise() method to indicate that we want to provide this service
+      setBoolServer.advertise(function (request, response) {
+        console.log(
+          "Received service request on " +
+            setBoolServer.name +
+            ": " +
+            request.data,
+        );
+        response["success"] = true;
+        response["message"] = "Set successfully";
+        return true;
+      });
 
-  // Setting a param value
-  // ---------------------
+      // Setting a param value
+      // ---------------------
 
-  ros.getParams(function(params) {
-    console.log(params);
-  });
+      ros.getParams(function (params) {
+        console.log(params);
+      });
 
-  // First, we create a Param object with the name of the param.
-  var maxVelX = new ROSLIB.Param({
-    ros : ros,
-    name : 'max_vel_y'
-  });
+      // First, we create a Param object with the name of the param.
+      var maxVelX = new ROSLIB.Param({
+        ros: ros,
+        name: "max_vel_y",
+      });
 
-  // Then we set the value of the param, which is sent to the ROS Parameter Server.
-  maxVelX.set(0.8);
-  maxVelX.get(function(value) {
-    console.log('MAX VAL: ' + value);
-  });
+      // Then we set the value of the param, which is sent to the ROS Parameter Server.
+      maxVelX.set(0.8);
+      maxVelX.get(function (value) {
+        console.log("MAX VAL: " + value);
+      });
 
-  // Getting a param value
-  // ---------------------
+      // Getting a param value
+      // ---------------------
 
-  var favoriteColor = new ROSLIB.Param({
-    ros : ros,
-    name : 'favorite_color'
-  });
+      var favoriteColor = new ROSLIB.Param({
+        ros: ros,
+        name: "favorite_color",
+      });
 
-  favoriteColor.set('red');
-  favoriteColor.get(function(value) {
-    console.log('My robot\'s favorite color is ' + value);
-  });
-</script>
-</head>
+      favoriteColor.set("red");
+      favoriteColor.get(function (value) {
+        console.log("My robot's favorite color is " + value);
+      });
+    </script>
+  </head>
 
-<body>
-  <h1>Simple roslib Example</h1>
-  <p>Run the following commands in the terminal then refresh this page. Check the JavaScript
-    console for the output.</p>
-  <ol>
-    <li><tt>roscore</tt></li>
-    <li><tt>rostopic pub /listener std_msgs/String "Hello, World"</tt></li>
-    <li><tt>rostopic echo /cmd_vel</tt></li>
-    <li><tt>rosrun rospy_tutorials add_two_ints_server</tt></li>
-    <li><tt>roslaunch rosbridge_server rosbridge_websocket.launch</tt></li>
-  </ol>
-  <div id="statusIndicator">
-    <p id="connecting">
-      Connecting to rosbridge...
+  <body>
+    <h1>Simple roslib Example</h1>
+    <p>
+      Run the following commands in the terminal then refresh this page. Check
+      the JavaScript console for the output.
     </p>
-    <p id="connected" style="color:#00D600; display:none">
-      Connected
-    </p>
-    <p id="error" style="color:#FF0000; display:none">
-      Error in the backend!
-    </p>
-    <p id="closed" style="display:none">
-      Connection closed.
-    </p>
-  </div>
-</body>
+    <ol>
+      <li><tt>roscore</tt></li>
+      <li><tt>rostopic pub /listener std_msgs/String "Hello, World"</tt></li>
+      <li><tt>rostopic echo /cmd_vel</tt></li>
+      <li><tt>rosrun rospy_tutorials add_two_ints_server</tt></li>
+      <li><tt>roslaunch rosbridge_server rosbridge_websocket.launch</tt></li>
+    </ol>
+    <div id="statusIndicator">
+      <p id="connecting">Connecting to rosbridge...</p>
+      <p id="connected" style="color: #00d600; display: none">Connected</p>
+      <p id="error" style="color: #ff0000; display: none">
+        Error in the backend!
+      </p>
+      <p id="closed" style="display: none">Connection closed.</p>
+    </div>
+  </body>
 </html>
