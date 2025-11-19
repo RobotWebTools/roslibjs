@@ -5,7 +5,8 @@
   "version": "2.0.0-alpha7",
   "license": "BSD-2-Clause",
   "files": [
-    "dist"
+    "dist",
+    "importmap.js"
   ],
   "module": "./dist/RosLib.js",
   "exports": {
@@ -30,6 +31,7 @@
     "globals": "^16.0.0",
     "jiti": "^2.6.1",
     "jsdom": "^27.0.0",
+    "jspm": "^4.2.0",
     "typedoc": "^0.28.14",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.39.0",
@@ -62,7 +64,9 @@
     "lint": "eslint .",
     "test": "vitest",
     "prepublishOnly": "npm run test",
-    "prepare": "npm run build",
+    "//": "The sed expression for eventemitter3 is because the package metadata is incorrect in EventEmitter3's package.json",
+    "generate-importmap": "jspm install --release --provider unpkg && sed -i.bak 's;eventemitter3@5.0.1/index.mjs;eventemitter3@5.0.1/dist/eventemitter3.esm.js;' importmap.js && rm importmap.js.bak",
+    "prepare": "npm run build && npm run generate-importmap",
     "make-changelog": "changelog-maker RobotWebTools roslibjs --markdown | cat - CHANGELOG.md > NEW_CHANGELOG.md && mv NEW_CHANGELOG.md CHANGELOG.md"
   },
   "repository": {
