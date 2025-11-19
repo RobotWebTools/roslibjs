@@ -74,8 +74,8 @@ export default class Action<
         const status = message.status as GoalStatus;
 
         // Check status code instead of result field to properly handle STATUS_CANCELED
-        if (status === GoalStatus.STATUS_SUCCEEDED) {
-          resultCallback(message.values as TResult);
+        if (status === GoalStatus.STATUS_SUCCEEDED && message.result) {
+          resultCallback(message.values);
         } else {
           const baseError =
             typeof message.values === "string" ? message.values : "";
