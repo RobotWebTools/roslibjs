@@ -14,6 +14,28 @@ import {
 import type Ros from "./Ros.ts";
 import { v4 as uuidv4 } from "uuid";
 
+class GoalError extends Error {
+  override name = "GoalError";
+  constructor(status: GoalStatus, errorValue?: string) {
+    super(`${makeErrorMessage(status)}${errorValue ? `: ${errorValue}` : ""}`);
+  }
+}
+
+function makeErrorMessage(status: GoalStatus) {
+  switch (status) {
+    case GoalStatus.STATUS_CANCELED:
+      return `Action was canceled`;
+    case GoalStatus.STATUS_ABORTED:
+      return `Action was aborted`;
+    case GoalStatus.STATUS_CANCELING:
+      return `Action is canceling`;
+    case GoalStatus.STATUS_UNKNOWN:
+      return `Action status unknown`;
+    default:
+      return `Action failed with status ${String(status)}`;
+  }
+}
+
 /**
  * A ROS 2 action client.
  */
@@ -69,11 +91,17 @@ export default class Action<
     }
 
     const actionGoalId = `send_action_goal:${this.name}:${uuidv4()}`;
-
-    this.ros.on(actionGoalId, function (message) {
+    this.ros.on(actionGoalId, (message) => {
       if (isRosbridgeActionResultMessage<TResult>(message)) {
+        const status = message.status as GoalStatus;
+
         if (!message.result) {
-          failedCallback(message.values ?? "");
+          failedCallback(String(new GoalError(status, message.values)));
+        } else if (status !== GoalStatus.STATUS_SUCCEEDED) {
+          failedCallback(
+            String(new GoalError(status, JSON.stringify(message.values))),
+          );
+          // Check status code instead of result field to properly handle STATUS_CANCELED
         } else {
           resultCallback(message.values);
         }
@@ -81,7 +109,6 @@ export default class Action<
         feedbackCallback?.(message.values);
       }
     });
-
     this.ros.callOnConnection({
       op: "send_action_goal",
       id: actionGoalId,
