@@ -7,6 +7,7 @@
     <!-- This is only non-default on humble, remove when humble EOL -->
     <arg name="send_action_goals_in_new_thread" value="true"/>
     <arg name="delay_between_messages" value="0.0" />
+    <arg name="services_glob" value="[*]" />
   </include>
 
   <!-- Static transform publisher (equivalent to tf static_transform_publisher) -->
