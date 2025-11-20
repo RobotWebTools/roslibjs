@@ -12,6 +12,10 @@
         url: "ws://localhost:9090",
       });
 
+      ros.on("connection", function () {
+        console.log("Connection made!");
+      });
+
       // If there is an error on the backend, an 'error' emit will be emitted.
       ros.on("error", function (error) {
         console.log(error);

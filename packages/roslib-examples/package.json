@@ -27,10 +27,13 @@
     }
   ],
   "scripts": {
-    "start": "http-server .. -o /roslib-examples/src/index.html"
+    "start": "http-server .. -o /roslib-examples/src/index.html",
+    "test": "playwright install --with-deps && playwright test"
   },
   "devDependencies": {
-    "http-server": "^14.1.1"
+    "@playwright/test": "^1.56.1",
+    "http-server": "^14.1.1",
+    "playwright": "^1.56.1"
   },
   "dependencies": {
     "roslib": "^2.0.0"
