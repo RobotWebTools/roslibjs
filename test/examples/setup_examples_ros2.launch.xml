@@ -6,7 +6,7 @@
     <arg name="call_services_in_new_thread" value="true"/>
     <!-- This is only non-default on humble, remove when humble EOL -->
     <arg name="send_action_goals_in_new_thread" value="true"/>
-    <arg name="delay_between_messages" value="0.0" unless="$(eval env('ROS_DISTRO') == 'humble')"/>
+    <arg name="delay_between_messages" value="$(if $(equals $(env 'ROS_DISTRO') 'humble') 0 0.0)"/>
     <arg name="services_glob" value="'[*]'" />
   </include>
 
