@@ -38,10 +38,10 @@ jobs:
         run: npm ci
 
       - name: Build JavaScript library
-        run: npm run build
+        run: npm run build --workspaces --if-present
 
       - name: Run tests
-        run: npm test
+        run: npm test --workspaces --if-present
 
   docs:
     uses: ./.github/workflows/docs.yml
