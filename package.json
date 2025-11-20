@@ -1,5 +1,5 @@
 {
-  "name": "@robot-web-tools/workspace",
+  "//": "TODO: add a workspace name in the future once we have everything in a consistent namespace like @robot-web-tools/* on npm",
   "workspaces": [
     "packages/*"
   ]
