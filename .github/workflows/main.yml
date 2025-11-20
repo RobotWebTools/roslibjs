@@ -20,8 +20,9 @@ jobs:
         ros_distro:
           - noetic
           - humble
-          - jazzy
-          - kilted
+          # Temporarily disabled until next rosbridge release is synced
+          # - jazzy
+          # - kilted
         node_version: [20, 22, 24]
     env:
       ROS_DISTRO: ${{ matrix.ros_distro }}
