@@ -30,7 +30,7 @@ npm install roslib
    });
    ```
 
-   Try running `npm run examples` for some complete examples!
+   Check out the `roslib-examples` package for some complete examples!
 
 2. Check that you have the websocket server is running on
    port 9090. Something like this should do:

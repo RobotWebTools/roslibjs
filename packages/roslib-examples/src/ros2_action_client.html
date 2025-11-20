@@ -2,13 +2,15 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <script src="../importmap.js"></script>
+    <script src="/roslib/importmap.js"></script>
 
     <script type="module">
       import * as ROSLIB from "roslib";
       // Connecting to ROS
       // -----------------
-      var ros = new ROSLIB.Ros();
+      var ros = new ROSLIB.Ros({
+        url: "ws://localhost:9090",
+      });
 
       // If there is an error on the backend, an 'error' emit will be emitted.
       ros.on("error", function (error) {
@@ -35,39 +37,51 @@
         document.getElementById("closed").style.display = "inline";
       });
 
-      // Create a connection to the rosbridge WebSocket server.
-      ros.connect("ws://localhost:9090");
+      // The ActionClient
+      // ----------------
 
-      // TF Client
-      // ---------
-      var tfClient = new ROSLIB.TFClient({
+      var fibonacciClient = new ROSLIB.Action({
         ros: ros,
-        fixedFrame: "world",
-        angularThres: 0.01,
-        transThres: 0.01,
+        name: "/fibonacci",
+        actionType: "example_interfaces/Fibonacci",
       });
 
-      // Subscribe to a turtle.
-      tfClient.subscribe("turtle1", function (tf) {
-        console.log(tf);
-      });
+      // Send an action goal
+      var goal = { order: 5 };
+
+      var goal_id = fibonacciClient.sendGoal(
+        goal,
+        function (result) {
+          console.log(
+            "Result for action goal on " +
+              fibonacciClient.name +
+              ": " +
+              result.result.sequence,
+          );
+        },
+        function (feedback) {
+          console.log(
+            "Feedback for action on " +
+              fibonacciClient.name +
+              ": " +
+              feedback.partial_sequence,
+          );
+        },
+      );
     </script>
   </head>
 
   <body>
-    <h1>Simple TF Example</h1>
+    <h1>Fibonacci ActionClient Example</h1>
     <p>
       Run the following commands in the terminal then refresh this page. Check
       the JavaScript console for the output.
     </p>
     <ol>
-      <li><tt>roslaunch turtle_tf turtle_tf_demo.launch</tt></li>
-      <li><tt>rosrun tf2_web_republisher tf2_web_republisher</tt></li>
-      <li><tt>roslaunch rosbridge_server rosbridge_websocket.launch</tt></li>
       <li>
-        Use your arrow keys on your keyboard to move the turtle (must have
-        <tt>turtle_tf_demo.launch</tt> terminal focused).
+        <tt>ros2 launch rosbridge_server rosbridge_websocket_launch.xml</tt>
       </li>
+      <li><tt>ros2 run action_tutorials_py fibonacci_action_server</tt></li>
     </ol>
     <div id="statusIndicator">
       <p id="connecting">Connecting to rosbridge...</p>

@@ -1,0 +1,38 @@
+{
+  "name": "roslib-examples",
+  "version": "2.0.0",
+  "description": "Example usage of roslibjs",
+  "keywords": [
+    "ROS",
+    "ros",
+    "roslib",
+    "roslibjs",
+    "robot"
+  ],
+  "homepage": "https://github.com/RobotWebTools/roslibjs#readme",
+  "bugs": {
+    "url": "https://github.com/RobotWebTools/roslibjs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RobotWebTools/roslibjs.git"
+  },
+  "license": "BSD-2-Clause",
+  "author": "Robot Webtools Team <robot-web-tools@googlegroups.com> (https://robotwebtools.github.io)",
+  "contributors": [
+    {
+      "name": "Ezra Brooks",
+      "email": "ezra@brooks.cx",
+      "url": "https://github.com/EzraBrooks"
+    }
+  ],
+  "scripts": {
+    "start": "http-server .. -o /roslib-examples/src/index.html"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "dependencies": {
+    "roslib": "^2.0.0"
+  }
+}
