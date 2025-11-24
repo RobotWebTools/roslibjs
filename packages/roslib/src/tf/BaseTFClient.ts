@@ -7,8 +7,9 @@ import type { std_msgs } from "../types/std_msgs.ts";
  * Base class for TF Clients that provides common functionality.
  */
 export default class BaseTFClient {
-  frameInfos: Partial<
-    Record<string, { transform?: Transform; cbs: ((tf: Transform) => void)[] }>
+  frameInfos: Record<
+    string,
+    { transform?: Transform; cbs: ((tf: Transform) => void)[] }
   > = {};
   republisherUpdateRequested = false;
   ros: Ros;
