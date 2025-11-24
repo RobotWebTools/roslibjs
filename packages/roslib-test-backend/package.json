@@ -1,0 +1,31 @@
+{
+  "name": "roslib-test-backend",
+  "version": "2.0.0",
+  "description": "Integration test backend for roslib",
+  "homepage": "https://github.com/RobotWebTools/roslibjs#readme",
+  "bugs": {
+    "url": "https://github.com/RobotWebTools/roslibjs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RobotWebTools/roslibjs.git"
+  },
+  "license": "BSD-2-Clause",
+  "author": "Robot Webtools Team <robot-web-tools@googlegroups.com> (https://robotwebtools.github.io)",
+  "contributors": [
+    {
+      "name": "Ezra Brooks",
+      "email": "ezra@brooks.cx",
+      "url": "https://github.com/EzraBrooks"
+    }
+  ],
+  "type": "module",
+  "main": "ros-backend.ts",
+  "peerDependencies": {
+    "roslib": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/dockerode": "^3.3.47",
+    "dockerode": "^4.0.9"
+  }
+}
