@@ -59,7 +59,7 @@ export default class UrdfJoint {
     const axis = xml.getElementsByTagName(UrdfAttrs.Axis);
     if (axis[0]) {
       const xyzValue = axis[0].getAttribute(UrdfAttrs.Xyz)?.split(" ");
-      if (!xyzValue?.length !== 3) {
+      if (xyzValue?.length !== 3) {
         throw new Error(
           "If specified, axis must have an xyz value composed of three numbers",
         );
