@@ -34,7 +34,7 @@
             goal.order,
         );
         console.log("ID: " + id);
-        fibonacciSequence = [];
+        let fibonacciSequence = [];
         fibonacciSequence.push(0);
         fibonacciSequence.push(1);
 
@@ -54,7 +54,7 @@
           );
           console.log("Sending feedback: " + fibonacciSequence);
           fibonacciServer.sendFeedback(id, {
-            partial_sequence: fibonacciSequence,
+            sequence: fibonacciSequence,
           });
         }
 
