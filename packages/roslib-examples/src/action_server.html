@@ -17,6 +17,10 @@
         console.log(error);
       });
 
+      ros.on("connection", function () {
+        console.log("Connection made!");
+      });
+
       // The ActionServer
       // ----------------
 

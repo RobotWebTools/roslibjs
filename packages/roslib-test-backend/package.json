@@ -1,14 +1,7 @@
 {
-  "name": "roslib-examples",
+  "name": "roslib-test-backend",
   "version": "2.0.0",
-  "description": "Example usage of roslibjs",
-  "keywords": [
-    "ROS",
-    "ros",
-    "roslib",
-    "roslibjs",
-    "robot"
-  ],
+  "description": "Integration test backend for roslib",
   "homepage": "https://github.com/RobotWebTools/roslibjs#readme",
   "bugs": {
     "url": "https://github.com/RobotWebTools/roslibjs/issues"
@@ -26,16 +19,13 @@
       "url": "https://github.com/EzraBrooks"
     }
   ],
-  "scripts": {
-    "start": "http-server .. -o /roslib-examples/src/index.html",
-    "test": "playwright install --with-deps && playwright test"
+  "type": "module",
+  "main": "ros-backend.ts",
+  "peerDependencies": {
+    "roslib": "^2.0.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.56.1",
-    "http-server": "^14.1.1",
-    "playwright": "^1.56.1"
-  },
-  "dependencies": {
-    "roslib": "^2.0.0"
+    "@types/dockerode": "^3.3.47",
+    "dockerode": "^4.0.9"
   }
 }
