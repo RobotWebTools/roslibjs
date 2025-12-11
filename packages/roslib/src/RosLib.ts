@@ -11,7 +11,7 @@ export { default as Topic } from "./core/Topic.ts";
 export { default as Param } from "./core/Param.ts";
 export { default as Service } from "./core/Service.ts";
 export { default as Action } from "./core/Action.ts";
-export { type GoalStatus } from "./core/GoalStatus.ts";
+export { GoalStatus } from "./core/GoalStatus.ts";
 
 // Core Transport exports
 export {
