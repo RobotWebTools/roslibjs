@@ -124,9 +124,19 @@ export default class Action<
   /**
    * Cancels an action goal.
    *
-   * @param id - The ID of the action goal to cancel.
+   * @param [id] - The ID of the action goal to cancel. If not set or falsey; cancels all goals for this action.
    */
-  cancelGoal(id: string) {
+  cancelGoal(id?: string) {
+    if (!id) {
+      this.ros.callOnConnection({
+        op: "call_service",
+        service: `${this.name}/_action/cancel_goal`,
+        args: {},
+      });
+
+      return;
+    }
+
     this.ros.callOnConnection({
       op: "cancel_action_goal",
       id: id,
