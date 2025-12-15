@@ -19,7 +19,7 @@
     "@eslint/js": "^9.32.0",
     "@testing-library/react": "^16.0.0",
     "@types/dockerode": "^3.3.45",
-    "@types/node": "^24.0.1",
+    "@types/node": "^25.0.2",
     "@types/ws": "^8.5.10",
     "changelog-maker": "^4.4.5",
     "dockerode": "^4.0.9",
