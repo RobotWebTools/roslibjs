@@ -60,7 +60,7 @@ describe("Fibonacci Example", function () {
     8000,
   );
 
-  it(
+  it.skipIf(process.env["ROS_VERSION"] !== "2")(
     "Fibonacci ROS 2",
     () =>
       new Promise<void>((done) => {
@@ -110,50 +110,53 @@ describe("Fibonacci Example", function () {
     8000,
   );
 
-  it("Fibonacci ROS 2, cancel all goals", async () => {
-    const ros = new ROSLIB.Ros();
-    await ros.connect("ws://localhost:9090");
+  it.skipIf(process.env["ROS_VERSION"] !== "2")(
+    "Fibonacci ROS 2, cancel all goals",
+    async () => {
+      const ros = new ROSLIB.Ros();
+      await ros.connect("ws://localhost:9090");
 
-    let resultCalled = false;
-    let failedCalled = false;
+      let resultCalled = false;
+      let failedCalled = false;
 
-    /*
-     * The Action
-     * ----------------
-     */
-    const fibonacciAction = new ROSLIB.Action({
-      ros,
-      name: "/fibonacci",
-      actionType: "action_tutorials_interfaces/action/Fibonacci",
-    });
+      /*
+       * The Action
+       * ----------------
+       */
+      const fibonacciAction = new ROSLIB.Action({
+        ros,
+        name: "/fibonacci",
+        actionType: "action_tutorials_interfaces/action/Fibonacci",
+      });
 
-    const goal = { order: 8 };
+      const goal = { order: 8 };
 
-    /*
-     * Send the goal to the action server.
-     */
-    fibonacciAction.sendGoal(
-      goal,
-      // result callback.
-      () => {
-        resultCalled = true;
-      },
-      // feedback callback.
-      undefined,
-      // failed callback
-      () => {
-        failedCalled = true;
-      },
-    );
+      /*
+       * Send the goal to the action server.
+       */
+      fibonacciAction.sendGoal(
+        goal,
+        // result callback.
+        () => {
+          resultCalled = true;
+        },
+        // feedback callback.
+        undefined,
+        // failed callback
+        () => {
+          failedCalled = true;
+        },
+      );
 
-    /*
-     * Cancel all goals.
-     */
-    fibonacciAction.cancelAllGoals();
+      /*
+       * Cancel all goals.
+       */
+      fibonacciAction.cancelAllGoals();
 
-    setTimeout(() => {
-      expect(failedCalled).toBe(true);
-      expect(resultCalled).toBe(false);
-    }, 500); // wait 500ms to be sure the server handled the cancel request.
-  });
+      setTimeout(() => {
+        expect(failedCalled).toBe(true);
+        expect(resultCalled).toBe(false);
+      }, 500); // wait 500ms to be sure the server handled the cancel request.
+    },
+  );
 });
