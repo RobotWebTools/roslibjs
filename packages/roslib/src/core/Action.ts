@@ -135,6 +135,17 @@ export default class Action<
   }
 
   /**
+   * Cancels all action goals.
+   */
+  cancelAllGoals() {
+    this.ros.callOnConnection({
+      op: "call_service",
+      service: `${this.name}/_action/cancel_goal`,
+      args: {},
+    });
+  }
+
+  /**
    * Advertise the action. This turns the Action object from a client
    * into a server. The callback will be called with every goal sent to this action.
    *
