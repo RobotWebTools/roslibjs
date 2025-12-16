@@ -77,7 +77,7 @@ export default class Action<
    *
    * @param goal - The action goal to send.
    * @param resultCallback - The callback function when the action is completed.
-   * @param [feedbackCallback] - The callback function when the action pulishes feedback.
+   * @param [feedbackCallback] - The callback function when the action publishes feedback.
    * @param [failedCallback] - The callback function when the action failed.
    */
   sendGoal(
