@@ -156,15 +156,9 @@ export default class SimpleActionServer<
         }
       } else {
         // treat id and stamp independently
-        if (
-          this.currentGoal &&
-          cancelMessage.id === this.currentGoal.goal_id.id
-        ) {
+        if (cancelMessage.id === this.currentGoal?.goal_id.id) {
           this.emit("cancel");
-        } else if (
-          this.nextGoal &&
-          cancelMessage.id === this.nextGoal.goal_id.id
-        ) {
+        } else if (cancelMessage.id === this.nextGoal?.goal_id.id) {
           this.nextGoal = null;
         }
 
