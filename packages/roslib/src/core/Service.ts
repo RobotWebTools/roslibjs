@@ -15,7 +15,10 @@ import { v4 as uuidv4 } from "uuid";
 /**
  * A ROS service client.
  */
-export default class Service<TRequest, TResponse> extends EventEmitter {
+export default class Service<
+  TRequest = unknown,
+  TResponse = unknown,
+> extends EventEmitter {
   /**
    * Stores a reference to the most recent service callback advertised so it can be removed from the EventEmitter during un-advertisement
    */
