@@ -22,7 +22,7 @@ import { v4 as uuidv4 } from "uuid";
  *  * 'warning' - If there are any warning during the Topic creation.
  *  * 'message' - The message data from rosbridge.
  */
-export default class Topic<T> extends EventEmitter<{
+export default class Topic<T = unknown> extends EventEmitter<{
   message: [T];
   warning: [string];
   unsubscribe: undefined;
