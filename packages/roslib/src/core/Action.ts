@@ -3,6 +3,7 @@
  * @author Sebastian Castro - sebastian.castro@picknik.ai
  */
 
+import { actionlib_msgs } from "../types/actionlib_msgs.ts";
 import { GoalStatus } from "./GoalStatus.ts";
 import type { RosbridgeSendActionGoalMessage } from "../types/protocol.ts";
 import {
@@ -13,6 +14,8 @@ import {
 } from "../types/protocol.ts";
 import type Ros from "./Ros.ts";
 import { v4 as uuidv4 } from "uuid";
+import Topic from "./Topic.ts";
+import GoalStatusArray = actionlib_msgs.GoalStatusArray;
 
 class GoalError extends Error {
   override name = "GoalError";
@@ -290,6 +293,17 @@ export default class Action<
       action: this.name,
       status: GoalStatus.STATUS_ABORTED,
       result: false,
+    });
+  }
+
+  /**
+   * Returns the status topic for this action.
+   */
+  getStatusTopic() {
+    return new Topic<GoalStatusArray>({
+      ros: this.ros,
+      name: `${this.name}/_action/status`,
+      messageType: "action_msgs/msg/GoalStatusArray",
     });
   }
 }
