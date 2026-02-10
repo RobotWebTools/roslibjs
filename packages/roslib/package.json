@@ -12,10 +12,9 @@
   "exports": {
     ".": {
       "types": "./dist/RosLib.d.ts",
-      "default": "./dist/RosLib.js"
+      "import": "./dist/RosLib.js"
     },
     "./package.json": "./package.json"
-  },
   },
   "type": "module",
   "devDependencies": {
