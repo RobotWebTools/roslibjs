@@ -648,7 +648,7 @@ describe("Transport", () => {
   });
 
   describe("WebSocketTransportFactory", () => {
-    it("uses ws package WebSocket in jsdom environment (even when native WebSocket is available)", async () => {
+    it("uses WsWebSocketTransport in jsdom environment", async () => {
       vi.stubGlobal("WebSocket", WebSocket);
       expect(typeof WebSocket).toBe("function");
 
