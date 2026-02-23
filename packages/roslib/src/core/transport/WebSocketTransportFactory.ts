@@ -5,15 +5,37 @@ import type { ITransport, ITransportFactory } from "./Transport.ts";
  * jsdom provides WebSocket but has cross-realm issues with Event objects.
  */
 function isJsdomEnvironment(): boolean {
-  // Check for navigator.userAgent containing "jsdom" or window.name === "nodejs"
-  // which are common indicators of jsdom
-  if (typeof navigator !== "undefined" && navigator.userAgent) {
-    return navigator.userAgent.includes("jsdom");
+  // Check for jsdom-specific navigator.userAgent
+  try {
+    if (navigator.userAgent.includes("jsdom")) {
+      return true;
+    }
+  } catch {
+    // navigator not available
   }
-  // Check for window.name which jsdom sets to "nodejs"
-  if (typeof window !== "undefined" && window.name === "nodejs") {
-    return true;
+
+  // Check for jsdom-specific window constructor name
+  if (typeof window !== "undefined") {
+    const windowConstructorName = window.constructor.name;
+    if (
+      windowConstructorName === "jsdom" ||
+      windowConstructorName === "JSDOM"
+    ) {
+      return true;
+    }
   }
+
+  // Check for jsdom-specific globals that aren't present in real browsers
+  if (typeof globalThis !== "undefined") {
+    // jsdom creates a special Symbol for internal use
+    const hasJsdomSymbol = Object.getOwnPropertySymbols(globalThis).some(
+      (sym) => sym.toString().includes("jsdom"),
+    );
+    if (hasJsdomSymbol) {
+      return true;
+    }
+  }
+
   return false;
 }
 
