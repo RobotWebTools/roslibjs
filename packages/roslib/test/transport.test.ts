@@ -648,13 +648,14 @@ describe("Transport", () => {
   });
 
   describe("WebSocketTransportFactory", () => {
-    it("uses native WebSocket when available", async () => {
+    it("uses ws package WebSocket in jsdom environment (even when native WebSocket is available)", async () => {
       vi.stubGlobal("WebSocket", WebSocket);
       expect(typeof WebSocket).toBe("function");
 
+      // In jsdom environment, should use WsWebSocketTransport to avoid cross-realm Event issues
       const transport = await WebSocketTransportFactory("ws://localhost:9090");
 
-      expect(transport).toBeInstanceOf(NativeWebSocketTransport);
+      expect(transport).toBeInstanceOf(WsWebSocketTransport);
     });
 
     it("uses ws package WebSocket when native WebSocket is not available", async () => {
