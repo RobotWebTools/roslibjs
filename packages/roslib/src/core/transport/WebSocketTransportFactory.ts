@@ -16,11 +16,8 @@ function isJsdomEnvironment(): boolean {
 
   // Check for jsdom-specific window constructor name
   if (typeof window !== "undefined") {
-    const windowConstructorName = window.constructor.name;
-    if (
-      windowConstructorName === "jsdom" ||
-      windowConstructorName === "JSDOM"
-    ) {
+    const windowConstructorName = window.constructor.name.toLowerCase();
+    if (windowConstructorName === "jsdom") {
       return true;
     }
   }
