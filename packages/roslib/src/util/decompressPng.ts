@@ -4,7 +4,6 @@
  */
 
 import type { DecodedPng } from "fast-png";
-import { decode } from "fast-png";
 
 const textDecoder = new TextDecoder();
 
@@ -15,22 +14,20 @@ const textDecoder = new TextDecoder();
  *
  * @param data - An object containing the PNG data.
  */
-export default function decompressPng(data: string): unknown {
+export default async function decompressPng(data: string): Promise<unknown> {
+  const { decode } = await import("fast-png");
   const buffer = Uint8Array.from(atob(data), (char) => char.charCodeAt(0));
 
-  const decoded = tryDecodeBuffer(buffer);
+  let decoded: DecodedPng;
+  try {
+    decoded = decode(buffer);
+  } catch (error) {
+    throw new Error("Error decoding PNG buffer", { cause: error });
+  }
 
   try {
     return JSON.parse(textDecoder.decode(decoded.data));
   } catch (error) {
     throw new Error("Error parsing PNG JSON contents", { cause: error });
-  }
-}
-
-function tryDecodeBuffer(buffer: Uint8Array): DecodedPng {
-  try {
-    return decode(buffer);
-  } catch (error) {
-    throw new Error("Error decoding PNG buffer", { cause: error });
   }
 }
