@@ -28,7 +28,7 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsdoc": "^62.7.0",
     "eslint-plugin-prettier": "^5.5.4",
-    "globals": "^17.3.0",
+    "globals": "^17.4.0",
     "jiti": "^2.6.1",
     "jsdom": "^27.4.0",
     "jspm": "^4.4.0",
