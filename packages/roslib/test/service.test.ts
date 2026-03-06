@@ -203,4 +203,24 @@ describe("Service", () => {
     await server.unadvertise();
     expect(server.isAdvertised).toBe(false);
   });
+
+  it("Successfully call /rosapi/get_time with an async return", async () => {
+    const emptyRequest = {};
+
+    const getTimeService = new Service<
+      typeof emptyRequest,
+      {
+        time: { sec: number; nanosec: number };
+      }
+    >({
+      ros,
+      serviceType: "rosapi_msgs/srv/GetTime",
+      name: "/rosapi/get_time",
+    });
+
+    const response = await getTimeService.callServiceAsync(emptyRequest);
+
+    expect(response.time.sec).toBeDefined();
+    expect(response.time.nanosec).toBeDefined();
+  });
 });
