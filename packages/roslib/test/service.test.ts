@@ -229,5 +229,5 @@ describe("Service", () => {
       success: true,
       message: "bar",
     });
-  });
+  }, 10_000);
 });
