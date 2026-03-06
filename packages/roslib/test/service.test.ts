@@ -204,23 +204,30 @@ describe("Service", () => {
     expect(server.isAdvertised).toBe(false);
   });
 
-  it("Successfully call /rosapi/get_time with an async return", async () => {
-    const emptyRequest = {};
-
-    const getTimeService = new Service<
-      typeof emptyRequest,
-      {
-        time: { sec: number; nanosec: number };
-      }
+  it("Successfully call a service with an asynchronous return", async () => {
+    const server = new Service<
+      undefined,
+      { success: boolean; message: string }
     >({
       ros,
-      serviceType: "rosapi_msgs/srv/GetTime",
-      name: "/rosapi/get_time",
+      serviceType: "std_srvs/Trigger",
+      name: "/test_service",
     });
+    await server.advertise((_request, response) => {
+      response.success = true;
+      response.message = "bar";
+      return true;
+    });
+    const client = new Service({
+      ros,
+      serviceType: "std_srvs/Trigger",
+      name: "/test_service",
+    });
+    const response = await client.callServiceAsync({});
 
-    const response = await getTimeService.callServiceAsync(emptyRequest);
-
-    expect(response.time.sec).toBeDefined();
-    expect(response.time.nanosec).toBeDefined();
+    expect(response).toEqual({
+      success: true,
+      message: "bar",
+    });
   });
 });
