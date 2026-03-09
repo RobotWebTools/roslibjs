@@ -203,4 +203,31 @@ describe("Service", () => {
     await server.unadvertise();
     expect(server.isAdvertised).toBe(false);
   });
+
+  it("Successfully call a service with an asynchronous return", async () => {
+    const server = new Service<
+      undefined,
+      { success: boolean; message: string }
+    >({
+      ros,
+      serviceType: "std_srvs/Trigger",
+      name: "/test_service",
+    });
+    await server.advertise((_request, response) => {
+      response.success = true;
+      response.message = "bar";
+      return true;
+    });
+    const client = new Service({
+      ros,
+      serviceType: "std_srvs/Trigger",
+      name: "/test_service",
+    });
+    const response = await client.callServiceAsync({});
+
+    expect(response).toEqual({
+      success: true,
+      message: "bar",
+    });
+  }, 10_000);
 });

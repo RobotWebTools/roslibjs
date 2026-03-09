@@ -96,6 +96,29 @@ export default class Service<
       timeout: timeout,
     });
   }
+
+  /**
+   * Wrapper of callService that returns a modern Promise-based interface for use with async/await.
+   * @see callService
+   * @param request - The service request to send.
+   * @param [timeout] - Optional timeout, in seconds, for the service call. A non-positive value means no timeout.
+   *                             If not provided, the rosbridge server will use its default value.
+   */
+  callServiceAsync(request: TRequest, timeout?: number): Promise<TResponse> {
+    return new Promise<TResponse>((resolve, reject) => {
+      this.callService(
+        request,
+        (res) => {
+          resolve(res);
+        },
+        (err) => {
+          reject(new Error(err));
+        },
+        timeout,
+      );
+    });
+  }
+
   /**
    * Advertise the service. This turns the Service object from a client
    * into a server. The callback will be called with every request
