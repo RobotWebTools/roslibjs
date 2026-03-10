@@ -78,21 +78,22 @@ export default class Service<
 
   /**
    * Call the service. Returns the service response in the form of a Promise.
-   * Does nothing if the service is currently advertised.
+   * Returns a rejected promise if the service is currently advertised.
    * @param request - The service request to send.
    * @param [timeout] - Optional timeout, in seconds, for the service call. A non-positive value means no timeout.
    *                             If not provided, the rosbridge server will use its default value.
    */
   callServiceAsync(request: TRequest, timeout?: number): Promise<TResponse> {
-    return new Promise<TResponse>((resolve, reject) => {
-      if (this.isAdvertised) {
-        return;
-      }
+    if (this.isAdvertised) {
+      return Promise.reject(new Error("Service is currently advertised"));
+    }
 
+    return new Promise<TResponse>((resolve, reject) => {
       const serviceCallId = `call_service:${this.name}:${uuidv4()}`;
 
       this.ros.once(serviceCallId, (message) => {
         if (!isRosbridgeServiceResponseMessage<TResponse>(message)) {
+          reject(new Error("Received an invalid service response message"));
           return;
         }
 
