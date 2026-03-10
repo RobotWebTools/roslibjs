@@ -57,8 +57,9 @@ export default class Service<
     this.serviceType = serviceType;
   }
   /**
-   * Call the service. Returns the service response in the
-   * callback. Does nothing if this service is currently advertised.
+   * Wrapper of callServiceAsync for synchronous use. Returns the service response in the
+   * callback.
+   * @see callService
    *
    * @param request - The service request to send.
    * @param [callback] - Function with the following params:
@@ -72,50 +73,43 @@ export default class Service<
     failedCallback: (error: string) => void = console.error,
     timeout?: number,
   ): void {
-    if (this.isAdvertised) {
-      return;
-    }
-
-    const serviceCallId = `call_service:${this.name}:${uuidv4()}`;
-
-    this.ros.once(serviceCallId, function (message) {
-      if (isRosbridgeServiceResponseMessage<TResponse>(message)) {
-        if (!message.result) {
-          failedCallback(message.values ?? "");
-        } else {
-          callback?.(message.values);
-        }
-      }
-    });
-
-    this.ros.callOnConnection({
-      op: "call_service",
-      id: serviceCallId,
-      service: this.name,
-      args: request,
-      timeout: timeout,
-    });
+    this.callServiceAsync(request, timeout).then(callback, failedCallback);
   }
 
   /**
-   * Wrapper of callService that returns a modern Promise-based interface for use with async/await.
-   * @see callService
+   * Call the service. Returns the service response in the form of a Promise.
+   * Does nothing if the service is currently advertised.
    * @param request - The service request to send.
    * @param [timeout] - Optional timeout, in seconds, for the service call. A non-positive value means no timeout.
    *                             If not provided, the rosbridge server will use its default value.
    */
   callServiceAsync(request: TRequest, timeout?: number): Promise<TResponse> {
     return new Promise<TResponse>((resolve, reject) => {
-      this.callService(
-        request,
-        (res) => {
-          resolve(res);
-        },
-        (err) => {
-          reject(new Error(err));
-        },
-        timeout,
-      );
+      if (this.isAdvertised) {
+        return;
+      }
+
+      const serviceCallId = `call_service:${this.name}:${uuidv4()}`;
+
+      this.ros.once(serviceCallId, (message) => {
+        if (!isRosbridgeServiceResponseMessage<TResponse>(message)) {
+          return;
+        }
+
+        if (message.result) {
+          resolve(message.values);
+        } else {
+          reject(new Error(message.values ?? ""));
+        }
+      });
+
+      this.ros.callOnConnection({
+        op: "call_service",
+        id: serviceCallId,
+        service: this.name,
+        args: request,
+        timeout: timeout,
+      });
     });
   }
 
