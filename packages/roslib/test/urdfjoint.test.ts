@@ -61,7 +61,7 @@ describe("UrdfJoint", () => {
     if (!xml) {
       throw new Error("Failed to parse XML");
     }
-    expect(() => new UrdfJoint({ xml })).toThrowError(
+    expect(() => new UrdfJoint({ xml })).toThrow(
       "If specified, axis must have an xyz value composed of three numbers",
     );
   });
