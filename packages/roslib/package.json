@@ -33,7 +33,7 @@
     "jsdom": "^27.4.0",
     "jspm": "^4.4.0",
     "typedoc": "^0.28.14",
-    "typescript": "^5.9.2",
+    "typescript": "^6.0.2",
     "typescript-eslint": "^8.57.0",
     "vite": "^8.0.0",
     "vite-plugin-checker": "^0.12.0",
