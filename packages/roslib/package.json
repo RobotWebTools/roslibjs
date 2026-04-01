@@ -43,7 +43,7 @@
     "vitest-fail-on-console": "^0.10.1"
   },
   "dependencies": {
-    "@xmldom/xmldom": "^0.9.8",
+    "@xmldom/xmldom": "^0.9.9",
     "bson": "^7.2.0",
     "cbor2": "^2.3.0",
     "eventemitter3": "^5.0.1",
