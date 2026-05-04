@@ -22,7 +22,7 @@
     "@types/node": "^25.6.0",
     "@types/ws": "^8.5.10",
     "changelog-maker": "^4.4.5",
-    "dockerode": "^4.0.9",
+    "dockerode": "^5.0.0",
     "eslint": "^10.2.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
