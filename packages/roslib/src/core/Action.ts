@@ -93,7 +93,7 @@ export default class Action<
     const actionGoalId = `send_action_goal:${this.name}:${uuidv4()}`;
     this.ros.on(actionGoalId, (message) => {
       if (isRosbridgeActionResultMessage<TResult>(message)) {
-        const status = message.status as GoalStatus;
+        const status: GoalStatus = message.status;
 
         if (!message.result) {
           failedCallback(String(new GoalError(status, message.values)));
