@@ -23,7 +23,7 @@
     "@types/ws": "^8.5.10",
     "changelog-maker": "^4.4.5",
     "dockerode": "^5.0.0",
-    "eslint": "^10.3.0",
+    "eslint": "^10.4.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsdoc": "^62.9.0",
