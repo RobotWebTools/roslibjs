@@ -30,7 +30,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "globals": "^17.6.0",
     "jiti": "^2.7.0",
-    "jsdom": "^27.4.0",
+    "jsdom": "^29.1.1",
     "jspm": "^4.5.0",
     "typedoc": "^0.28.14",
     "typescript": "^6.0.2",
