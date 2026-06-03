@@ -1,5 +1,5 @@
 import { resolve } from "path";
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 import dts from "vite-plugin-dts";
 import checker from "vite-plugin-checker";
 import { externalizeDeps } from "vite-plugin-externalize-deps";
@@ -20,7 +20,7 @@ export default defineConfig({
         lintCommand: "eslint .",
         useFlatConfig: true,
       },
-    }),
+    }) as never,
     externalizeDeps({ except: ["@xmldom/xmldom"] }),
   ],
   build: {
