@@ -1,5 +1,5 @@
 import { resolve } from "path";
-import { defineConfig } from "vitest/config";
+import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import checker from "vite-plugin-checker";
 import { externalizeDeps } from "vite-plugin-externalize-deps";
