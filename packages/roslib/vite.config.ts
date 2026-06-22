@@ -20,7 +20,7 @@ export default defineConfig({
         lintCommand: "eslint .",
         useFlatConfig: true,
       },
-    }),
+    }) as never,
     externalizeDeps({ except: ["@xmldom/xmldom"] }),
   ],
   build: {
