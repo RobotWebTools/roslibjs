@@ -23,7 +23,8 @@ function isJsdomEnvironment(): boolean {
   }
 
   // Check for jsdom-specific globals that aren't present in real browsers
-  if (typeof globalThis !== "undefined") {
+  // (avoid doing this work in Node environments that don't have a DOM `window`).
+  if (typeof window !== "undefined" && typeof globalThis !== "undefined") {
     // jsdom creates a special Symbol for internal use
     const hasJsdomSymbol = Object.getOwnPropertySymbols(globalThis).some(
       (sym) => sym.toString().includes("jsdom"),
