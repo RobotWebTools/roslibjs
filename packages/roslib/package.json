@@ -21,7 +21,7 @@
     "@types/dockerode": "^4.0.0",
     "@types/node": "^26.2.0",
     "@types/ws": "^8.5.10",
-    "changelog-maker": "^4.4.5",
+    "changelog-maker": "^5.0.0",
     "dockerode": "^5.0.0",
     "eslint": "^10.7.0",
     "eslint-config-prettier": "^10.1.8",
