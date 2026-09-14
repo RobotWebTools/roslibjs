@@ -2,6 +2,8 @@ import type { geometry_msgs } from "./geometry_msgs.ts";
 import type { std_msgs } from "./std_msgs.ts";
 
 export namespace tf2_web_republisher {
+  type EmptyObject = Record<string, never>;
+
   export interface RepublishTFsRequest extends TFSubscriptionGoal {
     timeout: std_msgs.time;
   }
@@ -18,7 +20,7 @@ export namespace tf2_web_republisher {
     rate: number;
   }
 
-  export type TFSubscriptionResult = Record<never, never>;
+  export type TFSubscriptionResult = EmptyObject;
 
   export interface TFSubscriptionFeedback {
     transforms: geometry_msgs.TransformStamped[];

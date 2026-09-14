@@ -1,6 +1,8 @@
 // TODO: autogenerate these with ros-typescript-generator
 
 export namespace rosapi {
+  type EmptyObject = Record<string, never>;
+
   export interface TypeDef {
     type: string;
     fieldnames: string[];
@@ -51,7 +53,7 @@ export namespace rosapi {
     name: string;
     value: string;
   }
-  export type SetParamResponsePreJazzy = Record<never, never>;
+  export type SetParamResponsePreJazzy = EmptyObject;
   export interface FailedSetParamResponsePostJazzy {
     successful: false;
     reason: string;
@@ -67,7 +69,7 @@ export namespace rosapi {
   export interface DeleteParamRequest {
     name: string;
   }
-  export type DeleteParamResponsePreJazzy = Record<never, never>;
+  export type DeleteParamResponsePreJazzy = EmptyObject;
   export interface FailedDeleteParamResponsePostJazzy {
     successful: false;
     reason: string;
@@ -80,11 +82,11 @@ export namespace rosapi {
     | DeleteParamResponsePreJazzy
     | FailedDeleteParamResponsePostJazzy
     | SuccessfulDeleteParamResponsePostJazzy;
-  export type GetActionServersRequest = Record<never, never>;
+  export type GetActionServersRequest = EmptyObject;
   export interface GetActionServersResponse {
     action_servers: string[];
   }
-  export type TopicsRequest = Record<never, never>;
+  export type TopicsRequest = EmptyObject;
   export interface TopicsResponse {
     topics: string[];
     types: string[];
@@ -95,7 +97,7 @@ export namespace rosapi {
   export interface TopicsForTypeResponse {
     topics: string[];
   }
-  export type ServicesRequest = Record<never, never>;
+  export type ServicesRequest = EmptyObject;
   export interface ServicesResponse {
     services: string[];
   }
@@ -105,7 +107,7 @@ export namespace rosapi {
   export interface ServicesForTypeResponse {
     services: string[];
   }
-  export type NodesRequest = Record<never, never>;
+  export type NodesRequest = EmptyObject;
   export interface NodesResponse {
     nodes: string[];
   }
@@ -117,7 +119,7 @@ export namespace rosapi {
     publishing: string[];
     services: string[];
   }
-  export type GetParamNamesRequest = Record<never, never>;
+  export type GetParamNamesRequest = EmptyObject;
   export interface GetParamNamesResponse {
     names: string[];
   }
@@ -139,7 +141,7 @@ export namespace rosapi {
   export interface MessageDetailsResponse {
     typedefs: TypeDef[];
   }
-  export type TopicsAndRawTypesRequest = Record<never, never>;
+  export type TopicsAndRawTypesRequest = EmptyObject;
   export interface TopicsAndRawTypesResponse {
     topics: string[];
     types: string[];
