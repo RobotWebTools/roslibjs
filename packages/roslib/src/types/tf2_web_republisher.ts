@@ -18,7 +18,7 @@ export namespace tf2_web_republisher {
     rate: number;
   }
 
-  export type TFSubscriptionResult = Record<never, never>;
+  export type TFSubscriptionResult = Record<string, never>;
 
   export interface TFSubscriptionFeedback {
     transforms: geometry_msgs.TransformStamped[];
