@@ -634,6 +634,103 @@ export default class Ros extends EventEmitter<
   }
 
   /**
+   * Retrieve the details of a ROS action goal interface.
+   *
+   * @param type - The type of the action.
+   * @param callback - Function with the following params:
+   * @param [failedCallback] - The callback function when the service call failed with params:
+   */
+  public getActionGoalDetails(
+    type: string,
+    callback: (typedefs: rosapi.TypeDef[]) => void,
+    failedCallback: (error: string) => void = console.error,
+  ) {
+    this.callActionInterfaceDetails<
+      rosapi.ActionGoalDetailsRequest,
+      rosapi.ActionGoalDetailsResponse
+    >(
+      "rosapi/action_goal_details",
+      "rosapi/ActionGoalDetails",
+      { type },
+      (result) => {
+        callback(result.typedefs);
+      },
+      failedCallback,
+    );
+  }
+
+  /**
+   * Retrieve the details of a ROS action result interface.
+   *
+   * @param type - The type of the action.
+   * @param callback - Function with the following params:
+   * @param [failedCallback] - The callback function when the service call failed with params:
+   */
+  public getActionResultDetails(
+    type: string,
+    callback: (typedefs: rosapi.TypeDef[]) => void,
+    failedCallback: (error: string) => void = console.error,
+  ) {
+    this.callActionInterfaceDetails<
+      rosapi.ActionResultDetailsRequest,
+      rosapi.ActionResultDetailsResponse
+    >(
+      "rosapi/action_result_details",
+      "rosapi/ActionResultDetails",
+      { type },
+      (result) => {
+        callback(result.typedefs);
+      },
+      failedCallback,
+    );
+  }
+
+  /**
+   * Retrieve the details of a ROS action feedback interface.
+   *
+   * @param type - The type of the action.
+   * @param callback - Function with the following params:
+   * @param [failedCallback] - The callback function when the service call failed with params:
+   */
+  public getActionFeedbackDetails(
+    type: string,
+    callback: (typedefs: rosapi.TypeDef[]) => void,
+    failedCallback: (error: string) => void = console.error,
+  ) {
+    this.callActionInterfaceDetails<
+      rosapi.ActionFeedbackDetailsRequest,
+      rosapi.ActionFeedbackDetailsResponse
+    >(
+      "rosapi/action_feedback_details",
+      "rosapi/ActionFeedbackDetails",
+      { type },
+      (result) => {
+        callback(result.typedefs);
+      },
+      failedCallback,
+    );
+  }
+
+  private callActionInterfaceDetails<
+    TReq extends { type: string },
+    TRes extends { typedefs: rosapi.TypeDef[] },
+  >(
+    srv: string,
+    srvType: string,
+    request: TReq,
+    callback: (result: TRes) => void,
+    failedCallback: (error: string) => void,
+  ): Service<TReq, TRes> {
+    const client = new Service<TReq, TRes>({
+      ros: this,
+      name: srv,
+      serviceType: srvType,
+    });
+    client.callService(request, callback, failedCallback);
+    return client;
+  }
+
+  /**
    * Decode a typedef array into a dictionary like `rosmsg show foo/bar`.
    *
    * @param defs - Array of type_def dictionary.
