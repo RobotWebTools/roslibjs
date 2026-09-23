@@ -11,8 +11,10 @@
   "module": "./dist/RosLib.js",
   "exports": {
     ".": {
+      "types": "./dist/RosLib.d.ts",
       "import": "./dist/RosLib.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "type": "module",
   "devDependencies": {
