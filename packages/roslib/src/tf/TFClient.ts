@@ -14,6 +14,27 @@ import BaseTFClient from "./BaseTFClient.ts";
 
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
+ *
+ * @example Canceling Goals
+ * ```javascript
+ * const tfClient = new TFClient({
+ *   ros: ros,
+ *   fixedFrame: 'world'
+ * });
+ *
+ * // Subscribe to a frame
+ * tfClient.subscribe('turtle1', function(tf) {
+ *   console.log('Transform received:', tf);
+ * });
+ *
+ * // Cancel the current goal only
+ * if (tfClient.currentGoal) {
+ *   tfClient.currentGoal.cancel();
+ * }
+ *
+ * // Cancel all goals associated with this TF client
+ * tfClient.actionClient.cancel();
+ * ```
  */
 export default class TFClient extends BaseTFClient {
   currentGoal:
