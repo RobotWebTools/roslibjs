@@ -118,7 +118,10 @@ describe("Action.sendGoal", () => {
 
       messageHandler?.(cancelledMessage);
 
-      expect(failedCallback).toHaveBeenCalled();
+      expect(failedCallback).toHaveBeenCalledWith(
+        expect.any(String),
+        GoalStatus.STATUS_CANCELED,
+      );
       expect(resultCallback).not.toHaveBeenCalled();
     });
 
@@ -144,7 +147,10 @@ describe("Action.sendGoal", () => {
 
       messageHandler?.(abortedMessage);
 
-      expect(failedCallback).toHaveBeenCalled();
+      expect(failedCallback).toHaveBeenCalledWith(
+        expect.any(String),
+        GoalStatus.STATUS_ABORTED,
+      );
       expect(resultCallback).not.toHaveBeenCalled();
     });
 
@@ -170,7 +176,10 @@ describe("Action.sendGoal", () => {
 
       messageHandler?.(cancelingMessage);
 
-      expect(failedCallback).toHaveBeenCalled();
+      expect(failedCallback).toHaveBeenCalledWith(
+        expect.any(String),
+        GoalStatus.STATUS_CANCELING,
+      );
       expect(resultCallback).not.toHaveBeenCalled();
     });
 
@@ -196,7 +205,10 @@ describe("Action.sendGoal", () => {
 
       messageHandler?.(unknownMessage);
 
-      expect(failedCallback).toHaveBeenCalled();
+      expect(failedCallback).toHaveBeenCalledWith(
+        expect.any(String),
+        GoalStatus.STATUS_UNKNOWN,
+      );
       expect(resultCallback).not.toHaveBeenCalled();
     });
   });
@@ -290,7 +302,11 @@ describe("Action.sendGoal", () => {
       messageHandler?.(confusingMessage);
 
       // Should call failedCallback because status is CANCELED
-      expect(failedCallback).toHaveBeenCalled();
+      expect(failedCallback).toHaveBeenCalledWith(
+        expect.any(String),
+        GoalStatus.STATUS_CANCELED,
+        { result: 0 },
+      );
       expect(resultCallback).not.toHaveBeenCalled();
     });
 
