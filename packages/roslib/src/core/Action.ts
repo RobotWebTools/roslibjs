@@ -84,7 +84,11 @@ export default class Action<
     goal: TGoal,
     resultCallback: (result: TResult) => void,
     feedbackCallback?: (feedback: TFeedback) => void,
-    failedCallback: (error: string) => void = console.error,
+    failedCallback: (
+      error: string,
+      status: GoalStatus,
+      result?: TResult,
+    ) => void = console.error,
   ) {
     if (this.isAdvertised) {
       return;
@@ -96,12 +100,14 @@ export default class Action<
         const status: GoalStatus = message.status;
 
         if (!message.result) {
-          failedCallback(String(new GoalError(status, message.values)));
+          failedCallback(String(new GoalError(status, message.values)), status);
         } else if (status !== GoalStatus.STATUS_SUCCEEDED) {
+          // Check status code instead of result field to properly handle STATUS_CANCELED
           failedCallback(
             String(new GoalError(status, JSON.stringify(message.values))),
+            status,
+            message.values,
           );
-          // Check status code instead of result field to properly handle STATUS_CANCELED
         } else {
           resultCallback(message.values);
         }
