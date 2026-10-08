@@ -20,7 +20,7 @@
     "@testing-library/react": "^16.0.0",
     "@types/dockerode": "^4.0.0",
     "@types/node": "^26.6.1",
-    "@types/ws": "^8.5.10",
+    "@types/ws": "^8.18.2",
     "changelog-maker": "^5.0.0",
     "dockerode": "^5.0.0",
     "eslint": "^10.11.0",
@@ -49,7 +49,7 @@
     "eventemitter3": "^5.0.1",
     "fast-png": "^8.0.0",
     "uuid": "^14.0.0",
-    "ws": "^8.21.0"
+    "ws": "^8.22.0"
   },
   "directories": {
     "test": "test"
