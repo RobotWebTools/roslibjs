@@ -2,6 +2,8 @@
  * https://github.com/RobotWebTools/rosbridge_suite/blob/ros2/ROSBRIDGE_PROTOCOL.md
  */
 
+import type { GoalStatus } from "../core/GoalStatus.ts";
+
 export interface RosbridgeMessageBase {
   op: string;
 }
@@ -296,7 +298,7 @@ interface RosbridgeActionResultMessageBase extends RosbridgeMessageBase {
   op: "action_result";
   id: string;
   action: string;
-  status: number;
+  status: GoalStatus;
 }
 
 export interface FailedRosbridgeActionResultMessage
