@@ -1,5 +1,4 @@
 import type { std_msgs } from "./std_msgs.ts";
-import type { GoalStatus as GoalStatusEnum } from "../core/GoalStatus.ts";
 
 export namespace actionlib_msgs {
   export interface GoalID {
@@ -8,7 +7,12 @@ export namespace actionlib_msgs {
   }
   export interface GoalStatus {
     goal_id: GoalID;
-    status: GoalStatusEnum;
+    /**
+     * ROS 1 actionlib status code (PENDING=0, ACTIVE=1, PREEMPTED=2, SUCCEEDED=3,
+     * ABORTED=4, REJECTED=5, PREEMPTING=6, RECALLING=7, RECALLED=8, LOST=9).
+     * Not to be confused with the ROS 2 `GoalStatus` enum.
+     */
+    status: number;
     text?: string;
   }
   export interface GoalStatusArray {
