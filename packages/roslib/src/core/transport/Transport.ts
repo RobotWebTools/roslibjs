@@ -187,12 +187,17 @@ export abstract class AbstractTransport
    * It is one technique for compressing JSON data.
    */
   private handleRosbridgePngMessage(message: RosbridgePngMessage) {
-    const decoded = decompressPng(message.data);
-    if (isRosbridgeMessage(decoded)) {
-      this.handleRosbridgeMessage(decoded);
-    } else {
-      throw new Error("Decompressed PNG data was invalid!");
-    }
+    decompressPng(message.data)
+      .then((decoded) => {
+        if (isRosbridgeMessage(decoded)) {
+          this.handleRosbridgeMessage(decoded);
+        } else {
+          this.emit("error", new Error("Decompressed PNG data was invalid!"));
+        }
+      })
+      .catch((error: unknown) => {
+        this.emit("error", error);
+      });
   }
 
   /**
