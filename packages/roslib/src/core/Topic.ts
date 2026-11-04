@@ -10,6 +10,7 @@ import {
   isRosbridgePublishMessage,
   type RosbridgeAdvertiseMessage,
   type RosbridgeMessage,
+  type RosbridgeQosProfile,
   type RosbridgeSubscribeMessage,
 } from "../types/protocol.ts";
 import type { rosapi } from "../types/rosapi.ts";
@@ -39,6 +40,7 @@ export default class Topic<T = unknown> extends EventEmitter<{
   latch: boolean;
   queue_size: number;
   queue_length: number;
+  qos?: RosbridgeQosProfile;
   reconnect_on_close: boolean;
   callForSubscribeAndAdvertise: (
     message: RosbridgeSubscribeMessage | RosbridgeAdvertiseMessage,
@@ -55,6 +57,7 @@ export default class Topic<T = unknown> extends EventEmitter<{
    * @param [options.queue_size=100] - The queue created at bridge side for re-publishing webtopics.
    * @param [options.latch=false] - Latch the topic when publishing.
    * @param [options.queue_length=0] - The queue length at bridge side used when subscribing.
+   * @param [options.qos] - QoS profile for the topic. When provided, `latch` and `queue_size` are ignored.
    * @param [options.reconnect_on_close=true] - The flag to enable resubscription and readvertisement on close event.
    */
   constructor({
@@ -66,6 +69,7 @@ export default class Topic<T = unknown> extends EventEmitter<{
     latch = false,
     queue_size = 100,
     queue_length = 0,
+    qos,
     reconnect_on_close = true,
   }: {
     ros: Ros;
@@ -76,6 +80,7 @@ export default class Topic<T = unknown> extends EventEmitter<{
     queue_size?: number;
     latch?: boolean;
     queue_length?: number;
+    qos?: RosbridgeQosProfile;
     reconnect_on_close?: boolean;
   }) {
     super();
@@ -88,6 +93,7 @@ export default class Topic<T = unknown> extends EventEmitter<{
     this.latch = latch;
     this.queue_size = queue_size;
     this.queue_length = queue_length;
+    this.qos = qos;
     this.reconnect_on_close = reconnect_on_close;
 
     // Check for valid compression types
@@ -171,6 +177,7 @@ export default class Topic<T = unknown> extends EventEmitter<{
       compression: this.compression,
       throttle_rate: this.throttle_rate,
       queue_length: this.queue_length,
+      qos: this.qos,
     });
   }
   /**
@@ -221,6 +228,7 @@ export default class Topic<T = unknown> extends EventEmitter<{
       topic: this.name,
       latch: this.latch,
       queue_size: this.queue_size,
+      qos: this.qos,
     });
     this.isAdvertised = true;
 
