@@ -54,13 +54,12 @@ describe.skipIf(process.env["ROS_DISTRO"] !== "noetic")(
 describe.skipIf(process.env["ROS_DISTRO"] === "noetic")(
   "ROS 2 TF2 Republisher Example",
   function () {
-    const ros = new ROSLIB.Ros({
-      url: "ws://localhost:9090",
-    });
+    const ros = new ROSLIB.Ros();
     const clients: ROSLIB.ROS2TFClient[] = [];
 
     it("tf republisher", () =>
       new Promise<void>((done) => {
+        ros.connect("ws://localhost:9090").catch(console.error);
         const tfClient = new ROSLIB.ROS2TFClient({
           ros: ros,
           fixedFrame: "world",
