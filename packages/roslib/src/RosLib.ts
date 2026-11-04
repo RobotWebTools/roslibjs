@@ -119,4 +119,5 @@ export {
   type FailedRosbridgeServiceResponseMessage,
   type SuccessfulRosbridgeServiceResponseMessage,
   type RosbridgeQosProfile,
+  type RosbridgeDuration,
 } from "./types/protocol.ts";
