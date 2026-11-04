@@ -4,7 +4,10 @@
 
 import type { GoalStatus } from "../core/GoalStatus.ts";
 
-type RosbridgeDuration = number | { secs: number; nsecs: number } | "infinite";
+export type RosbridgeDuration =
+  | number
+  | { secs: number; nsecs: number }
+  | "infinite";
 
 export interface RosbridgeQosProfile {
   history?: "keep_last" | "keep_all";
