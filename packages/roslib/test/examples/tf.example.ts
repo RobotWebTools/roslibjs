@@ -74,7 +74,7 @@ describe.skipIf(process.env["ROS_DISTRO"] === "noetic")(
             expect(tf.translation).to.be.eql(new ROSLIB.Vector3());
             done();
           } catch (error) {
-            reject(error);
+            reject(error instanceof Error ? error : new Error(String(error)));
           }
         });
       }));
