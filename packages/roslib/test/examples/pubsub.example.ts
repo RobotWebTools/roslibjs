@@ -21,7 +21,7 @@ describe("Topics Example", function () {
   });
 
   beforeAll(async () => {
-    ros.connect("ws://localhost:9090");
+    await ros.connect("ws://localhost:9090");
   });
 
   it("Client-side subscribers receive messages from client-side publishers", async () => {
@@ -155,7 +155,7 @@ describe.skipIf(process.env["ROS_DISTRO"] === "noetic")(
     const settle = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
     beforeAll(async () => {
-      ros.connect("ws://localhost:9090");
+      await ros.connect("ws://localhost:9090");
     });
 
     it("Late subscriber receives a message published with transient local durability", async () => {
