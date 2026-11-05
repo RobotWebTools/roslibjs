@@ -1,10 +1,8 @@
-import { describe, it, expect, afterAll, vi } from "vitest";
+import { describe, it, expect, afterAll, vi, beforeAll } from "vitest";
 import * as ROSLIB from "../../src/RosLib.ts";
 
 describe("Topics Example", function () {
-  const ros = new ROSLIB.Ros({
-    url: "ws://localhost:9090",
-  });
+  const ros = new ROSLIB.Ros();
 
   const example = ros.Topic<{ data: string }>({
     name: "/example_topic",
@@ -20,6 +18,10 @@ describe("Topics Example", function () {
   const example2 = ros.Topic<{ data: string }>({
     name: "/example_topic",
     messageType: "std_msgs/String",
+  });
+
+  beforeAll(async () => {
+    ros.connect("ws://localhost:9090");
   });
 
   it("Client-side subscribers receive messages from client-side publishers", async () => {
@@ -135,9 +137,7 @@ describe("Topics Example", function () {
 describe.skipIf(process.env["ROS_DISTRO"] === "noetic")(
   "Topics QoS Example",
   function () {
-    const ros = new ROSLIB.Ros({
-      url: "ws://localhost:9090",
-    });
+    const ros = new ROSLIB.Ros();
     const topics: ROSLIB.Topic<{ data: string }>[] = [];
 
     function makeTopic(name: string, qos: ROSLIB.RosbridgeQosProfile) {
@@ -153,6 +153,10 @@ describe.skipIf(process.env["ROS_DISTRO"] === "noetic")(
     // Gives rosbridge time to create the ROS publisher/subscription and for
     // DDS discovery to match them, since advertise/subscribe have no reply
     const settle = () => new Promise((resolve) => setTimeout(resolve, 1000));
+
+    beforeAll(async () => {
+      ros.connect("ws://localhost:9090");
+    });
 
     it("Late subscriber receives a message published with transient local durability", async () => {
       const name = "/qos_transient_local";
