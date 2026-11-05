@@ -58,7 +58,7 @@ describe.skipIf(process.env["ROS_DISTRO"] === "noetic")(
     const clients: ROSLIB.ROS2TFClient[] = [];
 
     it("tf republisher", () =>
-      new Promise<void>((done) => {
+      new Promise<void>((done, reject) => {
         ros.connect("ws://localhost:9090").catch(console.error);
         const tfClient = new ROSLIB.ROS2TFClient({
           ros: ros,
@@ -69,9 +69,13 @@ describe.skipIf(process.env["ROS_DISTRO"] === "noetic")(
         clients.push(tfClient);
 
         tfClient.subscribe("turtle1", function (tf) {
-          expect(tf.rotation).to.be.eql(new ROSLIB.Quaternion());
-          expect(tf.translation).to.be.eql(new ROSLIB.Vector3());
-          done();
+          try {
+            expect(tf.rotation).to.be.eql(new ROSLIB.Quaternion());
+            expect(tf.translation).to.be.eql(new ROSLIB.Vector3());
+            done();
+          } catch (error) {
+            reject(error);
+          }
         });
       }));
 
