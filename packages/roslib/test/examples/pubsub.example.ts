@@ -1,10 +1,8 @@
-import { describe, it, expect, afterAll, vi } from "vitest";
+import { describe, it, expect, afterAll, vi, beforeAll } from "vitest";
 import * as ROSLIB from "../../src/RosLib.ts";
 
 describe("Topics Example", function () {
-  const ros = new ROSLIB.Ros({
-    url: "ws://localhost:9090",
-  });
+  const ros = new ROSLIB.Ros();
 
   const example = ros.Topic<{ data: string }>({
     name: "/example_topic",
@@ -20,6 +18,10 @@ describe("Topics Example", function () {
   const example2 = ros.Topic<{ data: string }>({
     name: "/example_topic",
     messageType: "std_msgs/String",
+  });
+
+  beforeAll(async () => {
+    await ros.connect("ws://localhost:9090");
   });
 
   it("Client-side subscribers receive messages from client-side publishers", async () => {
@@ -128,3 +130,110 @@ describe("Topics Example", function () {
     example2.unsubscribe();
   });
 }, 1000);
+
+// QoS profiles are a ROS 2 rosbridge feature (protocol 2.1.0).
+// Each case uses its own topic, because rosbridge keeps one publisher and one
+// subscription per topic and only the first advertise/subscribe sets its QoS.
+describe.skipIf(process.env["ROS_DISTRO"] === "noetic")(
+  "Topics QoS Example",
+  function () {
+    const ros = new ROSLIB.Ros();
+    const topics: ROSLIB.Topic<{ data: string }>[] = [];
+
+    function makeTopic(name: string, qos: ROSLIB.RosbridgeQosProfile) {
+      const topic = ros.Topic<{ data: string }>({
+        name,
+        messageType: "std_msgs/String",
+        qos,
+      });
+      topics.push(topic);
+      return topic;
+    }
+
+    // Gives rosbridge time to create the ROS publisher/subscription and for
+    // DDS discovery to match them, since advertise/subscribe have no reply
+    const settle = () => new Promise((resolve) => setTimeout(resolve, 1000));
+
+    beforeAll(async () => {
+      await ros.connect("ws://localhost:9090");
+    });
+
+    it("Late subscriber receives a message published with transient local durability", async () => {
+      const name = "/qos_transient_local";
+      const publisher = makeTopic(name, {
+        reliability: "reliable",
+        durability: "transient_local",
+        depth: 1,
+      });
+      publisher.advertise();
+      await settle();
+      publisher.publish({ data: "latched" });
+      await settle();
+
+      const callback = vi.fn();
+      makeTopic(name, {
+        reliability: "reliable",
+        durability: "transient_local",
+      }).subscribe(callback);
+
+      await vi.waitFor(
+        () => {
+          expect(callback).toHaveBeenCalledWith({ data: "latched" });
+        },
+        { timeout: 5000 },
+      );
+    }, 10000);
+
+    it("Late subscriber gets nothing from a volatile publisher", async () => {
+      // rosbridge's default publisher is transient local, so this only passes
+      // when the qos profile actually reaches the server
+      const name = "/qos_volatile";
+      const publisher = makeTopic(name, {
+        reliability: "reliable",
+        durability: "volatile",
+      });
+      publisher.advertise();
+      await settle();
+      publisher.publish({ data: "not latched" });
+      await settle();
+
+      const callback = vi.fn();
+      makeTopic(name, {
+        reliability: "reliable",
+        durability: "transient_local",
+      }).subscribe(callback);
+      await settle();
+
+      expect(callback).not.toHaveBeenCalled();
+    }, 10000);
+
+    it("Reliable subscriber gets nothing from a best effort publisher", async () => {
+      // Incompatible QoS: a reliable reader never matches a best effort writer
+      const name = "/qos_incompatible";
+      const publisher = makeTopic(name, {
+        reliability: "best_effort",
+        durability: "volatile",
+      });
+      const callback = vi.fn();
+      makeTopic(name, {
+        reliability: "reliable",
+        durability: "volatile",
+      }).subscribe(callback);
+      publisher.advertise();
+      await settle();
+
+      publisher.publish({ data: "dropped" });
+      await settle();
+
+      expect(callback).not.toHaveBeenCalled();
+    }, 10000);
+
+    afterAll(function () {
+      for (const topic of topics) {
+        topic.unsubscribe();
+        topic.unadvertise();
+      }
+      ros.close();
+    });
+  },
+);
