@@ -66,6 +66,21 @@ npm run build
 npm run test
 ```
 
+The tests build and start a rosbridge backend in Docker for the ROS distro in
+`ROS_DISTRO` (default `noetic`). To use a backend you started yourself instead,
+for example while debugging, set `ROSLIB_EXTERNAL_BACKEND`. The tests then expect
+rosbridge on `ws://localhost:9090` and leave it running afterwards. Set
+`ROS_DISTRO` to match it, since some tests are distro-specific:
+
+```bash
+# Same backend the tests use, from packages/roslib
+docker build --build-arg ROS_DISTRO=humble -t roslibjs-test:humble .
+docker run --rm -p 9090:9090 roslibjs-test:humble
+
+# In another terminal
+ROSLIB_EXTERNAL_BACKEND=1 ROS_DISTRO=humble npm run test
+```
+
 ### Linting
 
 ```bash
