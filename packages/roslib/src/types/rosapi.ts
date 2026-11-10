@@ -145,4 +145,22 @@ export namespace rosapi {
     types: string[];
     typedefs_full_text: string[];
   }
+  export interface ActionGoalDetailsRequest {
+    type: string;
+  }
+  export interface ActionGoalDetailsResponse {
+    typedefs: TypeDef[];
+  }
+  export interface ActionResultDetailsRequest {
+    type: string;
+  }
+  export interface ActionResultDetailsResponse {
+    typedefs: TypeDef[];
+  }
+  export interface ActionFeedbackDetailsRequest {
+    type: string;
+  }
+  export interface ActionFeedbackDetailsResponse {
+    typedefs: TypeDef[];
+  }
 }
