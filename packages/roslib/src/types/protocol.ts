@@ -4,6 +4,20 @@
 
 import type { GoalStatus } from "../core/GoalStatus.ts";
 
+export type RosbridgeDuration =
+  | number
+  | { secs: number; nsecs: number }
+  | "infinite";
+
+export interface RosbridgeQosProfile {
+  history?: "keep_last" | "keep_all";
+  depth?: number;
+  reliability?: "reliable" | "best_effort" | "best_available";
+  durability?: "transient_local" | "volatile" | "best_available";
+  deadline?: RosbridgeDuration | "best_available";
+  lifespan?: RosbridgeDuration;
+}
+
 export interface RosbridgeMessageBase {
   op: string;
 }
@@ -87,8 +101,11 @@ export interface RosbridgeAdvertiseMessage extends RosbridgeMessageBase {
   id?: string;
   type: string;
   topic: string;
+  /** @deprecated Use `qos.durability` instead. */
   latch?: boolean;
+  /** @deprecated Use `qos.depth` instead. */
   queue_size?: number;
+  qos?: RosbridgeQosProfile;
 }
 
 export function isRosbridgeAdvertiseMessage(
@@ -115,6 +132,12 @@ export interface RosbridgePublishMessage<TMessage = unknown>
   id?: string;
   topic: string;
   msg: TMessage;
+  type?: string;
+  /** @deprecated Use `qos.durability` instead. */
+  latch?: boolean;
+  /** @deprecated Use `qos.depth` instead. */
+  queue_size?: number;
+  qos?: RosbridgeQosProfile;
 }
 
 export function isRosbridgePublishMessage<T>(
@@ -132,6 +155,7 @@ export interface RosbridgeSubscribeMessage extends RosbridgeMessageBase {
   queue_length?: number;
   fragment_size?: number;
   compression?: string;
+  qos?: RosbridgeQosProfile;
 }
 
 export function isRosbridgeSubscribeMessage(
