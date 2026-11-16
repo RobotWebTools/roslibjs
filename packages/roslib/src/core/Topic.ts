@@ -21,16 +21,34 @@ import { v4 as uuidv4 } from "uuid";
  * `latch` and `queue_size` options.
  */
 export type TopicOptions = {
+  /** The ROSLIB.Ros connection handle. */
   ros: Ros;
+  /** The topic name, like '/cmd_vel'. */
   name: string;
+  /** The message type, like 'std_msgs/String'. */
   messageType: string;
+  /** The type of compression to use, like 'png', 'cbor', or 'cbor-raw'. Defaults to 'none'. */
   compression?: string;
+  /** The rate (in ms in between messages) at which to throttle the topics. Defaults to 0. */
   throttle_rate?: number;
+  /** The queue length at bridge side used when subscribing. Defaults to 0. */
   queue_length?: number;
+  /** Enable resubscription and readvertisement on close event. Defaults to true. */
   reconnect_on_close?: boolean;
 } & (
-  | { qos?: RosbridgeQosProfile; latch?: never; queue_size?: never }
-  | { qos?: never; latch?: boolean; queue_size?: number }
+  | {
+      /** QoS profile used for both advertising and subscribing. Requires rosbridge protocol >= 2.1.0 (ROS 2); older servers ignore it and use their default QoS. */
+      qos?: RosbridgeQosProfile;
+      latch?: never;
+      queue_size?: never;
+    }
+  | {
+      qos?: never;
+      /** Latch the topic when publishing. Defaults to false. */
+      latch?: boolean;
+      /** The queue created at bridge side for re-publishing webtopics. Defaults to 100. */
+      queue_size?: number;
+    }
 );
 
 /**
@@ -65,17 +83,7 @@ export default class Topic<T = unknown> extends EventEmitter<{
   subscribeId: string | null = null;
   advertiseId?: string;
   /**
-   * @param options
-   * @param options.ros - The ROSLIB.Ros connection handle.
-   * @param options.name - The topic name, like '/cmd_vel'.
-   * @param options.messageType - The message type, like 'std_msgs/String'.
-   * @param [options.compression=none] - The type of compression to use, like 'png', 'cbor', or 'cbor-raw'.
-   * @param [options.throttle_rate=0] - The rate (in ms in between messages) at which to throttle the topics.
-   * @param [options.queue_size=100] - The queue created at bridge side for re-publishing webtopics.
-   * @param [options.latch=false] - Latch the topic when publishing.
-   * @param [options.queue_length=0] - The queue length at bridge side used when subscribing.
-   * @param [options.qos] - QoS profile used for both advertising and subscribing. Mutually exclusive with `latch` and `queue_size`. Requires rosbridge protocol >= 2.1.0 (ROS 2); older servers ignore it and use their default QoS.
-   * @param [options.reconnect_on_close=true] - The flag to enable resubscription and readvertisement on close event.
+   * @param options - Topic configuration.
    */
   constructor({
     ros,
