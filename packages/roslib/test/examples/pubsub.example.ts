@@ -185,8 +185,6 @@ describe.skipIf(process.env["ROS_DISTRO"] === "noetic")(
     }, 10000);
 
     it("Late subscriber gets nothing from a volatile publisher", async () => {
-      // rosbridge's default publisher is transient local, so this only passes
-      // when the qos profile actually reaches the server
       const name = "/qos_volatile";
       const publisher = makeTopic(name, {
         reliability: "reliable",
@@ -200,12 +198,21 @@ describe.skipIf(process.env["ROS_DISTRO"] === "noetic")(
       const callback = vi.fn();
       makeTopic(name, {
         reliability: "reliable",
-        durability: "transient_local",
+        durability: "volatile",
       }).subscribe(callback);
       await settle();
 
       expect(callback).not.toHaveBeenCalled();
-    }, 10000);
+
+      // Positive control: the subscription is matched, it only missed the earlier message
+      publisher.publish({ data: "live" });
+      await vi.waitFor(
+        () => {
+          expect(callback).toHaveBeenCalledWith({ data: "live" });
+        },
+        { timeout: 5000 },
+      );
+    }, 15000);
 
     it("Reliable subscriber gets nothing from a best effort publisher", async () => {
       // Incompatible QoS: a reliable reader never matches a best effort writer
