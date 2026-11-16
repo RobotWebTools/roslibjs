@@ -35,7 +35,7 @@ import type {
 import { WebSocketTransportFactory } from "./transport/WebSocketTransportFactory.ts";
 
 /** Like `Omit`, but applied to each member of a union separately. */
-type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
+export type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
   ? Omit<T, K>
   : never;
 
