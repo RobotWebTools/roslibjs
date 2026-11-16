@@ -34,6 +34,11 @@ import type {
 } from "./transport/Transport.ts";
 import { WebSocketTransportFactory } from "./transport/WebSocketTransportFactory.ts";
 
+/** Like `Omit`, but applied to each member of a union separately. */
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
+  ? Omit<T, K>
+  : never;
+
 export interface TypeDefDict {
   [key: string]: string | string[] | TypeDefDict | TypeDefDict[];
 }
@@ -735,7 +740,7 @@ export default class Ros extends EventEmitter<
   }
 
   public Topic<T>(
-    options: Omit<ConstructorParameters<typeof Topic<T>>[0], "ros">,
+    options: DistributiveOmit<ConstructorParameters<typeof Topic<T>>[0], "ros">,
   ) {
     return new Topic<T>({ ros: this, ...options });
   }

@@ -62,6 +62,14 @@ describe("Topic QoS", () => {
     });
   });
 
+  it("does not send the legacy latch/queue_size fields alongside qos", () => {
+    makeTopic({ qos }).advertise();
+
+    const [advertise] = sent("advertise");
+    expect(advertise).not.toHaveProperty("latch");
+    expect(advertise).not.toHaveProperty("queue_size");
+  });
+
   it("sends the qos profile when subscribing", () => {
     makeTopic({ qos }).subscribe(() => undefined);
 

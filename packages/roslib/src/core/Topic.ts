@@ -17,6 +17,23 @@ import type { rosapi } from "../types/rosapi.ts";
 import { v4 as uuidv4 } from "uuid";
 
 /**
+ * Options for {@link Topic}. `qos` is mutually exclusive with the legacy
+ * `latch` and `queue_size` options.
+ */
+export type TopicOptions = {
+  ros: Ros;
+  name: string;
+  messageType: string;
+  compression?: string;
+  throttle_rate?: number;
+  queue_length?: number;
+  reconnect_on_close?: boolean;
+} & (
+  | { qos?: RosbridgeQosProfile; latch?: never; queue_size?: never }
+  | { qos?: never; latch?: boolean; queue_size?: number }
+);
+
+/**
  * Publish and/or subscribe to a topic in ROS.
  *
  * Emits the following events:
@@ -57,7 +74,7 @@ export default class Topic<T = unknown> extends EventEmitter<{
    * @param [options.queue_size=100] - The queue created at bridge side for re-publishing webtopics.
    * @param [options.latch=false] - Latch the topic when publishing.
    * @param [options.queue_length=0] - The queue length at bridge side used when subscribing.
-   * @param [options.qos] - QoS profile for the topic. When provided, `latch` and `queue_size` are ignored.
+   * @param [options.qos] - QoS profile used for both advertising and subscribing. Mutually exclusive with `latch` and `queue_size`. Requires rosbridge protocol >= 2.1.0 (ROS 2); older servers ignore it and use their default QoS.
    * @param [options.reconnect_on_close=true] - The flag to enable resubscription and readvertisement on close event.
    */
   constructor({
@@ -71,18 +88,7 @@ export default class Topic<T = unknown> extends EventEmitter<{
     queue_length = 0,
     qos,
     reconnect_on_close = true,
-  }: {
-    ros: Ros;
-    name: string;
-    messageType: string;
-    compression?: string;
-    throttle_rate?: number;
-    queue_size?: number;
-    latch?: boolean;
-    queue_length?: number;
-    qos?: RosbridgeQosProfile;
-    reconnect_on_close?: boolean;
-  }) {
+  }: TopicOptions) {
     super();
 
     this.ros = ros;
@@ -226,9 +232,9 @@ export default class Topic<T = unknown> extends EventEmitter<{
       id: this.advertiseId,
       type: this.messageType,
       topic: this.name,
-      latch: this.latch,
-      queue_size: this.queue_size,
-      qos: this.qos,
+      ...(this.qos
+        ? { qos: this.qos }
+        : { latch: this.latch, queue_size: this.queue_size }),
     });
     this.isAdvertised = true;
 
