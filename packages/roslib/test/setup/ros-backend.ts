@@ -128,14 +128,16 @@ async function waitForBackend() {
   const startTime = Date.now();
 
   while (Date.now() - startTime < MAX_WAIT_TIME) {
+    // Closed after each attempt, an open probe connection keeps Vitest from exiting
+    const ros = new Ros({ url: `ws://localhost:${CONTAINER_PORT.toString()}` });
     try {
-      await waitForRosConnection(
-        new Ros({ url: `ws://localhost:${CONTAINER_PORT.toString()}` }),
-      );
+      await waitForRosConnection(ros);
       console.log("ROS backend is ready");
       return true;
     } catch {
       await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL));
+    } finally {
+      ros.close();
     }
   }
 
@@ -172,11 +174,31 @@ async function getLogs() {
 }
 
 /**
+ * Whether the user runs the rosbridge backend themselves, in which case the
+ * container is neither built, started nor stopped
+ */
+function useExternalBackend() {
+  return Boolean(process.env["ROSLIB_EXTERNAL_BACKEND"]);
+}
+
+/**
  * Main setup function
  */
 export async function setupBackend() {
   const rosDistro = getRosDistro();
   console.log(`Using ROS distro: ${rosDistro}`);
+
+  if (useExternalBackend()) {
+    console.log(
+      `Using external ROS backend on port ${CONTAINER_PORT.toString()} (ROSLIB_EXTERNAL_BACKEND is set)`,
+    );
+    if (!(await waitForBackend())) {
+      throw new Error(
+        `No rosbridge server reachable at ws://localhost:${CONTAINER_PORT.toString()}. Start it first, or unset ROSLIB_EXTERNAL_BACKEND to let the tests start a container.`,
+      );
+    }
+    return;
+  }
 
   // Build container
   await buildContainer(rosDistro);
@@ -200,5 +222,8 @@ export async function setupBackend() {
  * Main teardown function
  */
 export async function teardownBackend() {
+  if (useExternalBackend()) {
+    return;
+  }
   await stopContainer();
 }
