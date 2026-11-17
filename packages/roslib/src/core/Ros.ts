@@ -19,7 +19,7 @@ import {
   isRosbridgeStatusMessage,
 } from "../types/protocol.ts";
 
-import Topic from "./Topic.ts";
+import Topic, { type TopicOptions } from "./Topic.ts";
 import Service from "./Service.ts";
 import Param from "./Param.ts";
 import TFClient from "../tf/TFClient.ts";
@@ -33,11 +33,6 @@ import type {
   TransportEvent,
 } from "./transport/Transport.ts";
 import { WebSocketTransportFactory } from "./transport/WebSocketTransportFactory.ts";
-
-/** Like `Omit`, but applied to each member of a union separately. */
-export type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
-  ? Omit<T, K>
-  : never;
 
 export interface TypeDefDict {
   [key: string]: string | string[] | TypeDefDict | TypeDefDict[];
@@ -739,9 +734,7 @@ export default class Ros extends EventEmitter<
     );
   }
 
-  public Topic<T>(
-    options: DistributiveOmit<ConstructorParameters<typeof Topic<T>>[0], "ros">,
-  ) {
+  public Topic<T>(options: TopicOptions) {
     return new Topic<T>({ ros: this, ...options });
   }
 

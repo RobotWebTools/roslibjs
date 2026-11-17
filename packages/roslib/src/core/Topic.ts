@@ -21,8 +21,6 @@ import { v4 as uuidv4 } from "uuid";
  * `latch` and `queue_size` options.
  */
 export type TopicOptions = {
-  /** The ROSLIB.Ros connection handle. */
-  ros: Ros;
   /** The topic name, like '/cmd_vel'. */
   name: string;
   /** The message type, like 'std_msgs/String'. */
@@ -96,7 +94,7 @@ export default class Topic<T = unknown> extends EventEmitter<{
     queue_length = 0,
     qos,
     reconnect_on_close = true,
-  }: TopicOptions) {
+  }: TopicOptions & { ros: Ros }) {
     super();
 
     this.ros = ros;
