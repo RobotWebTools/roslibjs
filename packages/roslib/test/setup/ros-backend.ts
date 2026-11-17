@@ -182,6 +182,30 @@ function useExternalBackend() {
 }
 
 /**
+ * Whether the test image was built beforehand, e.g. by CI with a layer cache,
+ * in which case it is used as-is instead of being rebuilt
+ */
+function usePrebuiltImage() {
+  return Boolean(process.env["ROSLIB_SKIP_IMAGE_BUILD"]);
+}
+
+/**
+ * Ensure the prebuilt test image exists, so a missing image fails with a clear
+ * message instead of a generic Docker error when creating the container
+ */
+async function assertImageExists(rosDistro: string) {
+  const image = `roslibjs-test:${rosDistro}`;
+  try {
+    await docker.getImage(image).inspect();
+  } catch {
+    throw new Error(
+      `Image ${image} not found. Build it first, or unset ROSLIB_SKIP_IMAGE_BUILD to let the tests build it.`,
+    );
+  }
+  console.log(`Using prebuilt image ${image} (ROSLIB_SKIP_IMAGE_BUILD is set)`);
+}
+
+/**
  * Main setup function
  */
 export async function setupBackend() {
@@ -200,8 +224,12 @@ export async function setupBackend() {
     return;
   }
 
-  // Build container
-  await buildContainer(rosDistro);
+  // Build container, unless it was built beforehand
+  if (usePrebuiltImage()) {
+    await assertImageExists(rosDistro);
+  } else {
+    await buildContainer(rosDistro);
+  }
 
   // Start container
   await startContainer(rosDistro);

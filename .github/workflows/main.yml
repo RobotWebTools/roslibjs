@@ -28,6 +28,21 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - uses: docker/setup-buildx-action@v4
+
+      # Built here instead of by the test setup, so the layers are cached
+      # across runs and shared by the jobs of each ROS distro
+      - name: Build ROS test image
+        uses: docker/build-push-action@v7
+        with:
+          context: packages/roslib
+          build-args: ROS_DISTRO=${{ matrix.ros_distro }}
+          tags: roslibjs-test:${{ matrix.ros_distro }}
+          load: true
+          cache-from: type=gha,scope=ros-test-${{ matrix.ros_distro }}
+          # The jobs of a distro all export the same cache, only one can win
+          cache-to: type=gha,mode=max,scope=ros-test-${{ matrix.ros_distro }},ignore-error=true
+
       - uses: actions/setup-node@v7
         with:
           cache: npm
@@ -41,6 +56,8 @@ jobs:
 
       - name: Run tests
         run: npm test --workspaces --if-present
+        env:
+          ROSLIB_SKIP_IMAGE_BUILD: 1
 
   docs:
     uses: ./.github/workflows/docs.yml
