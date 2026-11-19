@@ -10,10 +10,44 @@ import {
   isRosbridgePublishMessage,
   type RosbridgeAdvertiseMessage,
   type RosbridgeMessage,
+  type RosbridgeQosProfile,
   type RosbridgeSubscribeMessage,
 } from "../types/protocol.ts";
 import type { rosapi } from "../types/rosapi.ts";
 import { v4 as uuidv4 } from "uuid";
+
+/**
+ * Options for {@link Topic}. `qos` is mutually exclusive with the legacy
+ * `latch` and `queue_size` options.
+ */
+export type TopicOptions = {
+  /** The topic name, like '/cmd_vel'. */
+  name: string;
+  /** The message type, like 'std_msgs/String'. */
+  messageType: string;
+  /** The type of compression to use, like 'png', 'cbor', or 'cbor-raw'. Defaults to 'none'. */
+  compression?: string;
+  /** The rate (in ms in between messages) at which to throttle the topics. Defaults to 0. */
+  throttle_rate?: number;
+  /** The queue length at bridge side used when subscribing. Defaults to 0. */
+  queue_length?: number;
+  /** Enable resubscription and readvertisement on close event. Defaults to true. */
+  reconnect_on_close?: boolean;
+} & (
+  | {
+      /** QoS profile used for both advertising and subscribing. Requires rosbridge protocol >= 2.1.0 (ROS 2); older servers ignore it and use their default QoS. */
+      qos?: RosbridgeQosProfile;
+      latch?: never;
+      queue_size?: never;
+    }
+  | {
+      qos?: never;
+      /** Latch the topic when publishing. Defaults to false. */
+      latch?: boolean;
+      /** The queue created at bridge side for re-publishing webtopics. Defaults to 100. */
+      queue_size?: number;
+    }
+);
 
 /**
  * Publish and/or subscribe to a topic in ROS.
@@ -39,6 +73,7 @@ export default class Topic<T = unknown> extends EventEmitter<{
   latch: boolean;
   queue_size: number;
   queue_length: number;
+  qos?: RosbridgeQosProfile;
   reconnect_on_close: boolean;
   callForSubscribeAndAdvertise: (
     message: RosbridgeSubscribeMessage | RosbridgeAdvertiseMessage,
@@ -46,16 +81,7 @@ export default class Topic<T = unknown> extends EventEmitter<{
   subscribeId: string | null = null;
   advertiseId?: string;
   /**
-   * @param options
-   * @param options.ros - The ROSLIB.Ros connection handle.
-   * @param options.name - The topic name, like '/cmd_vel'.
-   * @param options.messageType - The message type, like 'std_msgs/String'.
-   * @param [options.compression=none] - The type of compression to use, like 'png', 'cbor', or 'cbor-raw'.
-   * @param [options.throttle_rate=0] - The rate (in ms in between messages) at which to throttle the topics.
-   * @param [options.queue_size=100] - The queue created at bridge side for re-publishing webtopics.
-   * @param [options.latch=false] - Latch the topic when publishing.
-   * @param [options.queue_length=0] - The queue length at bridge side used when subscribing.
-   * @param [options.reconnect_on_close=true] - The flag to enable resubscription and readvertisement on close event.
+   * @param options - Topic configuration.
    */
   constructor({
     ros,
@@ -66,18 +92,9 @@ export default class Topic<T = unknown> extends EventEmitter<{
     latch = false,
     queue_size = 100,
     queue_length = 0,
+    qos,
     reconnect_on_close = true,
-  }: {
-    ros: Ros;
-    name: string;
-    messageType: string;
-    compression?: string;
-    throttle_rate?: number;
-    queue_size?: number;
-    latch?: boolean;
-    queue_length?: number;
-    reconnect_on_close?: boolean;
-  }) {
+  }: TopicOptions & { ros: Ros }) {
     super();
 
     this.ros = ros;
@@ -88,6 +105,7 @@ export default class Topic<T = unknown> extends EventEmitter<{
     this.latch = latch;
     this.queue_size = queue_size;
     this.queue_length = queue_length;
+    this.qos = qos;
     this.reconnect_on_close = reconnect_on_close;
 
     // Check for valid compression types
@@ -171,6 +189,7 @@ export default class Topic<T = unknown> extends EventEmitter<{
       compression: this.compression,
       throttle_rate: this.throttle_rate,
       queue_length: this.queue_length,
+      qos: this.qos,
     });
   }
   /**
@@ -219,8 +238,9 @@ export default class Topic<T = unknown> extends EventEmitter<{
       id: this.advertiseId,
       type: this.messageType,
       topic: this.name,
-      latch: this.latch,
-      queue_size: this.queue_size,
+      ...(this.qos
+        ? { qos: this.qos }
+        : { latch: this.latch, queue_size: this.queue_size }),
     });
     this.isAdvertised = true;
 

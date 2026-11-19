@@ -19,7 +19,7 @@ import {
   isRosbridgeStatusMessage,
 } from "../types/protocol.ts";
 
-import Topic from "./Topic.ts";
+import Topic, { type TopicOptions } from "./Topic.ts";
 import Service from "./Service.ts";
 import Param from "./Param.ts";
 import TFClient from "../tf/TFClient.ts";
@@ -734,9 +734,7 @@ export default class Ros extends EventEmitter<
     );
   }
 
-  public Topic<T>(
-    options: Omit<ConstructorParameters<typeof Topic<T>>[0], "ros">,
-  ) {
+  public Topic<T>(options: TopicOptions) {
     return new Topic<T>({ ros: this, ...options });
   }
 

@@ -7,7 +7,7 @@ export const REVISION = import.meta.env.VITE_ROSLIBJS_VERSION;
 
 // Core exports
 export { default as Ros, type TypeDefDict } from "./core/Ros.ts";
-export { default as Topic } from "./core/Topic.ts";
+export { default as Topic, type TopicOptions } from "./core/Topic.ts";
 export { default as Param } from "./core/Param.ts";
 export { default as Service } from "./core/Service.ts";
 export { default as Action } from "./core/Action.ts";
@@ -118,4 +118,6 @@ export {
   type SuccessfulRosbridgeActionResultMessage,
   type FailedRosbridgeServiceResponseMessage,
   type SuccessfulRosbridgeServiceResponseMessage,
+  type RosbridgeQosProfile,
+  type RosbridgeDuration,
 } from "./types/protocol.ts";
