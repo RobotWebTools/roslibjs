@@ -9,6 +9,21 @@ import { EventEmitter } from "eventemitter3";
 import type { actionlib_msgs } from "../types/actionlib_msgs.ts";
 import type Goal from "./Goal.ts";
 
+export interface ActionClientOptions {
+  /** The action server name, like '/fibonacci'. */
+  serverName: string;
+  /** The action message name, like 'actionlib_tutorials/FibonacciAction'. */
+  actionName: string;
+  /** The timeout length when connecting to the action server. */
+  timeout?: number;
+  /** The flag to indicate whether to omit the feedback channel or not. */
+  omitFeedback?: boolean;
+  /** The flag to indicate whether to omit the status channel or not. */
+  omitStatus?: boolean;
+  /** The flag to indicate whether to omit the result channel or not. */
+  omitResult?: boolean;
+}
+
 /**
  * An actionlib action client.
  *
@@ -48,14 +63,7 @@ export default class ActionClient<
   goalTopic: Topic<{ goal: TGoal; goal_id: actionlib_msgs.GoalID }>;
   cancelTopic: Topic<Partial<actionlib_msgs.GoalID>>;
   /**
-   * @param options
-   * @param options.ros - The ROSLIB.Ros connection handle.
-   * @param options.serverName - The action server name, like '/fibonacci'.
-   * @param options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
-   * @param [options.timeout] - The timeout length when connecting to the action server.
-   * @param [options.omitFeedback] - The flag to indicate whether to omit the feedback channel or not.
-   * @param [options.omitStatus] - The flag to indicate whether to omit the status channel or not.
-   * @param [options.omitResult] - The flag to indicate whether to omit the result channel or not.
+   * @param options - The options for the action client.
    */
   constructor({
     ros,
@@ -65,15 +73,7 @@ export default class ActionClient<
     omitFeedback,
     omitStatus,
     omitResult,
-  }: {
-    ros: Ros;
-    serverName: string;
-    actionName: string;
-    timeout?: number;
-    omitFeedback?: boolean;
-    omitStatus?: boolean;
-    omitResult?: boolean;
-  }) {
+  }: ActionClientOptions & { ros: Ros }) {
     super();
     this.ros = ros;
     this.serverName = serverName;

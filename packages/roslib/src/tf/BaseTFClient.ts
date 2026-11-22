@@ -3,6 +3,23 @@ import type Ros from "../core/Ros.ts";
 import type { tf2_msgs } from "../types/tf2_msgs.ts";
 import type { std_msgs } from "../types/std_msgs.ts";
 
+export interface BaseTFClientOptions {
+  /** The fixed frame. */
+  fixedFrame?: string;
+  /** The angular threshold for the TF republisher. */
+  angularThres?: number;
+  /** The translation threshold for the TF republisher. */
+  transThres?: number;
+  /** The rate for the TF republisher. */
+  rate?: number;
+  /** The time (in ms) to wait after a new subscription to update the TF republisher's list of TFs. */
+  updateDelay?: number;
+  /** The timeout parameter for the TF republisher. */
+  topicTimeout?: number;
+  /** The name of the tf2_web_republisher server. */
+  serverName?: string;
+}
+
 /**
  * Base class for TF Clients that provides common functionality.
  */
@@ -22,16 +39,7 @@ export default class BaseTFClient {
   serverName: string;
 
   /**
-   * @param options
-   * @param options.ros - The ROSLIB.Ros connection handle.
-   * @param [options.fixedFrame=base_link] - The fixed frame.
-   * @param [options.angularThres=2.0] - The angular threshold for the TF republisher.
-   * @param [options.transThres=0.01] - The translation threshold for the TF republisher.
-   * @param [options.rate=10.0] - The rate for the TF republisher.
-   * @param [options.updateDelay=50] - The time (in ms) to wait after a new subscription
-   *     to update the TF republisher's list of TFs.
-   * @param [options.topicTimeout=2.0] - The timeout parameter for the TF republisher.
-   * @param [options.serverName="/tf2_web_republisher"] - The name of the tf2_web_republisher server.
+   * @param options - The options for the TF client.
    */
   constructor({
     ros,
@@ -42,16 +50,7 @@ export default class BaseTFClient {
     updateDelay = 50,
     topicTimeout = 2.0,
     serverName = "/tf2_web_republisher",
-  }: {
-    ros: Ros;
-    fixedFrame?: string;
-    angularThres?: number;
-    transThres?: number;
-    rate?: number;
-    updateDelay?: number;
-    topicTimeout?: number;
-    serverName?: string;
-  }) {
+  }: BaseTFClientOptions & { ros: Ros }) {
     this.ros = ros;
     this.fixedFrame = fixedFrame;
     this.angularThres = angularThres;

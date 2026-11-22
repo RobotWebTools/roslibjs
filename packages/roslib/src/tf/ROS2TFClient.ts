@@ -1,6 +1,9 @@
 import type { tf2_web_republisher } from "../types/tf2_web_republisher.ts";
 import Action from "../core/Action.ts";
-import BaseTFClient from "./BaseTFClient.ts";
+import type Ros from "../core/Ros.ts";
+import BaseTFClient, { type BaseTFClientOptions } from "./BaseTFClient.ts";
+
+export type ROS2TFClientOptions = BaseTFClientOptions;
 
 /**
  * A TF Client that listens to TFs from tf2_web_republisher using ROS2 actions.
@@ -14,7 +17,7 @@ export default class ROS2TFClient extends BaseTFClient {
   >;
   currentGoal?: tf2_web_republisher.TFSubscriptionGoal;
 
-  constructor(options: ConstructorParameters<typeof BaseTFClient>[0]) {
+  constructor(options: ROS2TFClientOptions & { ros: Ros }) {
     super(options);
 
     this.goal_id = "";

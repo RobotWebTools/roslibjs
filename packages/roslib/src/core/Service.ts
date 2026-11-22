@@ -12,6 +12,13 @@ import {
 import type Ros from "./Ros.ts";
 import { v4 as uuidv4 } from "uuid";
 
+export interface ServiceOptions {
+  /** The service name, like '/add_two_ints'. */
+  name: string;
+  /** The service type, like 'rospy_tutorials/AddTwoInts'. */
+  serviceType: string;
+}
+
 /**
  * A ROS service client.
  */
@@ -42,15 +49,7 @@ export default class Service<
    * @param options.name - The service name, like '/add_two_ints'.
    * @param options.serviceType - The service type, like 'rospy_tutorials/AddTwoInts'.
    */
-  constructor({
-    ros,
-    name,
-    serviceType,
-  }: {
-    ros: Ros;
-    name: string;
-    serviceType: string;
-  }) {
+  constructor({ ros, name, serviceType }: ServiceOptions & { ros: Ros }) {
     super();
     this.ros = ros;
     this.name = name;
