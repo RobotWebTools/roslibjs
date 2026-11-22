@@ -45,8 +45,11 @@ export { default as Vector3, type IVector3 } from "./math/Vector3.ts";
 
 // TF exports
 export { type BaseTFClientOptions } from "./tf/BaseTFClient.ts";
-export { default as TFClient } from "./tf/TFClient.ts";
-export { default as ROS2TFClient } from "./tf/ROS2TFClient.ts";
+export { default as TFClient, type TFClientOptions } from "./tf/TFClient.ts";
+export {
+  default as ROS2TFClient,
+  type ROS2TFClientOptions,
+} from "./tf/ROS2TFClient.ts";
 
 // URDF exports
 export { default as UrdfBox } from "./urdf/UrdfBox.ts";
