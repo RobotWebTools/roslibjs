@@ -81,6 +81,12 @@ docker run --rm -p 9090:9090 roslibjs-test:humble
 ROSLIB_EXTERNAL_BACKEND=1 ROS_DISTRO=humble npm run test
 ```
 
+To let the tests start the container but skip rebuilding the image, set
+`ROSLIB_SKIP_IMAGE_BUILD`. The tests then use the existing
+`roslibjs-test:$ROS_DISTRO` image as-is, so rebuild it yourself after changing
+the `Dockerfile`, `package.xml` or `test/examples/`. CI uses this to build the
+image beforehand with a layer cache.
+
 ### Linting
 
 ```bash
