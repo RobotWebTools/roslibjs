@@ -5,12 +5,15 @@
 
 import ActionClient from "../actionlib/ActionClient.ts";
 import Goal from "../actionlib/Goal.ts";
+import type Ros from "../core/Ros.ts";
 
 import Topic from "../core/Topic.ts";
 import type { tf2_msgs } from "../types/tf2_msgs.ts";
 import type { tf2_web_republisher } from "../types/tf2_web_republisher.ts";
 
-import BaseTFClient from "./BaseTFClient.ts";
+import BaseTFClient, { type BaseTFClientOptions } from "./BaseTFClient.ts";
+
+export type TFClientOptions = BaseTFClientOptions;
 
 /**
  * A TF Client that listens to TFs from tf2_web_republisher.
@@ -31,18 +34,9 @@ export default class TFClient extends BaseTFClient {
   #isDisposed = false;
 
   /**
-   * @param options
-   * @param options.ros - The ROSLIB.Ros connection handle.
-   * @param [options.fixedFrame=base_link] - The fixed frame.
-   * @param [options.angularThres=2.0] - The angular threshold for the TF republisher.
-   * @param [options.transThres=0.01] - The translation threshold for the TF republisher.
-   * @param [options.rate=10.0] - The rate for the TF republisher.
-   * @param [options.updateDelay=50] - The time (in ms) to wait after a new subscription
-   *     to update the TF republisher's list of TFs.
-   * @param [options.topicTimeout=2.0] - The timeout parameter for the TF republisher.
-   * @param [options.serverName="/tf2_web_republisher"] - The name of the tf2_web_republisher server.
+   * @param options - The options for the TF client.
    */
-  constructor(options: ConstructorParameters<typeof BaseTFClient>[0]) {
+  constructor(options: TFClientOptions & { ros: Ros }) {
     super(options);
 
     // Create an Action Client

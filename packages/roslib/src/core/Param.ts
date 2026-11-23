@@ -7,6 +7,15 @@ import type { rosapi } from "../types/rosapi.ts";
 import type Ros from "./Ros.ts";
 import Service from "./Service.ts";
 
+export interface ParamOptions {
+  /**
+   * The name of the parameter.
+   * For ROS1, this should be the fully qualified name of the parameter, like /robot/max_vel_x.
+   * For ROS2, this should be a node name and the parameter name, separated by a colon, like my_node:my_param.
+   */
+  name: string;
+}
+
 /**
  * A ROS parameter.
  */
@@ -14,11 +23,9 @@ export default class Param<T = unknown> {
   ros: Ros;
   name: string;
   /**
-   * @param options
-   * @param options.ros - The ROSLIB.Ros connection handle.
-   * @param options.name - The param name, like max_vel_x.
+   * @param options - Param configuration.
    */
-  constructor({ ros, name }: { ros: Ros; name: string }) {
+  constructor({ ros, name }: ParamOptions & { ros: Ros }) {
     this.ros = ros;
     this.name = name;
   }

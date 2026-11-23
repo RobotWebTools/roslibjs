@@ -9,6 +9,13 @@ import Topic from "../core/Topic.ts";
 import { EventEmitter } from "eventemitter3";
 import type { actionlib_msgs } from "../types/actionlib_msgs.ts";
 
+export interface ActionListenerOptions {
+  /** The action server name, like '/fibonacci'. */
+  serverName: string;
+  /** The action message name, like 'actionlib_tutorials/FibonacciAction'. */
+  actionName: string;
+}
+
 /**
  * An actionlib action listener.
  *
@@ -33,20 +40,13 @@ export default class ActionListener<
   serverName: string;
   actionName: string;
   /**
-   * @param options
-   * @param options.ros - The ROSLIB.Ros connection handle.
-   * @param options.serverName - The action server name, like '/fibonacci'.
-   * @param options.actionName - The action message name, like 'actionlib_tutorials/FibonacciAction'.
+   * @param options - The options for the action listener.
    */
   constructor({
     ros,
     serverName,
     actionName,
-  }: {
-    ros: Ros;
-    serverName: string;
-    actionName: string;
-  }) {
+  }: ActionListenerOptions & { ros: Ros }) {
     super();
     this.ros = ros;
     this.serverName = serverName;

@@ -20,11 +20,17 @@ import {
 } from "../types/protocol.ts";
 
 import Topic, { type TopicOptions } from "./Topic.ts";
-import Service from "./Service.ts";
-import Param from "./Param.ts";
-import TFClient from "../tf/TFClient.ts";
-import ActionClient from "../actionlib/ActionClient.ts";
-import SimpleActionServer from "../actionlib/SimpleActionServer.ts";
+import Service, { type ServiceOptions } from "./Service.ts";
+import Param, { type ParamOptions } from "./Param.ts";
+import Action, { type ActionOptions } from "./Action.ts";
+import TFClient, { type TFClientOptions } from "../tf/TFClient.ts";
+import ROS2TFClient, { type ROS2TFClientOptions } from "../tf/ROS2TFClient.ts";
+import ActionClient, {
+  type ActionClientOptions,
+} from "../actionlib/ActionClient.ts";
+import SimpleActionServer, {
+  type SimpleActionServerOptions,
+} from "../actionlib/SimpleActionServer.ts";
 import { EventEmitter } from "eventemitter3";
 import type { rosapi } from "../types/rosapi.ts";
 import type {
@@ -738,33 +744,27 @@ export default class Ros extends EventEmitter<
     return new Topic<T>({ ros: this, ...options });
   }
 
-  public Param<T>(
-    options: Omit<ConstructorParameters<typeof Param<T>>[0], "ros">,
-  ) {
+  public Param<T>(options: ParamOptions) {
     return new Param<T>({ ros: this, ...options });
   }
 
-  public Service<TRequest, TResponse>(
-    options: Omit<
-      ConstructorParameters<typeof Service<TRequest, TResponse>>[0],
-      "ros"
-    >,
-  ) {
+  public Service<TRequest, TResponse>(options: ServiceOptions) {
     return new Service<TRequest, TResponse>({ ros: this, ...options });
   }
 
-  public TFClient(
-    options: Omit<ConstructorParameters<typeof TFClient>[0], "ros">,
-  ) {
+  public Action<TGoal, TFeedback, TResult>(options: ActionOptions) {
+    return new Action<TGoal, TFeedback, TResult>({ ros: this, ...options });
+  }
+
+  public TFClient(options: TFClientOptions) {
     return new TFClient({ ros: this, ...options });
   }
 
-  public ActionClient<TGoal, TFeedback, TResult>(
-    options: Omit<
-      ConstructorParameters<typeof ActionClient<TGoal, TFeedback, TResult>>[0],
-      "ros"
-    >,
-  ) {
+  public ROS2TFClient(options: ROS2TFClientOptions) {
+    return new ROS2TFClient({ ros: this, ...options });
+  }
+
+  public ActionClient<TGoal, TFeedback, TResult>(options: ActionClientOptions) {
     return new ActionClient<TGoal, TFeedback, TResult>({
       ros: this,
       ...options,
@@ -772,12 +772,7 @@ export default class Ros extends EventEmitter<
   }
 
   public SimpleActionServer<TGoal, TFeedback, TResult>(
-    options: Omit<
-      ConstructorParameters<
-        typeof SimpleActionServer<TGoal, TFeedback, TResult>
-      >[0],
-      "ros"
-    >,
+    options: SimpleActionServerOptions,
   ) {
     return new SimpleActionServer<TGoal, TFeedback, TResult>({
       ros: this,

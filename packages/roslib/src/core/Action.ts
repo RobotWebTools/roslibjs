@@ -36,6 +36,13 @@ function makeErrorMessage(status: GoalStatus) {
   }
 }
 
+export interface ActionOptions {
+  /** The action name, like '/fibonacci'. */
+  name: string;
+  /** The action type, like 'example_interfaces/Fibonacci'. */
+  actionType: string;
+}
+
 /**
  * A ROS 2 action client.
  */
@@ -50,21 +57,11 @@ export default class Action<
   ros: Ros;
   name: string;
   actionType: string;
+
   /**
-   * @param options
-   * @param options.ros - The ROSLIB.Ros connection handle.
-   * @param options.name - The action name, like '/fibonacci'.
-   * @param options.actionType - The action type, like 'example_interfaces/Fibonacci'.
+   * @param options - The options for the action client.
    */
-  constructor({
-    ros,
-    name,
-    actionType,
-  }: {
-    ros: Ros;
-    name: string;
-    actionType: string;
-  }) {
+  constructor({ ros, name, actionType }: ActionOptions & { ros: Ros }) {
     this.ros = ros;
     this.name = name;
     this.actionType = actionType;

@@ -8,9 +8,9 @@ export const REVISION = import.meta.env.VITE_ROSLIBJS_VERSION;
 // Core exports
 export { default as Ros, type TypeDefDict } from "./core/Ros.ts";
 export { default as Topic, type TopicOptions } from "./core/Topic.ts";
-export { default as Param } from "./core/Param.ts";
-export { default as Service } from "./core/Service.ts";
-export { default as Action } from "./core/Action.ts";
+export { default as Param, type ParamOptions } from "./core/Param.ts";
+export { default as Service, type ServiceOptions } from "./core/Service.ts";
+export { default as Action, type ActionOptions } from "./core/Action.ts";
 export { GoalStatus } from "./core/GoalStatus.ts";
 
 // Core Transport exports
@@ -23,10 +23,19 @@ export {
 export { WebSocketTransportFactory } from "./core/transport/WebSocketTransportFactory.ts";
 
 // ActionLib exports
-export { default as ActionClient } from "./actionlib/ActionClient.ts";
-export { default as ActionListener } from "./actionlib/ActionListener.ts";
+export {
+  default as ActionClient,
+  type ActionClientOptions,
+} from "./actionlib/ActionClient.ts";
+export {
+  default as ActionListener,
+  type ActionListenerOptions,
+} from "./actionlib/ActionListener.ts";
 export { default as Goal } from "./actionlib/Goal.ts";
-export { default as SimpleActionServer } from "./actionlib/SimpleActionServer.ts";
+export {
+  default as SimpleActionServer,
+  type SimpleActionServerOptions,
+} from "./actionlib/SimpleActionServer.ts";
 
 // Math exports
 export { default as Pose, type IPose } from "./math/Pose.ts";
@@ -35,8 +44,12 @@ export { default as Transform, type ITransform } from "./math/Transform.ts";
 export { default as Vector3, type IVector3 } from "./math/Vector3.ts";
 
 // TF exports
-export { default as TFClient } from "./tf/TFClient.ts";
-export { default as ROS2TFClient } from "./tf/ROS2TFClient.ts";
+export { type BaseTFClientOptions } from "./tf/BaseTFClient.ts";
+export { default as TFClient, type TFClientOptions } from "./tf/TFClient.ts";
+export {
+  default as ROS2TFClient,
+  type ROS2TFClientOptions,
+} from "./tf/ROS2TFClient.ts";
 
 // URDF exports
 export { default as UrdfBox } from "./urdf/UrdfBox.ts";
