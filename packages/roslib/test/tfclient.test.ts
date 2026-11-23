@@ -14,9 +14,8 @@ describe("TFClient", function () {
         on: () => {},
         off: () => {},
         callOnConnection: () => {},
-      };
+      } as unknown as ROSLIB.Ros;
 
-      // @ts-expect-error -- stub impl
       const tfclient = new ROSLIB.TFClient({ ros: dummyROS });
       tfclient.dispose();
 
