@@ -10,7 +10,11 @@ export { default as Ros, type TypeDefDict } from "./core/Ros.ts";
 export { default as Topic, type TopicOptions } from "./core/Topic.ts";
 export { default as Param } from "./core/Param.ts";
 export { default as Service } from "./core/Service.ts";
-export { default as Action } from "./core/Action.ts";
+export {
+  default as Action,
+  type ActionTopicOptions,
+  type ActionFeedbackMessage,
+} from "./core/Action.ts";
 export { GoalStatus } from "./core/GoalStatus.ts";
 
 // Core Transport exports
@@ -65,6 +69,9 @@ export { isElement, parseUrdfOrigin } from "./urdf/UrdfUtils.ts";
 
 // only export the types that typedoc requires us to export - those are our public interfaces
 export { type actionlib_msgs } from "./types/actionlib_msgs.ts";
+export { type action_msgs } from "./types/action_msgs.ts";
+export { type builtin_interfaces } from "./types/builtin_interfaces.ts";
+export { type unique_identifier_msgs } from "./types/unique_identifier_msgs.ts";
 export { type tf2_web_republisher } from "./types/tf2_web_republisher.ts";
 export { type rosapi } from "./types/rosapi.ts";
 export { type std_msgs } from "./types/std_msgs.ts";

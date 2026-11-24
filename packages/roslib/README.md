@@ -16,6 +16,74 @@ Install roslibjs with any NPM-compatible package manager via, for example,
 npm install roslib
 ```
 
+### Monitor ROS 2 actions from other clients
+
+`Action.sendGoal()` callbacks track the goal sent by that call. To observe goals
+sent by other clients, subscribe to the action's status and feedback topics:
+
+```ts
+import {
+  Action,
+  GoalStatus,
+  Ros,
+  type ActionFeedbackMessage,
+  type action_msgs,
+} from "roslib";
+
+const ros = new Ros({ url: "ws://localhost:9090" });
+const action = new Action<
+  { order: number },
+  { sequence: number[] },
+  { sequence: number[] }
+>({
+  ros,
+  name: "/fibonacci",
+  actionType: "action_tutorials_interfaces/action/Fibonacci",
+});
+
+const statusTopic = action.getStatusTopic();
+const feedbackTopic = action.getFeedbackTopic();
+const onStatus = (message: action_msgs.GoalStatusArray) => {
+  for (const goal of message.status_list) {
+    console.log(goal.goal_info.goal_id, GoalStatus[goal.status]);
+  }
+};
+const onFeedback = (message: ActionFeedbackMessage<{ sequence: number[] }>) => {
+  console.log(message.goal_id, message.feedback.sequence);
+};
+statusTopic.subscribe(onStatus);
+feedbackTopic.subscribe(onFeedback);
+
+function stopMonitoring() {
+  statusTopic.unsubscribe(onStatus);
+  feedbackTopic.unsubscribe(onFeedback);
+  ros.close();
+}
+```
+
+Call `stopMonitoring()` when finished. Each method returns a new `Topic` without
+subscribing automatically. Keep that instance to manage its callbacks and
+lifetime. Feedback includes the ROS goal
+UUID alongside the typed feedback payload; it is not the bare payload returned
+by `sendGoal`'s feedback callback. UUID bytes are base64 strings in rosbridge JSON
+and may be arrays or `Uint8Array` values with other encodings. They are distinct
+from the rosbridge request ID returned by `sendGoal()`.
+
+The status topic uses `action_msgs/msg/GoalStatusArray` with ROS 2
+`{ sec, nanosec }` timestamps. Feedback message types are derived from either
+`package/Action` or `package/action/Action`. Both helpers retain the action's
+namespace and use normal `Topic` reconnect behavior.
+
+Status defaults to reliable, transient-local, keep-last depth 1 so a late
+observer can request the current status snapshot. Feedback defaults to reliable,
+volatile, keep-last depth 10. Both accept subscription options, for example
+`action.getFeedbackTopic({ qos: { reliability: "best_effort" }, compression: "cbor" })`
+for a server configured to publish best-effort feedback. Explicit QoS requires
+rosbridge protocol 2.1.0 or newer; older servers ignore these overrides. Status
+and feedback do not provide the result of another client's goal.
+
+See `roslib-examples`' ROS 2 Action Monitor for a runnable browser example.
+
 ## Troubleshooting
 
 1. Check that connection is established. You can listen to error and

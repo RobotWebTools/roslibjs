@@ -12,7 +12,26 @@ import {
   isRosbridgeSendActionGoalMessage,
 } from "../types/protocol.ts";
 import type Ros from "./Ros.ts";
+import Topic, { type TopicOptions } from "./Topic.ts";
+import type { action_msgs } from "../types/action_msgs.ts";
+import type { unique_identifier_msgs } from "../types/unique_identifier_msgs.ts";
 import { v4 as uuidv4 } from "uuid";
+
+/** Subscription options for an action's status or feedback topic. */
+export type ActionTopicOptions = Pick<
+  TopicOptions,
+  | "compression"
+  | "throttle_rate"
+  | "queue_length"
+  | "reconnect_on_close"
+  | "qos"
+>;
+
+/** Feedback topic wrapper generated for a ROS 2 action type. */
+export interface ActionFeedbackMessage<TFeedback> {
+  goal_id: unique_identifier_msgs.UUID;
+  feedback: TFeedback;
+}
 
 class GoalError extends Error {
   override name = "GoalError";
@@ -68,6 +87,64 @@ export default class Action<
     this.ros = ros;
     this.name = name;
     this.actionType = actionType;
+  }
+
+  /**
+   * Create a topic that receives feedback for every goal, including goals sent
+   * by other clients. Each message contains both `goal_id` and `feedback`.
+   * Keep the returned topic and unsubscribe its callbacks when finished.
+   *
+   * @param options - Subscription options, including an optional QoS override.
+   * @returns A new, independently managed feedback topic.
+   */
+  getFeedbackTopic(options: ActionTopicOptions = {}) {
+    const match = /^([^/]+)\/(?:action\/)?([^/]+)$/.exec(this.actionType);
+    const packageName = match?.[1];
+    const actionName = match?.[2];
+    if (!packageName || !actionName) {
+      throw new Error(
+        `Cannot derive feedback message type from '${this.actionType}'; expected 'package/Action' or 'package/action/Action'`,
+      );
+    }
+
+    return new Topic<ActionFeedbackMessage<TFeedback>>({
+      ...options,
+      ros: this.ros,
+      name: `${this.name.replace(/\/+$/, "")}/_action/feedback`,
+      messageType: `${packageName}/action/${actionName}_FeedbackMessage`,
+      qos: {
+        history: "keep_last",
+        depth: 10,
+        reliability: "reliable",
+        durability: "volatile",
+        ...options.qos,
+      },
+    });
+  }
+
+  /**
+   * Create a topic that receives status for every goal, including goals sent
+   * by other clients. Transient-local durability requests the server's latest
+   * status for clients that join after a goal has started.
+   * Keep the returned topic and unsubscribe its callbacks when finished.
+   *
+   * @param options - Subscription options, including an optional QoS override.
+   * @returns A new, independently managed status topic.
+   */
+  getStatusTopic(options: ActionTopicOptions = {}) {
+    return new Topic<action_msgs.GoalStatusArray>({
+      ...options,
+      ros: this.ros,
+      name: `${this.name.replace(/\/+$/, "")}/_action/status`,
+      messageType: "action_msgs/msg/GoalStatusArray",
+      qos: {
+        history: "keep_last",
+        depth: 1,
+        reliability: "reliable",
+        durability: "transient_local",
+        ...options.qos,
+      },
+    });
   }
 
   /**

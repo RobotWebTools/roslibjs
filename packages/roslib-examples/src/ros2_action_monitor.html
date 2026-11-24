@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ROS 2 Action Monitor</title>
+    <script src="/roslib/importmap.js"></script>
+  </head>
+  <body>
+    <h1>ROS 2 Action Monitor</h1>
+    <p>
+      Observe status and feedback for goals sent by any client. Start rosbridge
+      and a Fibonacci action server, connect below, then send a goal from a
+      separate terminal or the ROS 2 Action Client example.
+    </p>
+    <pre>
+ros2 launch rosbridge_server rosbridge_websocket_launch.xml
+ros2 run action_tutorials_py fibonacci_action_server
+ros2 action send_goal /fibonacci action_tutorials_interfaces/action/Fibonacci '{order: 10}' --feedback</pre
+    >
+    <p>
+      This page only subscribes; it does not send or cancel goals. QoS overrides
+      require rosbridge protocol 2.1.0 or newer. The status subscription
+      requests the latest snapshot so it can also observe goals that are already
+      running.
+    </p>
+    <form id="connection">
+      <p>
+        <label
+          >rosbridge URL <input id="url" value="ws://localhost:9090" required
+        /></label>
+      </p>
+      <p>
+        <label
+          >Action name <input id="name" value="/fibonacci" required
+        /></label>
+      </p>
+      <p>
+        <label
+          >Action type
+          <input
+            id="type"
+            value="action_tutorials_interfaces/action/Fibonacci"
+            required
+        /></label>
+      </p>
+      <button id="connect" type="submit">Connect</button>
+      <button id="disconnect" type="button" disabled>Disconnect</button>
+    </form>
+    <p id="status" role="status">Disconnected</p>
+    <p>Showing <span id="count">0</span> goals (up to 100 per connection).</p>
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Goal UUID</th>
+          <th scope="col">Status</th>
+          <th scope="col">Latest feedback</th>
+        </tr>
+      </thead>
+      <tbody id="goals"></tbody>
+    </table>
+    <script type="module">
+      import { Action, GoalStatus, Ros } from "roslib";
+
+      const form = document.getElementById("connection");
+      const connectButton = document.getElementById("connect");
+      const disconnectButton = document.getElementById("disconnect");
+      const status = document.getElementById("status");
+      const body = document.getElementById("goals");
+      const count = document.getElementById("count");
+      const goals = new Map();
+      let disconnect = () => {};
+
+      function goalRow(goalId) {
+        // rosbridge JSON encodes uint8 arrays as base64; CBOR carries bytes.
+        const bytes =
+          typeof goalId.uuid === "string"
+            ? Uint8Array.from(atob(goalId.uuid), (char) => char.charCodeAt(0))
+            : goalId.uuid;
+        const id = Array.from(bytes, (byte) =>
+          byte.toString(16).padStart(2, "0"),
+        ).join("");
+        if (goals.has(id)) return goals.get(id);
+        if (goals.size === 100) {
+          const oldestId = goals.keys().next().value;
+          goals.get(oldestId).row.remove();
+          goals.delete(oldestId);
+        }
+        const row = document.createElement("tr");
+        const idCell = document.createElement("td");
+        const statusCell = document.createElement("td");
+        const feedbackCell = document.createElement("td");
+        idCell.textContent = id;
+        statusCell.textContent = "Unknown";
+        row.append(idCell, statusCell, feedbackCell);
+        body.append(row);
+        const entry = { row, statusCell, feedbackCell };
+        goals.set(id, entry);
+        count.textContent = String(goals.size);
+        return entry;
+      }
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        disconnect();
+        goals.clear();
+        body.replaceChildren();
+        count.textContent = "0";
+
+        const ros = new Ros();
+        const action = new Action({
+          ros,
+          name: document.getElementById("name").value.trim(),
+          actionType: document.getElementById("type").value.trim(),
+        });
+        let feedbackTopic;
+        try {
+          feedbackTopic = action.getFeedbackTopic();
+        } catch (error) {
+          status.textContent = error.message;
+          return;
+        }
+        const statusTopic = action.getStatusTopic();
+        const onStatus = (message) => {
+          for (const goal of message.status_list) {
+            goalRow(goal.goal_info.goal_id).statusCell.textContent =
+              GoalStatus[goal.status] ?? String(goal.status);
+          }
+        };
+        const onFeedback = (message) => {
+          goalRow(message.goal_id).feedbackCell.textContent = JSON.stringify(
+            message.feedback,
+          ).slice(0, 500);
+        };
+        let stopped = false;
+        function stop(message) {
+          if (stopped) return;
+          stopped = true;
+          statusTopic.unsubscribe(onStatus);
+          feedbackTopic.unsubscribe(onFeedback);
+          ros.close();
+          connectButton.disabled = false;
+          disconnectButton.disabled = true;
+          status.textContent = message;
+        }
+        disconnect = () => stop("Disconnected");
+        ros.on("connection", () => {
+          if (stopped) ros.close();
+          else status.textContent = "Connected — waiting for action topics";
+        });
+        ros.on("close", () => stop("Disconnected"));
+        ros.on("error", () =>
+          stop("Connection error — check the rosbridge URL"),
+        );
+        connectButton.disabled = true;
+        disconnectButton.disabled = false;
+        status.textContent = "Connecting…";
+        statusTopic.subscribe(onStatus);
+        feedbackTopic.subscribe(onFeedback);
+        ros
+          .connect(document.getElementById("url").value.trim())
+          .catch((error) => {
+            stop(error.message);
+          });
+      });
+      disconnectButton.addEventListener("click", () => disconnect());
+      window.addEventListener("pagehide", () => disconnect());
+    </script>
+  </body>
+</html>
