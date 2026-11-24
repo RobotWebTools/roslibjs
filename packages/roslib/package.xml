@@ -21,6 +21,7 @@
   <test_depend condition="$ROS_VERSION == 1">common_tutorials</test_depend>
   <test_depend condition="$ROS_VERSION == 1">ros_tutorials</test_depend>
   <test_depend condition="$ROS_VERSION == 2">action_tutorials_cpp</test_depend>
+  <test_depend condition="$ROS_VERSION == 2">example_interfaces</test_depend>
   <test_depend condition="$ROS_VERSION == 2">examples_rclpy_minimal_service</test_depend>
   <test_depend condition="$ROS_VERSION == 2">tf2_ros</test_depend>
 

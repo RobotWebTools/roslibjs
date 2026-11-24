@@ -33,7 +33,7 @@ import {
 const ros = new Ros({ url: "ws://localhost:9090" });
 const action = new Action<
   { order: number },
-  { sequence: number[] },
+  { partial_sequence: number[] },
   { sequence: number[] }
 >({
   ros,
@@ -48,8 +48,10 @@ const onStatus = (message: action_msgs.GoalStatusArray) => {
     console.log(goal.goal_info.goal_id, GoalStatus[goal.status]);
   }
 };
-const onFeedback = (message: ActionFeedbackMessage<{ sequence: number[] }>) => {
-  console.log(message.goal_id, message.feedback.sequence);
+const onFeedback = (
+  message: ActionFeedbackMessage<{ partial_sequence: number[] }>,
+) => {
+  console.log(message.goal_id, message.feedback.partial_sequence);
 };
 statusTopic.subscribe(onStatus);
 feedbackTopic.subscribe(onFeedback);

@@ -30,7 +30,7 @@ describe.skipIf(process.env["ROS_DISTRO"] === "noetic")(
       }
       const options = {
         name: "/roslibjs_action_monitor_test",
-        actionType: "action_tutorials_interfaces/action/Fibonacci",
+        actionType: "example_interfaces/action/Fibonacci",
       };
       const server = new Action<
         { order: number },
@@ -95,12 +95,17 @@ describe.skipIf(process.env["ROS_DISTRO"] === "noetic")(
           .poll(
             () => {
               if (goalRequestId)
-                server.sendFeedback(goalRequestId, { sequence: [0, 1, 1, 2] });
+                server.sendFeedback(goalRequestId, {
+                  sequence: [0, 1, 1, 2],
+                });
               return { feedback: feedback?.feedback, errors };
             },
             { timeout: 5000 },
           )
-          .toEqual({ feedback: { sequence: [0, 1, 1, 2] }, errors: [] });
+          .toEqual({
+            feedback: { sequence: [0, 1, 1, 2] },
+            errors: [],
+          });
 
         // No status subscriber existed when the goal started.
         await lateRos.connect("ws://localhost:9090");
