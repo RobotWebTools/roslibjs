@@ -43,7 +43,6 @@ jobs:
         run: npm test --workspaces --if-present
 
   docs:
-    uses: ./.github/workflows/docs.yml
-    secrets: inherit
-    with:
-      deploy: false
+    permissions:
+      contents: read
+    uses: ./.github/workflows/docs-build.yml
