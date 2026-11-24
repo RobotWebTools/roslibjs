@@ -6,6 +6,7 @@ import {
   type ActionFeedbackMessage,
   type action_msgs,
 } from "../../src/RosLib.ts";
+import { isRosbridgeStatusMessage } from "../../src/types/protocol.ts";
 
 // This uses the real ROS 2 backend, including generated feedback message types
 // and DDS's transient-local status delivery. Noetic only supplies ROS 1.
@@ -20,6 +21,13 @@ describe.skipIf(process.env["ROS_DISTRO"] === "noetic")(
         new Ros(),
       ] as const;
       const clients = [serverRos, actorRos, observerRos, lateRos];
+      const errors: string[] = [];
+      for (const ros of [observerRos, lateRos]) {
+        ros.on("status", (message) => {
+          if (isRosbridgeStatusMessage(message) && message.level === "error")
+            errors.push(message.msg);
+        });
+      }
       const options = {
         name: "/roslibjs_action_monitor_test",
         actionType: "action_tutorials_interfaces/action/Fibonacci",
@@ -82,20 +90,23 @@ describe.skipIf(process.env["ROS_DISTRO"] === "noetic")(
             reject(new Error(error));
           });
         });
-        await expect.poll(() => goalRequestId).toBeDefined();
+        await expect.poll(() => goalRequestId, { timeout: 5000 }).toBeDefined();
         await expect
-          .poll(() => {
-            if (goalRequestId)
-              server.sendFeedback(goalRequestId, { sequence: [0, 1, 1, 2] });
-            return feedback?.feedback;
-          })
-          .toEqual({ sequence: [0, 1, 1, 2] });
+          .poll(
+            () => {
+              if (goalRequestId)
+                server.sendFeedback(goalRequestId, { sequence: [0, 1, 1, 2] });
+              return { feedback: feedback?.feedback, errors };
+            },
+            { timeout: 5000 },
+          )
+          .toEqual({ feedback: { sequence: [0, 1, 1, 2] }, errors: [] });
 
         // No status subscriber existed when the goal started.
         await lateRos.connect("ws://localhost:9090");
         statusTopic.subscribe(onStatus);
         await expect
-          .poll(() => statuses?.status_list[0]?.status)
+          .poll(() => statuses?.status_list[0]?.status, { timeout: 5000 })
           .toBe(GoalStatus.STATUS_EXECUTING);
         expect(statuses?.status_list[0]?.goal_info.goal_id).toEqual(
           feedback?.goal_id,
@@ -110,7 +121,7 @@ describe.skipIf(process.env["ROS_DISTRO"] === "noetic")(
         server.setSucceeded(goalRequestId, { sequence: [0, 1, 1, 2] });
         await expect(result).resolves.toEqual({ sequence: [0, 1, 1, 2] });
         await expect
-          .poll(() => statuses?.status_list[0]?.status)
+          .poll(() => statuses?.status_list[0]?.status, { timeout: 5000 })
           .toBe(GoalStatus.STATUS_SUCCEEDED);
       } finally {
         feedbackTopic.unsubscribe(onFeedback);
